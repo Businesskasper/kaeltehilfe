@@ -1,0 +1,6 @@
+@kaeltebus_backend_HostAddress = http://localhost:5280
+
+GET {{kaeltebus_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

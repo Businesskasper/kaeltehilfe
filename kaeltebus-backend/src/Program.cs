@@ -1,0 +1,71 @@
+using System.Reflection;
+using System.Text.Json.Serialization;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using kaeltebus_backend.Infrastructure.Database;
+using kaeltebus_backend.shared;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
+// Add services to the container.
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+builder.Services.AddDbContext<KbContext>((options) =>
+{
+    options.UseSqlite(builder.Configuration.GetConnectionString("SqliteDb"));
+});
+
+builder.Services.AddControllers(x =>
+{
+    x.AllowEmptyInputInBodyModelBinding = false;
+    x.Filters.Add<ModelStateValidationFilter>();
+}).AddJsonOptions(x =>
+{
+    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
+// Configure fluent validation
+// Disable default modelstate validation and register all validations
+builder.Services.AddFluentValidationAutoValidation(x =>
+{
+    x.DisableDataAnnotationsValidation = true;
+});
+builder.Services
+    .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+// Register middleware service to catch fluent validation errors
+builder.Services.AddTransient<InvalidModelStateExceptionHandler>();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+// Allow Request.Body to be read in controller
+// Required for UPDATE logic since apparently .Net cannot implement PATCH in a proper way
+app.Use((context, next) =>
+{
+    context.Request.EnableBuffering();
+    return next();
+});
+
+app.UseInvalidModelStateHandler();
+
+app.MapControllers();
+
+app.RunMigrations<KbContext>();
+
+app.Run();

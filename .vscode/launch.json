@@ -1,0 +1,19 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Launch Backend",
+			"preLaunchTask": "build backend",
+			"program": "${workspaceFolder}/kaeltebus-backend/src/bin/Debug/net8.0/kaeltebus-backend.dll",
+			"args": [],
+			"cwd": "${workspaceFolder}/kaeltebus-backend/src"
+		},
+		{
+			"name": "Launch Backend Tests",
+			"preLaunchTask": "build backend test",
+			"program": "${workspaceFolder}/kaeltebus-backend/test/bin/Debug/net8.0/kaeltebus-test.dll",
+			"args": [],
+			"cwd": "${workspaceFolder}/kaeltebus-backend/test"
+		}
+	]
+}

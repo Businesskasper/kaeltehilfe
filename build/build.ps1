@@ -1,0 +1,1 @@
+Write-Host "Start build" -ForegroundColor Cyan
