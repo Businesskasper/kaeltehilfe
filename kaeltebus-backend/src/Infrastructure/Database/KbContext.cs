@@ -36,15 +36,15 @@ public class KbContext : DbContext
         // Configure Many-To-Many between Shift and Volunteer
         modelBuilder.Entity<Shift>().HasMany(x => x.Volunteers).WithMany()
            .UsingEntity<Dictionary<string, string>>("ShiftVolunteer",
-               x => x.HasOne<Volunteer>().WithMany().HasForeignKey("VolunteerId").OnDelete(DeleteBehavior.SetNull),
-               x => x.HasOne<Shift>().WithMany().HasForeignKey("ShiftId").OnDelete(DeleteBehavior.SetNull),
+               x => x.HasOne<Volunteer>().WithMany().HasForeignKey("VolunteerId"),
+               x => x.HasOne<Shift>().WithMany().HasForeignKey("ShiftId"),
                x => x.ToTable("ShiftVolunteer")
            );
 
         // Configure Many-To-One between Distribution and Good, Client and Shift
-        modelBuilder.Entity<Distribution>().HasOne(x => x.Good).WithMany().OnDelete(DeleteBehavior.SetNull);
-        modelBuilder.Entity<Distribution>().HasOne(x => x.Client).WithMany().OnDelete(DeleteBehavior.SetNull); ;
-        modelBuilder.Entity<Distribution>().HasOne(x => x.Shift).WithMany().OnDelete(DeleteBehavior.SetNull); ;
+        modelBuilder.Entity<Distribution>().HasOne(x => x.Good).WithMany();
+        modelBuilder.Entity<Distribution>().HasOne(x => x.Client).WithMany();
+        modelBuilder.Entity<Distribution>().HasOne(x => x.Shift).WithMany();
 
         if (_seedData) Seed(modelBuilder);
     }
@@ -52,43 +52,43 @@ public class KbContext : DbContext
     private void Seed(ModelBuilder modelBuilder)
     {
         var goods = new List<Good> {
-                new Good { Id = 1, Name = "Suppe", GoodType = GoodType.FOOD, AddOn = DateTime.Today },
-                new Good { Id = 2, Name = "Kaffee", GoodType = GoodType.FOOD, AddOn = DateTime.Today },
-                new Good { Id = 3, Name = "Tee", GoodType = GoodType.FOOD, AddOn = DateTime.Today },
-                new Good { Id = 4, Name = "Decke", GoodType = GoodType.CLOTHING, AddOn = DateTime.Today },
-                new Good { Id = 5, Name = "Socken", GoodType = GoodType.CLOTHING, AddOn = DateTime.Today },
-                new Good { Id = 6, Name = "Tempos", GoodType = GoodType.CONSUMABLE, AddOn = DateTime.Today },
-                new Good { Id = 7, Name = "Deo", GoodType = GoodType.CONSUMABLE, AddOn = DateTime.Today },
+                new Good { Id = 1, Name = "Suppe", GoodType = GoodType.FOOD, AddOn = DateTime.Today, IsDeleted = false },
+                new Good { Id = 2, Name = "Kaffee", GoodType = GoodType.FOOD, AddOn = DateTime.Today , IsDeleted = false},
+                new Good { Id = 3, Name = "Tee", GoodType = GoodType.FOOD, AddOn = DateTime.Today, IsDeleted = false },
+                new Good { Id = 4, Name = "Decke", GoodType = GoodType.CLOTHING, AddOn = DateTime.Today, IsDeleted = false },
+                new Good { Id = 5, Name = "Socken", GoodType = GoodType.CLOTHING, AddOn = DateTime.Today , IsDeleted = false},
+                new Good { Id = 6, Name = "Tempos", GoodType = GoodType.CONSUMABLE, AddOn = DateTime.Today , IsDeleted = false},
+                new Good { Id = 7, Name = "Deo", GoodType = GoodType.CONSUMABLE, AddOn = DateTime.Today, IsDeleted = false },
             };
         modelBuilder.Entity<Good>().HasData(goods);
 
         var volunteers = new List<Volunteer> {
-                new Volunteer { Id = 1, Firstname = "Luka", Lastname = "Weis" },
-                new Volunteer { Id = 2, Firstname = "Peter", Lastname = "Pan" },
-                new Volunteer { Id = 3, Firstname = "Max", Lastname = "Mustermann" }
+                new Volunteer { Id = 1, Firstname = "Luka", Lastname = "Weis", IsDeleted= false },
+                new Volunteer { Id = 2, Firstname = "Peter", Lastname = "Pan", IsDeleted= false },
+                new Volunteer { Id = 3, Firstname = "Max", Lastname = "Mustermann", IsDeleted= false }
             };
         modelBuilder.Entity<Volunteer>().HasData(volunteers);
 
-        var shift = new { Id = 1, Date = DateOnly.FromDateTime(DateTime.Now), AddOn = DateTime.Now };
+        var shift = new { Id = 1, Date = DateOnly.FromDateTime(DateTime.Now), AddOn = DateTime.Now, IsDeleted = false };
         modelBuilder.Entity<Shift>().HasData(shift);
 
         modelBuilder.Entity("ShiftVolunteer").HasData(new { ShiftId = 1, VolunteerId = 1 });
 
         var clients = new List<Client> {
-                new Client { Id = 1, Name = "Martin", ApproxAge = 45, Gender = Gender.MALE, AddOn = DateTime.Now },
-                new Client { Id = 2, Name = "Martina", ApproxAge = 40, Gender = Gender.FEMALE, AddOn = DateTime.Now },
-                new Client { Id = 3, Name = "Tim", ApproxAge = 30, AddOn = DateTime.Now }
+                new Client { Id = 1, Name = "Martin", ApproxAge = 45, Gender = Gender.MALE, AddOn = DateTime.Now, IsDeleted = false },
+                new Client { Id = 2, Name = "Martina", ApproxAge = 40, Gender = Gender.FEMALE, AddOn = DateTime.Now, IsDeleted = false },
+                new Client { Id = 3, Name = "Tim", ApproxAge = 30, AddOn = DateTime.Now, IsDeleted = false }
             };
         modelBuilder.Entity<Client>().HasData(clients);
 
         modelBuilder.Entity<Distribution>().HasData(
-            new { Id = 1, ClientId = clients[0].Id, GoodId = goods[0].Id, ShiftId = shift.Id, Quantity = 1, AddOn = DateTime.Now },
-            new { Id = 2, ClientId = clients[0].Id, GoodId = goods[1].Id, ShiftId = shift.Id, Quantity = 2, AddOn = DateTime.Now },
-            new { Id = 3, ClientId = clients[0].Id, GoodId = goods[3].Id, ShiftId = shift.Id, Quantity = 1, AddOn = DateTime.Now },
-            new { Id = 4, ClientId = clients[1].Id, GoodId = goods[1].Id, ShiftId = shift.Id, Quantity = 1, AddOn = DateTime.Now },
-            new { Id = 5, ClientId = clients[2].Id, GoodId = goods[0].Id, ShiftId = shift.Id, Quantity = 1, AddOn = DateTime.Now },
-            new { Id = 6, ClientId = clients[2].Id, GoodId = goods[2].Id, ShiftId = shift.Id, Quantity = 2, AddOn = DateTime.Now },
-            new { Id = 7, ClientId = clients[2].Id, GoodId = goods[6].Id, ShiftId = shift.Id, Quantity = 1, AddOn = DateTime.Now }
+            new { Id = 1, ClientId = clients[0].Id, GoodId = goods[0].Id, ShiftId = shift.Id, Quantity = 1, AddOn = DateTime.Now, IsDeleted = false },
+            new { Id = 2, ClientId = clients[0].Id, GoodId = goods[1].Id, ShiftId = shift.Id, Quantity = 2, AddOn = DateTime.Now, IsDeleted = false },
+            new { Id = 3, ClientId = clients[0].Id, GoodId = goods[3].Id, ShiftId = shift.Id, Quantity = 1, AddOn = DateTime.Now, IsDeleted = false },
+            new { Id = 4, ClientId = clients[1].Id, GoodId = goods[1].Id, ShiftId = shift.Id, Quantity = 1, AddOn = DateTime.Now, IsDeleted = false },
+            new { Id = 5, ClientId = clients[2].Id, GoodId = goods[0].Id, ShiftId = shift.Id, Quantity = 1, AddOn = DateTime.Now, IsDeleted = false },
+            new { Id = 6, ClientId = clients[2].Id, GoodId = goods[2].Id, ShiftId = shift.Id, Quantity = 2, AddOn = DateTime.Now, IsDeleted = false },
+            new { Id = 7, ClientId = clients[2].Id, GoodId = goods[6].Id, ShiftId = shift.Id, Quantity = 1, AddOn = DateTime.Now, IsDeleted = false }
         );
     }
 
@@ -98,9 +98,11 @@ static class DbContextExtensions
 {
     public static EntityTypeBuilder<TEntity> ConfigureBaseEntity<TEntity>(this EntityTypeBuilder<TEntity> modelBuilder) where TEntity : BaseEntity
     {
+        modelBuilder.HasIndex(x => x.IsDeleted);
         modelBuilder.Property(x => x.Id).ValueGeneratedOnAdd();
         modelBuilder.Property(x => x.AddOn).ValueGeneratedOnAdd().HasDefaultValueSql("datetime()");
         modelBuilder.Property(x => x.ChangeOn).ValueGeneratedOnUpdate().HasDefaultValueSql("datetime()");
+        modelBuilder.Property(x => x.IsDeleted).HasDefaultValue(false);
 
         return modelBuilder;
     }

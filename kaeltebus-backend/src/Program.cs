@@ -23,6 +23,17 @@ builder.Services.AddDbContext<KbContext>((options) =>
     options.UseSqlite(builder.Configuration.GetConnectionString("SqliteDb"));
 });
 
+var CORS_POLICY = "CorsOriginsKey";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: CORS_POLICY, policy =>
+    {
+        policy.WithOrigins("http://localhost:5173");
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers(x =>
 {
     x.AllowEmptyInputInBodyModelBinding = false;
@@ -53,6 +64,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(CORS_POLICY);
 
 // Allow Request.Body to be read in controller
 // Required for UPDATE logic since apparently .Net cannot implement PATCH in a proper way

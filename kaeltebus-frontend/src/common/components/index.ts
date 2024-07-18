@@ -1,1 +1,3 @@
-export * from "./NavigationItem";
+export * from "./Modal/Modal";
+export * from "./NavigationItem/NavigationItem";
+export * from "./Table/Table";

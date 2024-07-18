@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {}
+    "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {}
   },
   "projects": {
-    "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {
+    "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+        "projectUniqueName": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
         "projectName": "kaeltebus-backend",
-        "projectPath": "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+        "projectPath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
         "packagesPath": "C:\\Users\\LukaW\\.nuget\\packages\\",
-        "outputPath": "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\obj\\",
+        "outputPath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\LukaW\\AppData\\Roaming\\NuGet\\NuGet.Config",

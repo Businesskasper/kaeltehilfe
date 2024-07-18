@@ -29,7 +29,7 @@ public abstract class CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>
     [HttpGet()]
     public async Task<IEnumerable<TListDto>> Query()
     {
-        var objs = await _kbContext.Set<TEntity>().ToListAsync();
+        var objs = await _kbContext.Set<TEntity>().Where(x => !x.IsDeleted).ToListAsync();
         var dtos = _mapper.Map<List<TEntity>, List<TListDto>>(objs);
 
         return dtos;
@@ -74,13 +74,27 @@ public abstract class CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>
         return NoContent();
     }
 
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Put([FromRoute(Name = "id")] int id, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] TCreateDto dto)
+    {
+        var existing = await _kbContext.Set<TEntity>().FindAsync(id);
+        if (existing is null) return NotFound();
+
+        var obj = _mapper.Map<TEntity>(dto);
+        _kbContext.Set<TEntity>().Entry(obj).State = EntityState.Modified;
+        await _kbContext.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Set<TEntity>().FindAsync(id);
         if (obj == null) return NotFound();
 
-        _kbContext.Set<TEntity>().Remove(obj);
+        // _kbContext.Set<TEntity>().Remove(obj);
+        obj.IsDeleted = true;
         await _kbContext.SaveChangesAsync();
 
         return NoContent();

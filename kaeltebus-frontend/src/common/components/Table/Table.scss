@@ -1,0 +1,24 @@
+.TableActionIcon {
+    background-color: rgba(0, 0, 0, 0);
+
+    &:hover {
+        background-color: var(--mantine-color-gray-light-hover);
+    }
+}
+
+.table-fill-screen {
+    display: flex !important;
+    flex-grow: 1;
+    flex-direction: column;
+
+    .container-fill-screen {
+        flex-grow: 1;
+    }
+    
+}
+
+
+.mrt-table-head-cell-resize-handle {
+    width: 0.1rem;
+}
+

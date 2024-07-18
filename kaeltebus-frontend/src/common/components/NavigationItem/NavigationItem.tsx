@@ -15,11 +15,10 @@ export type NavigationItemProps = {
   //   icon: ReactNode;
   Icon: ComponentType<IconProps>;
 };
-export const NavigationItem = ({
-  target,
-  label,
-  Icon,
-}: NavigationItemProps) => {
+
+type Props = NavigationItemProps & { onNavigate?: () => void };
+
+export const NavigationItem = ({ target, label, Icon, onNavigate }: Props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const resolvedpath = useResolvedPath(target);
@@ -34,11 +33,13 @@ export const NavigationItem = ({
   return (
     <NavLink
       key={target}
-      onClick={() => navigate(target)}
+      onClick={() => {
+        navigate(target);
+        onNavigate && onNavigate();
+      }}
       active={isActive}
       fz="h3"
       label={label}
-      //   leftSection={icon({ size: "1.5rem", stroke: 1.5 })}
       leftSection={<Icon size="1.5rem" stroke={1.5} />}
     />
   );

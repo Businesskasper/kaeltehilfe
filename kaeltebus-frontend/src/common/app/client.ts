@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 
+const { VITE_API_BASE_URL } = import.meta.env;
+
 export type Client = {
   name: string;
 };
@@ -9,6 +11,7 @@ const getClients = async (
   abortSignal?: AbortSignal
 ): Promise<Array<Client>> => {
   const response = await axios.get<Array<Client>>("/clients", {
+    baseURL: VITE_API_BASE_URL,
     signal: abortSignal,
   });
 
@@ -19,7 +22,10 @@ const postClient = async (
   client: Client,
   abortSignal?: AbortSignal
 ): Promise<void> => {
-  await axios.post<Client>("/clients", client, { signal: abortSignal });
+  await axios.post<Client>("/clients", client, {
+    baseURL: VITE_API_BASE_URL,
+    signal: abortSignal,
+  });
 };
 
 const patchClient = async (
@@ -28,6 +34,7 @@ const patchClient = async (
   abortSignal?: AbortSignal
 ): Promise<void> => {
   await axios.patch<Partial<Client>>(`/clients/${id}`, update, {
+    baseURL: VITE_API_BASE_URL,
     signal: abortSignal,
   });
 };
@@ -40,13 +47,14 @@ export const useClients = () => {
     queryFn: ({ signal }) => getClients(signal),
   });
 
-  const invalidateClients = queryClient.invalidateQueries({
-    queryKey: ["clients"],
-  });
+  const invalidateClients = () =>
+    queryClient.invalidateQueries({
+      queryKey: ["clients"],
+    });
 
   const addClientMutation = useMutation({
     mutationFn: postClient,
-    onSuccess: () => invalidateClients,
+    onSuccess: invalidateClients,
   });
 
   const updateClientMutation = useMutation<

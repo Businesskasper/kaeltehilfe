@@ -26,7 +26,7 @@ https://styleguide.drk.de/deutsches-rotes-kreuz/digital/webseite#c1321
 
 ## Auth
 A shift is connected to a vehicle and a tablet. Volunteers aren't necessarily fit for managing users and logins. Admin has no time to manage resources and logins for volunteers.
-Idea: The shifts device can be authenticated by a client certificate
+Idea: The shifts device can be authenticated using a client certificate
 -> No user management necessary
 -> Client certificate can easily be revoked
 -> Submitted data is automatically connected to the shift

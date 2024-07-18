@@ -1,0 +1,295 @@
+import { ActionIcon, Box, Button, Tooltip } from "@mantine/core";
+import {
+  IconEdit,
+  IconFileExcel,
+  IconPlus,
+  IconTrash,
+} from "@tabler/icons-react";
+import {
+  MRT_ColumnDef,
+  MRT_ColumnFiltersState,
+  MRT_ColumnSizingState,
+  MRT_ShowHideColumnsButton,
+  MRT_TableInstance,
+  MRT_ToggleDensePaddingButton,
+  MRT_ToggleFiltersButton,
+  MRT_ToggleFullScreenButton,
+  MRT_ToggleGlobalFilterButton,
+  MantineReactTable,
+  useMantineReactTable,
+} from "mantine-react-table";
+import { MRT_Localization_DE } from "mantine-react-table/locales/de/index.cjs";
+import React from "react";
+import * as XLSX from "xlsx";
+import { ValueTypeProps } from "../../utils/types";
+
+import { useLocalStorage, useMediaQuery } from "@mantine/hooks";
+import "./Table.scss";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ExportConfig<T extends Record<string, any>> = {
+  fileName: string | (() => string);
+  transformators?: { [key in keyof T]?: Transformator<T> };
+};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Transformator<T extends Record<string, any>> = {
+  columnName: string;
+  transformFn: (obj: T) => string | number | Date | boolean;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Props<T extends Record<string, any>> = {
+  data: Array<T>;
+  columns: MRT_ColumnDef<T, unknown>[];
+  isLoading: boolean;
+  keyGetter: ValueTypeProps<T, string> | ((item: T) => string);
+  handleDelete?: (items: Array<T>) => void;
+  handleAdd?: () => void;
+  handleEdit?: (item: T) => void;
+  exportConfig?: ExportConfig<T>;
+  fillScreen?: boolean;
+  tableKey: string;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const Table = <T extends Record<string, any>>({
+  data,
+  columns,
+  keyGetter,
+  isLoading,
+  handleAdd,
+  handleDelete,
+  handleEdit,
+  exportConfig,
+  fillScreen,
+  tableKey,
+}: Props<T>) => {
+  const [rowSelection, setRowSelection] = React.useState({});
+  const getRowId = React.useCallback(
+    (item: T) =>
+      typeof keyGetter === "function" ? keyGetter(item) : item[keyGetter],
+    [keyGetter]
+  );
+
+  const [columnSizing, setColumnSizing] =
+    useLocalStorage<MRT_ColumnSizingState>({
+      key: `${tableKey}_columns`,
+      defaultValue: {},
+    });
+  const [columnFilters, setColumnFilters] =
+    useLocalStorage<MRT_ColumnFiltersState>({
+      key: `${tableKey}_filters`,
+      defaultValue: [],
+    });
+
+  const table = useMantineReactTable<T>({
+    localization: MRT_Localization_DE,
+    enableRowSelection: true,
+    getRowId,
+    positionToolbarAlertBanner: "bottom",
+    renderTopToolbarCustomActions: (table) => (
+      <CustomActions
+        handleAdd={handleAdd}
+        handleDelete={handleDelete}
+        handleEdit={handleEdit}
+        table={table.table}
+      />
+    ),
+    renderToolbarInternalActions: ({ table }) => (
+      <InternalActions table={table} exportConfig={exportConfig} />
+    ),
+    selectAllMode: "page",
+    layoutMode: "grid",
+    state: {
+      isLoading: isLoading && data.length === 0,
+      rowSelection,
+      columnSizing,
+      columnFilters,
+    },
+    onRowSelectionChange: setRowSelection,
+    initialState: { density: "xs" },
+    data: data || [],
+    columns,
+    mantinePaperProps: {
+      className: fillScreen ? "table-fill-screen" : undefined,
+    },
+    renderDetailPanel: ({ row }) => {
+      return <div>{JSON.stringify(row.original, undefined, 3)}</div>;
+    },
+    mantineTableContainerProps: {
+      className: fillScreen ? "container-fill-screen" : undefined,
+    },
+    enableColumnResizing: true,
+    onColumnSizingChange: setColumnSizing,
+    onColumnFiltersChange: setColumnFilters,
+  });
+
+  return <MantineReactTable table={table}></MantineReactTable>;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type CustomActionsProps<T extends Record<string, any>> = {
+  table: MRT_TableInstance<T>;
+  handleDelete?: (items: Array<T>) => void;
+  handleAdd?: () => void;
+  handleEdit?: (item: T) => void;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const CustomActions = <T extends Record<string, any>>({
+  table,
+  handleAdd,
+  handleDelete,
+  handleEdit,
+}: CustomActionsProps<T>) => {
+  const isMobile = useMediaQuery("(max-width: 50em)");
+
+  const selectedData =
+    table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()
+      ? table.getSelectedRowModel()?.rows.map((r) => r.original)
+      : [];
+
+  return (
+    <Box
+      style={{ display: "flex", alignItems: "center", gap: "1rem", p: "4px" }}
+    >
+      {handleDelete && !isMobile && (
+        <Button
+          disabled={selectedData.length === 0}
+          color="red"
+          onClick={() => handleDelete(selectedData)}
+          variant="outline"
+        >
+          Löschen
+        </Button>
+      )}
+      {handleDelete && isMobile && (
+        <ActionIcon
+          disabled={selectedData.length === 0}
+          color="red"
+          onClick={() => handleDelete(selectedData)}
+          variant="outline"
+        >
+          <IconTrash />
+        </ActionIcon>
+      )}
+      {handleEdit && !isMobile && (
+        <Button
+          disabled={selectedData.length !== 1}
+          color="blue"
+          onClick={() => handleEdit(selectedData[0])}
+          variant="default"
+        >
+          Bearbeiten
+        </Button>
+      )}
+      {handleEdit && isMobile && (
+        <ActionIcon
+          disabled={selectedData.length !== 1}
+          color="blue"
+          onClick={() => handleEdit(selectedData[0])}
+          variant="defalut"
+        >
+          <IconEdit />
+        </ActionIcon>
+      )}
+      {handleAdd && !isMobile && (
+        <Button
+          disabled={selectedData.length > 0}
+          color="blue"
+          onClick={handleAdd}
+          variant="filled"
+        >
+          Hinzufügen
+        </Button>
+      )}
+      {handleAdd && isMobile && (
+        <ActionIcon
+          disabled={selectedData.length > 0}
+          color="blue"
+          onClick={handleAdd}
+          variant="filled"
+        >
+          <IconPlus />
+        </ActionIcon>
+      )}
+    </Box>
+  );
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type InternalActionProps<T extends Record<string, any>> = {
+  table: MRT_TableInstance<T>;
+  exportConfig?: ExportConfig<T>;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const InternalActions = <T extends Record<string, any>>({
+  table,
+  exportConfig,
+}: InternalActionProps<T>) => {
+  const isSomeSelected = table.getIsSomeRowsSelected();
+
+  const onPrintExcelClick = () => {
+    const selectedData = (
+      isSomeSelected ? table.getSelectedRowModel() : table.getRowModel()
+    ).rows.map((row) => row.original);
+
+    const transformedData = selectedData.map((selectedItem) => {
+      return Object.keys(selectedItem).reduce((transformedObj, key) => {
+        const keyConfig = exportConfig?.transformators?.[key];
+
+        const value = keyConfig?.transformFn
+          ? keyConfig.transformFn(selectedItem)
+          : selectedItem[key];
+
+        const header = keyConfig?.columnName ?? key;
+
+        return { ...transformedObj, [header]: value };
+      }, {});
+    });
+
+    const fileName = exportConfig?.fileName
+      ? typeof exportConfig.fileName === "function"
+        ? exportConfig.fileName()
+        : exportConfig.fileName
+      : "";
+
+    const worksheet = XLSX.utils.json_to_sheet(transformedData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Mappe1");
+    XLSX.writeFile(workbook, fileName || "Export.xlsx", { compression: true });
+  };
+  return (
+    <Box style={{ display: "flex", gap: "0.3rem" }}>
+      <MRT_ToggleGlobalFilterButton table={table} />
+      <MRT_ToggleFiltersButton table={table} />
+      <MRT_ShowHideColumnsButton table={table} />
+      <MRT_ToggleDensePaddingButton table={table} />
+      {exportConfig?.fileName && (
+        <Tooltip
+          label={
+            isSomeSelected
+              ? "Ausgewählte Einträge exportieren"
+              : "Alle Einträge exportieren"
+          }
+        >
+          <ActionIcon
+            onClick={onPrintExcelClick}
+            className="TableActionIcon"
+            variant="default"
+            display="inline-flex"
+            h="var(--ai-size-lg)"
+            w="var(--ai-size-lg)"
+            c="var(--mantine-color-gray-light-color)"
+            bd="1px solid transparent"
+          >
+            <IconFileExcel />
+          </ActionIcon>
+        </Tooltip>
+      )}
+
+      <MRT_ToggleFullScreenButton table={table} />
+    </Box>
+  );
+};

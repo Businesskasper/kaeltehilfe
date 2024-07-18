@@ -61,6 +61,11 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -69,31 +74,36 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
 
                     b.HasAlternateKey("Name");
 
+                    b.HasIndex("IsDeleted");
+
                     b.ToTable("Clients");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 7, 9, 22, 53, 8, 565, DateTimeKind.Local).AddTicks(2875),
+                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8529),
                             ApproxAge = 45,
                             Gender = 0,
+                            IsDeleted = false,
                             Name = "Martin"
                         },
                         new
                         {
                             Id = 2,
-                            AddOn = new DateTime(2024, 7, 9, 22, 53, 8, 565, DateTimeKind.Local).AddTicks(2881),
+                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8546),
                             ApproxAge = 40,
                             Gender = 1,
+                            IsDeleted = false,
                             Name = "Martina"
                         },
                         new
                         {
                             Id = 3,
-                            AddOn = new DateTime(2024, 7, 9, 22, 53, 8, 565, DateTimeKind.Local).AddTicks(2885),
+                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8559),
                             ApproxAge = 30,
                             Gender = 0,
+                            IsDeleted = false,
                             Name = "Tim"
                         });
                 });
@@ -120,6 +130,11 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                     b.Property<int>("GoodId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
 
@@ -132,6 +147,8 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
 
                     b.HasIndex("GoodId");
 
+                    b.HasIndex("IsDeleted");
+
                     b.HasIndex("ShiftId");
 
                     b.ToTable("Distributions");
@@ -140,63 +157,70 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 7, 9, 22, 53, 8, 565, DateTimeKind.Local).AddTicks(2937),
+                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8743),
                             ClientId = 1,
                             GoodId = 1,
+                            IsDeleted = false,
                             Quantity = 1,
                             ShiftId = 1
                         },
                         new
                         {
                             Id = 2,
-                            AddOn = new DateTime(2024, 7, 9, 22, 53, 8, 565, DateTimeKind.Local).AddTicks(2943),
+                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8761),
                             ClientId = 1,
                             GoodId = 2,
+                            IsDeleted = false,
                             Quantity = 2,
                             ShiftId = 1
                         },
                         new
                         {
                             Id = 3,
-                            AddOn = new DateTime(2024, 7, 9, 22, 53, 8, 565, DateTimeKind.Local).AddTicks(2947),
+                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8774),
                             ClientId = 1,
                             GoodId = 4,
+                            IsDeleted = false,
                             Quantity = 1,
                             ShiftId = 1
                         },
                         new
                         {
                             Id = 4,
-                            AddOn = new DateTime(2024, 7, 9, 22, 53, 8, 565, DateTimeKind.Local).AddTicks(2950),
+                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8787),
                             ClientId = 2,
                             GoodId = 2,
+                            IsDeleted = false,
                             Quantity = 1,
                             ShiftId = 1
                         },
                         new
                         {
                             Id = 5,
-                            AddOn = new DateTime(2024, 7, 9, 22, 53, 8, 565, DateTimeKind.Local).AddTicks(2954),
+                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8801),
                             ClientId = 3,
                             GoodId = 1,
+                            IsDeleted = false,
                             Quantity = 1,
                             ShiftId = 1
                         },
                         new
                         {
                             Id = 6,
-                            AddOn = new DateTime(2024, 7, 9, 22, 53, 8, 565, DateTimeKind.Local).AddTicks(2956),
+                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8814),
                             ClientId = 3,
                             GoodId = 3,
+                            IsDeleted = false,
                             Quantity = 2,
                             ShiftId = 1
                         },
                         new
                         {
                             Id = 7,
-                            AddOn = new DateTime(2024, 7, 9, 22, 53, 8, 565, DateTimeKind.Local).AddTicks(2959),
+                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8827),
                             ClientId = 3,
                             GoodId = 7,
+                            IsDeleted = false,
                             Quantity = 1,
                             ShiftId = 1
                         });
@@ -225,6 +249,11 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                     b.Property<int>("GoodType")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -237,69 +266,78 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
 
                     b.HasAlternateKey("Name");
 
+                    b.HasIndex("IsDeleted");
+
                     b.ToTable("Goods");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 7, 9, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 2,
+                            IsDeleted = false,
                             Name = "Suppe",
                             Tags = "[]"
                         },
                         new
                         {
                             Id = 2,
-                            AddOn = new DateTime(2024, 7, 9, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 2,
+                            IsDeleted = false,
                             Name = "Kaffee",
                             Tags = "[]"
                         },
                         new
                         {
                             Id = 3,
-                            AddOn = new DateTime(2024, 7, 9, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 2,
+                            IsDeleted = false,
                             Name = "Tee",
                             Tags = "[]"
                         },
                         new
                         {
                             Id = 4,
-                            AddOn = new DateTime(2024, 7, 9, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 1,
+                            IsDeleted = false,
                             Name = "Decke",
                             Tags = "[]"
                         },
                         new
                         {
                             Id = 5,
-                            AddOn = new DateTime(2024, 7, 9, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 1,
+                            IsDeleted = false,
                             Name = "Socken",
                             Tags = "[]"
                         },
                         new
                         {
                             Id = 6,
-                            AddOn = new DateTime(2024, 7, 9, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 0,
+                            IsDeleted = false,
                             Name = "Tempos",
                             Tags = "[]"
                         },
                         new
                         {
                             Id = 7,
-                            AddOn = new DateTime(2024, 7, 9, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 0,
+                            IsDeleted = false,
                             Name = "Deo",
                             Tags = "[]"
                         });
@@ -324,7 +362,14 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
                     b.HasKey("Id");
+
+                    b.HasIndex("IsDeleted");
 
                     b.ToTable("Shifts");
 
@@ -332,8 +377,9 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 7, 9, 22, 53, 8, 565, DateTimeKind.Local).AddTicks(2798),
-                            Date = new DateOnly(2024, 7, 9)
+                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8339),
+                            Date = new DateOnly(2024, 7, 16),
+                            IsDeleted = false
                         });
                 });
 
@@ -360,6 +406,11 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
                     b.Property<bool>("IsDriver")
                         .HasColumnType("INTEGER");
 
@@ -371,6 +422,8 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
 
                     b.HasAlternateKey("Firstname", "Lastname");
 
+                    b.HasIndex("IsDeleted");
+
                     b.ToTable("Volunteers");
 
                     b.HasData(
@@ -380,6 +433,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                             AddOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Firstname = "Luka",
                             Gender = 0,
+                            IsDeleted = false,
                             IsDriver = false,
                             Lastname = "Weis"
                         },
@@ -389,6 +443,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                             AddOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Firstname = "Peter",
                             Gender = 0,
+                            IsDeleted = false,
                             IsDriver = false,
                             Lastname = "Pan"
                         },
@@ -398,6 +453,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                             AddOn = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Firstname = "Max",
                             Gender = 0,
+                            IsDeleted = false,
                             IsDriver = false,
                             Lastname = "Mustermann"
                         });
@@ -408,13 +464,13 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                     b.HasOne("kaeltebus_backend.Models.Shift", null)
                         .WithMany()
                         .HasForeignKey("ShiftId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("kaeltebus_backend.Models.Volunteer", null)
                         .WithMany()
                         .HasForeignKey("VolunteerId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -423,19 +479,19 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                     b.HasOne("kaeltebus_backend.Models.Client", "Client")
                         .WithMany()
                         .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("kaeltebus_backend.Models.Good", "Good")
                         .WithMany()
                         .HasForeignKey("GoodId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("kaeltebus_backend.Models.Shift", "Shift")
                         .WithMany()
                         .HasForeignKey("ShiftId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Client");
