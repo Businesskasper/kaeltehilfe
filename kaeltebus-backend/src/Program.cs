@@ -51,8 +51,10 @@ builder.Services.AddFluentValidationAutoValidation(x =>
 });
 builder.Services
     .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-// Register middleware service to catch fluent validation errors
+// Register middleware service to catch fluent validation exceptions
 builder.Services.AddTransient<InvalidModelStateExceptionHandler>();
+// Register middleware service to catch UNIQUE constraint exceptions
+builder.Services.AddTransient<SqliteUniqueExceptionHandler>();
 
 var app = builder.Build();
 
@@ -76,6 +78,8 @@ app.Use((context, next) =>
 });
 
 app.UseInvalidModelStateHandler();
+
+app.UseSqliteUniqueExceptionHandler();
 
 app.MapControllers();
 

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("kaeltebus-test")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e9831980964eab2fca862d0d4712c91512f8c104")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+31ca9763d77bc0265cd44f9b011944c86d3f13e9")]
 [assembly: System.Reflection.AssemblyProductAttribute("kaeltebus-test")]
 [assembly: System.Reflection.AssemblyTitleAttribute("kaeltebus-test")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -8,13 +8,15 @@ import { GoodModal } from "./GoodsModal";
 
 export const Goods = () => {
   const {
-    goods: { data: goods, isLoading },
-    updateGood: { isPending: isUpdating },
-    deleteGood: { isPending: isDeleting, mutate: deleteGood },
+    objs: { data: goods, isLoading },
+    put: { isPending: isPutting },
+    remove: { isPending: isDeleting, mutate: deleteGood },
   } = useGoods();
 
   const [isModalOpened, { open: openModal, close: closeModal }] =
     useDisclosure(false);
+
+  const [selectedGoods, setSelectedGoods] = React.useState<Array<Good>>([]);
 
   const columns: Array<MRT_ColumnDef<Good>> = [
     {
@@ -80,9 +82,9 @@ export const Goods = () => {
     },
   };
 
-  const handleEdit = React.useCallback((good: Good) => {
-    console.log("Update", good);
-  }, []);
+  const handleEdit = React.useCallback(() => {
+    openModal();
+  }, [openModal]);
 
   const handleDelete = React.useCallback(
     (goods: Array<Good>) => {
@@ -95,7 +97,7 @@ export const Goods = () => {
     openModal();
   }, [openModal]);
 
-  const isTableLoading = isLoading || isUpdating || isDeleting;
+  const isTableLoading = isLoading || isPutting || isDeleting;
 
   return (
     <>
@@ -114,8 +116,13 @@ export const Goods = () => {
         exportConfig={exportConfig}
         fillScreen
         tableKey="goods-overview"
+        setSelected={setSelectedGoods}
       />
-      <GoodModal close={closeModal} isOpen={isModalOpened} />
+      <GoodModal
+        close={closeModal}
+        isOpen={isModalOpened}
+        existing={selectedGoods[0]}
+      />
     </>
   );
 };

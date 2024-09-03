@@ -3134,11 +3134,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+      "projectUniqueName": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
       "projectName": "kaeltebus-backend",
-      "projectPath": "c:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+      "projectPath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
       "packagesPath": "C:\\Users\\LukaW\\.nuget\\packages\\",
-      "outputPath": "c:\\git\\kaeltebus\\kaeltebus-backend\\src\\obj\\",
+      "outputPath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\LukaW\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -3226,7 +3226,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.304/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

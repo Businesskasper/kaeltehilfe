@@ -1,5 +1,6 @@
 import { Button, Select, TagsInput, TextInput, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import React from "react";
 import {
   Good,
   GoodType,
@@ -7,11 +8,16 @@ import {
   useGoods,
 } from "../../../common/app/good";
 import { AppModal, ModalActions, ModalMain } from "../../../common/components";
+import {
+  minLengthValidator,
+  requiredValidator,
+  validators,
+} from "../../../common/utils/validators";
 
 type GoodModalProps = {
   isOpen: boolean;
   close: () => void;
-  existingGood?: Good;
+  existing?: Good;
 };
 
 type GoodForm = Omit<Good, "id">;
@@ -21,34 +27,35 @@ const goodTypeOptions = Object.keys(GoodTypeTranslation).map((key) => ({
   value: key,
 }));
 
-export const GoodModal = ({ isOpen, close, existingGood }: GoodModalProps) => {
+export const GoodModal = ({ isOpen, close, existing }: GoodModalProps) => {
   const {
-    addGood: { mutate, status },
+    post: { mutate: post },
+    put: { mutate: put },
   } = useGoods();
-  console.log("status", status);
+
+  const initialValues: GoodForm = {
+    name: "",
+    description: "",
+    goodType: "" as GoodType,
+    tags: [],
+  };
 
   const form = useForm<GoodForm>({
     mode: "controlled",
-    initialValues: {
-      name: "",
-      description: "",
-      goodType: "" as GoodType,
-      tags: [],
-    },
+    initialValues,
     validate: {
-      name: (value) => {
-        if (value === null || value === undefined || value.trim() === "")
-          return "Erforderlich";
-        if (value.trim().length < 3) {
-          return "Mindestens 3 Zeichen";
-        }
-      },
-      goodType: (value) => {
-        if (value === null || value === undefined || value.trim() === "")
-          return "Erforderlich";
-      },
+      name: (value) =>
+        validators(value, requiredValidator(), minLengthValidator(3)),
+      goodType: (value) => validators(value, requiredValidator()),
     },
   });
+
+  React.useEffect(() => {
+    form.setValues(existing || initialValues);
+    form.resetDirty();
+    form.resetTouched();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [existing]);
 
   const closeModal = () => {
     form.reset();
@@ -56,9 +63,11 @@ export const GoodModal = ({ isOpen, close, existingGood }: GoodModalProps) => {
   };
 
   const onSubmit = (formModel: GoodForm) => {
-    console.log("onSubmit", formModel);
-    console.log("formModel", formModel);
-    mutate(formModel, { onSuccess: closeModal });
+    if (existing) {
+      put({ id: existing.id, update: formModel }, { onSuccess: closeModal });
+    } else {
+      post(formModel, { onSuccess: closeModal });
+    }
   };
 
   return (
@@ -66,7 +75,7 @@ export const GoodModal = ({ isOpen, close, existingGood }: GoodModalProps) => {
       <AppModal
         close={closeModal}
         isOpen={isOpen}
-        title={existingGood ? "Bearbeiten" : "Hinzufügen"}
+        title={existing ? "Bearbeiten" : "Hinzufügen"}
       >
         <ModalMain>
           <TextInput
@@ -74,12 +83,8 @@ export const GoodModal = ({ isOpen, close, existingGood }: GoodModalProps) => {
             data-autofocus
             label="Name"
             key={form.key("name")}
-            // placeholder="Name"
             placeholder="Name (min. 3 Zeichen)"
             withAsterisk
-            // required
-            // minLength={3}
-            // mt="md"
             mb="md"
           />
           <Textarea
@@ -92,12 +97,11 @@ export const GoodModal = ({ isOpen, close, existingGood }: GoodModalProps) => {
           <Select
             {...form.getInputProps("goodType")}
             data={goodTypeOptions}
-            // required
             withAsterisk
             label="Typ"
             placeholder="Typ"
-            // value={value ? value.value : null}
-            // onChange={(_value, option) => setValue(option)}
+            mt="md"
+            mb="md"
           />
           <TagsInput
             {...form.getInputProps("tags")}
@@ -109,9 +113,7 @@ export const GoodModal = ({ isOpen, close, existingGood }: GoodModalProps) => {
         </ModalMain>
         <ModalActions>
           <Button
-            // disabled={!form.isValid() || !form.isTouched() || !form.isDirty()}
             disabled={!form.isTouched() || !form.isDirty()}
-            // type="submit"
             onClick={() => form.onSubmit(onSubmit)()}
             fullWidth
             mt="xl"

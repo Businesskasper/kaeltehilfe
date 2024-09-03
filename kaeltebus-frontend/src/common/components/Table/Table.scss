@@ -1,8 +1,8 @@
 .TableActionIcon {
-    background-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0) !important;
 
     &:hover {
-        background-color: var(--mantine-color-gray-light-hover);
+        background-color: var(--mantine-color-gray-light-hover) !important;
     }
 }
 
@@ -19,6 +19,6 @@
 
 
 .mrt-table-head-cell-resize-handle {
-    width: 0.1rem;
+    width: 0.1rem !important;
 }
 

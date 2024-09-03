@@ -4,5 +4,5 @@ public enum Gender
 {
     MALE,
     FEMALE,
-    NOT_SET
+    DIVERSE
 }

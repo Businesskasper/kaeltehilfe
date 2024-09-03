@@ -21,6 +21,9 @@ public class VolunteerCreateDto
 {
     public string? Firstname { get; set; }
     public string? Lastname { get; set; }
+    public Gender? Gender { get; set; }
+    public bool? IsDriver { get; set; }
+    public string? Remarks { get; set; }
 }
 
 public class VolunteerUpdateDto : VolunteerCreateDto;
@@ -28,6 +31,7 @@ public class VolunteerUpdateDto : VolunteerCreateDto;
 public class VolunteerListDto : VolunteerCreateDto
 {
     public int Id { get; set; }
+    public string? Fullname { get; set; }
 }
 
 public class VolunteerDtoToObjProfile : Profile

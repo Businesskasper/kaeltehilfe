@@ -9,6 +9,12 @@ import { Outlet } from "react-router-dom";
 
 import "./App.scss";
 
+import { DatesProvider } from "@mantine/dates";
+import dayjs from "dayjs";
+import "dayjs/locale/de";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+
 function App() {
   const queryCache = new QueryCache();
   const queryClient = new QueryClient({
@@ -40,10 +46,12 @@ function App() {
         primaryColor: "blue",
       }}
     >
-      <Notifications position="bottom-center" />
-      <QueryClientProvider client={queryClient}>
-        <Outlet />
-      </QueryClientProvider>
+      <DatesProvider settings={{ locale: "de" }}>
+        <Notifications position="bottom-center" />
+        <QueryClientProvider client={queryClient}>
+          <Outlet />
+        </QueryClientProvider>
+      </DatesProvider>
     </MantineProvider>
   );
 }

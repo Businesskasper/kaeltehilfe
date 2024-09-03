@@ -6,7 +6,13 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 import App from "./App.tsx";
-import { AdminHome, Goods, Shifts } from "./features/admin";
+import {
+  AdminHome,
+  Clients,
+  Goods,
+  Shifts,
+  Volunteers,
+} from "./features/admin";
 import { OperatorHome } from "./features/operator";
 
 import "@mantine/core/styles.css";
@@ -30,8 +36,16 @@ export const router = createBrowserRouter([
             element: <Shifts />,
           },
           {
+            path: "clients",
+            element: <Clients />,
+          },
+          {
             path: "goods",
             element: <Goods />,
+          },
+          {
+            path: "volunteers",
+            element: <Volunteers />,
           },
         ],
       },

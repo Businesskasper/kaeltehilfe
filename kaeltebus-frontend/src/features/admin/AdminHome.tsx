@@ -23,9 +23,9 @@ import "./AdminHome.scss";
 
 const links: Array<NavigationItemProps> = [
   {
-    label: "Schichten",
-    target: "shifts",
-    Icon: IconBus,
+    label: "Güter",
+    target: "goods",
+    Icon: IconSoup,
   },
   {
     label: "Klienten",
@@ -38,9 +38,9 @@ const links: Array<NavigationItemProps> = [
     Icon: IconUser,
   },
   {
-    label: "Güter",
-    target: "goods",
-    Icon: IconSoup,
+    label: "Schichten",
+    target: "shifts",
+    Icon: IconBus,
   },
 ];
 

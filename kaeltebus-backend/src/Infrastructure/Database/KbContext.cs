@@ -1,6 +1,7 @@
 using kaeltebus_backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 
 namespace kaeltebus_backend.Infrastructure.Database;
@@ -23,12 +24,17 @@ public class KbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Good>().ConfigureBaseEntity();
-        modelBuilder.Entity<Good>().HasAlternateKey(x => x.Name);
+        modelBuilder.Entity<Good>().HasIndex(x => x.Name).IsUnique().HasFilter("IsDeleted = 0");
+
         modelBuilder.Entity<Volunteer>().ConfigureBaseEntity();
-        modelBuilder.Entity<Volunteer>().HasAlternateKey(x => new { x.Firstname, x.Lastname });
+        modelBuilder.Entity<Volunteer>().HasIndex(x => new { x.Firstname, x.Lastname }).IsUnique().HasFilter("IsDeleted = 0");
+
         modelBuilder.Entity<Shift>().ConfigureBaseEntity();
+        modelBuilder.Entity<Shift>().HasIndex(x => x.Date).IsUnique().HasFilter("IsDeleted = 0");
+
         modelBuilder.Entity<Client>().ConfigureBaseEntity();
-        modelBuilder.Entity<Client>().HasAlternateKey(x => x.Name);
+        modelBuilder.Entity<Client>().HasIndex(x => x.Name).IsUnique().HasFilter("IsDeleted = 0");
+
         modelBuilder.Entity<Distribution>().ConfigureBaseEntity();
         modelBuilder.Entity<Distribution>().HasIndex(x => x.ClientId);
         modelBuilder.Entity<Distribution>().HasIndex(x => x.GoodId);
@@ -38,13 +44,25 @@ public class KbContext : DbContext
            .UsingEntity<Dictionary<string, string>>("ShiftVolunteer",
                x => x.HasOne<Volunteer>().WithMany().HasForeignKey("VolunteerId"),
                x => x.HasOne<Shift>().WithMany().HasForeignKey("ShiftId"),
-               x => x.ToTable("ShiftVolunteer")
+               x =>
+               {
+                   x.ToTable("ShiftVolunteer");
+                   x.Property<int>("Id").ValueGeneratedOnAdd();
+                   //    x.Property<int>("Order").ValueGeneratedOnAddOrUpdate().Metadata.SetAnnotation("asdf", new {});
+                   //    x.Property<int>("Order").ValueGeneratedOnAddOrUpdate();
+                   //    x.HasIndex("Order").IsDescending(true);
+                   //    x.HasKey("VolunteerId", "ShiftId", "Order");
+               }
            );
+        modelBuilder.Entity<Shift>().Navigation(x => x.Volunteers).AutoInclude();
 
         // Configure Many-To-One between Distribution and Good, Client and Shift
         modelBuilder.Entity<Distribution>().HasOne(x => x.Good).WithMany();
+        modelBuilder.Entity<Distribution>().Navigation(x => x.Good).AutoInclude();
         modelBuilder.Entity<Distribution>().HasOne(x => x.Client).WithMany();
+        modelBuilder.Entity<Distribution>().Navigation(x => x.Client).AutoInclude();
         modelBuilder.Entity<Distribution>().HasOne(x => x.Shift).WithMany();
+        modelBuilder.Entity<Distribution>().Navigation(x => x.Shift).AutoInclude();
 
         if (_seedData) Seed(modelBuilder);
     }
@@ -72,7 +90,11 @@ public class KbContext : DbContext
         var shift = new { Id = 1, Date = DateOnly.FromDateTime(DateTime.Now), AddOn = DateTime.Now, IsDeleted = false };
         modelBuilder.Entity<Shift>().HasData(shift);
 
-        modelBuilder.Entity("ShiftVolunteer").HasData(new { ShiftId = 1, VolunteerId = 1 });
+        modelBuilder.Entity("ShiftVolunteer").HasData(
+            new { Id = 1, ShiftId = 1, VolunteerId = 1 },
+            new { Id = 2, ShiftId = 1, VolunteerId = 2 },
+            new { Id = 3, ShiftId = 1, VolunteerId = 3 }
+        );
 
         var clients = new List<Client> {
                 new Client { Id = 1, Name = "Martin", ApproxAge = 45, Gender = Gender.MALE, AddOn = DateTime.Now, IsDeleted = false },

@@ -1,0 +1,141 @@
+import { Button, Checkbox, Select, TextInput, Textarea } from "@mantine/core";
+import { useForm } from "@mantine/form";
+import React from "react";
+import { Gender, GenderTranslation } from "../../../common/app/gender";
+import { Volunteer, useVolunteers } from "../../../common/app/volunteer";
+import { AppModal, ModalActions, ModalMain } from "../../../common/components";
+
+type VolunteerModalProps = {
+  isOpen: boolean;
+  close: () => void;
+  existing?: Volunteer;
+};
+
+type VolunteerForm = Omit<Volunteer, "id">;
+
+const volunteerGenderOptions = Object.keys(GenderTranslation).map((key) => ({
+  label: GenderTranslation[key as Gender]?.label,
+  value: key,
+}));
+
+export const VolunteerModal = ({
+  isOpen,
+  close,
+  existing,
+}: VolunteerModalProps) => {
+  const {
+    post: { mutate: post },
+    put: { mutate: put },
+  } = useVolunteers();
+
+  const initialValues: VolunteerForm = {
+    firstname: "",
+    lastname: "",
+    gender: "" as Gender,
+    isDriver: false,
+    remarks: "",
+  };
+
+  const form = useForm<VolunteerForm>({
+    mode: "controlled",
+    initialValues,
+    validate: {
+      firstname: (value) => {
+        if (value === null || value === undefined || value.trim() === "")
+          return "Erforderlich";
+        if (value.trim().length < 3) {
+          return "Mindestens 3 Zeichen";
+        }
+      },
+      lastname: (value) => {
+        if (value === null || value === undefined || value.trim() === "")
+          return "Erforderlich";
+        if (value.trim().length < 3) {
+          return "Mindestens 3 Zeichen";
+        }
+      },
+    },
+  });
+
+  React.useEffect(() => {
+    form.setValues(existing || initialValues);
+    form.resetDirty();
+    form.resetTouched();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [existing]);
+
+  const closeModal = () => {
+    form.reset();
+    close();
+  };
+
+  const onSubmit = (formModel: VolunteerForm) => {
+    if (existing) {
+      put({ id: existing.id, update: formModel }, { onSuccess: closeModal });
+    } else {
+      post(formModel, { onSuccess: closeModal });
+    }
+  };
+
+  return (
+    <form onSubmit={form.onSubmit(onSubmit)}>
+      <AppModal
+        close={closeModal}
+        isOpen={isOpen}
+        title={existing ? "Bearbeiten" : "Hinzufügen"}
+      >
+        <ModalMain>
+          <TextInput
+            {...form.getInputProps("firstname")}
+            data-autofocus
+            label="Vorname"
+            key={form.key("firstname")}
+            placeholder="Vorname (min. 3 Zeichen)"
+            withAsterisk
+            mb="md"
+          />
+          <TextInput
+            {...form.getInputProps("lastname")}
+            data-autofocus
+            label="Nachname"
+            key={form.key("lastname")}
+            placeholder="Nachname (min. 3 Zeichen)"
+            withAsterisk
+            mt="md"
+            mb="md"
+          />
+          <Select
+            {...form.getInputProps("gender")}
+            data={volunteerGenderOptions}
+            label="Geschlecht"
+            placeholder="Geschlecht"
+            mt="md"
+            mb="md"
+          />
+          <Checkbox
+            {...form.getInputProps("isDriver", { type: "checkbox" })}
+            label="Fahrer"
+            mt="md"
+            mb="md"
+          />
+          <Textarea
+            {...form.getInputProps("remarks")}
+            label="Notizen"
+            placeholder="Notizen"
+            mb="md"
+          />
+        </ModalMain>
+        <ModalActions>
+          <Button
+            disabled={!form.isTouched() || !form.isDirty()}
+            onClick={() => form.onSubmit(onSubmit)()}
+            fullWidth
+            mt="xl"
+          >
+            Abschicken
+          </Button>
+        </ModalActions>
+      </AppModal>
+    </form>
+  );
+};

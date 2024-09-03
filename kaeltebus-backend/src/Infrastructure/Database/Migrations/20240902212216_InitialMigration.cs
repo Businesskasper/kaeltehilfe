@@ -22,6 +22,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Gender = table.Column<int>(type: "INTEGER", nullable: false),
                     ApproxAge = table.Column<int>(type: "INTEGER", nullable: false),
+                    Remarks = table.Column<string>(type: "TEXT", nullable: false),
                     AddOn = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "datetime()"),
                     ChangeOn = table.Column<DateTime>(type: "TEXT", nullable: true, defaultValueSql: "datetime()"),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false)
@@ -29,7 +30,6 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Clients", x => x.Id);
-                    table.UniqueConstraint("AK_Clients_Name", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -40,8 +40,8 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
-                    GoodType = table.Column<int>(type: "INTEGER", nullable: false),
                     Tags = table.Column<string>(type: "TEXT", nullable: false),
+                    GoodType = table.Column<int>(type: "INTEGER", nullable: false),
                     AddOn = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "datetime()"),
                     ChangeOn = table.Column<DateTime>(type: "TEXT", nullable: true, defaultValueSql: "datetime()"),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false)
@@ -49,7 +49,6 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Goods", x => x.Id);
-                    table.UniqueConstraint("AK_Goods_Name", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -78,6 +77,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                     Lastname = table.Column<string>(type: "TEXT", nullable: false),
                     Gender = table.Column<int>(type: "INTEGER", nullable: false),
                     IsDriver = table.Column<bool>(type: "INTEGER", nullable: false),
+                    Remarks = table.Column<string>(type: "TEXT", nullable: false),
                     AddOn = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "datetime()"),
                     ChangeOn = table.Column<DateTime>(type: "TEXT", nullable: true, defaultValueSql: "datetime()"),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false)
@@ -85,7 +85,6 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Volunteers", x => x.Id);
-                    table.UniqueConstraint("AK_Volunteers_Firstname_Lastname", x => new { x.Firstname, x.Lastname });
                 });
 
             migrationBuilder.CreateTable(
@@ -129,12 +128,14 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                 name: "ShiftVolunteer",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     ShiftId = table.Column<int>(type: "INTEGER", nullable: false),
                     VolunteerId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ShiftVolunteer", x => new { x.ShiftId, x.VolunteerId });
+                    table.PrimaryKey("PK_ShiftVolunteer", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ShiftVolunteer_Shifts_ShiftId",
                         column: x => x.ShiftId,
@@ -151,12 +152,12 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
 
             migrationBuilder.InsertData(
                 table: "Clients",
-                columns: new[] { "Id", "AddOn", "ApproxAge", "Gender", "Name" },
+                columns: new[] { "Id", "AddOn", "ApproxAge", "Gender", "Name", "Remarks" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8529), 45, 0, "Martin" },
-                    { 2, new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8546), 40, 1, "Martina" },
-                    { 3, new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8559), 30, 0, "Tim" }
+                    { 1, new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8195), 45, 0, "Martin", "" },
+                    { 2, new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8200), 40, 1, "Martina", "" },
+                    { 3, new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8202), 30, 0, "Tim", "" }
                 });
 
             migrationBuilder.InsertData(
@@ -164,28 +165,28 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                 columns: new[] { "Id", "AddOn", "Description", "GoodType", "Name", "Tags" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 2, "Suppe", "[]" },
-                    { 2, new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 2, "Kaffee", "[]" },
-                    { 3, new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 2, "Tee", "[]" },
-                    { 4, new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 1, "Decke", "[]" },
-                    { 5, new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 1, "Socken", "[]" },
-                    { 6, new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 0, "Tempos", "[]" },
-                    { 7, new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 0, "Deo", "[]" }
+                    { 1, new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local), "", 2, "Suppe", "[]" },
+                    { 2, new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local), "", 2, "Kaffee", "[]" },
+                    { 3, new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local), "", 2, "Tee", "[]" },
+                    { 4, new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local), "", 1, "Decke", "[]" },
+                    { 5, new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local), "", 1, "Socken", "[]" },
+                    { 6, new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local), "", 0, "Tempos", "[]" },
+                    { 7, new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local), "", 0, "Deo", "[]" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Shifts",
                 columns: new[] { "Id", "AddOn", "Date" },
-                values: new object[] { 1, new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8339), new DateOnly(2024, 7, 16) });
+                values: new object[] { 1, new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8138), new DateOnly(2024, 9, 2) });
 
             migrationBuilder.InsertData(
                 table: "Volunteers",
-                columns: new[] { "Id", "Firstname", "Gender", "IsDriver", "Lastname" },
+                columns: new[] { "Id", "Firstname", "Gender", "IsDriver", "Lastname", "Remarks" },
                 values: new object[,]
                 {
-                    { 1, "Luka", 0, false, "Weis" },
-                    { 2, "Peter", 0, false, "Pan" },
-                    { 3, "Max", 0, false, "Mustermann" }
+                    { 1, "Luka", 0, false, "Weis", "" },
+                    { 2, "Peter", 0, false, "Pan", "" },
+                    { 3, "Max", 0, false, "Mustermann", "" }
                 });
 
             migrationBuilder.InsertData(
@@ -193,24 +194,36 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                 columns: new[] { "Id", "AddOn", "ClientId", "GoodId", "Quantity", "ShiftId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8743), 1, 1, 1, 1 },
-                    { 2, new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8761), 1, 2, 2, 1 },
-                    { 3, new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8774), 1, 4, 1, 1 },
-                    { 4, new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8787), 2, 2, 1, 1 },
-                    { 5, new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8801), 3, 1, 1, 1 },
-                    { 6, new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8814), 3, 3, 2, 1 },
-                    { 7, new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8827), 3, 7, 1, 1 }
+                    { 1, new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8239), 1, 1, 1, 1 },
+                    { 2, new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8244), 1, 2, 2, 1 },
+                    { 3, new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8246), 1, 4, 1, 1 },
+                    { 4, new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8249), 2, 2, 1, 1 },
+                    { 5, new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8251), 3, 1, 1, 1 },
+                    { 6, new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8254), 3, 3, 2, 1 },
+                    { 7, new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8256), 3, 7, 1, 1 }
                 });
 
             migrationBuilder.InsertData(
                 table: "ShiftVolunteer",
-                columns: new[] { "ShiftId", "VolunteerId" },
-                values: new object[] { 1, 1 });
+                columns: new[] { "Id", "ShiftId", "VolunteerId" },
+                values: new object[,]
+                {
+                    { 1, 1, 1 },
+                    { 2, 1, 2 },
+                    { 3, 1, 3 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clients_IsDeleted",
                 table: "Clients",
                 column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Clients_Name",
+                table: "Clients",
+                column: "Name",
+                unique: true,
+                filter: "IsDeleted = 0");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Distributions_ClientId",
@@ -238,14 +251,40 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                 column: "IsDeleted");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Goods_Name",
+                table: "Goods",
+                column: "Name",
+                unique: true,
+                filter: "IsDeleted = 0");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Shifts_Date",
+                table: "Shifts",
+                column: "Date",
+                unique: true,
+                filter: "IsDeleted = 0");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Shifts_IsDeleted",
                 table: "Shifts",
                 column: "IsDeleted");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ShiftVolunteer_ShiftId",
+                table: "ShiftVolunteer",
+                column: "ShiftId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ShiftVolunteer_VolunteerId",
                 table: "ShiftVolunteer",
                 column: "VolunteerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Volunteers_Firstname_Lastname",
+                table: "Volunteers",
+                columns: new[] { "Firstname", "Lastname" },
+                unique: true,
+                filter: "IsDeleted = 0");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Volunteers_IsDeleted",

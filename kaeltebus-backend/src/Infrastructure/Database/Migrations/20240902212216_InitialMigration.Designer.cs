@@ -11,7 +11,7 @@ using kaeltebus_backend.Infrastructure.Database;
 namespace kaeltebus_backend.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(KbContext))]
-    [Migration("20240716212037_InitialMigration")]
+    [Migration("20240902212216_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -22,13 +22,19 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("ShiftVolunteer", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("ShiftId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("VolunteerId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("ShiftId", "VolunteerId");
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShiftId");
 
                     b.HasIndex("VolunteerId");
 
@@ -37,8 +43,21 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                     b.HasData(
                         new
                         {
+                            Id = 1,
                             ShiftId = 1,
                             VolunteerId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ShiftId = 1,
+                            VolunteerId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ShiftId = 1,
+                            VolunteerId = 3
                         });
                 });
 
@@ -73,11 +92,17 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Remarks")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.HasAlternateKey("Name");
-
                     b.HasIndex("IsDeleted");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("IsDeleted = 0");
 
                     b.ToTable("Clients");
 
@@ -85,29 +110,32 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8529),
+                            AddOn = new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8195),
                             ApproxAge = 45,
                             Gender = 0,
                             IsDeleted = false,
-                            Name = "Martin"
+                            Name = "Martin",
+                            Remarks = ""
                         },
                         new
                         {
                             Id = 2,
-                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8546),
+                            AddOn = new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8200),
                             ApproxAge = 40,
                             Gender = 1,
                             IsDeleted = false,
-                            Name = "Martina"
+                            Name = "Martina",
+                            Remarks = ""
                         },
                         new
                         {
                             Id = 3,
-                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8559),
+                            AddOn = new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8202),
                             ApproxAge = 30,
                             Gender = 0,
                             IsDeleted = false,
-                            Name = "Tim"
+                            Name = "Tim",
+                            Remarks = ""
                         });
                 });
 
@@ -160,7 +188,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8743),
+                            AddOn = new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8239),
                             ClientId = 1,
                             GoodId = 1,
                             IsDeleted = false,
@@ -170,7 +198,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 2,
-                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8761),
+                            AddOn = new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8244),
                             ClientId = 1,
                             GoodId = 2,
                             IsDeleted = false,
@@ -180,7 +208,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 3,
-                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8774),
+                            AddOn = new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8246),
                             ClientId = 1,
                             GoodId = 4,
                             IsDeleted = false,
@@ -190,7 +218,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 4,
-                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8787),
+                            AddOn = new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8249),
                             ClientId = 2,
                             GoodId = 2,
                             IsDeleted = false,
@@ -200,7 +228,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 5,
-                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8801),
+                            AddOn = new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8251),
                             ClientId = 3,
                             GoodId = 1,
                             IsDeleted = false,
@@ -210,7 +238,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 6,
-                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8814),
+                            AddOn = new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8254),
                             ClientId = 3,
                             GoodId = 3,
                             IsDeleted = false,
@@ -220,7 +248,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 7,
-                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8827),
+                            AddOn = new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8256),
                             ClientId = 3,
                             GoodId = 7,
                             IsDeleted = false,
@@ -267,9 +295,11 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasAlternateKey("Name");
-
                     b.HasIndex("IsDeleted");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("IsDeleted = 0");
 
                     b.ToTable("Goods");
 
@@ -277,7 +307,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 2,
                             IsDeleted = false,
@@ -287,7 +317,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 2,
-                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 2,
                             IsDeleted = false,
@@ -297,7 +327,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 3,
-                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 2,
                             IsDeleted = false,
@@ -307,7 +337,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 4,
-                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 1,
                             IsDeleted = false,
@@ -317,7 +347,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 5,
-                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 1,
                             IsDeleted = false,
@@ -327,7 +357,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 6,
-                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 0,
                             IsDeleted = false,
@@ -337,7 +367,7 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 7,
-                            AddOn = new DateTime(2024, 7, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 2, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 0,
                             IsDeleted = false,
@@ -372,6 +402,10 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Date")
+                        .IsUnique()
+                        .HasFilter("IsDeleted = 0");
+
                     b.HasIndex("IsDeleted");
 
                     b.ToTable("Shifts");
@@ -380,8 +414,8 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 7, 16, 23, 20, 36, 428, DateTimeKind.Local).AddTicks(8339),
-                            Date = new DateOnly(2024, 7, 16),
+                            AddOn = new DateTime(2024, 9, 2, 23, 22, 16, 294, DateTimeKind.Local).AddTicks(8138),
+                            Date = new DateOnly(2024, 9, 2),
                             IsDeleted = false
                         });
                 });
@@ -421,11 +455,17 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Remarks")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.HasAlternateKey("Firstname", "Lastname");
-
                     b.HasIndex("IsDeleted");
+
+                    b.HasIndex("Firstname", "Lastname")
+                        .IsUnique()
+                        .HasFilter("IsDeleted = 0");
 
                     b.ToTable("Volunteers");
 
@@ -438,7 +478,8 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                             Gender = 0,
                             IsDeleted = false,
                             IsDriver = false,
-                            Lastname = "Weis"
+                            Lastname = "Weis",
+                            Remarks = ""
                         },
                         new
                         {
@@ -448,7 +489,8 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                             Gender = 0,
                             IsDeleted = false,
                             IsDriver = false,
-                            Lastname = "Pan"
+                            Lastname = "Pan",
+                            Remarks = ""
                         },
                         new
                         {
@@ -458,7 +500,8 @@ namespace kaeltebus_backend.Infrastructure.Database.Migrations
                             Gender = 0,
                             IsDeleted = false,
                             IsDriver = false,
-                            Lastname = "Mustermann"
+                            Lastname = "Mustermann",
+                            Remarks = ""
                         });
                 });
 

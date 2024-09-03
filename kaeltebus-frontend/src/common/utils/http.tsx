@@ -19,17 +19,24 @@ http.interceptors.response.use(
   (response) => response,
   (error) => {
     if (isAxiosError(error)) {
-      if (error.status === 404) {
+      if (error.response?.status === 404) {
         notifications.show({
           ...notificationProps,
           message: "Das Objekt wurde nicht gefunden",
         });
-      } else if (error.status?.toString()[0] === "4") {
-        notifications.show({
-          ...notificationProps,
-          message: "Bitte überprüfen Sie Ihre Eingabe",
-        });
-      } else if (error.status?.toString()[0] === "5") {
+      } else if (error.response?.status?.toString()[0] === "4") {
+        if (error.response?.data.Code === "DUPLICATE") {
+          notifications.show({
+            ...notificationProps,
+            message: "Ein Objekt mit angegebenem Schlüssel existiert bereits.",
+          });
+        } else {
+          notifications.show({
+            ...notificationProps,
+            message: "Bitte überprüfen Sie Ihre Eingabe",
+          });
+        }
+      } else if (error.response?.status?.toString()[0] === "5") {
         notifications.show({
           ...notificationProps,
           message: "Bitte versuchen Sie es später erneut",
@@ -41,4 +48,62 @@ http.interceptors.response.use(
   }
 );
 
-export { http };
+const getBaseQuery =
+  <T,>(path: string) =>
+  async (abortSignal?: AbortSignal): Promise<Array<T>> => {
+    const response = await http.get<Array<T>>(path, {
+      baseURL: VITE_API_BASE_URL,
+      signal: abortSignal,
+    });
+    return response.data;
+  };
+
+const getBasePost =
+  <T,>(path: string) =>
+  async (item: T, abortSignal?: AbortSignal): Promise<void> => {
+    await http.post<T>(path, item, {
+      baseURL: VITE_API_BASE_URL,
+      signal: abortSignal,
+    });
+  };
+
+const getBaseUpdate =
+  <T,>(path: string) =>
+  async (
+    id: number,
+    update: Partial<T>,
+    abortSignal?: AbortSignal
+  ): Promise<void> => {
+    await http.patch<Partial<T>>(`${path}/${id}`, update, {
+      baseURL: VITE_API_BASE_URL,
+      signal: abortSignal,
+    });
+  };
+
+const getBasePut =
+  <T,>(path: string) =>
+  async (
+    id: number,
+    update: Partial<T>,
+    abortSignal?: AbortSignal
+  ): Promise<void> => {
+    await http.put<Partial<T>>(`${path}/${id}`, update, {
+      baseURL: VITE_API_BASE_URL,
+      signal: abortSignal,
+    });
+    // await http.patch<Partial<T>>(`${path}/${id}`, update, {
+    //   baseURL: VITE_API_BASE_URL,
+    //   signal: abortSignal,
+    // });
+  };
+
+const getBaseDelete =
+  (path: string) =>
+  async (id: number, abortSignal?: AbortSignal): Promise<void> => {
+    await http.delete(`${path}/${id}`, {
+      baseURL: VITE_API_BASE_URL,
+      signal: abortSignal,
+    });
+  };
+
+export { getBaseDelete, getBasePost, getBasePut, getBaseQuery, getBaseUpdate };

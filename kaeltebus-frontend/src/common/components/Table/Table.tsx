@@ -11,6 +11,7 @@ import {
   MRT_ColumnSizingState,
   MRT_ShowHideColumnsButton,
   MRT_TableInstance,
+  MRT_TableOptions,
   MRT_ToggleDensePaddingButton,
   MRT_ToggleFiltersButton,
   MRT_ToggleFullScreenButton,
@@ -42,13 +43,17 @@ type Props<T extends Record<string, any>> = {
   data: Array<T>;
   columns: MRT_ColumnDef<T, unknown>[];
   isLoading: boolean;
-  keyGetter: ValueTypeProps<T, string> | ((item: T) => string);
+  keyGetter:
+    | ValueTypeProps<T, string | number>
+    | ((item: T) => string | number);
   handleDelete?: (items: Array<T>) => void;
   handleAdd?: () => void;
   handleEdit?: (item: T) => void;
   exportConfig?: ExportConfig<T>;
   fillScreen?: boolean;
   tableKey: string;
+  renderDetailPanel?: MRT_TableOptions<T>["renderDetailPanel"];
+  setSelected?: React.Dispatch<React.SetStateAction<Array<T>>>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,6 +68,8 @@ export const Table = <T extends Record<string, any>>({
   exportConfig,
   fillScreen,
   tableKey,
+  renderDetailPanel,
+  setSelected,
 }: Props<T>) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const getRowId = React.useCallback(
@@ -85,7 +92,7 @@ export const Table = <T extends Record<string, any>>({
   const table = useMantineReactTable<T>({
     localization: MRT_Localization_DE,
     enableRowSelection: true,
-    getRowId,
+    getRowId: (obj) => String(getRowId(obj)),
     positionToolbarAlertBanner: "bottom",
     renderTopToolbarCustomActions: (table) => (
       <CustomActions
@@ -113,9 +120,7 @@ export const Table = <T extends Record<string, any>>({
     mantinePaperProps: {
       className: fillScreen ? "table-fill-screen" : undefined,
     },
-    renderDetailPanel: ({ row }) => {
-      return <div>{JSON.stringify(row.original, undefined, 3)}</div>;
-    },
+    renderDetailPanel,
     mantineTableContainerProps: {
       className: fillScreen ? "container-fill-screen" : undefined,
     },
@@ -123,6 +128,15 @@ export const Table = <T extends Record<string, any>>({
     onColumnSizingChange: setColumnSizing,
     onColumnFiltersChange: setColumnFilters,
   });
+
+  React.useEffect(() => {
+    const selectedData =
+      table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()
+        ? table.getSelectedRowModel()?.rows.map((r) => r.original)
+        : [];
+
+    setSelected && setSelected(selectedData);
+  }, [rowSelection, setSelected, table, data]);
 
   return <MantineReactTable table={table}></MantineReactTable>;
 };
