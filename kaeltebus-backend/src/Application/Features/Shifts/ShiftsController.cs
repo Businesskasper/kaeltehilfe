@@ -29,19 +29,19 @@ public class ShiftsController : ControllerBase
     }
 
     [HttpGet()]
-    public async Task<IEnumerable<ShiftListDto>> Query()
+    public async Task<IEnumerable<ShiftQueryDto>> Query()
     {
         var objs = await _kbContext.Shifts.Where(x => !x.IsDeleted).ToListAsync();
-        var dtos = _mapper.Map<List<ShiftListDto>>(objs);
+        var dtos = _mapper.Map<List<ShiftQueryDto>>(objs);
 
         return dtos;
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ShiftListDto>> Get([FromRoute(Name = "id")] int id)
+    public async Task<ActionResult<ShiftQueryDto>> Get([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Shifts.FirstOrDefaultAsync(x => x.Id == id);
-        return obj != null ? _mapper.Map<ShiftListDto>(obj) : NotFound();
+        return obj != null ? _mapper.Map<ShiftQueryDto>(obj) : NotFound();
     }
 
     [HttpPost()]
@@ -49,8 +49,7 @@ public class ShiftsController : ControllerBase
     {
         var obj = _mapper.Map<Shift>(dto);
         var volunteers = await _kbContext.Volunteers.Where(x => !x.IsDeleted && dto.Volunteers.Select(x => x.Id).Contains(x.Id)).ToDictionaryAsync(x => x.Id);
-        List<Volunteer> newVolunteers = [];
-        foreach (var submittedVolunteer in obj.Volunteers)
+        List<ShiftVolunteer> newVolunteers = dto.Volunteers.Select((submittedVolunteer, index) =>
         {
             var volunteerEntry = volunteers[submittedVolunteer.Id];
             if (volunteerEntry == null)
@@ -59,14 +58,17 @@ public class ShiftsController : ControllerBase
                 modelState.AddModelError("Volunteers", $"Volunteer ${submittedVolunteer.Id} was not found");
                 throw new InvalidModelStateException(modelState);
             }
+            return new ShiftVolunteer
+            {
+                Order = index,
+                Volunteer = volunteerEntry
+            };
+        }).ToList();
 
-            newVolunteers.Add(volunteerEntry);
-        }
-        obj.Volunteers = newVolunteers;
-
+        obj.ShiftVolunteers = newVolunteers;
 
         _logger.LogInformation($"Found {newVolunteers.Count} volunteers");
-        _logger.LogInformation($"First volunteer {newVolunteers[0].Fullname}");
+        _logger.LogInformation($"First volunteer {newVolunteers[0].Volunteer.Fullname}");
 
 
         var result = _kbContext.Shifts.Attach(obj);
@@ -78,25 +80,26 @@ public class ShiftsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult> Put([FromRoute(Name = "id")] int id, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] ShiftCreateDto dto)
     {
-        var existing = await _kbContext.Shifts.FindAsync(id);
-        if (existing is null) return NotFound();
+        throw new NotImplementedException();
+        // var existing = await _kbContext.Shifts.FindAsync(id);
+        // if (existing is null) return NotFound();
 
-        var updatedObj = _mapper.Map<Shift>(dto);
+        // var updatedObj = _mapper.Map<Shift>(dto);
 
-        existing.Date = updatedObj.Date;
-        existing.IsDeleted = updatedObj.IsDeleted;
-        existing.Volunteers.Clear();
+        // existing.Date = updatedObj.Date;
+        // existing.IsDeleted = updatedObj.IsDeleted;
+        // existing.Volunteers.Clear();
 
-        var volunteers = await _kbContext.Volunteers.Where(x => !x.IsDeleted && updatedObj.Volunteers.Select(y => y.Id).Contains(x.Id)).ToListAsync();
-        var reorderedVolunteers = updatedObj.Volunteers.SelectMany(x => volunteers.Where(y => y.Id == x.Id)).ToList();
-        foreach (var reorderedVolunteer in reorderedVolunteers)
-            existing.Volunteers.Add(reorderedVolunteer);
-        _logger.LogInformation($"First {reorderedVolunteers[0].Fullname}");
+        // var volunteers = await _kbContext.Volunteers.Where(x => !x.IsDeleted && updatedObj.Volunteers.Select(y => y.Id).Contains(x.Id)).ToListAsync();
+        // var reorderedVolunteers = updatedObj.Volunteers.SelectMany(x => volunteers.Where(y => y.Id == x.Id)).ToList();
+        // foreach (var reorderedVolunteer in reorderedVolunteers)
+        //     existing.Volunteers.Add(reorderedVolunteer);
+        // _logger.LogInformation($"First {reorderedVolunteers[0].Fullname}");
 
-        _kbContext.Shifts.Update(existing);
-        await _kbContext.SaveChangesAsync();
+        // _kbContext.Shifts.Update(existing);
+        // await _kbContext.SaveChangesAsync();
 
-        return NoContent();
+        // return NoContent();
     }
 
     [HttpDelete("{id}")]
@@ -124,7 +127,7 @@ public class ShiftCreateVolunteerDto
 }
 
 public class ShiftUpdateDto : ShiftCreateDto;
-public class ShiftListDto
+public class ShiftQueryDto
 {
     public int Id { get; set; }
     public DateOnly? Date { get; set; }
@@ -144,15 +147,29 @@ public class ShiftDtoToObjProfile : Profile
     public ShiftDtoToObjProfile()
     {
         CreateMap<ShiftCreateDto, Shift>();
-        CreateMap<ShiftCreateVolunteerDto, Volunteer>();
+        // CreateMap<ShiftCreateVolunteerDto, Volunteer>();
 
-        CreateMap<Shift, ShiftCreateDto>();
-        CreateMap<Volunteer, ShiftCreateVolunteerDto>();
+        // CreateMap<Shift, ShiftCreateDto>();
+        // CreateMap<Volunteer, ShiftCreateVolunteerDto>();
 
-        CreateMap<Volunteer, ShiftListVolunteerDto>();
-        CreateMap<Shift, ShiftListDto>().ForMember(shift => shift.Volunteers, opt => opt.MapFrom(src => src.Volunteers));
+        // CreateMap<Volunteer, ShiftListVolunteerDto>();
+        // CreateMap<Shift, ShiftQueryDto>().ForMember(shift => shift.Volunteers, opt => opt.MapFrom(src => src.Volunteers));
 
-        CreateMap<ShiftUpdateDto, Shift>();
+        // CreateMap<ShiftUpdateDto, Shift>();
+
+
+        CreateMap<Shift, ShiftQueryDto>()
+            .ForMember(dest => dest.Volunteers, opt => opt.MapFrom(src => src.ShiftVolunteers
+                .OrderBy(sv => sv.Order)
+                .Select(sv => new ShiftListVolunteerDto
+                {
+                    Id = sv.Volunteer.Id,
+                    Fullname = sv.Volunteer.Fullname,
+                    Gender = sv.Volunteer.Gender,
+                    IsDriver = sv.Volunteer.IsDriver
+                }).ToList()))
+            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
     }
 }
 

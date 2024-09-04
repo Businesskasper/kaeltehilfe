@@ -1,6 +1,6 @@
 ## Migrations
 ```
-dotnet ef migrations add InitialMigration -o Infrastructure/Database/Migrations 
+dotnet ef migrations add InitialMigration -o Application/Infrastructure/Database/Migrations
 dotnet ef database update
 ```
 ## Requirements

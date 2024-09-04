@@ -1,6 +1,7 @@
 using AutoMapper;
 using FluentValidation;
 using kaeltebus_backend.Infrastructure.Database;
+using kaeltebus_backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -63,7 +64,7 @@ public abstract class CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>
 
         // Generate full updated object by merging existing and updated as DTO and mapping back to domain model
         var existingDto = _mapper.Map<TEntity, TCreateDto>(existing);
-        var updated = ControllerExtensions.getUpdated(existingDto, update);
+        var updated = ObjectMethods.getUpdated(existingDto, update);
         var updatedObj = _mapper.Map<TEntity>(updated);
         updatedObj.Id = existing.Id;
         updatedObj.AddOn = existing.AddOn;
