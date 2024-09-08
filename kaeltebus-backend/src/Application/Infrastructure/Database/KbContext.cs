@@ -31,8 +31,6 @@ public class KbContext : DbContext
         modelBuilder.Entity<Shift>().ConfigureBaseEntity();
         modelBuilder.Entity<Shift>().HasIndex(x => x.Date).IsUnique().HasFilter("IsDeleted = 0");
 
-        // modelBuilder.Entity<ShiftVolunteer>().ConfigureBaseEntity();
-
         modelBuilder.Entity<Client>().ConfigureBaseEntity();
         modelBuilder.Entity<Client>().HasIndex(x => x.Name).IsUnique().HasFilter("IsDeleted = 0");
 
@@ -40,10 +38,7 @@ public class KbContext : DbContext
         modelBuilder.Entity<Distribution>().HasIndex(x => x.ClientId);
         modelBuilder.Entity<Distribution>().HasIndex(x => x.GoodId);
 
-        // // Configure Many-To-Many between Shift and Volunteer
-        // modelBuilder.Entity<Shift>().HasMany(x => x.ShiftVolunteers).WithOne().HasForeignKey("ShiftId");
-        // modelBuilder.Entity<ShiftVolunteer>().HasOne(x => x.Volunteer).WithMany().HasForeignKey("VolunteerId");
-        // modelBuilder.Entity<ShiftVolunteer>().HasKey("ShiftId", "VolunteerId", "Order");
+        // Configure Many-To-Many between Shift and Volunteer
         modelBuilder.Entity<ShiftVolunteer>().HasKey("ShiftId", "VolunteerId");
         modelBuilder.Entity<ShiftVolunteer>().HasOne(sv => sv.Shift).WithMany(s => s.ShiftVolunteers).HasForeignKey("ShiftId");
         modelBuilder.Entity<ShiftVolunteer>().HasOne(sv => sv.Volunteer).WithMany().HasForeignKey("VolunteerId");
@@ -83,11 +78,12 @@ public class KbContext : DbContext
         var shift = new { Id = 1, Date = DateOnly.FromDateTime(DateTime.Now), AddOn = DateTime.Now, IsDeleted = false };
         modelBuilder.Entity<Shift>().HasData(shift);
 
-        modelBuilder.Entity("ShiftVolunteer").HasData(
-            new { ShiftId = 1, VolunteerId = 1, Order = 1 },
-            new { ShiftId = 1, VolunteerId = 2, Order = 2 },
-            new { ShiftId = 1, VolunteerId = 3, Order = 3 }
-        );
+        // Seeding keyless entities is not supported for whatever reason
+        // modelBuilder.Entity("ShiftVolunteer").HasNoKey().HasData(
+        //     new { ShiftId = 1, VolunteerId = 1, Order = 0 },
+        //     new { ShiftId = 1, VolunteerId = 2, Order = 1 },
+        //     new { ShiftId = 1, VolunteerId = 3, Order = 2 }
+        // );
 
         var clients = new List<Client> {
                     new Client { Id = 1, Name = "Martin", ApproxAge = 45, Gender = Gender.MALE, AddOn = DateTime.Now, IsDeleted = false },

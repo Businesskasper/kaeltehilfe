@@ -1,4 +1,3 @@
-using System.Text.Json;
 using AutoMapper;
 using FluentValidation;
 using kaeltebus_backend.Infrastructure.Database;
@@ -31,7 +30,11 @@ public class ShiftsController : ControllerBase
     [HttpGet()]
     public async Task<IEnumerable<ShiftQueryDto>> Query()
     {
-        var objs = await _kbContext.Shifts.Where(x => !x.IsDeleted).ToListAsync();
+        var objs = await _kbContext
+            .Shifts.Where(x => !x.IsDeleted)
+            .Include(s => s.ShiftVolunteers)
+            .ThenInclude(sv => sv.Volunteer)
+            .ToListAsync();
         var dtos = _mapper.Map<List<ShiftQueryDto>>(objs);
 
         return dtos;
@@ -48,70 +51,85 @@ public class ShiftsController : ControllerBase
     public async Task<IActionResult> Create([FromBody()] ShiftCreateDto dto)
     {
         var obj = _mapper.Map<Shift>(dto);
-        var volunteers = await _kbContext.Volunteers.Where(x => !x.IsDeleted && dto.Volunteers.Select(x => x.Id).Contains(x.Id)).ToDictionaryAsync(x => x.Id);
-        List<ShiftVolunteer> newVolunteers = dto.Volunteers.Select((submittedVolunteer, index) =>
-        {
-            var volunteerEntry = volunteers[submittedVolunteer.Id];
-            if (volunteerEntry == null)
-            {
-                var modelState = new ModelStateDictionary();
-                modelState.AddModelError("Volunteers", $"Volunteer ${submittedVolunteer.Id} was not found");
-                throw new InvalidModelStateException(modelState);
-            }
-            return new ShiftVolunteer
-            {
-                Order = index,
-                Volunteer = volunteerEntry
-            };
-        }).ToList();
+        var volunteers = await _kbContext
+            .Volunteers.Where(x => !x.IsDeleted && dto.Volunteers.Select(x => x.Id).Contains(x.Id))
+            .ToDictionaryAsync(x => x.Id);
+        obj.ShiftVolunteers = dto.Volunteers.ToShiftVolunteers(volunteers);
 
-        obj.ShiftVolunteers = newVolunteers;
-
-        _logger.LogInformation($"Found {newVolunteers.Count} volunteers");
-        _logger.LogInformation($"First volunteer {newVolunteers[0].Volunteer.Fullname}");
-
-
-        var result = _kbContext.Shifts.Attach(obj);
+        var result = await _kbContext.Shifts.AddAsync(obj);
         await _kbContext.SaveChangesAsync();
 
         return CreatedAtAction(nameof(Get), routeValues: new { id = result.Entity.Id }, null);
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult> Put([FromRoute(Name = "id")] int id, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] ShiftCreateDto dto)
+    public async Task<ActionResult> Put(
+        [FromRoute(Name = "id")] int id,
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] ShiftCreateDto dto
+    )
     {
-        throw new NotImplementedException();
-        // var existing = await _kbContext.Shifts.FindAsync(id);
-        // if (existing is null) return NotFound();
+        var existing = await _kbContext
+            .Shifts.Include(s => s.ShiftVolunteers)
+            .ThenInclude(sv => sv.Volunteer)
+            .FirstOrDefaultAsync(s => s.Id == id);
+        if (existing is null)
+            return NotFound();
 
-        // var updatedObj = _mapper.Map<Shift>(dto);
+        var updatedObj = _mapper.Map<Shift>(dto);
+        existing.Date = updatedObj.Date;
+        existing.IsDeleted = updatedObj.IsDeleted;
+        existing.ShiftVolunteers.Clear();
 
-        // existing.Date = updatedObj.Date;
-        // existing.IsDeleted = updatedObj.IsDeleted;
-        // existing.Volunteers.Clear();
+        var volunteers = await _kbContext
+            .Volunteers.Where(x => !x.IsDeleted && dto.Volunteers.Select(x => x.Id).Contains(x.Id))
+            .ToDictionaryAsync(x => x.Id);
+        existing.ShiftVolunteers = dto.Volunteers.ToShiftVolunteers(volunteers);
 
-        // var volunteers = await _kbContext.Volunteers.Where(x => !x.IsDeleted && updatedObj.Volunteers.Select(y => y.Id).Contains(x.Id)).ToListAsync();
-        // var reorderedVolunteers = updatedObj.Volunteers.SelectMany(x => volunteers.Where(y => y.Id == x.Id)).ToList();
-        // foreach (var reorderedVolunteer in reorderedVolunteers)
-        //     existing.Volunteers.Add(reorderedVolunteer);
-        // _logger.LogInformation($"First {reorderedVolunteers[0].Fullname}");
+        _kbContext.Shifts.Update(existing);
+        await _kbContext.SaveChangesAsync();
 
-        // _kbContext.Shifts.Update(existing);
-        // await _kbContext.SaveChangesAsync();
-
-        // return NoContent();
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Shifts.FindAsync(id);
-        if (obj == null) return NotFound();
+        if (obj == null)
+            return NotFound();
 
         obj.IsDeleted = true;
         await _kbContext.SaveChangesAsync();
 
         return NoContent();
+    }
+}
+
+static class ShiftsExtensions
+{
+    public static List<ShiftVolunteer> ToShiftVolunteers(
+        this List<ShiftCreateVolunteerDto> submittedVolunteers,
+        Dictionary<int, Volunteer> resolvedVolunteers
+    )
+    {
+        return submittedVolunteers
+            .Select(
+                (submittedVolunteer, index) =>
+                {
+                    var volunteerEntry = resolvedVolunteers[submittedVolunteer.Id];
+                    if (volunteerEntry == null)
+                    {
+                        var modelState = new ModelStateDictionary();
+                        modelState.AddModelError(
+                            "Volunteers",
+                            $"Volunteer ${submittedVolunteer.Id} was not found"
+                        );
+                        throw new InvalidModelStateException(modelState);
+                    }
+                    return new ShiftVolunteer { Order = index, Volunteer = volunteerEntry };
+                }
+            )
+            .ToList();
     }
 }
 
@@ -127,12 +145,14 @@ public class ShiftCreateVolunteerDto
 }
 
 public class ShiftUpdateDto : ShiftCreateDto;
+
 public class ShiftQueryDto
 {
     public int Id { get; set; }
     public DateOnly? Date { get; set; }
     public List<ShiftListVolunteerDto>? Volunteers { get; set; }
 }
+
 public class ShiftListVolunteerDto
 {
     public int Id { get; set; }
@@ -140,7 +160,6 @@ public class ShiftListVolunteerDto
     public Gender Gender { get; set; }
     public bool IsDriver { get; set; }
 }
-
 
 public class ShiftDtoToObjProfile : Profile
 {
@@ -159,15 +178,21 @@ public class ShiftDtoToObjProfile : Profile
 
 
         CreateMap<Shift, ShiftQueryDto>()
-            .ForMember(dest => dest.Volunteers, opt => opt.MapFrom(src => src.ShiftVolunteers
-                .OrderBy(sv => sv.Order)
-                .Select(sv => new ShiftListVolunteerDto
-                {
-                    Id = sv.Volunteer.Id,
-                    Fullname = sv.Volunteer.Fullname,
-                    Gender = sv.Volunteer.Gender,
-                    IsDriver = sv.Volunteer.IsDriver
-                }).ToList()))
+            .ForMember(
+                dest => dest.Volunteers,
+                opt =>
+                    opt.MapFrom(src =>
+                        src.ShiftVolunteers.OrderBy(sv => sv.Order)
+                            .Select(sv => new ShiftListVolunteerDto
+                            {
+                                Id = sv.Volunteer.Id,
+                                Fullname = sv.Volunteer.Fullname,
+                                Gender = sv.Volunteer.Gender,
+                                IsDriver = sv.Volunteer.IsDriver,
+                            })
+                            .ToList()
+                    )
+            )
             .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
     }
@@ -180,7 +205,9 @@ public class ShiftCreateDtoValidator : AbstractValidator<ShiftCreateDto>
         RuleFor(shift => shift.Date).NotNull();
         RuleFor(shift => shift.Volunteers).NotNull();
         RuleForEach(shift => shift.Volunteers).SetValidator(new ShiftVolunteerDtoValidator());
-        RuleFor(shift => shift.Volunteers).Must(volunteers => !HasDuplicates(volunteers)).WithMessage("Volunteers can only be assigned once to a single shift");
+        RuleFor(shift => shift.Volunteers)
+            .Must(volunteers => !HasDuplicates(volunteers))
+            .WithMessage("Volunteers can only be assigned once to a single shift");
     }
 
     private bool HasDuplicates(List<ShiftCreateVolunteerDto> volunteers)
