@@ -15,7 +15,11 @@ import {
   ModalActions,
   ModalMain,
 } from "../../../common/components";
-import { requiredValidator } from "../../../common/utils/validators";
+import {
+  isDuplicate,
+  requiredValidator,
+  validators,
+} from "../../../common/utils/validators";
 
 type ShiftModalProps = {
   isOpen: boolean;
@@ -30,6 +34,7 @@ type ShiftForm = {
 
 export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
   const {
+    objs: { data: shifts },
     post: { mutate: post },
     put: { mutate: put },
   } = useShifts();
@@ -51,9 +56,47 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
     mode: "controlled",
     initialValues,
     validate: {
-      date: requiredValidator("Date"),
+      date: (value) =>
+        validators(
+          value,
+          requiredValidator("Date"),
+          isDuplicate(
+            shifts
+              ?.filter((s) => s.date !== existing?.date)
+              ?.map(({ date }) => date) || [],
+            "Eine Schicht zum angegebenem Datum existiert bereits"
+          )
+        ),
       volunteers: {
-        id: requiredValidator("Id"),
+        id: requiredValidator("Id", "Bitte auswählen"),
+        fullname: (value, values, path) => {
+          if (!value) return "Bitte auswählen";
+
+          const index = Number.parseInt(path.match(/\d+/)?.[0] || "");
+          if (isNaN(index)) return;
+
+          const currentVolunteer = values.volunteers[index];
+          if (
+            !currentVolunteer ||
+            !currentVolunteer.fullname ||
+            (currentVolunteer.id &&
+              volunteers?.find((v) => v.id)?.fullname ===
+                currentVolunteer.fullname)
+          ) {
+            return;
+          }
+
+          // if ()
+          const volunteerObjs = volunteers?.filter(
+            (v) => v.id === currentVolunteer.id
+          );
+          if (!volunteerObjs || volunteerObjs.length === 0) {
+            return "Frewilliger wurde nicht gefunden";
+          }
+          if (volunteerObjs.length > 1) {
+            return "Mehrere Freiwillige unter selbem Namen gefnden - bitte auswählen";
+          }
+        },
       },
     },
   });
@@ -106,6 +149,7 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
       pos="relative"
     >
       <FormSelect
+        searchable
         items={volunteers || []}
         valueGetter="fullname"
         sort
@@ -113,6 +157,37 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
         formProps={form.getInputProps(`volunteers.${index}.fullname`)}
         onItemSelected={(selectedVolunteer) => {
           form.setFieldValue(`volunteers.${index}.id`, selectedVolunteer?.id);
+        }}
+        onBlur={() => {
+          // In case on option was selected (but typed), we must manually set the volunteers id
+          const currentVolunteer = form.getValues()?.volunteers[index];
+          if (
+            !currentVolunteer ||
+            !currentVolunteer.fullname ||
+            (currentVolunteer.id &&
+              volunteers?.find((v) => v.id)?.fullname ===
+                currentVolunteer.fullname)
+          ) {
+            return;
+          }
+          const volunteerObj = volunteers?.filter(
+            (v) => v.fullname === currentVolunteer.fullname
+          );
+          if (!volunteerObj || volunteerObj.length === 0) {
+            // form.setFieldError(
+            //   `volunteers.${index}.fullname`,
+            //   "Nicht gefunden"
+            // );
+            return;
+          }
+          if (volunteerObj.length > 1) {
+            // form.setFieldError(
+            //   `volunteers.${index}.fullname`,
+            //   "Bitte auswählen"
+            // );
+            return;
+          }
+          form.setFieldValue(`volunteers.${index}.id`, volunteerObj[0].id);
         }}
       />
       {/* <Autocomplete

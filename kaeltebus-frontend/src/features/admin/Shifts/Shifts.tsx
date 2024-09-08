@@ -25,17 +25,34 @@ export const Shifts = () => {
   const [isModalOpened, { open: openModal, close: closeModal }] =
     useDisclosure(false);
 
+  const countVolunteers = shifts?.reduce((sum, shift) => {
+    const countVolunteers = shift.volunteers?.length || 0;
+    return sum >= countVolunteers ? sum : countVolunteers;
+  }, 0);
+
+  const volunteerColumns: Array<MRT_ColumnDef<Shift>> = Array.from(
+    Array(countVolunteers).keys()
+  ).map((index) => ({
+    id: `volunteer_${index + 1}`,
+    header: `Freiwilliger ${index + 1}`,
+    // accessorKey: `volunteers[${index}].fullname`,
+    accessorFn: ({ volunteers }) => volunteers?.[index]?.fullname,
+  }));
+
   const columns: Array<MRT_ColumnDef<Shift>> = [
     {
+      id: "date",
       accessorFn: ({ date }) => formatDate(date),
       header: "Datum",
     },
+    ...volunteerColumns,
+    // {
+    //   header: "Freiwillige",
+    //   accessorFn: ({ volunteers }) =>
+    //     volunteers?.map((v) => v.fullname).join(", "),
+    // },
     {
-      header: "Freiwillige",
-      accessorFn: ({ volunteers }) =>
-        volunteers?.map((v) => v.fullname).join(", "),
-    },
-    {
+      id: "planning_state",
       header: "Planungsstatus",
       accessorFn: ({ volunteers }) => {
         const driver = volunteers?.find((v) => v.isDriver);
@@ -66,6 +83,7 @@ export const Shifts = () => {
       },
     },
   ];
+  console.log("cols", columns);
 
   const exportConfig: ExportConfig<Shift> = {
     fileName: () =>

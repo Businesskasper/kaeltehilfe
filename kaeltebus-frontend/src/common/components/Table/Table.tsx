@@ -1,4 +1,5 @@
 import { ActionIcon, Box, Button, Tooltip } from "@mantine/core";
+import { useLocalStorage, useMediaQuery } from "@mantine/hooks";
 import {
   IconEdit,
   IconFileExcel,
@@ -9,6 +10,7 @@ import {
   MRT_ColumnDef,
   MRT_ColumnFiltersState,
   MRT_ColumnSizingState,
+  MRT_RowSelectionState,
   MRT_ShowHideColumnsButton,
   MRT_TableInstance,
   MRT_TableOptions,
@@ -24,7 +26,6 @@ import React from "react";
 import * as XLSX from "xlsx";
 import { ValueTypeProps } from "../../utils/types";
 
-import { useLocalStorage, useMediaQuery } from "@mantine/hooks";
 import "./Table.scss";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,6 +78,23 @@ export const Table = <T extends Record<string, any>>({
       typeof keyGetter === "function" ? keyGetter(item) : item[keyGetter],
     [keyGetter]
   );
+
+  // Update row selection state after data changed
+  // Otherwise, after row deletion, they might be left dangling in the selection state, invisible to the user
+  React.useEffect(() => {
+    const existingIds = data.map(getRowId);
+    setRowSelection((currentRowSelection: MRT_RowSelectionState) => {
+      const selectedIds = Object.keys(currentRowSelection).filter(
+        (key) => currentRowSelection[key] === true
+      );
+
+      return selectedIds.reduce((newState, selectedId) => {
+        return existingIds.includes(selectedId)
+          ? { ...newState, [selectedId]: true }
+          : newState;
+      }, {} as MRT_RowSelectionState);
+    });
+  }, [data, getRowId]);
 
   const [columnSizing, setColumnSizing] =
     useLocalStorage<MRT_ColumnSizingState>({

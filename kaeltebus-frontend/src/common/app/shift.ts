@@ -1,4 +1,4 @@
-import { toDate } from "../utils";
+import { toLocalDate } from "../utils";
 import { useCrudHook } from "../utils/crudHook";
 import { Volunteer } from "./volunteer";
 
@@ -15,4 +15,6 @@ export type ShiftPost = {
 };
 
 export const useShifts = () =>
-  useCrudHook<Shift, ShiftPost>("shifts", { date: (date) => toDate(date) });
+  useCrudHook<Shift, ShiftPost>("shifts", {
+    date: (date) => toLocalDate(date),
+  });

@@ -6,6 +6,15 @@ export const toDate = (value: unknown) => {
   return isNaN(asDate.valueOf()) ? undefined : asDate;
 };
 
+export const toLocalDate = (value: unknown) => {
+  const asDate = toDate(value);
+  if (!asDate) return undefined;
+
+  return new Date(
+    asDate.setTime(asDate.getTime() + asDate.getTimezoneOffset() * 60 * 1000)
+  );
+};
+
 export const formatDate = (date: unknown) => {
   const asDate = toDate(date);
   if (!asDate) return "";

@@ -7,9 +7,11 @@ export const validators = <T>(
     if (result) return result;
   }
 };
-export const requiredValidator = (type?: "Date" | "Id") => (value: unknown) => {
-  if (!isValueSet(value, type)) return "Erforderlich";
-};
+export const requiredValidator =
+  (type?: "Date" | "Id", message = "Erforderlich") =>
+  (value: unknown) => {
+    if (!isValueSet(value, type)) return message;
+  };
 
 export const minLengthValidator =
   (minLength: number) => (value?: string | number) => {
@@ -33,4 +35,20 @@ const isValueSet = (value: unknown, type?: "Date" | "Id") => {
   if (type == "Id" && !value) return false;
 
   return true;
+};
+
+export const isDuplicate =
+  <T>(existingValues: Array<T>, message: string) =>
+  (value: T) => {
+    return existingValues
+      .map((existingValue) => toString(existingValue))
+      ?.includes(toString(value))
+      ? message
+      : undefined;
+  };
+
+const toString = (value: unknown) => {
+  return value && typeof value === "object" && "toString" in value
+    ? value.toString()
+    : String(value);
 };

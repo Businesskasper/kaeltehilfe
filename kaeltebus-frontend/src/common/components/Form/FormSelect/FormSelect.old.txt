@@ -25,7 +25,6 @@ export type FormSelectProps<T extends { [key in string]: unknown }> = {
   onItemSelected?: (item: T | undefined) => void;
   formProps: ReturnType<ReturnType<typeof useForm>["getInputProps"]>;
   searchable?: boolean;
-  onBlur?: () => void;
 };
 
 export const FormSelect = <T extends { [key in string]: unknown }>({
@@ -38,7 +37,6 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
   onItemSelected,
   formProps,
   searchable,
-  onBlur,
 }: FormSelectProps<T>) => {
   const getItemValue = React.useCallback(
     (item: T) => {
@@ -91,18 +89,21 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
   //       )
   //     : options;
   // }, [formProps.value, options, shouldFilterOptions]);
+
+  const [searchValue, setSearchValue] = React.useState(formProps.value || "");
+  React.useEffect(() => {
+    setSearchValue(formProps.value);
+  }, [formProps.value]);
+
   const filteredOptions = React.useMemo(() => {
-    const currentValue =
-      typeof formProps.value === "string"
-        ? formProps?.value?.toLowerCase()?.trim()
-        : formProps.value;
-    return currentValue
+    return searchValue
       ? options.filter((option) =>
-          option.value?.toLowerCase()?.includes(currentValue)
+          option.value.toLowerCase().includes(searchValue.toLowerCase().trim())
         )
       : options;
-  }, [formProps.value, options]);
+  }, [searchValue, options]);
 
+  console.log("value", formProps.value);
   return (
     <Combobox
       store={combobox}
@@ -111,8 +112,7 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
         onItemSelected && onItemSelected(val as unknown as T | undefined);
         combobox.closeDropdown();
       }}
-      // withinPortal={false}
-      withinPortal={true}
+      withinPortal={false}
     >
       <Combobox.Target withKeyboardNavigation>
         {searchable ? (
@@ -120,28 +120,27 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
             classNames={{ root: `FormSelect ${classNames}` }}
             style={style}
             placeholder="Bitte auswählen"
-            value={formProps.value}
+            value={searchValue}
             onChange={(event) => {
-              formProps.onChange(event);
+              setSearchValue(event.target.value || "");
+              // formProps.onChange(event);
+              // setValue(event.currentTarget.value);
               combobox.openDropdown();
-              combobox.updateSelectedOptionIndex();
+              // combobox.updateSelectedOptionIndex();
               // combobox.clickSelectedOption();
             }}
             onClick={() => combobox.openDropdown()}
             onFocus={() => combobox.openDropdown()}
             onBlur={() => {
-              const currentValue = formProps.value as string;
-              if (
-                currentValue &&
-                (currentValue.startsWith(" ") || currentValue.endsWith(" "))
-              ) {
-                formProps.onChange(currentValue.trim());
-              }
               combobox.closeDropdown();
+              if (searchValue !== formProps.value) {
+                setSearchValue("");
+              }
               formProps.onBlur && formProps.onBlur();
-              onBlur && onBlur();
+              // if (formProps.value && !shouldFilterOptions) {
+              //   onItemSelected &&
+              // }
             }}
-            error={formProps.error}
           />
         ) : (
           <InputBase
@@ -153,10 +152,6 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
             rightSection={<Combobox.Chevron />}
             rightSectionPointerEvents="none"
             onClick={() => combobox.toggleDropdown()}
-            onBlur={() => {
-              formProps.onBlur && formProps.onBlur();
-              onBlur && onBlur();
-            }}
           >
             {formProps.value || (
               <Input.Placeholder>Bitte auswählen</Input.Placeholder>
