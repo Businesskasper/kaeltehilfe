@@ -1,6 +1,10 @@
 public static class Assertions
 {
-    public static void AssertProperty<TValue>(object? anonymousObject, string propertyKey, Action<TValue?> assertion)
+    public static void AssertProperty<TValue>(
+        object? anonymousObject,
+        string propertyKey,
+        Action<TValue?> assertion
+    )
     {
         Assert.IsNotNull(anonymousObject);
 

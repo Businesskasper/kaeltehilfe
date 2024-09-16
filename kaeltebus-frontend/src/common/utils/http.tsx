@@ -59,9 +59,18 @@ const getBaseQuery =
   };
 
 const getBasePost =
-  <T,>(path: string) =>
+  <T extends Record<string, unknown>>(path: string) =>
   async (item: T, abortSignal?: AbortSignal): Promise<void> => {
-    await http.post<T>(path, item, {
+    const itemKeys = Object.keys(item);
+    const cleanedItem = itemKeys.reduce((obj, key) => {
+      const value = obj[key];
+      return {
+        ...obj,
+        [key]: typeof value === "string" ? value?.trimStart().trimEnd() : value,
+      };
+    }, {} as T);
+
+    await http.post<T>(path, cleanedItem, {
       baseURL: VITE_API_BASE_URL,
       signal: abortSignal,
     });
@@ -81,20 +90,25 @@ const getBaseUpdate =
   };
 
 const getBasePut =
-  <T,>(path: string) =>
+  <T extends Record<string, unknown>>(path: string) =>
   async (
     id: number,
     update: Partial<T>,
     abortSignal?: AbortSignal
   ): Promise<void> => {
-    await http.put<Partial<T>>(`${path}/${id}`, update, {
+    const itemKeys = Object.keys(update);
+    const cleanedUpdate = itemKeys.reduce((obj, key) => {
+      const value = obj[key];
+      return {
+        ...obj,
+        [key]: typeof value === "string" ? value?.trimStart().trimEnd() : value,
+      };
+    }, {} as T);
+
+    await http.put<Partial<T>>(`${path}/${id}`, cleanedUpdate, {
       baseURL: VITE_API_BASE_URL,
       signal: abortSignal,
     });
-    // await http.patch<Partial<T>>(`${path}/${id}`, update, {
-    //   baseURL: VITE_API_BASE_URL,
-    //   signal: abortSignal,
-    // });
   };
 
 const getBaseDelete =

@@ -1,9 +1,17 @@
-import { ActionIcon, Box, Button, Tooltip } from "@mantine/core";
+import {
+  ActionIcon,
+  ActionIconProps,
+  Box,
+  Button,
+  DefaultMantineColor,
+  Tooltip,
+} from "@mantine/core";
 import { useLocalStorage, useMediaQuery } from "@mantine/hooks";
 import {
   IconEdit,
   IconFileExcel,
   IconPlus,
+  IconProps,
   IconTrash,
 } from "@tabler/icons-react";
 import {
@@ -12,6 +20,7 @@ import {
   MRT_ColumnSizingState,
   MRT_RowSelectionState,
   MRT_ShowHideColumnsButton,
+  MRT_SortingState,
   MRT_TableInstance,
   MRT_TableOptions,
   MRT_ToggleDensePaddingButton,
@@ -22,7 +31,7 @@ import {
   useMantineReactTable,
 } from "mantine-react-table";
 import { MRT_Localization_DE } from "mantine-react-table/locales/de/index.cjs";
-import React from "react";
+import React, { ComponentType } from "react";
 import * as XLSX from "xlsx";
 import { ValueTypeProps } from "../../utils/types";
 
@@ -32,11 +41,26 @@ import "./Table.scss";
 export type ExportConfig<T extends Record<string, any>> = {
   fileName: string | (() => string);
   transformators?: { [key in keyof T]?: Transformator<T> };
+  manualColumns?: Array<{ key: string; transformFn: TransformFn<T> }>;
 };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Transformator<T extends Record<string, any>> = {
   columnName: string;
-  transformFn: (obj: T) => string | number | Date | boolean;
+  transformFn: TransformFn<T>;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type TransformFn<T extends Record<string, any>> = (
+  obj: T
+) => string | number | Date | boolean;
+
+export type AdditionalCustomAction<T> = {
+  label: string;
+  icon: ComponentType<IconProps>;
+  isDisabled: (selectedItems: Array<T>) => boolean;
+  onClick: (selectedItems: Array<T>) => void;
+  color?: DefaultMantineColor;
+  variant?: ActionIconProps["variant"];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,6 +79,8 @@ type Props<T extends Record<string, any>> = {
   tableKey: string;
   renderDetailPanel?: MRT_TableOptions<T>["renderDetailPanel"];
   setSelected?: React.Dispatch<React.SetStateAction<Array<T>>>;
+  defaultSorting?: MRT_SortingState;
+  customActions?: Array<AdditionalCustomAction<T>>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,6 +97,8 @@ export const Table = <T extends Record<string, any>>({
   tableKey,
   renderDetailPanel,
   setSelected,
+  defaultSorting,
+  customActions,
 }: Props<T>) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const getRowId = React.useCallback(
@@ -118,6 +146,7 @@ export const Table = <T extends Record<string, any>>({
         handleDelete={handleDelete}
         handleEdit={handleEdit}
         table={table.table}
+        customActions={customActions}
       />
     ),
     renderToolbarInternalActions: ({ table }) => (
@@ -132,7 +161,10 @@ export const Table = <T extends Record<string, any>>({
       columnFilters,
     },
     onRowSelectionChange: setRowSelection,
-    initialState: { density: "xs" },
+    initialState: {
+      density: "xs",
+      sorting: defaultSorting || [],
+    },
     data: data || [],
     columns,
     mantinePaperProps: {
@@ -165,6 +197,7 @@ type CustomActionsProps<T extends Record<string, any>> = {
   handleDelete?: (items: Array<T>) => void;
   handleAdd?: () => void;
   handleEdit?: (item: T) => void;
+  customActions?: Array<AdditionalCustomAction<T>>;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -173,6 +206,7 @@ const CustomActions = <T extends Record<string, any>>({
   handleAdd,
   handleDelete,
   handleEdit,
+  customActions,
 }: CustomActionsProps<T>) => {
   const isMobile = useMediaQuery("(max-width: 50em)");
 
@@ -245,6 +279,29 @@ const CustomActions = <T extends Record<string, any>>({
           <IconPlus />
         </ActionIcon>
       )}
+      {customActions?.map((customAction, index) => {
+        return isMobile ? (
+          <ActionIcon
+            key={index}
+            disabled={customAction.isDisabled(selectedData)}
+            color={customAction.color}
+            onClick={() => customAction.onClick(selectedData)}
+            variant={customAction.variant}
+          >
+            <customAction.icon />
+          </ActionIcon>
+        ) : (
+          <Button
+            key={index}
+            disabled={customAction.isDisabled(selectedData)}
+            color={customAction.color}
+            onClick={() => customAction.onClick(selectedData)}
+            variant={customAction.variant}
+          >
+            {customAction.label}
+          </Button>
+        );
+      })}
     </Box>
   );
 };
@@ -268,17 +325,25 @@ const InternalActions = <T extends Record<string, any>>({
     ).rows.map((row) => row.original);
 
     const transformedData = selectedData.map((selectedItem) => {
-      return Object.keys(selectedItem).reduce((transformedObj, key) => {
-        const keyConfig = exportConfig?.transformators?.[key];
+      const transformedObject = Object.keys(selectedItem).reduce(
+        (transformedObj, key) => {
+          const keyConfig = exportConfig?.transformators?.[key];
 
-        const value = keyConfig?.transformFn
-          ? keyConfig.transformFn(selectedItem)
-          : selectedItem[key];
+          const value = keyConfig?.transformFn
+            ? keyConfig.transformFn(selectedItem)
+            : selectedItem[key];
 
-        const header = keyConfig?.columnName ?? key;
+          const header = keyConfig?.columnName ?? key;
 
-        return { ...transformedObj, [header]: value };
-      }, {});
+          return { ...transformedObj, [header]: value };
+        },
+        {} as { [key: string]: string | number | boolean | Date }
+      );
+      for (const manualColumn of exportConfig?.manualColumns || []) {
+        transformedObject[manualColumn.key] =
+          manualColumn.transformFn(selectedItem);
+      }
+      return transformedObject;
     });
 
     const fileName = exportConfig?.fileName

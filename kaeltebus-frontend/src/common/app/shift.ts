@@ -4,14 +4,16 @@ import { Volunteer } from "./volunteer";
 
 export type Shift = {
   id: number;
+  deviceId: number;
+  registrationNumber: string;
   date?: Date;
   volunteers?: Array<Volunteer>;
 };
 
 export type ShiftPost = {
   date: string;
+  deviceId: number;
   volunteers: Array<{ id: number }>;
-  // volunteers: Array<{ id: number; name: string }>;
 };
 
 export const useShifts = () =>

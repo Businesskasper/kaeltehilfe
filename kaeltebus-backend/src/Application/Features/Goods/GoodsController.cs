@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace kaeltebus_backend.Features.Goods;
 
-
 [Route("/api/[controller]")]
 public class GoodsController : CRUDQController<Good, GoodCreateDto, GoodUpdateDto, GoodListDto>
 {
@@ -15,7 +14,8 @@ public class GoodsController : CRUDQController<Good, GoodCreateDto, GoodUpdateDt
         KbContext kbContext,
         IMapper mapper,
         IValidator<GoodCreateDto> validator
-    ) : base(logger, kbContext, mapper, validator) { }
+    )
+        : base(logger, kbContext, mapper, validator) { }
 }
 
 public class GoodCreateDto
@@ -27,11 +27,11 @@ public class GoodCreateDto
 }
 
 public class GoodUpdateDto : GoodCreateDto;
+
 public class GoodListDto : GoodCreateDto
 {
     public int Id { get; set; }
 }
-
 
 public class GoodDtoToObjProfile : Profile
 {

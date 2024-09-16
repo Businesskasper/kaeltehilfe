@@ -8,17 +8,19 @@ using Microsoft.Extensions.Hosting;
 public class TestingKbContext : KbContext
 {
     private bool _disposed;
-    private static DbContextOptions<KbContext> _defaultOptions = new DbContextOptionsBuilder<KbContext>()
+    private static DbContextOptions<KbContext> _defaultOptions =
+        new DbContextOptionsBuilder<KbContext>()
             .UseSqlite("DataSource=file::memory:?cache=shared")
             .Options;
 
-    public TestingKbContext() : base(_defaultOptions, new TestHostingEnvironment("Production"))
+    public TestingKbContext()
+        : base(_defaultOptions, new TestHostingEnvironment("Production"))
     {
         Database.OpenConnection();
         Database.EnsureCreated();
     }
 
-    override public void Dispose()
+    public override void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
@@ -37,19 +39,42 @@ public class TestingKbContext : KbContext
 
         _disposed = true;
     }
-
 }
 
 internal class TestHostingEnvironment : IWebHostEnvironment
 {
-    public string WebRootPath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public IFileProvider WebRootFileProvider { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public string ApplicationName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public IFileProvider ContentRootFileProvider { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-    public string ContentRootPath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public string WebRootPath
+    {
+        get => throw new NotImplementedException();
+        set => throw new NotImplementedException();
+    }
+    public IFileProvider WebRootFileProvider
+    {
+        get => throw new NotImplementedException();
+        set => throw new NotImplementedException();
+    }
+    public string ApplicationName
+    {
+        get => throw new NotImplementedException();
+        set => throw new NotImplementedException();
+    }
+    public IFileProvider ContentRootFileProvider
+    {
+        get => throw new NotImplementedException();
+        set => throw new NotImplementedException();
+    }
+    public string ContentRootPath
+    {
+        get => throw new NotImplementedException();
+        set => throw new NotImplementedException();
+    }
 
     private string _environmentName;
-    string IHostEnvironment.EnvironmentName { get => _environmentName; set => throw new NotImplementedException(); }
+    string IHostEnvironment.EnvironmentName
+    {
+        get => _environmentName;
+        set => throw new NotImplementedException();
+    }
 
     public TestHostingEnvironment(string environmentName)
     {

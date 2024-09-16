@@ -35,14 +35,12 @@ public class SqliteUniqueExceptionHandler : IMiddleware
         var jsonResponse = System.Text.Json.JsonSerializer.Serialize(response);
         return context.Response.WriteAsync(jsonResponse);
     }
-
 }
+
 public static class SqliteUniqueExceptionHandlerExtension
 {
-    public static IApplicationBuilder UseSqliteUniqueExceptionHandler(
-        this WebApplication app)
+    public static IApplicationBuilder UseSqliteUniqueExceptionHandler(this WebApplication app)
     {
         return app.UseMiddleware<SqliteUniqueExceptionHandler>();
     }
-
 }

@@ -27,7 +27,12 @@ public class GoodsControllerTest
         _validatorMock = new Mock<IValidator<GoodCreateDto>>();
         _logger = new Mock<ILogger<GoodsController>>();
 
-        _controller = new GoodsController(_logger.Object, _kbContext, _mapperMock.Object, _validatorMock.Object);
+        _controller = new GoodsController(
+            _logger.Object,
+            _kbContext,
+            _mapperMock.Object,
+            _validatorMock.Object
+        );
     }
 
     [Test]
@@ -37,7 +42,9 @@ public class GoodsControllerTest
         var goodDto = new GoodCreateDto { Name = "Test Good" };
         var good = new Good { Name = "Test Good" };
 
-        _validatorMock.Setup(v => v.Validate(It.IsAny<GoodCreateDto>())).Returns(new ValidationResult());
+        _validatorMock
+            .Setup(v => v.Validate(It.IsAny<GoodCreateDto>()))
+            .Returns(new ValidationResult());
         _mapperMock.Setup(m => m.Map<Good>(It.IsAny<GoodCreateDto>())).Returns(good);
 
         // Act
@@ -47,10 +54,14 @@ public class GoodsControllerTest
         Assert.IsInstanceOf<CreatedAtActionResult>(result);
         var createdAtActionResult = result as CreatedAtActionResult;
         Assert.That(createdAtActionResult?.ActionName, Is.EqualTo("Get"));
-        Assertions.AssertProperty<int>(createdAtActionResult?.Value, "id", value =>
-        {
-            Assert.Greater(value, 0);
-        });
+        Assertions.AssertProperty<int>(
+            createdAtActionResult?.Value,
+            "id",
+            value =>
+            {
+                Assert.Greater(value, 0);
+            }
+        );
     }
 
     [TearDownAttribute]

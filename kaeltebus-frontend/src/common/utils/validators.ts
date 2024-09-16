@@ -20,6 +20,12 @@ export const minLengthValidator =
     }
   };
 
+export const noSpacesValidator = () => (value?: string) => {
+  if (value?.toString()?.includes(" ")) {
+    return "Darf keine Leerzeichen enthalten";
+  }
+};
+
 const isValueSet = (value: unknown, type?: "Date" | "Id") => {
   if (value === null || value === undefined) return false;
 

@@ -6,11 +6,12 @@ public class Good : BaseEntity
     public string Description { get; set; } = "";
     public List<string> Tags { get; set; } = [];
     public GoodType GoodType { get; set; }
+    public virtual List<Distribution> Distributions { get; set; } = [];
 }
 
 public enum GoodType
 {
     CONSUMABLE,
     CLOTHING,
-    FOOD
+    FOOD,
 }

@@ -1,9 +1,7 @@
-
 namespace kaeltebus_backend.shared;
 
 public class InvalidModelStateExceptionHandler : IMiddleware
 {
-
     public InvalidModelStateExceptionHandler() { }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -18,12 +16,15 @@ public class InvalidModelStateExceptionHandler : IMiddleware
         }
     }
 
-    private static Task HandleValidationExceptionAsync(HttpContext context, Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary errorDictionary)
+    private static Task HandleValidationExceptionAsync(
+        HttpContext context,
+        Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary errorDictionary
+    )
     {
-        var errors = errorDictionary
-            .ToDictionary(
-                x => x.Key,
-                x => x.Value?.Errors.Select(err => err.ErrorMessage));
+        var errors = errorDictionary.ToDictionary(
+            x => x.Key,
+            x => x.Value?.Errors.Select(err => err.ErrorMessage)
+        );
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = StatusCodes.Status400BadRequest;
@@ -32,7 +33,7 @@ public class InvalidModelStateExceptionHandler : IMiddleware
             Title = "One or more validation errors occurred.",
             Status = StatusCodes.Status400BadRequest,
             Code = "INVALID",
-            Errors = errors
+            Errors = errors,
         };
         var jsonResponse = System.Text.Json.JsonSerializer.Serialize(response);
         return context.Response.WriteAsync(jsonResponse);
@@ -41,8 +42,7 @@ public class InvalidModelStateExceptionHandler : IMiddleware
 
 public static class InvalidModelStateMiddlewareExtension
 {
-    public static IApplicationBuilder UseInvalidModelStateHandler(
-        this WebApplication app)
+    public static IApplicationBuilder UseInvalidModelStateHandler(this WebApplication app)
     {
         return app.UseMiddleware<InvalidModelStateExceptionHandler>();
     }

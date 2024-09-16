@@ -32,10 +32,11 @@ public class ShiftsController : ControllerBase
     {
         var objs = await _kbContext
             .Shifts.Where(x => !x.IsDeleted)
+            .Include(s => s.Device)
             .Include(s => s.ShiftVolunteers)
             .ThenInclude(sv => sv.Volunteer)
             .ToListAsync();
-        var dtos = _mapper.Map<List<ShiftQueryDto>>(objs);
+        var dtos = _mapper.Map<List<ShiftQueryDto>>(objs ?? []);
 
         return dtos;
     }
@@ -43,7 +44,11 @@ public class ShiftsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<ShiftQueryDto>> Get([FromRoute(Name = "id")] int id)
     {
-        var obj = await _kbContext.Shifts.FirstOrDefaultAsync(x => x.Id == id);
+        var obj = await _kbContext
+            .Shifts.Include(s => s.Device)
+            .Include(s => s.ShiftVolunteers)
+            .ThenInclude(sv => sv.Volunteer)
+            .FirstOrDefaultAsync(s => s.Id == id);
         return obj != null ? _mapper.Map<ShiftQueryDto>(obj) : NotFound();
     }
 
@@ -55,6 +60,11 @@ public class ShiftsController : ControllerBase
             .Volunteers.Where(x => !x.IsDeleted && dto.Volunteers.Select(x => x.Id).Contains(x.Id))
             .ToDictionaryAsync(x => x.Id);
         obj.ShiftVolunteers = dto.Volunteers.ToShiftVolunteers(volunteers);
+
+        var device = await _kbContext.Devices.FindAsync(dto.DeviceId);
+        if (device == null)
+            this.ThrowModelStateError("deviceId", "Device not found");
+        obj.Device = device;
 
         var result = await _kbContext.Shifts.AddAsync(obj);
         await _kbContext.SaveChangesAsync();
@@ -69,21 +79,31 @@ public class ShiftsController : ControllerBase
     )
     {
         var existing = await _kbContext
-            .Shifts.Include(s => s.ShiftVolunteers)
+            .Shifts.Include(s => s.Device)
+            .Include(s => s.ShiftVolunteers)
             .ThenInclude(sv => sv.Volunteer)
             .FirstOrDefaultAsync(s => s.Id == id);
         if (existing is null)
             return NotFound();
 
-        var updatedObj = _mapper.Map<Shift>(dto);
-        existing.Date = updatedObj.Date;
-        existing.IsDeleted = updatedObj.IsDeleted;
-        existing.ShiftVolunteers.Clear();
+        var receivedObj = _mapper.Map<Shift>(dto);
+        existing.Date = receivedObj.Date;
+        existing.IsDeleted = receivedObj.IsDeleted;
 
+        existing.ShiftVolunteers.Clear();
         var volunteers = await _kbContext
             .Volunteers.Where(x => !x.IsDeleted && dto.Volunteers.Select(x => x.Id).Contains(x.Id))
             .ToDictionaryAsync(x => x.Id);
         existing.ShiftVolunteers = dto.Volunteers.ToShiftVolunteers(volunteers);
+
+        if (existing.DeviceId != receivedObj.DeviceId)
+        {
+            var device = await _kbContext.Devices.FindAsync(receivedObj.DeviceId);
+            if (device == null)
+                this.ThrowModelStateError("DeviceId", "Device not found");
+            existing.Device = device;
+            existing.DeviceId = receivedObj.DeviceId;
+        }
 
         _kbContext.Shifts.Update(existing);
         await _kbContext.SaveChangesAsync();
@@ -135,6 +155,7 @@ static class ShiftsExtensions
 
 public class ShiftCreateDto
 {
+    public int DeviceId { get; set; }
     public DateOnly? Date { get; set; }
     public List<ShiftCreateVolunteerDto> Volunteers { get; set; } = [];
 }
@@ -149,6 +170,8 @@ public class ShiftUpdateDto : ShiftCreateDto;
 public class ShiftQueryDto
 {
     public int Id { get; set; }
+    public int DeviceId { get; set; }
+    public string RegistrationNumber { get; set; } = "";
     public DateOnly? Date { get; set; }
     public List<ShiftListVolunteerDto>? Volunteers { get; set; }
 }
@@ -161,21 +184,11 @@ public class ShiftListVolunteerDto
     public bool IsDriver { get; set; }
 }
 
-public class ShiftDtoToObjProfile : Profile
+public class ShiftDtoProfile : Profile
 {
-    public ShiftDtoToObjProfile()
+    public ShiftDtoProfile()
     {
         CreateMap<ShiftCreateDto, Shift>();
-        // CreateMap<ShiftCreateVolunteerDto, Volunteer>();
-
-        // CreateMap<Shift, ShiftCreateDto>();
-        // CreateMap<Volunteer, ShiftCreateVolunteerDto>();
-
-        // CreateMap<Volunteer, ShiftListVolunteerDto>();
-        // CreateMap<Shift, ShiftQueryDto>().ForMember(shift => shift.Volunteers, opt => opt.MapFrom(src => src.Volunteers));
-
-        // CreateMap<ShiftUpdateDto, Shift>();
-
 
         CreateMap<Shift, ShiftQueryDto>()
             .ForMember(
@@ -194,7 +207,12 @@ public class ShiftDtoToObjProfile : Profile
                     )
             )
             .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.DeviceId, opt => opt.MapFrom(src => src.DeviceId))
+            .ForMember(
+                dest => dest.RegistrationNumber,
+                opt => opt.MapFrom(src => src.Device.RegistrationNumber)
+            );
     }
 }
 
@@ -203,6 +221,7 @@ public class ShiftCreateDtoValidator : AbstractValidator<ShiftCreateDto>
     public ShiftCreateDtoValidator()
     {
         RuleFor(shift => shift.Date).NotNull();
+        RuleFor(shift => shift.DeviceId).NotNull();
         RuleFor(shift => shift.Volunteers).NotNull();
         RuleForEach(shift => shift.Volunteers).SetValidator(new ShiftVolunteerDtoValidator());
         RuleFor(shift => shift.Volunteers)

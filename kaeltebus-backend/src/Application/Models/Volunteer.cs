@@ -6,9 +6,13 @@ public class Volunteer : BaseEntity
     public string Lastname { get; set; } = "";
     public string Fullname
     {
-        get => !String.IsNullOrEmpty(Firstname) || !String.IsNullOrEmpty(Lastname) ? $"{Firstname} {Lastname}".Trim() : "";
+        get =>
+            !String.IsNullOrEmpty(Firstname) || !String.IsNullOrEmpty(Lastname)
+                ? $"{Firstname} {Lastname}".Trim()
+                : "";
     }
     public Gender Gender { get; set; }
     public bool IsDriver { get; set; }
     public string Remarks { get; set; } = "";
+    public virtual List<ShiftVolunteer> ShiftVolunteers { get; set; } = [];
 }

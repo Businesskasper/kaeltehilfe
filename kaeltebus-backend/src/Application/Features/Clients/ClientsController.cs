@@ -7,15 +7,18 @@ using Microsoft.AspNetCore.Mvc;
 namespace kaeltebus_backend.Features.Clients;
 
 [Route("/api/[controller]")]
-public class ClientsController : CRUDQController<Client, ClientCreateDto, ClientUpdateDto, ClientListDto>
+public class ClientsController
+    : CRUDQController<Client, ClientCreateDto, ClientUpdateDto, ClientListDto>
 {
     public ClientsController(
         ILogger<CRUDQController<Client, ClientCreateDto, ClientUpdateDto, ClientListDto>> logger,
         KbContext kbContext,
         IMapper mapper,
         IValidator<ClientCreateDto> validator
-    ) : base(logger, kbContext, mapper, validator) { }
+    )
+        : base(logger, kbContext, mapper, validator) { }
 }
+
 public class ClientCreateDto
 {
     public string? Name { get; set; }

@@ -11,7 +11,7 @@ type Transformer<T> = {
   [K in keyof T]?: (value: T[K]) => T[K];
 };
 
-export const useCrudHook = <T, TWriteModel>(
+export const useCrudHook = <T, TWriteModel extends Record<string, unknown>>(
   key: string,
   transformer?: Transformer<T>
 ) => {

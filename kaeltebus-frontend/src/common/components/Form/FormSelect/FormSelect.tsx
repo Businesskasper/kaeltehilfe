@@ -26,6 +26,8 @@ export type FormSelectProps<T extends { [key in string]: unknown }> = {
   formProps: ReturnType<ReturnType<typeof useForm>["getInputProps"]>;
   searchable?: boolean;
   onBlur?: () => void;
+  label?: string;
+  withAsterisk?: boolean;
 };
 
 export const FormSelect = <T extends { [key in string]: unknown }>({
@@ -39,6 +41,8 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
   formProps,
   searchable,
   onBlur,
+  label,
+  withAsterisk,
 }: FormSelectProps<T>) => {
   const getItemValue = React.useCallback(
     (item: T) => {
@@ -118,6 +122,8 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
         {searchable ? (
           <TextInput
             classNames={{ root: `FormSelect ${classNames}` }}
+            label={label}
+            withAsterisk={withAsterisk}
             style={style}
             placeholder="Bitte auswählen"
             value={formProps.value}
@@ -146,6 +152,8 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
         ) : (
           <InputBase
             classNames={{ root: `FormSelect ${classNames}` }}
+            label={label}
+            withAsterisk={withAsterisk}
             style={style}
             component="button"
             type="button"
@@ -157,6 +165,7 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
               formProps.onBlur && formProps.onBlur();
               onBlur && onBlur();
             }}
+            error={formProps.error}
           >
             {formProps.value || (
               <Input.Placeholder>Bitte auswählen</Input.Placeholder>
@@ -164,7 +173,9 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
           </InputBase>
         )}
       </Combobox.Target>
-      <Combobox.Dropdown>
+      <Combobox.Dropdown
+        hidden={!filteredOptions || filteredOptions?.length === 0}
+      >
         <Combobox.Options>
           <ScrollArea.Autosize mah={200} type="scroll">
             {filteredOptions.map((option, index) => {

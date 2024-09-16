@@ -6,6 +6,7 @@ import React from "react";
 import {
   Shift,
   ShiftPost,
+  useDevices,
   useShifts,
   useVolunteers,
 } from "../../../common/app";
@@ -15,6 +16,7 @@ import {
   ModalActions,
   ModalMain,
 } from "../../../common/components";
+import { compareByDateOnly } from "../../../common/utils";
 import {
   isDuplicate,
   requiredValidator,
@@ -29,6 +31,8 @@ type ShiftModalProps = {
 
 type ShiftForm = {
   date: Date;
+  deviceId: number;
+  registrationNumber: string;
   volunteers: Array<{ id: number; fullname: string }>;
 };
 
@@ -43,8 +47,14 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
     objs: { data: volunteers },
   } = useVolunteers();
 
+  const {
+    objs: { data: devices },
+  } = useDevices();
+
   const initialValues: ShiftForm = {
     date: undefined as unknown as Date,
+    deviceId: undefined as unknown as number,
+    registrationNumber: "",
     volunteers: [
       { id: undefined as unknown as number, fullname: "" },
       { id: undefined as unknown as number, fullname: "" },
@@ -62,11 +72,15 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
           requiredValidator("Date"),
           isDuplicate(
             shifts
-              ?.filter((s) => s.date !== existing?.date)
+              ?.filter(
+                (s) =>
+                  s.date !== existing?.date && s.deviceId === existing?.deviceId
+              )
               ?.map(({ date }) => date) || [],
             "Eine Schicht zum angegebenem Datum existiert bereits"
           )
         ),
+      registrationNumber: (value) => validators(value, requiredValidator()),
       volunteers: {
         id: requiredValidator("Id", "Bitte auswählen"),
         fullname: (value, values, path) => {
@@ -86,15 +100,14 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
             return;
           }
 
-          // if ()
-          const volunteerObjs = volunteers?.filter(
+          const volunteerObjs = values.volunteers?.filter(
             (v) => v.id === currentVolunteer.id
           );
           if (!volunteerObjs || volunteerObjs.length === 0) {
             return "Frewilliger wurde nicht gefunden";
           }
           if (volunteerObjs.length > 1) {
-            return "Mehrere Freiwillige unter selbem Namen gefnden - bitte auswählen";
+            return "Freiwillige können nicht mehrfach zugeteilt werden";
           }
         },
       },
@@ -105,6 +118,8 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
     if (existing) {
       form.setValues({
         date: existing.date,
+        deviceId: existing.deviceId,
+        registrationNumber: existing.registrationNumber,
         volunteers:
           existing.volunteers?.map(({ id, fullname }) => ({
             id,
@@ -131,6 +146,7 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
         month: "2-digit",
         day: "2-digit",
       }),
+      deviceId: formModel.deviceId,
       volunteers: formModel.volunteers.map(({ id }) => ({ id })),
     };
     if (existing) {
@@ -174,44 +190,14 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
             (v) => v.fullname === currentVolunteer.fullname
           );
           if (!volunteerObj || volunteerObj.length === 0) {
-            // form.setFieldError(
-            //   `volunteers.${index}.fullname`,
-            //   "Nicht gefunden"
-            // );
             return;
           }
           if (volunteerObj.length > 1) {
-            // form.setFieldError(
-            //   `volunteers.${index}.fullname`,
-            //   "Bitte auswählen"
-            // );
             return;
           }
           form.setFieldValue(`volunteers.${index}.id`, volunteerObj[0].id);
         }}
       />
-      {/* <Autocomplete
-          {...form.getInputProps(`volunteers.${index}.id`)}
-          key={form.key(`volunteers.${index}.id`)}
-          placeholder={`Freiwilliger ${index + 1}`}
-          style={{ width: "calc(100% - 35px)" }}
-          withAsterisk
-          data={(volunteers || []).map((v) => ({
-            value: v.id.toString() || "",
-            label: v.fullname || "",
-          }))}
-          renderOption={(x) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return (x.option as any).label;
-          }}
-        /> */}
-      {/* <Select
-          {...form.getInputProps(`volunteers.${index}.name`)}
-          key={form.key(`volunteers.${index}.name`)}
-          placeholder={`Freiwilliger ${index + 1}`}
-          style={{ width: "calc(100% - 35px)" }}
-          withAsterisk
-        /> */}
       <ActionIcon
         // h="35px"
         pos="absolute"
@@ -245,6 +231,25 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
             valueFormat="DD.MM.YYYY"
             preserveTime={false}
             clearable
+            getDayProps={(date) => {
+              const entryExists = !!shifts?.find(
+                (s) => compareByDateOnly(s.date, date) === 0
+              );
+              return {
+                disabled: entryExists,
+              };
+            }}
+          />
+          <FormSelect
+            label="Fahrzeug"
+            items={devices || []}
+            style={{ marginBottom: "var(--mantine-spacing-sm)" }}
+            valueGetter="registrationNumber"
+            sort
+            formProps={form.getInputProps("registrationNumber")}
+            onItemSelected={(selectedDevice) => {
+              form.setFieldValue("deviceId", selectedDevice?.id || 1);
+            }}
           />
           <InputLabel required w="100%">
             Freiwillige

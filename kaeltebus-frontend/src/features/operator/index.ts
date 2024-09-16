@@ -1,3 +1,3 @@
-export * from "./Add/Add";
+export * from "./Add/DistributionAdd";
+export * from "./DistributionOverview/DistributionOverview";
 export * from "./OperatorHome";
-export * from "./Overview/Overview";

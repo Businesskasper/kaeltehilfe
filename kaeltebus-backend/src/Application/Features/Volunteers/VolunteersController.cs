@@ -8,15 +8,20 @@ using Microsoft.EntityFrameworkCore;
 namespace kaeltebus_backend.Features.Volunteers;
 
 [Route("/api/[controller]")]
-public class VolunteersController : CRUDQController<Volunteer, VolunteerCreateDto, VolunteerUpdateDto, VolunteerListDto>
+public class VolunteersController
+    : CRUDQController<Volunteer, VolunteerCreateDto, VolunteerUpdateDto, VolunteerListDto>
 {
     public VolunteersController(
-        ILogger<CRUDQController<Volunteer, VolunteerCreateDto, VolunteerUpdateDto, VolunteerListDto>> logger,
+        ILogger<
+            CRUDQController<Volunteer, VolunteerCreateDto, VolunteerUpdateDto, VolunteerListDto>
+        > logger,
         KbContext kbContext,
         IMapper mapper,
         IValidator<VolunteerCreateDto> validator
-    ) : base(logger, kbContext, mapper, validator) { }
+    )
+        : base(logger, kbContext, mapper, validator) { }
 }
+
 public class VolunteerCreateDto
 {
     public string? Firstname { get; set; }

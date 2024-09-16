@@ -9,45 +9,26 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   IconBedFlat,
   IconBus,
+  IconCalendar,
   IconMoon,
   IconSoup,
   IconSun,
   IconUser,
 } from "@tabler/icons-react";
+import { useAuth } from "react-oidc-context";
 import { Outlet } from "react-router-dom";
 import LogoLight from "../../common/assets/drk_logo.png";
 import LogoDark from "../../common/assets/drk_logo_dark.png";
-import { NavigationItem, NavigationItemProps } from "../../common/components";
+import { NavigationItem, NavigationSection } from "../../common/components";
 
 import "./AdminHome.scss";
-
-const links: Array<NavigationItemProps> = [
-  {
-    label: "Güter",
-    target: "goods",
-    Icon: IconSoup,
-  },
-  {
-    label: "Klienten",
-    target: "clients",
-    Icon: IconBedFlat,
-  },
-  {
-    label: "Freiwillige",
-    target: "volunteers",
-    Icon: IconUser,
-  },
-  {
-    label: "Schichten",
-    target: "shifts",
-    Icon: IconBus,
-  },
-];
 
 export const AdminHome = () => {
   const [opened, { toggle }] = useDisclosure();
 
   const { toggleColorScheme, colorScheme } = useMantineColorScheme();
+
+  const auth = useAuth();
 
   return (
     <AppShell
@@ -68,19 +49,53 @@ export const AdminHome = () => {
               src={colorScheme === "dark" ? LogoDark : LogoLight}
             />
           </Group>
-          <Switch
-            size="md"
-            checked={colorScheme === "dark"}
-            onChange={() => toggleColorScheme()}
-            onLabel={<IconMoon style={{ padding: "2px" }} />}
-            offLabel={<IconSun style={{ padding: "2px" }} />}
-          />
+          <Group>
+            {auth.isAuthenticated && <span>{auth?.user?.profile.name}</span>}
+            <Switch
+              size="md"
+              checked={colorScheme === "dark"}
+              onChange={() => toggleColorScheme()}
+              onLabel={<IconMoon style={{ padding: "2px" }} />}
+              offLabel={<IconSun style={{ padding: "2px" }} />}
+            />
+          </Group>
         </Group>
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        {links.map((link) => (
-          <NavigationItem key={link.target} {...link} onNavigate={toggle} />
-        ))}
+        <NavigationSection label="Schichtplanung">
+          <NavigationItem
+            onNavigate={toggle}
+            label="Freiwillige"
+            Icon={IconUser}
+            target="volunteers"
+          />
+          <NavigationItem
+            onNavigate={toggle}
+            label="Schichtträger"
+            Icon={IconBus}
+            target="devices"
+          />
+          <NavigationItem
+            onNavigate={toggle}
+            label="Schichten"
+            Icon={IconCalendar}
+            target="shifts"
+          />
+        </NavigationSection>
+        <NavigationSection label="Ausgabeverwaltung">
+          <NavigationItem
+            onNavigate={toggle}
+            label="Güter"
+            target="goods"
+            Icon={IconSoup}
+          />
+          <NavigationItem
+            onNavigate={toggle}
+            label="Klienten"
+            target="clients"
+            Icon={IconBedFlat}
+          />
+        </NavigationSection>
       </AppShell.Navbar>
       <AppShell.Main id="admin-main">
         <Outlet />

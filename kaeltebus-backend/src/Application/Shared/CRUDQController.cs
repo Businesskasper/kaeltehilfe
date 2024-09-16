@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
-public abstract class CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto> : ControllerBase where TEntity : BaseEntity
+public abstract class CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto> : ControllerBase
+    where TEntity : BaseEntity
 {
-    private readonly ILogger<CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>> _logger;
-    private readonly KbContext _kbContext;
-    private readonly IMapper _mapper;
-    private readonly IValidator<TCreateDto> _validator;
+    protected readonly ILogger<CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>> _logger;
+    protected readonly KbContext _kbContext;
+    protected readonly IMapper _mapper;
+    protected readonly IValidator<TCreateDto> _validator;
 
     public CRUDQController(
         ILogger<CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>> logger,
@@ -55,12 +56,17 @@ public abstract class CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>
     }
 
     [HttpPatch("{id}")]
-    public async Task<ActionResult> Update([FromRoute(Name = "id")] int id, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] TUpdateDto update)
+    public async Task<ActionResult> Update(
+        [FromRoute(Name = "id")] int id,
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] TUpdateDto update
+    )
     {
-        if (update is null) throw new InvalidModelStateException(new ModelStateDictionary());
+        if (update is null)
+            throw new InvalidModelStateException(new ModelStateDictionary());
 
         var existing = await _kbContext.Set<TEntity>().FindAsync(id);
-        if (existing is null) return NotFound();
+        if (existing is null)
+            return NotFound();
 
         // Generate full updated object by merging existing and updated as DTO and mapping back to domain model
         var existingDto = _mapper.Map<TEntity, TCreateDto>(existing);
@@ -76,10 +82,14 @@ public abstract class CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult> Put([FromRoute(Name = "id")] int id, [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] TCreateDto dto)
+    public async Task<ActionResult> Put(
+        [FromRoute(Name = "id")] int id,
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] TCreateDto dto
+    )
     {
         var existing = await _kbContext.Set<TEntity>().FindAsync(id);
-        if (existing is null) return NotFound();
+        if (existing is null)
+            return NotFound();
 
         var updatedEntity = _mapper.Map(dto, existing);
 
@@ -96,7 +106,8 @@ public abstract class CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Set<TEntity>().FindAsync(id);
-        if (obj == null) return NotFound();
+        if (obj == null)
+            return NotFound();
 
         // _kbContext.Set<TEntity>().Remove(obj);
         obj.IsDeleted = true;

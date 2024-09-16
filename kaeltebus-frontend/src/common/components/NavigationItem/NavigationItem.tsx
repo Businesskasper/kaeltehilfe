@@ -31,16 +31,18 @@ export const NavigationItem = ({ target, label, Icon, onNavigate }: Props) => {
   //   console.log(target, isActive1, isActive2);
 
   return (
-    <NavLink
-      key={target}
-      onClick={() => {
-        navigate(target);
-        onNavigate && onNavigate();
-      }}
-      active={isActive}
-      fz="h3"
-      label={label}
-      leftSection={<Icon size="1.5rem" stroke={1.5} />}
-    />
+    <>
+      <NavLink
+        key={target}
+        onClick={() => {
+          navigate(target);
+          onNavigate && onNavigate();
+        }}
+        active={isActive}
+        fz="h3"
+        label={label}
+        leftSection={<Icon size="1.5rem" stroke={1.5} />}
+      />
+    </>
   );
 };

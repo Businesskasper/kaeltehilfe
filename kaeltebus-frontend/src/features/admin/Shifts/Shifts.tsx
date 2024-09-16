@@ -9,8 +9,8 @@ import {
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
 import { Shift, useShifts } from "../../../common/app";
-import { ExportConfig, Table } from "../../../common/components";
-import { formatDate } from "../../../common/utils";
+import { ExportConfig, Table, TransformFn } from "../../../common/components";
+import { compareByDateOnly, formatDate } from "../../../common/utils";
 import { ShiftModal } from "./ShiftModal";
 
 export const Shifts = () => {
@@ -44,13 +44,15 @@ export const Shifts = () => {
       id: "date",
       accessorFn: ({ date }) => formatDate(date),
       header: "Datum",
+      sortingFn: (a, b) => {
+        return compareByDateOnly(a.original.date, b.original.date);
+      },
     },
-    ...volunteerColumns,
-    // {
-    //   header: "Freiwillige",
-    //   accessorFn: ({ volunteers }) =>
-    //     volunteers?.map((v) => v.fullname).join(", "),
-    // },
+    {
+      id: "registrationNumber",
+      accessorKey: "registrationNumber",
+      header: "Fahrzeug",
+    },
     {
       id: "planning_state",
       header: "Planungsstatus",
@@ -82,12 +84,21 @@ export const Shifts = () => {
         );
       },
     },
+    ...volunteerColumns,
   ];
-  console.log("cols", columns);
+
+  const volunteerExportColumns: Array<{
+    key: string;
+    transformFn: TransformFn<Shift>;
+  }> = Array.from(Array(countVolunteers).keys()).map((index) => ({
+    key: `Freiwilliger ${index + 1}`,
+    transformFn: (shift) => shift.volunteers?.[index]?.fullname || "",
+  }));
 
   const exportConfig: ExportConfig<Shift> = {
     fileName: () =>
       `KB-Schichten-${new Date().toLocaleDateString().replace(".", "_")}.xlsx`,
+    manualColumns: volunteerExportColumns,
   };
 
   const handleEdit = React.useCallback(() => {
@@ -118,6 +129,7 @@ export const Shifts = () => {
         isLoading={isTableLoading}
         keyGetter="id"
         columns={columns}
+        // columns={isLoading ? [] : columns}
         handleAdd={handleAdd}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
@@ -125,6 +137,7 @@ export const Shifts = () => {
         fillScreen
         tableKey="shifts-overview"
         setSelected={setSelectedShifts}
+        defaultSorting={[{ id: "date", desc: true }]}
       />
       <ShiftModal
         close={closeModal}
