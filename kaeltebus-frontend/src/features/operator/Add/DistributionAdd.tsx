@@ -282,7 +282,12 @@ export const DistributionAdd = () => {
                   </Button>
                   {activeStep === FormStep.GOODS ? (
                     <Button
-                      disabled={!form.isTouched() || !form.isDirty()}
+                      disabled={
+                        !form.isTouched() ||
+                        !form.isDirty() ||
+                        !form.values.goods ||
+                        form.values.goods.length === 0
+                      }
                       onClick={() => form.onSubmit(onSubmit)()}
                     >
                       Absenden
@@ -296,6 +301,14 @@ export const DistributionAdd = () => {
                             : activeStep
                         );
                       }}
+                      disabled={
+                        activeStep === FormStep.LOCATION
+                          ? !form.values.locationName
+                          : activeStep === FormStep.CLIENTS
+                          ? !form.values.clients ||
+                            form.values.clients.length === 0
+                          : false
+                      }
                     >
                       Weiter
                     </Button>

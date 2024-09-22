@@ -153,11 +153,15 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
                               <ActionIcon
                                 onClick={() => removeGood(good)}
                                 color="red"
+                                variant="subtle"
                               >
                                 <IconTrash />
                               </ActionIcon>
                             ) : (
-                              <ActionIcon onClick={() => addGood(good)}>
+                              <ActionIcon
+                                onClick={() => addGood(good)}
+                                variant="subtle"
+                              >
                                 <IconPlus />
                               </ActionIcon>
                             )}

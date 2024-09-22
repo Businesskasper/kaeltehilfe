@@ -45,6 +45,7 @@ export const FormClients = () => {
           searchable
           items={clients || []}
           valueGetter="name"
+          withAsterisk
           sort
           label="Name"
           style={{ width: "calc(100% - 45px)" }}

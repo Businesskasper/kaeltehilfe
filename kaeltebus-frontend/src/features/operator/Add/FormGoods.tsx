@@ -75,8 +75,8 @@ const GoodSelection = ({
     <GoodListItem good={goodSource}>
       <Group>
         <ActionIcon
-          variant="default"
           onClick={() => adjustQuantity(selectedGood, "DECREASE")}
+          variant="subtle"
         >
           {selectedGood.quantity > 1 ? (
             <IconMinus color={colors.red[0]} />
@@ -86,8 +86,8 @@ const GoodSelection = ({
         </ActionIcon>
         {selectedGood.quantity}
         <ActionIcon
-          variant="default"
           onClick={() => adjustQuantity(selectedGood, "INCREASE")}
+          variant="subtle"
         >
           <IconPlus color={colors.blue[0]} />
         </ActionIcon>
