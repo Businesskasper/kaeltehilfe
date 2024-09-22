@@ -45,7 +45,7 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
           (good) =>
             good.name?.toUpperCase()?.includes(searchValue?.toUpperCase()) ||
             good.tags?.find((tag) =>
-              tag.includes(searchValue?.toUpperCase())
+              tag?.toUpperCase()?.includes(searchValue?.toUpperCase())
             ) ||
             good.description
               ?.toUpperCase()
@@ -148,7 +148,13 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
                           (g) => g.id === good.id
                         );
                         return (
-                          <GoodListItem good={good} key={good.id}>
+                          <GoodListItem
+                            good={good}
+                            key={good.id}
+                            onTagClicked={(value) =>
+                              searchField.setValue(value)
+                            }
+                          >
                             {exists ? (
                               <ActionIcon
                                 onClick={() => removeGood(good)}

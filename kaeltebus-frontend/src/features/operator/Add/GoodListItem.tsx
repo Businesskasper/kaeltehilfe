@@ -5,9 +5,14 @@ import "./DistributionAdd.scss";
 
 type GoodListItemProps = React.PropsWithChildren & {
   good: Good;
+  onTagClicked?: (text: string) => void;
 };
 
-export const GoodListItem = ({ good, children }: GoodListItemProps) => {
+export const GoodListItem = ({
+  good,
+  onTagClicked,
+  children,
+}: GoodListItemProps) => {
   const Icon = good.goodType
     ? GoodTypeTranslation[good.goodType]?.icon
     : undefined;
@@ -24,10 +29,11 @@ export const GoodListItem = ({ good, children }: GoodListItemProps) => {
             {good.tags.map((tag, index) => {
               return (
                 <Chip
-                  style={{ pointerEvents: "none" }}
+                  style={{ pointerEvents: !onTagClicked ? "none" : undefined }}
                   size="xs"
                   checked={false}
                   key={index}
+                  onClick={!onTagClicked ? undefined : () => onTagClicked(tag)}
                 >
                   {tag}
                 </Chip>
