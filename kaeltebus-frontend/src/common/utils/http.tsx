@@ -63,7 +63,7 @@ const getBasePost =
   async (item: T, abortSignal?: AbortSignal): Promise<void> => {
     const itemKeys = Object.keys(item);
     const cleanedItem = itemKeys.reduce((obj, key) => {
-      const value = obj[key];
+      const value = item[key];
       return {
         ...obj,
         [key]: typeof value === "string" ? value?.trimStart().trimEnd() : value,
@@ -98,7 +98,7 @@ const getBasePut =
   ): Promise<void> => {
     const itemKeys = Object.keys(update);
     const cleanedUpdate = itemKeys.reduce((obj, key) => {
-      const value = obj[key];
+      const value = update[key];
       return {
         ...obj,
         [key]: typeof value === "string" ? value?.trimStart().trimEnd() : value,

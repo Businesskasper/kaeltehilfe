@@ -13,3 +13,8 @@ export const GenderTranslation: {
     label: "divers",
   },
 };
+
+export const GenderOptions = Object.keys(GenderTranslation).map((gender) => ({
+  value: gender,
+  label: GenderTranslation[gender as Gender].label || "",
+}));

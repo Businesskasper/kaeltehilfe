@@ -6,7 +6,7 @@ import {
   DefaultMantineColor,
   Tooltip,
 } from "@mantine/core";
-import { useLocalStorage, useMediaQuery } from "@mantine/hooks";
+import { useLocalStorage } from "@mantine/hooks";
 import {
   IconEdit,
   IconFileExcel,
@@ -35,6 +35,7 @@ import React, { ComponentType } from "react";
 import * as XLSX from "xlsx";
 import { ValueTypeProps } from "../../utils/types";
 
+import { useBreakpoint } from "../../utils";
 import "./Table.scss";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -208,7 +209,8 @@ const CustomActions = <T extends Record<string, any>>({
   handleEdit,
   customActions,
 }: CustomActionsProps<T>) => {
-  const isMobile = useMediaQuery("(max-width: 50em)");
+  const breakpoint = useBreakpoint();
+  const isMobile = breakpoint === "BASE" || breakpoint === "XS";
 
   const selectedData =
     table.getIsSomeRowsSelected() || table.getIsAllRowsSelected()

@@ -74,6 +74,7 @@ function App() {
       <MantineProvider
         defaultColorScheme="light"
         theme={{
+          // scale: 1.2,
           colors: {
             red: colorsTuple("#e60005"),
             soft_red: colorsTuple("#e46450"),

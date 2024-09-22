@@ -8,7 +8,11 @@ import {
   Title,
 } from "@mantine/core";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
-import { Distribution } from "../../../common/app";
+import {
+  Distribution,
+  GoodTypeTranslation,
+  useGoods,
+} from "../../../common/app";
 import { compareByDateOnly, groupBy } from "../../../common/utils";
 
 export type DistributionCardProps = {
@@ -22,6 +26,10 @@ export const DistributionCard = ({
   distributions,
   isToday,
 }: DistributionCardProps) => {
+  const {
+    objs: { data: goods },
+  } = useGoods();
+
   // TODO: Gruppierung um ort
   const byGood = groupBy(distributions, (d) => d.good?.id);
   const sortedGoodIds = Array.from(byGood.keys()).sort((goodId1, goodId2) => {
@@ -52,9 +60,16 @@ export const DistributionCard = ({
               (sum, dist) => sum + dist.quantity || 0,
               0
             );
+            const good = goods?.find((g) => g.id === goodId);
+            const Icon = good?.goodType
+              ? GoodTypeTranslation[good.goodType]?.icon
+              : undefined;
             return (
               <Group key={String(goodId)} justify="space-between">
-                <Text>{goodName}</Text>
+                <Group>
+                  <Text>{goodName}</Text>
+                  {Icon && <Icon />}
+                </Group>
                 <Group>
                   {isToday && (
                     <ActionIcon

@@ -1,13 +1,36 @@
 .DistributionAdd {
     margin-top: var(--mantine-spacing-xl);
+
     .DistributionStepperRoot {
-       @media screen and (min-width: 62em) {
+        @media screen and (min-width: 62em) {
             display: flex;
             flex-direction: column;
-            align-items: center;
-       }
+            // align-items: center;
+            align-items: flex-start;
+        }
     }
 }
+
+
+.GoodListItem {
+    width: 100%;
+    height: 65px;
+    border: 1px solid var(--mantine-color-country_gray-light-color);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.FormGoodDrawer {
+    &.IsLoading {
+        .mantine-Drawer-header {
+            background: var(--overlay-bg);
+        }
+    }
+
+}
+
 
 
 // Breakpoint	Viewport width	Value in px

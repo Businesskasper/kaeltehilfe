@@ -1,7 +1,6 @@
 import { Modal, Title } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import React from "react";
-import { classes } from "../../utils";
+import { classes, useBreakpoint } from "../../utils";
 
 import "./Modal.scss";
 
@@ -15,7 +14,8 @@ type ModalProps = {
 };
 
 export const AppModal = ({ isOpen, close, title, children }: ModalProps) => {
-  const isMobile = useMediaQuery("(max-width: 50em)");
+  const breakpoint = useBreakpoint();
+  const isMobile = breakpoint === "BASE" || breakpoint === "XS";
 
   return (
     <Modal.Root

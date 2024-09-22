@@ -1,3 +1,4 @@
+export * from "./batchDistribution";
 export * from "./client";
 export * from "./device";
 export * from "./distribution";

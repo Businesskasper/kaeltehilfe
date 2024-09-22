@@ -1,3 +1,4 @@
+export * from "./breakpoint";
 export * from "./classes";
 export * from "./crudHook";
 export * from "./dates";

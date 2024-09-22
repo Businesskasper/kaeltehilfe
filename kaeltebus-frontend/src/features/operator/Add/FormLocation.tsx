@@ -1,60 +1,39 @@
-import { Button } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { Title } from "@mantine/core";
 import { useLocations } from "../../../common/app";
 import { FormSelect } from "../../../common/components";
-import {
-  requiredValidator,
-  validators,
-} from "../../../common/utils/validators";
+import { useBreakpoint } from "../../../common/utils";
+import { useDistributionFormContext } from "./DistributionFormContext";
 
-type LocationForm = {
-  locationName: string;
-};
-
-type Props = {
-  toNext: () => void;
-};
-export const FormLocation = ({ toNext }: Props) => {
+export const FormLocation = () => {
   const {
     objs: { data: locations },
   } = useLocations();
 
-  const form = useForm<LocationForm>({
-    mode: "controlled",
-    initialValues: { locationName: "" },
-    validate: {
-      locationName: (value) => validators(value, requiredValidator()),
-    },
-  });
+  const form = useDistributionFormContext();
 
-  const onSubmit = (formModel: LocationForm) => {
-    console.log("submit", formModel);
-    form.validateField("locationName");
-    toNext();
-  };
-  //   form.validate();
-  //   if (form.erro)
+  const breakpoint = useBreakpoint();
+  const isDesktop =
+    breakpoint === "SM" ||
+    breakpoint === "MD" ||
+    breakpoint === "LG" ||
+    breakpoint === "XL";
 
   return (
-    <form style={{ display: "contents" }} onSubmit={form.onSubmit(onSubmit)}>
+    <>
+      {isDesktop && (
+        <Title mt={isDesktop ? "sm" : undefined} mb="md" order={3}>
+          Ausgabe
+        </Title>
+      )}
       <FormSelect
-        formProps={form.getInputProps("locationName")}
         label="Ort"
         withAsterisk
         searchable
         items={locations || []}
         valueGetter="name"
         sort
-        style={{ width: "calc(100% - 35px)" }}
+        formProps={form.getInputProps("locationName")}
       />
-      <Button
-        disabled={!form.isTouched() || !form.isDirty()}
-        onClick={() => form.onSubmit(onSubmit)()}
-        // fullWidth
-        mt="xl"
-      >
-        Weiter
-      </Button>
-    </form>
+    </>
   );
 };

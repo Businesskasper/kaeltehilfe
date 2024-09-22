@@ -51,16 +51,23 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
     objs: { data: devices },
   } = useDevices();
 
-  const initialValues: ShiftForm = {
-    date: undefined as unknown as Date,
-    deviceId: undefined as unknown as number,
-    registrationNumber: "",
-    volunteers: [
-      { id: undefined as unknown as number, fullname: "" },
-      { id: undefined as unknown as number, fullname: "" },
-      { id: undefined as unknown as number, fullname: "" },
-    ],
-  };
+  const initialValues = React.useMemo<ShiftForm>(
+    () => ({
+      date: undefined as unknown as Date,
+      deviceId:
+        devices?.length === 1
+          ? devices[0].id
+          : (undefined as unknown as number),
+      registrationNumber:
+        devices?.length === 1 ? devices[0].registrationNumber : "",
+      volunteers: [
+        { id: undefined as unknown as number, fullname: "" },
+        { id: undefined as unknown as number, fullname: "" },
+        { id: undefined as unknown as number, fullname: "" },
+      ],
+    }),
+    [devices]
+  );
 
   const form = useForm<ShiftForm>({
     mode: "controlled",
@@ -132,7 +139,7 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
     form.resetDirty();
     form.resetTouched();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [existing]);
+  }, [existing, initialValues]);
 
   const closeModal = () => {
     form.reset();
@@ -175,7 +182,7 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
           form.setFieldValue(`volunteers.${index}.id`, selectedVolunteer?.id);
         }}
         onBlur={() => {
-          // In case on option was selected (but typed), we must manually set the volunteers id
+          // In case an existing option was not selected (but typed), we must manually set the volunteers id
           const currentVolunteer = form.getValues()?.volunteers[index];
           if (
             !currentVolunteer ||
@@ -199,7 +206,6 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
         }}
       />
       <ActionIcon
-        // h="35px"
         pos="absolute"
         top="3px"
         right="0px"

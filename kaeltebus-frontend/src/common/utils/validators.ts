@@ -8,7 +8,7 @@ export const validators = <T>(
   }
 };
 export const requiredValidator =
-  (type?: "Date" | "Id", message = "Erforderlich") =>
+  (type?: "Date" | "Id" | "Array", message = "Erforderlich") =>
   (value: unknown) => {
     if (!isValueSet(value, type)) return message;
   };
@@ -26,10 +26,8 @@ export const noSpacesValidator = () => (value?: string) => {
   }
 };
 
-const isValueSet = (value: unknown, type?: "Date" | "Id") => {
+const isValueSet = (value: unknown, type?: "Date" | "Id" | "Array") => {
   if (value === null || value === undefined) return false;
-
-  if (typeof value === "string" && value.trim() === "") return false;
 
   if (
     type === "Date" &&
@@ -38,7 +36,18 @@ const isValueSet = (value: unknown, type?: "Date" | "Id") => {
   )
     return false;
 
-  if (type == "Id" && !value) return false;
+  if (type === "Id" && !value) return false;
+
+  if (
+    type === "Array" &&
+    (!value || !Array.isArray(value) || value?.length === 0)
+  )
+    return false;
+
+  if (typeof value === "string" && value.trim() === "") return false;
+
+  if (typeof value === "number" && (value === undefined || value === null))
+    return false;
 
   return true;
 };
