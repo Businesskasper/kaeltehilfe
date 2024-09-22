@@ -92,10 +92,11 @@ export const FormClients = () => {
           <IconTrash size="1rem" />
         </ActionIcon>
       </Group>
-      <Group mt="xs" align="flex-end">
+      <Group w="calc(100% - 45px)" mt="xs" align="flex-end">
         <NumberInput
           {...form.getInputProps(`clients.${index}.approxAge`)}
           withAsterisk
+          flex="1"
           label="Gesch. Alter"
         />
         <div>
@@ -116,7 +117,7 @@ export const FormClients = () => {
 
   return (
     <>
-      <InputLabel required w="100%">
+      <InputLabel required w="100%" mb="xs">
         Klienten
       </InputLabel>
       {form.errors.clients && <InputError>{form.errors.clients}</InputError>}

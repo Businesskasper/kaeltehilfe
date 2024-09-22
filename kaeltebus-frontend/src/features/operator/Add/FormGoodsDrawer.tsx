@@ -8,7 +8,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useField } from "@mantine/form";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconTrash, IconX } from "@tabler/icons-react";
 import React from "react";
 import {
   Good,
@@ -73,6 +73,16 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
     }
   };
 
+  const removeGood = (good: Good) => {
+    const existingGood = form.values.goods?.find((g) => g.id === good.id);
+    if (!existingGood) return;
+
+    const index = form.values.goods.indexOf(existingGood);
+    const clone = form.values.goods.map((g) => g);
+    clone.splice(index, 1);
+    form.setFieldValue("goods", clone);
+  };
+
   const breakpoint = useBreakpoint();
 
   return (
@@ -97,7 +107,20 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
     >
       {isLoading && <LoadingOverlay visible />}
       <Drawer.Body>
-        <TextInput placeholder="Suche..." {...searchField.getInputProps()} />
+        <TextInput
+          placeholder="Suche..."
+          {...searchField.getInputProps()}
+          rightSection={
+            <ActionIcon
+              size="xs"
+              disabled={!searchValue}
+              onClick={() => searchField.reset()}
+              variant="transparent"
+            >
+              <IconX />
+            </ActionIcon>
+          }
+        />
         <Accordion
           multiple
           defaultValue={
@@ -121,11 +144,23 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
                   <Accordion.Panel>
                     <Stack my="md" gap="md">
                       {goodList?.map((good) => {
+                        const exists = !!form.values.goods?.find(
+                          (g) => g.id === good.id
+                        );
                         return (
                           <GoodListItem good={good} key={good.id}>
-                            <ActionIcon onClick={() => addGood(good)}>
-                              <IconPlus />
-                            </ActionIcon>
+                            {exists ? (
+                              <ActionIcon
+                                onClick={() => removeGood(good)}
+                                color="red"
+                              >
+                                <IconTrash />
+                              </ActionIcon>
+                            ) : (
+                              <ActionIcon onClick={() => addGood(good)}>
+                                <IconPlus />
+                              </ActionIcon>
+                            )}
                           </GoodListItem>
                         );
                       })}

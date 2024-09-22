@@ -183,6 +183,13 @@ export const DistributionAdd = () => {
               <Group justify="space-between" align="baseline">
                 <Title mb="md" order={3}>
                   Ausgabe
+                  {/* {breakpoint !== "BASE"
+                    ? "Ausgabe"
+                    : activeStep === FormStep.LOCATION
+                    ? "Ort"
+                    : activeStep === FormStep.CLIENTS
+                    ? "Klienten"
+                    : "Güter"} */}
                 </Title>
                 {activeStep === FormStep.GOODS && (
                   <ActionIcon

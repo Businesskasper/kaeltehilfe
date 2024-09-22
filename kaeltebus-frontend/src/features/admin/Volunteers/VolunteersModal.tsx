@@ -104,6 +104,18 @@ export const VolunteerModal = ({
             mt="md"
             mb="md"
           />
+          {/* <Group mt="md" mb="md" align="center">
+            <Checkbox
+              {...form.getInputProps("isDriver", { type: "checkbox" })}
+              label="Fahrer"
+            />
+            <div>
+              <SegmentedControl
+                {...form.getInputProps(`gender`)}
+                data={GenderOptions}
+              />
+            </div>
+          </Group> */}
           <Select
             {...form.getInputProps("gender")}
             data={volunteerGenderOptions}

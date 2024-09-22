@@ -2,6 +2,7 @@ import {
   ActionIcon,
   Group,
   InputError,
+  InputLabel,
   Skeleton,
   Stack,
   useMantineTheme,
@@ -23,13 +24,18 @@ export const FormGoods = ({ isDrawerOpen, closeDrawer }: FormGoodsProps) => {
   const form = useDistributionFormContext();
 
   return (
-    <Stack gap="md">
-      <FormGoodsDrawer isOpened={isDrawerOpen} close={closeDrawer} />
-      {form.errors.goods && <InputError>{form.errors.goods}</InputError>}
-      {form.values.goods?.map((selectedGood, index) => {
-        return <GoodSelection key={index} selectedGood={selectedGood} />;
-      })}
-    </Stack>
+    <>
+      <InputLabel required w="100%" mb="xs">
+        Güter
+      </InputLabel>
+      <Stack gap="md">
+        <FormGoodsDrawer isOpened={isDrawerOpen} close={closeDrawer} />
+        {form.errors.goods && <InputError>{form.errors.goods}</InputError>}
+        {form.values.goods?.map((selectedGood, index) => {
+          return <GoodSelection key={index} selectedGood={selectedGood} />;
+        })}
+      </Stack>
+    </>
   );
 };
 
