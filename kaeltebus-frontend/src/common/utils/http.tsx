@@ -14,6 +14,7 @@ const notificationProps: Partial<NotificationData> = {
   icon: <IconX />,
   withBorder: false,
   withCloseButton: true,
+  mb: "xs",
 };
 http.interceptors.response.use(
   (response) => response,
