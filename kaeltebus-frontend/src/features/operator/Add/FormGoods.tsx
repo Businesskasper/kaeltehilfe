@@ -28,7 +28,7 @@ export const FormGoods = ({ isDrawerOpen, closeDrawer }: FormGoodsProps) => {
       <InputLabel required w="100%" mb="xs">
         Güter
       </InputLabel>
-      <Stack gap="md">
+      <Stack gap="lg">
         <FormGoodsDrawer isOpened={isDrawerOpen} close={closeDrawer} />
         {form.errors.goods && <InputError>{form.errors.goods}</InputError>}
         {form.values.goods?.map((selectedGood, index) => {

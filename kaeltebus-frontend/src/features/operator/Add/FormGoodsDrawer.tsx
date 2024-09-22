@@ -142,7 +142,7 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
                 </Accordion.Control>
                 {goodList && goodList.length > 0 && (
                   <Accordion.Panel>
-                    <Stack my="md" gap="md">
+                    <Stack my="md" gap="lg">
                       {goodList?.map((good) => {
                         const exists = !!form.values.goods?.find(
                           (g) => g.id === good.id
