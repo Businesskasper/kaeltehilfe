@@ -1,4 +1,4 @@
-import { notifications } from "@mantine/notifications";
+import { NotificationData, notifications } from "@mantine/notifications";
 import { IconX } from "@tabler/icons-react";
 import axios, { isAxiosError } from "axios";
 const { VITE_API_BASE_URL } = import.meta.env;
@@ -7,13 +7,13 @@ const http = axios.create({
   baseURL: VITE_API_BASE_URL,
 });
 
-const notificationProps = {
+const notificationProps: Partial<NotificationData> = {
   title: "Fehler bei der Übertragung",
   color: "red",
   className: "AppNotification AppNotificationDanger",
   icon: <IconX />,
   withBorder: false,
-  withCloseButton: false,
+  withCloseButton: true,
 };
 http.interceptors.response.use(
   (response) => response,

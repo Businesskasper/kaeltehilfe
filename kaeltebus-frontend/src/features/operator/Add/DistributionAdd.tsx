@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Button,
   Grid,
   Group,
@@ -29,6 +30,7 @@ import { FormClients } from "./FormClients";
 import { FormGoods } from "./FormGoods";
 import { FormLocation } from "./FormLocation";
 
+import { IconLayoutSidebarRightExpand } from "@tabler/icons-react";
 import { useBreakpoint } from "../../../common/utils";
 import "./DistributionAdd.scss";
 
@@ -131,7 +133,8 @@ export const DistributionAdd = () => {
     if (!hasError) setActiveStep(newStep);
   };
 
-  const formGoodsDrawerDisclosure = useDisclosure(true);
+  const [isDrawerOpen, { open: openDrawer, close: closeDrawer }] =
+    useDisclosure(true);
 
   const breakpoint = useBreakpoint();
   const isDesktop =
@@ -159,29 +162,50 @@ export const DistributionAdd = () => {
               }
             }}
           >
-            {!isDesktop && (
-              <Grid.Col
-                span={{
-                  base: 9,
-                  xs: 9,
-                }}
-                offset={1}
-              >
+            <Grid.Col
+              span={{
+                base: 11,
+                xs: 9,
+                sm: 7,
+                md: 7,
+                lg: 7,
+                xl: 7,
+              }}
+              offset={{
+                // base: 1,
+                // xs: 1,
+                sm: 4,
+                md: 4,
+                lg: 3,
+                xl: 3,
+              }}
+            >
+              <Group justify="space-between" align="baseline">
                 <Title mb="md" order={3}>
                   Ausgabe
                 </Title>
-              </Grid.Col>
-            )}
+                {activeStep === FormStep.GOODS && (
+                  <ActionIcon
+                    onClick={openDrawer}
+                    variant="transparent"
+                    color="gray"
+                  >
+                    <IconLayoutSidebarRightExpand />
+                  </ActionIcon>
+                )}
+              </Group>
+            </Grid.Col>
             <Grid.Col
               span={{
-                base: 9,
+                base: 12,
                 xs: 9,
-                sm: 2,
-                md: 2,
+                sm: 3,
+                md: 3,
                 lg: 2,
                 xl: 2,
               }}
               offset={isDesktop ? 1 : undefined}
+              display={breakpoint === "BASE" ? "none" : undefined}
             >
               <Stepper
                 active={activeStep}
@@ -223,11 +247,14 @@ export const DistributionAdd = () => {
                 {/* <Stepper.Step orientation="vertical" label="Senden" /> */}
               </Stepper>
             </Grid.Col>
-            <Grid.Col span={{ base: 8, xs: 8, sm: 6, md: 6, lg: 6, xl: 6 }}>
+            <Grid.Col span={{ base: 12, xs: 10, sm: 7, md: 7, lg: 7, xl: 7 }}>
               {activeStep === FormStep.LOCATION && <FormLocation />}
               {activeStep === FormStep.CLIENTS && <FormClients />}
               {activeStep === FormStep.GOODS && (
-                <FormGoods drawerDislosure={formGoodsDrawerDisclosure} />
+                <FormGoods
+                  isDrawerOpen={isDrawerOpen}
+                  closeDrawer={closeDrawer}
+                />
               )}
               <Group justify="space-between" mt="xl">
                 <Button onClick={() => navigate("/operator")} variant="default">
@@ -249,8 +276,7 @@ export const DistributionAdd = () => {
                   {activeStep === FormStep.GOODS ? (
                     <Button
                       disabled={!form.isTouched() || !form.isDirty()}
-                      type="submit"
-                      // onClick={() => form.onSubmit(onSubmit)}
+                      onClick={() => form.onSubmit(onSubmit)()}
                     >
                       Absenden
                     </Button>

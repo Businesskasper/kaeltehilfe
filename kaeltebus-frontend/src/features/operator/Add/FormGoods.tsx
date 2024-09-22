@@ -4,18 +4,10 @@ import {
   InputError,
   Skeleton,
   Stack,
-  Title,
   useMantineTheme,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import {
-  IconLayoutSidebarRightExpand,
-  IconMinus,
-  IconPlus,
-  IconTrash,
-} from "@tabler/icons-react";
+import { IconMinus, IconPlus, IconTrash } from "@tabler/icons-react";
 import { useGoods } from "../../../common/app";
-import { useBreakpoint } from "../../../common/utils";
 import {
   DistributionFormGood,
   useDistributionFormContext,
@@ -24,37 +16,15 @@ import { FormGoodsDrawer } from "./FormGoodsDrawer";
 import { GoodListItem } from "./GoodListItem";
 
 type FormGoodsProps = {
-  drawerDislosure: ReturnType<typeof useDisclosure>;
+  isDrawerOpen: boolean;
+  closeDrawer: () => void;
 };
-export const FormGoods = ({ drawerDislosure }: FormGoodsProps) => {
+export const FormGoods = ({ isDrawerOpen, closeDrawer }: FormGoodsProps) => {
   const form = useDistributionFormContext();
-
-  const [isOpened, { close, open }] = drawerDislosure;
-
-  const breakpoint = useBreakpoint();
-  const isDesktop =
-    breakpoint === "SM" ||
-    breakpoint === "MD" ||
-    breakpoint === "LG" ||
-    breakpoint === "XL";
 
   return (
     <Stack gap="md">
-      <Group
-        onClick={open}
-        justify={isDesktop ? "space-between" : "flex-end"}
-        align="baseline"
-      >
-        {isDesktop && (
-          <Title mt={isDesktop ? "sm" : undefined} mb="md" order={3}>
-            Ausgabe
-          </Title>
-        )}
-        <ActionIcon variant="transparent" color="gray">
-          <IconLayoutSidebarRightExpand />
-        </ActionIcon>
-      </Group>
-      <FormGoodsDrawer isOpened={isOpened} close={close} />
+      <FormGoodsDrawer isOpened={isDrawerOpen} close={closeDrawer} />
       {form.errors.goods && <InputError>{form.errors.goods}</InputError>}
       {form.values.goods?.map((selectedGood, index) => {
         return <GoodSelection key={index} selectedGood={selectedGood} />;

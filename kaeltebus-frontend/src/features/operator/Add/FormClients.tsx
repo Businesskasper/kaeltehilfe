@@ -6,13 +6,11 @@ import {
   InputLabel,
   NumberInput,
   SegmentedControl,
-  Title,
 } from "@mantine/core";
 import {} from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { Client, GenderOptions, useClients } from "../../../common/app";
 import { FormSelect } from "../../../common/components";
-import { useBreakpoint } from "../../../common/utils";
 import { useDistributionFormContext } from "./DistributionFormContext";
 
 export const FormClients = () => {
@@ -116,20 +114,8 @@ export const FormClients = () => {
     </Fieldset>
   ));
 
-  const breakpoint = useBreakpoint();
-  const isDesktop =
-    breakpoint === "SM" ||
-    breakpoint === "MD" ||
-    breakpoint === "LG" ||
-    breakpoint === "XL";
-
   return (
     <>
-      {isDesktop && (
-        <Title mt={isDesktop ? "sm" : undefined} mb="md" order={3}>
-          Ausgabe
-        </Title>
-      )}
       <InputLabel required w="100%">
         Klienten
       </InputLabel>
