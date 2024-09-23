@@ -5,7 +5,6 @@ public static class ObjectMethods
     public static async Task<Dictionary<string, object?>> GetUpdatedFields<TData>(this Stream body)
     {
         var result = new Dictionary<string, object?>();
-        ;
 
         body.Position = 0;
         var json = await JsonSerializer.DeserializeAsync<Dictionary<string, object>>(body);
@@ -34,11 +33,18 @@ public static class ObjectMethods
         TUpdateDto update
     )
     {
+        // var hasUpdates = false;
+
         var updated = Activator.CreateInstance<TCreateDto>();
         var properties = existing?.GetType().GetProperties();
         foreach (var property in properties ?? [])
         {
-            property.SetValue(updated, property.GetValue(update) ?? property.GetValue(existing));
+            var existingValue = property.GetValue(existing);
+            var updatedValue = property.GetValue(updated);
+            // if (existingValue != updatedValue)
+            //     hasUpdates = true;
+
+            property.SetValue(updated, updatedValue ?? existingValue);
         }
 
         return updated;

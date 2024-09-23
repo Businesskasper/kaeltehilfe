@@ -7,6 +7,7 @@ namespace kaeltebus_backend.Infrastructure.Database;
 public class KbContext : DbContext
 {
     public virtual DbSet<Good> Goods { get; set; }
+    public virtual DbSet<Location> Locations { get; set; }
     public virtual DbSet<Volunteer> Volunteers { get; set; }
     public virtual DbSet<Shift> Shifts { get; set; }
     public virtual DbSet<ShiftVolunteer> ShiftVolunteers { get; set; }

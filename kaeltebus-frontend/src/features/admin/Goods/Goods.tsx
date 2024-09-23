@@ -62,7 +62,9 @@ export const Goods = () => {
         return (
           <PillGroup size="md">
             {tags.map((tag, index) => (
-              <Pill key={index}>{tag}</Pill>
+              <Pill size="sm" key={index}>
+                {tag}
+              </Pill>
             ))}
           </PillGroup>
         );

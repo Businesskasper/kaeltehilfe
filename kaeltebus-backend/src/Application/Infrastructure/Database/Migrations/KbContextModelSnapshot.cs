@@ -36,7 +36,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .HasColumnType("TEXT")
                         .HasDefaultValueSql("datetime()");
 
-                    b.Property<int>("Gender")
+                    b.Property<int?>("Gender")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsDeleted")
@@ -66,7 +66,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7235),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2094),
                             ApproxAge = 45,
                             Gender = 0,
                             IsDeleted = false,
@@ -76,7 +76,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 2,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7241),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2099),
                             ApproxAge = 40,
                             Gender = 1,
                             IsDeleted = false,
@@ -86,9 +86,8 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 3,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7243),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2102),
                             ApproxAge = 30,
-                            Gender = 0,
                             IsDeleted = false,
                             Name = "Tim",
                             Remarks = ""
@@ -134,7 +133,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7066),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(1899),
                             IsDeleted = false,
                             RegistrationNumber = "UL-RK1013"
                         });
@@ -194,208 +193,208 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
+                            AddOn = new DateTime(2024, 9, 13, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
                             DeviceId = 1,
-                            GoodId = 4,
+                            GoodId = 5,
                             IsDeleted = false,
-                            LocationId = 4,
-                            Quantity = 2
+                            LocationId = 2,
+                            Quantity = 0
                         },
                         new
                         {
                             Id = 2,
-                            AddOn = new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 13, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 3,
                             DeviceId = 1,
-                            GoodId = 2,
+                            GoodId = 6,
                             IsDeleted = false,
-                            LocationId = 1,
+                            LocationId = 3,
                             Quantity = 0
                         },
                         new
                         {
                             Id = 3,
-                            AddOn = new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 1,
-                            DeviceId = 1,
-                            GoodId = 2,
-                            IsDeleted = false,
-                            LocationId = 4,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            AddOn = new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 13, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 2,
-                            DeviceId = 1,
-                            GoodId = 3,
-                            IsDeleted = false,
-                            LocationId = 3,
-                            Quantity = 0
-                        },
-                        new
-                        {
-                            Id = 5,
-                            AddOn = new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
                             DeviceId = 1,
                             GoodId = 6,
                             IsDeleted = false,
                             LocationId = 4,
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AddOn = new DateTime(2024, 9, 13, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
+                            DeviceId = 1,
+                            GoodId = 4,
+                            IsDeleted = false,
+                            LocationId = 2,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            AddOn = new DateTime(2024, 9, 13, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
+                            DeviceId = 1,
+                            GoodId = 6,
+                            IsDeleted = false,
+                            LocationId = 2,
                             Quantity = 1
                         },
                         new
                         {
                             Id = 6,
-                            AddOn = new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
+                            AddOn = new DateTime(2024, 9, 13, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
                             DeviceId = 1,
-                            GoodId = 2,
+                            GoodId = 1,
                             IsDeleted = false,
-                            LocationId = 3,
-                            Quantity = 2
-                        },
-                        new
-                        {
-                            Id = 7,
-                            AddOn = new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 6,
-                            IsDeleted = false,
-                            LocationId = 3,
+                            LocationId = 2,
                             Quantity = 1
                         },
                         new
                         {
+                            Id = 7,
+                            AddOn = new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
+                            DeviceId = 1,
+                            GoodId = 5,
+                            IsDeleted = false,
+                            LocationId = 4,
+                            Quantity = 0
+                        },
+                        new
+                        {
                             Id = 8,
-                            AddOn = new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 2,
                             DeviceId = 1,
-                            GoodId = 3,
+                            GoodId = 4,
+                            IsDeleted = false,
+                            LocationId = 2,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 9,
+                            AddOn = new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 3,
+                            DeviceId = 1,
+                            GoodId = 2,
+                            IsDeleted = false,
+                            LocationId = 5,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 10,
+                            AddOn = new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
+                            DeviceId = 1,
+                            GoodId = 6,
                             IsDeleted = false,
                             LocationId = 1,
                             Quantity = 2
                         },
                         new
                         {
-                            Id = 9,
-                            AddOn = new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            Id = 11,
+                            AddOn = new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 3,
+                            DeviceId = 1,
+                            GoodId = 7,
+                            IsDeleted = false,
+                            LocationId = 1,
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 12,
+                            AddOn = new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 1,
                             DeviceId = 1,
                             GoodId = 1,
                             IsDeleted = false,
-                            LocationId = 3,
-                            Quantity = 1
+                            LocationId = 2,
+                            Quantity = 0
                         },
                         new
                         {
-                            Id = 10,
-                            AddOn = new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
+                            Id = 13,
+                            AddOn = new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
                             DeviceId = 1,
                             GoodId = 4,
                             IsDeleted = false,
-                            LocationId = 5,
+                            LocationId = 4,
                             Quantity = 2
                         },
                         new
                         {
-                            Id = 11,
-                            AddOn = new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            Id = 14,
+                            AddOn = new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 2,
                             DeviceId = 1,
-                            GoodId = 5,
+                            GoodId = 6,
+                            IsDeleted = false,
+                            LocationId = 2,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 15,
+                            AddOn = new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 3,
+                            DeviceId = 1,
+                            GoodId = 4,
+                            IsDeleted = false,
+                            LocationId = 2,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 16,
+                            AddOn = new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 3,
+                            DeviceId = 1,
+                            GoodId = 1,
                             IsDeleted = false,
                             LocationId = 4,
                             Quantity = 0
                         },
                         new
                         {
-                            Id = 12,
-                            AddOn = new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 1,
-                            DeviceId = 1,
-                            GoodId = 5,
-                            IsDeleted = false,
-                            LocationId = 5,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            Id = 13,
-                            AddOn = new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 1,
-                            DeviceId = 1,
-                            GoodId = 7,
-                            IsDeleted = false,
-                            LocationId = 2,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            Id = 14,
-                            AddOn = new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 3,
-                            IsDeleted = false,
-                            LocationId = 5,
-                            Quantity = 0
-                        },
-                        new
-                        {
-                            Id = 15,
-                            AddOn = new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 2,
-                            DeviceId = 1,
-                            GoodId = 7,
-                            IsDeleted = false,
-                            LocationId = 5,
-                            Quantity = 0
-                        },
-                        new
-                        {
-                            Id = 16,
-                            AddOn = new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 2,
-                            DeviceId = 1,
-                            GoodId = 3,
-                            IsDeleted = false,
-                            LocationId = 3,
-                            Quantity = 1
-                        },
-                        new
-                        {
                             Id = 17,
-                            AddOn = new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 1,
                             DeviceId = 1,
-                            GoodId = 2,
+                            GoodId = 4,
                             IsDeleted = false,
-                            LocationId = 2,
-                            Quantity = 0
+                            LocationId = 1,
+                            Quantity = 1
                         },
                         new
                         {
                             Id = 18,
-                            AddOn = new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 2,
                             DeviceId = 1,
-                            GoodId = 2,
+                            GoodId = 6,
                             IsDeleted = false,
-                            LocationId = 2,
-                            Quantity = 1
+                            LocationId = 5,
+                            Quantity = 2
                         },
                         new
                         {
                             Id = 19,
-                            AddOn = new DateTime(2024, 9, 8, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 1,
+                            AddOn = new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
                             DeviceId = 1,
-                            GoodId = 4,
+                            GoodId = 3,
                             IsDeleted = false,
                             LocationId = 1,
                             Quantity = 1
@@ -403,51 +402,106 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 20,
-                            AddOn = new DateTime(2024, 9, 8, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 3,
                             DeviceId = 1,
-                            GoodId = 3,
+                            GoodId = 4,
                             IsDeleted = false,
                             LocationId = 4,
-                            Quantity = 0
+                            Quantity = 1
                         },
                         new
                         {
                             Id = 21,
-                            AddOn = new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 2,
                             DeviceId = 1,
-                            GoodId = 7,
+                            GoodId = 1,
                             IsDeleted = false,
-                            LocationId = 2,
+                            LocationId = 3,
                             Quantity = 0
                         },
                         new
                         {
                             Id = 22,
-                            AddOn = new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 16, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 2,
                             DeviceId = 1,
                             GoodId = 5,
+                            IsDeleted = false,
+                            LocationId = 4,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 23,
+                            AddOn = new DateTime(2024, 9, 16, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
+                            DeviceId = 1,
+                            GoodId = 1,
+                            IsDeleted = false,
+                            LocationId = 4,
+                            Quantity = 2
+                        },
+                        new
+                        {
+                            Id = 24,
+                            AddOn = new DateTime(2024, 9, 16, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
+                            DeviceId = 1,
+                            GoodId = 1,
+                            IsDeleted = false,
+                            LocationId = 4,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 25,
+                            AddOn = new DateTime(2024, 9, 16, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
+                            DeviceId = 1,
+                            GoodId = 2,
+                            IsDeleted = false,
+                            LocationId = 2,
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 26,
+                            AddOn = new DateTime(2024, 9, 16, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
+                            DeviceId = 1,
+                            GoodId = 1,
+                            IsDeleted = false,
+                            LocationId = 2,
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 27,
+                            AddOn = new DateTime(2024, 9, 16, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
+                            DeviceId = 1,
+                            GoodId = 7,
+                            IsDeleted = false,
+                            LocationId = 1,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 28,
+                            AddOn = new DateTime(2024, 9, 17, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
+                            DeviceId = 1,
+                            GoodId = 1,
                             IsDeleted = false,
                             LocationId = 1,
                             Quantity = 0
                         },
                         new
                         {
-                            Id = 23,
-                            AddOn = new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 1,
-                            DeviceId = 1,
-                            GoodId = 2,
-                            IsDeleted = false,
-                            LocationId = 5,
-                            Quantity = 2
-                        },
-                        new
-                        {
-                            Id = 24,
-                            AddOn = new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            Id = 29,
+                            AddOn = new DateTime(2024, 9, 17, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 1,
                             DeviceId = 1,
                             GoodId = 7,
@@ -457,132 +511,77 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         },
                         new
                         {
-                            Id = 25,
-                            AddOn = new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            Id = 30,
+                            AddOn = new DateTime(2024, 9, 17, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
+                            DeviceId = 1,
+                            GoodId = 5,
+                            IsDeleted = false,
+                            LocationId = 4,
+                            Quantity = 2
+                        },
+                        new
+                        {
+                            Id = 31,
+                            AddOn = new DateTime(2024, 9, 17, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 2,
                             DeviceId = 1,
-                            GoodId = 3,
+                            GoodId = 5,
                             IsDeleted = false,
                             LocationId = 2,
                             Quantity = 1
                         },
                         new
                         {
-                            Id = 26,
-                            AddOn = new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            Id = 32,
+                            AddOn = new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 1,
-                            DeviceId = 1,
-                            GoodId = 1,
-                            IsDeleted = false,
-                            LocationId = 5,
-                            Quantity = 0
-                        },
-                        new
-                        {
-                            Id = 27,
-                            AddOn = new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 2,
                             DeviceId = 1,
                             GoodId = 4,
                             IsDeleted = false,
-                            LocationId = 5,
-                            Quantity = 0
+                            LocationId = 4,
+                            Quantity = 1
                         },
                         new
                         {
-                            Id = 28,
-                            AddOn = new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 2,
-                            DeviceId = 1,
-                            GoodId = 3,
-                            IsDeleted = false,
-                            LocationId = 5,
-                            Quantity = 2
-                        },
-                        new
-                        {
-                            Id = 29,
-                            AddOn = new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 2,
-                            IsDeleted = false,
-                            LocationId = 5,
-                            Quantity = 2
-                        },
-                        new
-                        {
-                            Id = 30,
-                            AddOn = new DateTime(2024, 9, 10, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 6,
-                            IsDeleted = false,
-                            LocationId = 5,
-                            Quantity = 0
-                        },
-                        new
-                        {
-                            Id = 31,
-                            AddOn = new DateTime(2024, 9, 10, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            Id = 33,
+                            AddOn = new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 1,
                             DeviceId = 1,
-                            GoodId = 1,
+                            GoodId = 2,
                             IsDeleted = false,
                             LocationId = 4,
                             Quantity = 0
                         },
                         new
                         {
-                            Id = 32,
-                            AddOn = new DateTime(2024, 9, 10, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 7,
-                            IsDeleted = false,
-                            LocationId = 1,
-                            Quantity = 0
-                        },
-                        new
-                        {
-                            Id = 33,
-                            AddOn = new DateTime(2024, 9, 10, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 2,
-                            DeviceId = 1,
-                            GoodId = 5,
-                            IsDeleted = false,
-                            LocationId = 2,
-                            Quantity = 0
-                        },
-                        new
-                        {
                             Id = 34,
-                            AddOn = new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
+                            AddOn = new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
                             DeviceId = 1,
-                            GoodId = 5,
+                            GoodId = 3,
                             IsDeleted = false,
-                            LocationId = 5,
-                            Quantity = 1
+                            LocationId = 3,
+                            Quantity = 2
                         },
                         new
                         {
                             Id = 35,
-                            AddOn = new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 2,
                             DeviceId = 1,
-                            GoodId = 2,
+                            GoodId = 5,
                             IsDeleted = false,
-                            LocationId = 1,
-                            Quantity = 1
+                            LocationId = 3,
+                            Quantity = 0
                         },
                         new
                         {
                             Id = 36,
-                            AddOn = new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 1,
+                            AddOn = new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 3,
                             DeviceId = 1,
-                            GoodId = 3,
+                            GoodId = 4,
                             IsDeleted = false,
                             LocationId = 2,
                             Quantity = 1
@@ -590,263 +589,263 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 37,
-                            AddOn = new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 2,
+                            AddOn = new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
                             DeviceId = 1,
-                            GoodId = 7,
+                            GoodId = 5,
                             IsDeleted = false,
-                            LocationId = 2,
+                            LocationId = 4,
                             Quantity = 0
                         },
                         new
                         {
                             Id = 38,
-                            AddOn = new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 1,
+                            AddOn = new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 3,
                             DeviceId = 1,
-                            GoodId = 1,
+                            GoodId = 7,
                             IsDeleted = false,
-                            LocationId = 2,
+                            LocationId = 4,
                             Quantity = 1
                         },
                         new
                         {
                             Id = 39,
-                            AddOn = new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 2,
+                            AddOn = new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 3,
                             DeviceId = 1,
-                            GoodId = 7,
+                            GoodId = 6,
                             IsDeleted = false,
                             LocationId = 2,
-                            Quantity = 1
+                            Quantity = 2
                         },
                         new
                         {
                             Id = 40,
-                            AddOn = new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 2,
+                            AddOn = new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 3,
                             DeviceId = 1,
-                            GoodId = 1,
+                            GoodId = 7,
                             IsDeleted = false,
-                            LocationId = 2,
+                            LocationId = 5,
                             Quantity = 1
                         },
                         new
                         {
                             Id = 41,
-                            AddOn = new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 1,
-                            DeviceId = 1,
-                            GoodId = 5,
-                            IsDeleted = false,
-                            LocationId = 4,
-                            Quantity = 2
-                        },
-                        new
-                        {
-                            Id = 42,
-                            AddOn = new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 2,
-                            DeviceId = 1,
-                            GoodId = 5,
-                            IsDeleted = false,
-                            LocationId = 4,
-                            Quantity = 0
-                        },
-                        new
-                        {
-                            Id = 43,
-                            AddOn = new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 1,
                             DeviceId = 1,
                             GoodId = 6,
                             IsDeleted = false,
                             LocationId = 1,
-                            Quantity = 2
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 42,
+                            AddOn = new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
+                            DeviceId = 1,
+                            GoodId = 7,
+                            IsDeleted = false,
+                            LocationId = 1,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 43,
+                            AddOn = new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
+                            DeviceId = 1,
+                            GoodId = 4,
+                            IsDeleted = false,
+                            LocationId = 1,
+                            Quantity = 0
                         },
                         new
                         {
                             Id = 44,
-                            AddOn = new DateTime(2024, 9, 12, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 2,
+                            AddOn = new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 3,
                             DeviceId = 1,
-                            GoodId = 1,
+                            GoodId = 2,
                             IsDeleted = false,
-                            LocationId = 5,
+                            LocationId = 1,
                             Quantity = 2
                         },
                         new
                         {
                             Id = 45,
-                            AddOn = new DateTime(2024, 9, 12, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
+                            AddOn = new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
                             DeviceId = 1,
                             GoodId = 1,
                             IsDeleted = false,
-                            LocationId = 1,
-                            Quantity = 1
+                            LocationId = 2,
+                            Quantity = 2
                         },
                         new
                         {
                             Id = 46,
-                            AddOn = new DateTime(2024, 9, 12, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 1,
+                            AddOn = new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
                             DeviceId = 1,
                             GoodId = 4,
                             IsDeleted = false,
-                            LocationId = 2,
+                            LocationId = 1,
                             Quantity = 1
                         },
                         new
                         {
                             Id = 47,
-                            AddOn = new DateTime(2024, 9, 13, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
+                            AddOn = new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
                             DeviceId = 1,
-                            GoodId = 3,
+                            GoodId = 4,
                             IsDeleted = false,
                             LocationId = 1,
-                            Quantity = 2
+                            Quantity = 1
                         },
                         new
                         {
                             Id = 48,
-                            AddOn = new DateTime(2024, 9, 13, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 3,
                             DeviceId = 1,
                             GoodId = 3,
                             IsDeleted = false,
-                            LocationId = 5,
+                            LocationId = 3,
                             Quantity = 1
                         },
                         new
                         {
                             Id = 49,
-                            AddOn = new DateTime(2024, 9, 13, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 2,
                             DeviceId = 1,
-                            GoodId = 7,
+                            GoodId = 6,
                             IsDeleted = false,
-                            LocationId = 5,
+                            LocationId = 1,
                             Quantity = 1
                         },
                         new
                         {
                             Id = 50,
-                            AddOn = new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            AddOn = new DateTime(2024, 9, 20, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 3,
-                            IsDeleted = false,
-                            LocationId = 3,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            Id = 51,
-                            AddOn = new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 1,
                             DeviceId = 1,
                             GoodId = 4,
                             IsDeleted = false,
                             LocationId = 5,
+                            Quantity = 2
+                        },
+                        new
+                        {
+                            Id = 51,
+                            AddOn = new DateTime(2024, 9, 20, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
+                            DeviceId = 1,
+                            GoodId = 1,
+                            IsDeleted = false,
+                            LocationId = 2,
                             Quantity = 0
                         },
                         new
                         {
                             Id = 52,
-                            AddOn = new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 7,
-                            IsDeleted = false,
-                            LocationId = 2,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            Id = 53,
-                            AddOn = new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 1,
+                            AddOn = new DateTime(2024, 9, 20, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
                             DeviceId = 1,
                             GoodId = 3,
-                            IsDeleted = false,
-                            LocationId = 2,
-                            Quantity = 0
-                        },
-                        new
-                        {
-                            Id = 54,
-                            AddOn = new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 1,
                             IsDeleted = false,
                             LocationId = 1,
                             Quantity = 2
                         },
                         new
                         {
-                            Id = 55,
-                            AddOn = new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            Id = 53,
+                            AddOn = new DateTime(2024, 9, 21, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 1,
                             DeviceId = 1,
-                            GoodId = 5,
-                            IsDeleted = false,
-                            LocationId = 5,
-                            Quantity = 2
-                        },
-                        new
-                        {
-                            Id = 56,
-                            AddOn = new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 1,
-                            IsDeleted = false,
-                            LocationId = 2,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            Id = 57,
-                            AddOn = new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 1,
-                            IsDeleted = false,
-                            LocationId = 3,
-                            Quantity = 0
-                        },
-                        new
-                        {
-                            Id = 58,
-                            AddOn = new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 4,
-                            IsDeleted = false,
-                            LocationId = 3,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            Id = 59,
-                            AddOn = new DateTime(2024, 9, 15, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 3,
+                            GoodId = 7,
                             IsDeleted = false,
                             LocationId = 4,
                             Quantity = 0
                         },
                         new
                         {
-                            Id = 60,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            Id = 54,
+                            AddOn = new DateTime(2024, 9, 21, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 1,
                             DeviceId = 1,
-                            GoodId = 7,
+                            GoodId = 1,
+                            IsDeleted = false,
+                            LocationId = 1,
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 55,
+                            AddOn = new DateTime(2024, 9, 21, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
+                            DeviceId = 1,
+                            GoodId = 3,
+                            IsDeleted = false,
+                            LocationId = 5,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 56,
+                            AddOn = new DateTime(2024, 9, 21, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
+                            DeviceId = 1,
+                            GoodId = 5,
+                            IsDeleted = false,
+                            LocationId = 3,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 57,
+                            AddOn = new DateTime(2024, 9, 22, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 3,
+                            DeviceId = 1,
+                            GoodId = 1,
+                            IsDeleted = false,
+                            LocationId = 2,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 58,
+                            AddOn = new DateTime(2024, 9, 22, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
+                            DeviceId = 1,
+                            GoodId = 4,
+                            IsDeleted = false,
+                            LocationId = 5,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 59,
+                            AddOn = new DateTime(2024, 9, 22, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
+                            DeviceId = 1,
+                            GoodId = 1,
+                            IsDeleted = false,
+                            LocationId = 5,
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 60,
+                            AddOn = new DateTime(2024, 9, 22, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
+                            DeviceId = 1,
+                            GoodId = 6,
                             IsDeleted = false,
                             LocationId = 2,
                             Quantity = 1
@@ -854,46 +853,57 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 61,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 2,
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 1,
                             DeviceId = 1,
-                            GoodId = 2,
+                            GoodId = 3,
                             IsDeleted = false,
                             LocationId = 2,
-                            Quantity = 1
-                        },
-                        new
-                        {
-                            Id = 62,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 3,
-                            DeviceId = 1,
-                            GoodId = 1,
-                            IsDeleted = false,
-                            LocationId = 5,
-                            Quantity = 0
-                        },
-                        new
-                        {
-                            Id = 63,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
-                            ClientId = 2,
-                            DeviceId = 1,
-                            GoodId = 1,
-                            IsDeleted = false,
-                            LocationId = 3,
                             Quantity = 2
                         },
                         new
                         {
-                            Id = 64,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310),
+                            Id = 62,
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
                             ClientId = 2,
                             DeviceId = 1,
                             GoodId = 1,
                             IsDeleted = false,
                             LocationId = 3,
                             Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 63,
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 3,
+                            DeviceId = 1,
+                            GoodId = 3,
+                            IsDeleted = false,
+                            LocationId = 1,
+                            Quantity = 1
+                        },
+                        new
+                        {
+                            Id = 64,
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 3,
+                            DeviceId = 1,
+                            GoodId = 6,
+                            IsDeleted = false,
+                            LocationId = 2,
+                            Quantity = 0
+                        },
+                        new
+                        {
+                            Id = 65,
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226),
+                            ClientId = 2,
+                            DeviceId = 1,
+                            GoodId = 7,
+                            IsDeleted = false,
+                            LocationId = 1,
+                            Quantity = 0
                         });
                 });
 
@@ -947,7 +957,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 2,
                             IsDeleted = false,
@@ -957,7 +967,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 2,
-                            AddOn = new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 2,
                             IsDeleted = false,
@@ -967,7 +977,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 3,
-                            AddOn = new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 2,
                             IsDeleted = false,
@@ -977,7 +987,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 4,
-                            AddOn = new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 1,
                             IsDeleted = false,
@@ -987,7 +997,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 5,
-                            AddOn = new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 1,
                             IsDeleted = false,
@@ -997,7 +1007,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 6,
-                            AddOn = new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 0,
                             IsDeleted = false,
@@ -1007,7 +1017,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 7,
-                            AddOn = new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local),
+                            AddOn = new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local),
                             Description = "",
                             GoodType = 0,
                             IsDeleted = false,
@@ -1049,41 +1059,41 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .IsUnique()
                         .HasFilter("IsDeleted = 0");
 
-                    b.ToTable("Location");
+                    b.ToTable("Locations");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7270),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2130),
                             IsDeleted = false,
                             Name = "Alter Friedhof"
                         },
                         new
                         {
                             Id = 2,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7274),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2186),
                             IsDeleted = false,
                             Name = "Bahnhof"
                         },
                         new
                         {
                             Id = 3,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7277),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2190),
                             IsDeleted = false,
                             Name = "Neue Mitte"
                         },
                         new
                         {
                             Id = 4,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7279),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2192),
                             IsDeleted = false,
                             Name = "Hirschstraße"
                         },
                         new
                         {
                             Id = 5,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7282),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2195),
                             IsDeleted = false,
                             Name = "Schillerstraße"
                         });
@@ -1132,8 +1142,8 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7205),
-                            Date = new DateOnly(2024, 9, 16),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2059),
+                            Date = new DateOnly(2024, 9, 23),
                             DeviceId = 1,
                             IsDeleted = false
                         });
@@ -1210,7 +1220,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 1,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7024),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(1850),
                             Firstname = "Luka",
                             Gender = 0,
                             IsDeleted = false,
@@ -1221,7 +1231,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 2,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7029),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(1855),
                             Firstname = "Peter",
                             Gender = 0,
                             IsDeleted = false,
@@ -1232,7 +1242,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 3,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7032),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(1858),
                             Firstname = "Max",
                             Gender = 0,
                             IsDeleted = false,
@@ -1243,7 +1253,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         new
                         {
                             Id = 4,
-                            AddOn = new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7035),
+                            AddOn = new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(1861),
                             Firstname = "Corinna",
                             Gender = 1,
                             IsDeleted = false,

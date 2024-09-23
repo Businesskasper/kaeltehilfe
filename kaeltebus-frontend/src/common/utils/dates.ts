@@ -46,3 +46,9 @@ export const compareByDateOnly = (date1: unknown, date2: unknown) => {
   const value2 = toNormalizedDate(date2);
   return (value1?.valueOf() || 0) - (value2?.valueOf() || 0);
 };
+
+export const compareByDateTime = (date1: unknown, date2: unknown) => {
+  const value1 = toDate(date1);
+  const value2 = toDate(date2);
+  return (value1?.valueOf() || 0) - (value2?.valueOf() || 0);
+};

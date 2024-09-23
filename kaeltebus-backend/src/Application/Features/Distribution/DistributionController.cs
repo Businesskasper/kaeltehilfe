@@ -55,7 +55,6 @@ public class DistributionsController : ControllerBase
     [HttpPost()]
     public async Task<IActionResult> Create([FromBody()] DistributionCreateDto dto)
     {
-        _logger.LogInformation("jo");
         // TODO: Adjust device lookup for calling device
         var device = await _kbContext.Devices.FirstOrDefaultAsync();
         if (device == null)

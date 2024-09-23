@@ -20,7 +20,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    Gender = table.Column<int>(type: "INTEGER", nullable: false),
+                    Gender = table.Column<int>(type: "INTEGER", nullable: true),
                     ApproxAge = table.Column<int>(type: "INTEGER", nullable: false),
                     Remarks = table.Column<string>(type: "TEXT", nullable: false),
                     AddOn = table.Column<DateTime>(type: "TEXT", nullable: false, defaultValueSql: "datetime()"),
@@ -68,7 +68,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Location",
+                name: "Locations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
@@ -80,7 +80,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Location", x => x.Id);
+                    table.PrimaryKey("PK_Locations", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -163,9 +163,9 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Distributions_Location_LocationId",
+                        name: "FK_Distributions_Locations_LocationId",
                         column: x => x.LocationId,
-                        principalTable: "Location",
+                        principalTable: "Locations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -200,40 +200,40 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 columns: new[] { "Id", "AddOn", "ApproxAge", "Gender", "Name", "Remarks" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7235), 45, 0, "Martin", "" },
-                    { 2, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7241), 40, 1, "Martina", "" },
-                    { 3, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7243), 30, 0, "Tim", "" }
+                    { 1, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2094), 45, 0, "Martin", "" },
+                    { 2, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2099), 40, 1, "Martina", "" },
+                    { 3, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2102), 30, null, "Tim", "" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Devices",
                 columns: new[] { "Id", "AddOn", "RegistrationNumber" },
-                values: new object[] { 1, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7066), "UL-RK1013" });
+                values: new object[] { 1, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(1899), "UL-RK1013" });
 
             migrationBuilder.InsertData(
                 table: "Goods",
                 columns: new[] { "Id", "AddOn", "Description", "GoodType", "Name", "Tags" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 2, "Suppe", "[]" },
-                    { 2, new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 2, "Kaffee", "[]" },
-                    { 3, new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 2, "Tee", "[]" },
-                    { 4, new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 1, "Decke", "[]" },
-                    { 5, new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 1, "Socken", "[]" },
-                    { 6, new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 0, "Tempos", "[]" },
-                    { 7, new DateTime(2024, 9, 16, 0, 0, 0, 0, DateTimeKind.Local), "", 0, "Deo", "[]" }
+                    { 1, new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local), "", 2, "Suppe", "[]" },
+                    { 2, new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local), "", 2, "Kaffee", "[]" },
+                    { 3, new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local), "", 2, "Tee", "[]" },
+                    { 4, new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local), "", 1, "Decke", "[]" },
+                    { 5, new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local), "", 1, "Socken", "[]" },
+                    { 6, new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local), "", 0, "Tempos", "[]" },
+                    { 7, new DateTime(2024, 9, 23, 0, 0, 0, 0, DateTimeKind.Local), "", 0, "Deo", "[]" }
                 });
 
             migrationBuilder.InsertData(
-                table: "Location",
+                table: "Locations",
                 columns: new[] { "Id", "AddOn", "Name" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7270), "Alter Friedhof" },
-                    { 2, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7274), "Bahnhof" },
-                    { 3, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7277), "Neue Mitte" },
-                    { 4, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7279), "Hirschstraße" },
-                    { 5, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7282), "Schillerstraße" }
+                    { 1, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2130), "Alter Friedhof" },
+                    { 2, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2186), "Bahnhof" },
+                    { 3, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2190), "Neue Mitte" },
+                    { 4, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2192), "Hirschstraße" },
+                    { 5, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2195), "Schillerstraße" }
                 });
 
             migrationBuilder.InsertData(
@@ -241,10 +241,10 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 columns: new[] { "Id", "AddOn", "Firstname", "Gender", "IsDriver", "Lastname", "Remarks" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7024), "Luka", 0, false, "Weis", "" },
-                    { 2, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7029), "Peter", 0, true, "Pan", "" },
-                    { 3, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7032), "Max", 0, false, "Mustermann", "" },
-                    { 4, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7035), "Corinna", 1, true, "Braun", "" }
+                    { 1, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(1850), "Luka", 0, false, "Weis", "" },
+                    { 2, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(1855), "Peter", 0, true, "Pan", "" },
+                    { 3, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(1858), "Max", 0, false, "Mustermann", "" },
+                    { 4, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(1861), "Corinna", 1, true, "Braun", "" }
                 });
 
             migrationBuilder.InsertData(
@@ -252,76 +252,77 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 columns: new[] { "Id", "AddOn", "ClientId", "DeviceId", "GoodId", "LocationId", "Quantity" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 4, 4, 2 },
-                    { 2, new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 2, 1, 0 },
-                    { 3, new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 2, 4, 1 },
-                    { 4, new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 3, 3, 0 },
-                    { 5, new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 6, 4, 1 },
-                    { 6, new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 2, 3, 2 },
-                    { 7, new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 6, 3, 1 },
-                    { 8, new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 3, 1, 2 },
-                    { 9, new DateTime(2024, 9, 6, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 1, 3, 1 },
-                    { 10, new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 4, 5, 2 },
-                    { 11, new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 5, 4, 0 },
-                    { 12, new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 5, 5, 1 },
-                    { 13, new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 7, 2, 1 },
-                    { 14, new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 3, 5, 0 },
-                    { 15, new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 7, 5, 0 },
-                    { 16, new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 3, 3, 1 },
-                    { 17, new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 2, 2, 0 },
-                    { 18, new DateTime(2024, 9, 7, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 2, 2, 1 },
-                    { 19, new DateTime(2024, 9, 8, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 4, 1, 1 },
-                    { 20, new DateTime(2024, 9, 8, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 3, 4, 0 },
-                    { 21, new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 7, 2, 0 },
-                    { 22, new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 5, 1, 0 },
-                    { 23, new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 2, 5, 2 },
-                    { 24, new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 7, 1, 1 },
-                    { 25, new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 3, 2, 1 },
-                    { 26, new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 1, 5, 0 },
-                    { 27, new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 4, 5, 0 },
-                    { 28, new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 3, 5, 2 },
-                    { 29, new DateTime(2024, 9, 9, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 2, 5, 2 },
-                    { 30, new DateTime(2024, 9, 10, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 6, 5, 0 },
-                    { 31, new DateTime(2024, 9, 10, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 1, 4, 0 },
-                    { 32, new DateTime(2024, 9, 10, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 7, 1, 0 },
-                    { 33, new DateTime(2024, 9, 10, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 5, 2, 0 },
-                    { 34, new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 5, 5, 1 },
-                    { 35, new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 2, 1, 1 },
-                    { 36, new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 3, 2, 1 },
-                    { 37, new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 7, 2, 0 },
-                    { 38, new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 1, 2, 1 },
-                    { 39, new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 7, 2, 1 },
-                    { 40, new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 1, 2, 1 },
-                    { 41, new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 5, 4, 2 },
-                    { 42, new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 5, 4, 0 },
-                    { 43, new DateTime(2024, 9, 11, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 6, 1, 2 },
-                    { 44, new DateTime(2024, 9, 12, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 1, 5, 2 },
-                    { 45, new DateTime(2024, 9, 12, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 1, 1, 1 },
-                    { 46, new DateTime(2024, 9, 12, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 4, 2, 1 },
-                    { 47, new DateTime(2024, 9, 13, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 3, 1, 2 },
-                    { 48, new DateTime(2024, 9, 13, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 3, 5, 1 },
-                    { 49, new DateTime(2024, 9, 13, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 7, 5, 1 },
-                    { 50, new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 3, 3, 1 },
-                    { 51, new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 4, 5, 0 },
-                    { 52, new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 7, 2, 1 },
-                    { 53, new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 3, 2, 0 },
-                    { 54, new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 1, 1, 2 },
-                    { 55, new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 5, 5, 2 },
-                    { 56, new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 1, 2, 1 },
-                    { 57, new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 1, 3, 0 },
-                    { 58, new DateTime(2024, 9, 14, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 4, 3, 1 },
-                    { 59, new DateTime(2024, 9, 15, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 3, 4, 0 },
-                    { 60, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 1, 1, 7, 2, 1 },
-                    { 61, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 2, 2, 1 },
-                    { 62, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 3, 1, 1, 5, 0 },
-                    { 63, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 1, 3, 2 },
-                    { 64, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7310), 2, 1, 1, 3, 1 }
+                    { 1, new DateTime(2024, 9, 13, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 5, 2, 0 },
+                    { 2, new DateTime(2024, 9, 13, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 6, 3, 0 },
+                    { 3, new DateTime(2024, 9, 13, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 6, 4, 0 },
+                    { 4, new DateTime(2024, 9, 13, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 4, 2, 1 },
+                    { 5, new DateTime(2024, 9, 13, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 6, 2, 1 },
+                    { 6, new DateTime(2024, 9, 13, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 1, 2, 1 },
+                    { 7, new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 5, 4, 0 },
+                    { 8, new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 4, 2, 1 },
+                    { 9, new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 2, 5, 1 },
+                    { 10, new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 6, 1, 2 },
+                    { 11, new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 7, 1, 0 },
+                    { 12, new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 1, 2, 0 },
+                    { 13, new DateTime(2024, 9, 14, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 4, 4, 2 },
+                    { 14, new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 6, 2, 1 },
+                    { 15, new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 4, 2, 1 },
+                    { 16, new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 1, 4, 0 },
+                    { 17, new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 4, 1, 1 },
+                    { 18, new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 6, 5, 2 },
+                    { 19, new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 3, 1, 1 },
+                    { 20, new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 4, 4, 1 },
+                    { 21, new DateTime(2024, 9, 15, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 1, 3, 0 },
+                    { 22, new DateTime(2024, 9, 16, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 5, 4, 1 },
+                    { 23, new DateTime(2024, 9, 16, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 1, 4, 2 },
+                    { 24, new DateTime(2024, 9, 16, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 1, 4, 1 },
+                    { 25, new DateTime(2024, 9, 16, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 2, 2, 0 },
+                    { 26, new DateTime(2024, 9, 16, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 1, 2, 0 },
+                    { 27, new DateTime(2024, 9, 16, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 7, 1, 1 },
+                    { 28, new DateTime(2024, 9, 17, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 1, 1, 0 },
+                    { 29, new DateTime(2024, 9, 17, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 7, 1, 1 },
+                    { 30, new DateTime(2024, 9, 17, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 5, 4, 2 },
+                    { 31, new DateTime(2024, 9, 17, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 5, 2, 1 },
+                    { 32, new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 4, 4, 1 },
+                    { 33, new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 2, 4, 0 },
+                    { 34, new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 3, 3, 2 },
+                    { 35, new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 5, 3, 0 },
+                    { 36, new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 4, 2, 1 },
+                    { 37, new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 5, 4, 0 },
+                    { 38, new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 7, 4, 1 },
+                    { 39, new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 6, 2, 2 },
+                    { 40, new DateTime(2024, 9, 18, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 7, 5, 1 },
+                    { 41, new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 6, 1, 0 },
+                    { 42, new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 7, 1, 1 },
+                    { 43, new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 4, 1, 0 },
+                    { 44, new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 2, 1, 2 },
+                    { 45, new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 1, 2, 2 },
+                    { 46, new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 4, 1, 1 },
+                    { 47, new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 4, 1, 1 },
+                    { 48, new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 3, 3, 1 },
+                    { 49, new DateTime(2024, 9, 19, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 6, 1, 1 },
+                    { 50, new DateTime(2024, 9, 20, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 4, 5, 2 },
+                    { 51, new DateTime(2024, 9, 20, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 1, 2, 0 },
+                    { 52, new DateTime(2024, 9, 20, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 3, 1, 2 },
+                    { 53, new DateTime(2024, 9, 21, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 7, 4, 0 },
+                    { 54, new DateTime(2024, 9, 21, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 1, 1, 0 },
+                    { 55, new DateTime(2024, 9, 21, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 3, 5, 1 },
+                    { 56, new DateTime(2024, 9, 21, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 5, 3, 1 },
+                    { 57, new DateTime(2024, 9, 22, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 1, 2, 1 },
+                    { 58, new DateTime(2024, 9, 22, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 4, 5, 1 },
+                    { 59, new DateTime(2024, 9, 22, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 1, 5, 0 },
+                    { 60, new DateTime(2024, 9, 22, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 6, 2, 1 },
+                    { 61, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 1, 1, 3, 2, 2 },
+                    { 62, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 1, 3, 1 },
+                    { 63, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 3, 1, 1 },
+                    { 64, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 3, 1, 6, 2, 0 },
+                    { 65, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2226), 2, 1, 7, 1, 0 }
                 });
 
             migrationBuilder.InsertData(
                 table: "Shifts",
                 columns: new[] { "Id", "AddOn", "Date", "DeviceId" },
-                values: new object[] { 1, new DateTime(2024, 9, 16, 16, 17, 52, 561, DateTimeKind.Local).AddTicks(7205), new DateOnly(2024, 9, 16), 1 });
+                values: new object[] { 1, new DateTime(2024, 9, 23, 23, 1, 28, 849, DateTimeKind.Local).AddTicks(2059), new DateOnly(2024, 9, 23), 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clients_IsDeleted",
@@ -385,13 +386,13 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 filter: "IsDeleted = 0");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Location_IsDeleted",
-                table: "Location",
+                name: "IX_Locations_IsDeleted",
+                table: "Locations",
                 column: "IsDeleted");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Location_Name",
-                table: "Location",
+                name: "IX_Locations_Name",
+                table: "Locations",
                 column: "Name",
                 unique: true,
                 filter: "IsDeleted = 0");
@@ -447,7 +448,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 name: "Goods");
 
             migrationBuilder.DropTable(
-                name: "Location");
+                name: "Locations");
 
             migrationBuilder.DropTable(
                 name: "Shifts");
