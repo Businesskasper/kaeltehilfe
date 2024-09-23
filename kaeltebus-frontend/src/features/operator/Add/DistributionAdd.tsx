@@ -149,6 +149,7 @@ export const DistributionAdd = () => {
         <Grid
           gutter={20}
           columns={12}
+          mb="64px"
           justify={isDesktop ? "flex-start" : "center"}
         >
           {isLoading && <LoadingOverlay visible />}

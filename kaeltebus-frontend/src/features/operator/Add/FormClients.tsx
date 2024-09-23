@@ -22,7 +22,7 @@ export const FormClients = () => {
 
   const setClientData = (index: number, clientData?: Client) => {
     form.setFieldValue(`clients.${index}.id`, clientData?.id);
-    form.setFieldValue(`clients.${index}.gender`, clientData?.gender || "", {
+    form.setFieldValue(`clients.${index}.gender`, clientData?.gender || null, {
       forceUpdate: true,
     });
     form.setFieldValue(
