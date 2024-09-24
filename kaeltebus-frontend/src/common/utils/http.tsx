@@ -51,10 +51,14 @@ http.interceptors.response.use(
 
 const getBaseQuery =
   <T,>(path: string) =>
-  async (abortSignal?: AbortSignal): Promise<Array<T>> => {
+  async (
+    abortSignal?: AbortSignal,
+    params?: Record<string, unknown>
+  ): Promise<Array<T>> => {
     const response = await http.get<Array<T>>(path, {
       baseURL: VITE_API_BASE_URL,
       signal: abortSignal,
+      params,
     });
     return response.data;
   };

@@ -95,6 +95,7 @@ public class KbContext : DbContext
         modelBuilder.Entity<Distribution>().HasIndex(x => x.DeviceId);
         modelBuilder.Entity<Distribution>().HasIndex(x => x.ClientId);
         modelBuilder.Entity<Distribution>().HasIndex(x => x.GoodId);
+        modelBuilder.Entity<Distribution>().HasIndex(x => x.AddOn);
         modelBuilder
             .Entity<Distribution>()
             .HasOne(d => d.Good)
@@ -146,7 +147,7 @@ public class KbContext : DbContext
                 Id = 1,
                 Name = "Suppe",
                 GoodType = GoodType.FOOD,
-                AddOn = DateTime.Today,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
             new Good
@@ -154,7 +155,7 @@ public class KbContext : DbContext
                 Id = 2,
                 Name = "Kaffee",
                 GoodType = GoodType.FOOD,
-                AddOn = DateTime.Today,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
             new Good
@@ -162,7 +163,7 @@ public class KbContext : DbContext
                 Id = 3,
                 Name = "Tee",
                 GoodType = GoodType.FOOD,
-                AddOn = DateTime.Today,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
             new Good
@@ -170,7 +171,7 @@ public class KbContext : DbContext
                 Id = 4,
                 Name = "Decke",
                 GoodType = GoodType.CLOTHING,
-                AddOn = DateTime.Today,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
             new Good
@@ -178,7 +179,7 @@ public class KbContext : DbContext
                 Id = 5,
                 Name = "Socken",
                 GoodType = GoodType.CLOTHING,
-                AddOn = DateTime.Today,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
             new Good
@@ -186,7 +187,7 @@ public class KbContext : DbContext
                 Id = 6,
                 Name = "Tempos",
                 GoodType = GoodType.CONSUMABLE,
-                AddOn = DateTime.Today,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
             new Good
@@ -194,7 +195,7 @@ public class KbContext : DbContext
                 Id = 7,
                 Name = "Deo",
                 GoodType = GoodType.CONSUMABLE,
-                AddOn = DateTime.Today,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
         };
@@ -210,7 +211,7 @@ public class KbContext : DbContext
                 IsDriver = false,
                 IsDeleted = false,
                 Gender = Gender.MALE,
-                AddOn = DateTime.Now,
+                AddOn = DateTime.UtcNow,
             },
             new Volunteer
             {
@@ -220,7 +221,7 @@ public class KbContext : DbContext
                 IsDriver = true,
                 IsDeleted = false,
                 Gender = Gender.MALE,
-                AddOn = DateTime.Now,
+                AddOn = DateTime.UtcNow,
             },
             new Volunteer
             {
@@ -230,7 +231,7 @@ public class KbContext : DbContext
                 IsDriver = false,
                 IsDeleted = false,
                 Gender = Gender.MALE,
-                AddOn = DateTime.Now,
+                AddOn = DateTime.UtcNow,
             },
             new Volunteer
             {
@@ -240,7 +241,7 @@ public class KbContext : DbContext
                 IsDriver = true,
                 IsDeleted = false,
                 Gender = Gender.FEMALE,
-                AddOn = DateTime.Now,
+                AddOn = DateTime.UtcNow,
             },
         };
         modelBuilder.Entity<Volunteer>().HasData(volunteers);
@@ -249,7 +250,7 @@ public class KbContext : DbContext
         {
             Id = 1,
             RegistrationNumber = "UL-RK1013",
-            AddOn = DateTime.Now,
+            AddOn = DateTime.UtcNow,
             IsDeleted = false,
         };
         modelBuilder.Entity<Device>().HasData(device);
@@ -258,7 +259,7 @@ public class KbContext : DbContext
         {
             Id = 1,
             Date = DateOnly.FromDateTime(DateTime.Now),
-            AddOn = DateTime.Now,
+            AddOn = DateTime.UtcNow,
             IsDeleted = false,
             DeviceId = device.Id,
         };
@@ -279,7 +280,7 @@ public class KbContext : DbContext
                 Name = "Martin",
                 ApproxAge = 45,
                 Gender = Gender.MALE,
-                AddOn = DateTime.Now,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
             new Client
@@ -288,7 +289,7 @@ public class KbContext : DbContext
                 Name = "Martina",
                 ApproxAge = 40,
                 Gender = Gender.FEMALE,
-                AddOn = DateTime.Now,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
             new Client
@@ -296,7 +297,7 @@ public class KbContext : DbContext
                 Id = 3,
                 Name = "Tim",
                 ApproxAge = 30,
-                AddOn = DateTime.Now,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
         };
@@ -308,35 +309,35 @@ public class KbContext : DbContext
             {
                 Id = 1,
                 Name = "Alter Friedhof",
-                AddOn = DateTime.Now,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
             new Location
             {
                 Id = 2,
                 Name = "Bahnhof",
-                AddOn = DateTime.Now,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
             new Location
             {
                 Id = 3,
                 Name = "Neue Mitte",
-                AddOn = DateTime.Now,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
             new Location
             {
                 Id = 4,
                 Name = "Hirschstraße",
-                AddOn = DateTime.Now,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
             new Location
             {
                 Id = 5,
                 Name = "Schillerstraße",
-                AddOn = DateTime.Now,
+                AddOn = DateTime.UtcNow,
                 IsDeleted = false,
             },
         };

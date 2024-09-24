@@ -2,15 +2,17 @@ import {
   Card,
   Divider,
   Group,
+  Loader,
   LoadingOverlay,
   SimpleGrid,
+  Text,
   Title,
   useMantineColorScheme,
 } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import React from "react";
-import { useDistributions } from "../../../common/app";
+import { useDistributionsPaginated } from "../../../common/app";
 import {
   compareByDateOnly,
   formatDate,
@@ -23,9 +25,54 @@ import { useNavigate } from "react-router-dom";
 import "./DistributionOverview.scss";
 
 export const DistributionOverview = () => {
+  // const {
+  //   objs: { data: distributions, isLoading },
+  // } = useDistributions();
+
   const {
-    objs: { data: distributions, isLoading },
-  } = useDistributions();
+    queryDistributionsPaginated: {
+      data,
+      fetchNextPage,
+      isLoading,
+      hasNextPage,
+      isFetchingNextPage,
+    },
+  } = useDistributionsPaginated();
+  const observerRef = React.useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = React.useRef<HTMLDivElement | null>(null);
+  // IntersectionObserver callback to trigger fetching the next page
+  const handleObserver = React.useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      const target = entries[0];
+      if (target.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
+  );
+
+  React.useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver(handleObserver, {
+      root: null, // Use the browser viewport as the container
+      rootMargin: "0px",
+      threshold: 0.1, // Trigger when 10% of the target is visible
+    });
+
+    const currentObserver = observerRef.current;
+    const target = loadMoreRef.current;
+
+    if (target) currentObserver.observe(target);
+
+    return () => {
+      if (currentObserver && target) {
+        currentObserver.unobserve(target);
+      }
+    };
+  }, [handleObserver]);
+
+  const distributions = data?.pages?.flatMap((p) => p);
 
   const navigate = useNavigate();
 
@@ -112,6 +159,13 @@ export const DistributionOverview = () => {
           </div>
         );
       })}
+      <Group justify="center" w="100%" ref={loadMoreRef}>
+        {isFetchingNextPage ? (
+          <Loader size="sm" />
+        ) : (
+          <Text>Scrollen um weitere Ergebnisse zu laden</Text>
+        )}
+      </Group>
     </div>
   );
 };

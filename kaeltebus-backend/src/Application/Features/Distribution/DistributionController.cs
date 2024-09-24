@@ -29,14 +29,17 @@ public class DistributionsController : ControllerBase
 
     [HttpGet()]
     public async Task<IEnumerable<DistributionQueryDto>> Query(
-        [FromQuery] int? pageSize,
-        [FromQuery] int? page
+        [FromQuery] DateTime? from,
+        [FromQuery] DateTime? to
     )
     {
         // TODO: Nur die eigenen Schichten wenn User Operator
         var query = _kbContext.Distributions.AsQueryable().Where(x => !x.IsDeleted);
-        if (pageSize != null && page != null)
-            query = query.Skip(((int)page - 1) * (int)pageSize);
+        // if (pageSize != null && page != null)
+        //     query = query.Skip(((int)page - 1) * (int)pageSize);
+        _logger.LogInformation($"Received ${from} - ${to} query params");
+        if (from.HasValue && to.HasValue)
+            query = query.Where(x => x.AddOn >= from && x.AddOn <= to);
 
         var objs = await query.ToListAsync();
 
@@ -140,9 +143,9 @@ public class DistributionCreateDtoValidator : AbstractValidator<DistributionCrea
         RuleFor(d => d.GoodId).NotNull();
         RuleFor(d => d.Quantity).GreaterThan(0);
         RuleFor(d => d.Client).NotNull();
-        RuleFor(d => d.Client.Id)
+        RuleFor(d => d.Client!.Id)
             .NotNull()
             .When(d => d.Client != null && String.IsNullOrEmpty(d.Client?.Name));
-        RuleFor(d => d.Client.Name).Empty().When(d => d.Client != null && d.Client?.Id != null);
+        RuleFor(d => d.Client!.Name).Empty().When(d => d.Client != null && d.Client?.Id != null);
     }
 }
