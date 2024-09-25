@@ -87,6 +87,35 @@ public class DistributionsController : ControllerBase
 
         return CreatedAtAction(nameof(Get), routeValues: new { id = result.Entity.Id }, null);
     }
+
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> Update(
+        [FromRoute(Name = "id")] int id,
+        [FromBody()] DistributionUpdateDto dto
+    )
+    {
+        var distribution = await _kbContext.Distributions.FindAsync(id);
+        if (distribution is null)
+            return NotFound();
+
+        distribution.Quantity = dto.Quantity;
+        await _kbContext.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
+    {
+        var distribution = await _kbContext.Distributions.FindAsync(id);
+        if (distribution is null)
+            return NotFound();
+
+        distribution.IsDeleted = true;
+        await _kbContext.SaveChangesAsync();
+
+        return NoContent();
+    }
 }
 
 public class DistributionQueryDto
@@ -124,6 +153,11 @@ public class DistributionCreateDto
     public int Quantity { get; set; }
 }
 
+public class DistributionUpdateDto
+{
+    public int Quantity { get; set; }
+}
+
 public class DistributionDtoProfile : Profile
 {
     public DistributionDtoProfile()
@@ -147,5 +181,13 @@ public class DistributionCreateDtoValidator : AbstractValidator<DistributionCrea
             .NotNull()
             .When(d => d.Client != null && String.IsNullOrEmpty(d.Client?.Name));
         RuleFor(d => d.Client!.Name).Empty().When(d => d.Client != null && d.Client?.Id != null);
+    }
+}
+
+public class DistributionUpdateDtoValidator : AbstractValidator<DistributionUpdateDto>
+{
+    public DistributionUpdateDtoValidator()
+    {
+        RuleFor(d => d.Quantity).GreaterThan(0);
     }
 }

@@ -24,8 +24,16 @@ export type Distribution = {
   quantity: number;
 };
 
+type DistributionUpdate = {
+  quantity: number;
+};
+
 export const useDistributions = () =>
-  useCrudHook<Distribution, never>("distributions");
+  useCrudHook<Distribution, never, DistributionUpdate>(
+    "distributions",
+    undefined,
+    ["distributionsPaginated"]
+  );
 
 export const useDistributionsPaginated = () => {
   const httpGet = getBaseQuery<Distribution>(`/distributions`);
@@ -45,19 +53,19 @@ export const useDistributionsPaginated = () => {
     Distribution[],
     Error,
     InfiniteData<Distribution>,
-    ["distributions"],
+    ["distributionsPaginated"],
     { from: Date; to: Date }
   >(
     {
-      queryKey: ["distributions"],
-      queryFn: (a) => httpGet(a.signal, a.pageParam),
+      queryKey: ["distributionsPaginated"],
+      queryFn: (params) => httpGet(params.signal, params.pageParam),
       initialPageParam: {
         from: oneMonthBefore,
         to: oneHourAhead,
       },
       getNextPageParam: (lastPage, _allPages, lastPageParams) => {
         // If last page returned no data, increase the emptyPageCountRef counter
-        if (lastPage.length === 0) {
+        if (!lastPage || lastPage?.length === 0) {
           emptyPageCountRef.current++;
         } else {
           emptyPageCountRef.current = 0; // Reset if we have data
@@ -84,14 +92,9 @@ export const useDistributionsPaginated = () => {
 
   const invalidate = () => {
     queryClient.invalidateQueries({
-      queryKey: ["distributions"],
+      queryKey: ["distributionsPaginated"],
     });
   };
-  // const invalidatePage = (from: number, to: number) => {
-  //   queryClient.invalidateQueries({
-  //     queryKey: ["distributions", { from, to }],
-  //   });
-  // };
 
   return { queryDistributionsPaginated, invalidate };
 };

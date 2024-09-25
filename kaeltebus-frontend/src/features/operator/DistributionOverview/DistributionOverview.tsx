@@ -12,6 +12,7 @@ import {
 import { useHover } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { useDistributionsPaginated } from "../../../common/app";
 import {
   compareByDateOnly,
@@ -21,7 +22,6 @@ import {
 } from "../../../common/utils";
 import { DistributionCard } from "./DistributionCard";
 
-import { useNavigate } from "react-router-dom";
 import "./DistributionOverview.scss";
 
 export const DistributionOverview = () => {

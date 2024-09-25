@@ -11,14 +11,19 @@ type Transformer<T> = {
   [K in keyof T]?: (value: T[K]) => T[K];
 };
 
-export const useCrudHook = <T, TWriteModel extends Record<string, unknown>>(
+export const useCrudHook = <
+  T,
+  TWriteModel extends Record<string, unknown>,
+  TUpdateModel = Partial<TWriteModel>
+>(
   key: string,
-  transformer?: Transformer<T>
+  transformer?: Transformer<T>,
+  additionalInvalidation?: Array<string>
 ) => {
   const httpGet = getBaseQuery<T>(`/${key}`);
   const httpPost = getBasePost<TWriteModel>(`/${key}`);
   const httpPUT = getBasePut<TWriteModel>(`/${key}`);
-  const httpPatch = getBasePatch<TWriteModel>(`/${key}`);
+  const httpPatch = getBasePatch<TUpdateModel>(`/${key}`);
   const httpDelete = getBaseDelete(`/${key}`);
 
   const queryClient = useQueryClient();
@@ -49,10 +54,14 @@ export const useCrudHook = <T, TWriteModel extends Record<string, unknown>>(
     },
   });
 
-  const invalidate = () =>
+  const invalidate = () => {
     queryClient.invalidateQueries({
       queryKey: [key],
     });
+    additionalInvalidation?.forEach((key) =>
+      queryClient.invalidateQueries({ queryKey: [key] })
+    );
+  };
 
   const post = useMutation({
     mutationFn: httpPost,
@@ -62,7 +71,7 @@ export const useCrudHook = <T, TWriteModel extends Record<string, unknown>>(
   const update = useMutation<
     void,
     unknown,
-    { id: number; update: Partial<TWriteModel> },
+    { id: number; update: TUpdateModel },
     unknown
   >({
     mutationFn: ({ id, update }) => httpPatch(id, update),
