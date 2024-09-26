@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getBaseDelete,
-  getBaseUpdate as getBasePatch,
   getBasePost,
   getBasePut,
   getBaseQuery,
+  getBaseUpdate,
 } from "./http";
 
 type Transformer<T> = {
@@ -23,7 +23,7 @@ export const useCrudHook = <
   const httpGet = getBaseQuery<T>(`/${key}`);
   const httpPost = getBasePost<TWriteModel>(`/${key}`);
   const httpPUT = getBasePut<TWriteModel>(`/${key}`);
-  const httpPatch = getBasePatch<TUpdateModel>(`/${key}`);
+  const httpPatch = getBaseUpdate<TUpdateModel>(`/${key}`);
   const httpDelete = getBaseDelete(`/${key}`);
 
   const queryClient = useQueryClient();
@@ -52,6 +52,7 @@ export const useCrudHook = <
         return transformedObject;
       });
     },
+    refetchOnWindowFocus: "always",
   });
 
   const invalidate = () => {

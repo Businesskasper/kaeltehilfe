@@ -12,8 +12,8 @@ import React from "react";
 import {
   Distribution,
   GoodTypeTranslation,
-  useDistributions,
   useGoods,
+  useWriteDistributions,
 } from "../../../common/app";
 import {
   compareByDateOnly,
@@ -40,7 +40,7 @@ export const DistributionCard = ({
   const {
     update: { mutate: updateDistribution },
     remove: { mutate: removeDistribution },
-  } = useDistributions();
+  } = useWriteDistributions();
 
   // TODO: Gruppierung um Ort?
   // TODO: Sortierung innerhalb der Gruppe?

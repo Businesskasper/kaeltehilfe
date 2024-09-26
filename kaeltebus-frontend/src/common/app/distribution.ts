@@ -1,12 +1,17 @@
 import {
   InfiniteData,
-  QueryFunctionContext,
   useInfiniteQuery,
-  useQueries,
+  useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
 import React from "react";
-import { getBaseQuery, useCrudHook } from "../utils";
+import {
+  getBaseDelete,
+  getBaseQuery,
+  getBaseUpdate,
+  toNormalizedDate,
+  useCrudHook,
+} from "../utils";
 
 export type Distribution = {
   id: number;
@@ -37,6 +42,38 @@ export const useDistributions = () =>
     ["distributionsPaginated"]
   );
 
+export const useWriteDistributions = () => {
+  const httpPatch = getBaseUpdate<DistributionUpdate>(`/distributions`);
+  const httpDelete = getBaseDelete(`/distributions`);
+
+  const queryClient = useQueryClient();
+
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: ["distributions"] });
+    queryClient.invalidateQueries({ queryKey: ["distributionsPaginated"] });
+  };
+
+  const update = useMutation<
+    void,
+    unknown,
+    { id: number; update: DistributionUpdate },
+    unknown
+  >({
+    mutationFn: ({ id, update }) => httpPatch(id, update),
+    onSettled: invalidate,
+  });
+
+  const remove = useMutation({
+    mutationFn: httpDelete,
+    onSettled: invalidate,
+  });
+
+  return {
+    remove,
+    update,
+  };
+};
+
 export const useDistributionsPaginated = () => {
   const httpGet = getBaseQuery<Distribution>(`/distributions`);
 
@@ -47,8 +84,8 @@ export const useDistributionsPaginated = () => {
 
   const now = new Date();
   const oneHourAhead = new Date(now.setHours(now.getHours() + 1));
-  const oneMonthBefore = new Date(
-    new Date(now).setMonth(now.getMonth() - 1).valueOf()
+  const oneMonthBefore = toNormalizedDate(
+    new Date(new Date(now).setMonth(now.getMonth() - 1).valueOf())
   );
 
   const queryDistributionsPaginated = useInfiniteQuery<
@@ -101,29 +138,30 @@ export const useDistributionsPaginated = () => {
   return { queryDistributionsPaginated, invalidate };
 };
 
-export const useDistributionsByClients = (clientIds: number[]) => {
-  const getDistributionsByClient = getBaseQuery<Distribution>(`/distributions`);
+// // TODO: not tested
+// export const useDistributionsByClients = (clientIds: number[]) => {
+//   const getDistributionsByClient = getBaseQuery<Distribution>(`/distributions`);
 
-  const queryClient = useQueryClient();
+//   const queryClient = useQueryClient();
 
-  const queries = useQueries({
-    queries: clientIds.map((clientId) => ({
-      queryKey: ["distributionsByClientId", clientId.toString()],
-      queryFn: (params: QueryFunctionContext) =>
-        getDistributionsByClient(params.signal, {
-          clientId: clientId.toString(),
-        }),
-    })),
-    combine: (result) => result.flatMap((r) => r.data),
-  });
+//   const queries = useQueries({
+//     queries: clientIds.map((clientId) => ({
+//       queryKey: ["distributionsByClientId", clientId.toString()],
+//       queryFn: (params: QueryFunctionContext) =>
+//         getDistributionsByClient(params.signal, {
+//           clientId: clientId.toString(),
+//         }),
+//     })),
+//     combine: (result) => result.flatMap((r) => r.data),
+//   });
 
-  const invalidate = (clientId: number) =>
-    queryClient.invalidateQueries({
-      queryKey: ["distributionsByClientId", [clientId.toString()]],
-    });
+//   const invalidate = (clientId: number) =>
+//     queryClient.invalidateQueries({
+//       queryKey: ["distributionsByClientId", [clientId.toString()]],
+//     });
 
-  return {
-    invalidate,
-    queries,
-  };
-};
+//   return {
+//     invalidate,
+//     queries,
+//   };
+// };

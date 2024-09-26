@@ -95,6 +95,12 @@ export const AdminHome = () => {
             target="clients"
             Icon={IconBedFlat}
           />
+          <NavigationItem
+            onNavigate={toggle}
+            label="Ausgaben"
+            target="distributions"
+            Icon={IconBedFlat}
+          />
         </NavigationSection>
       </AppShell.Navbar>
       <AppShell.Main id="admin-main">

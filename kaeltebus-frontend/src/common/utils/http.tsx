@@ -16,6 +16,12 @@ const notificationProps: Partial<NotificationData> = {
   withCloseButton: true,
   mb: "xs",
 };
+http.interceptors.request.use((request) => {
+  request.withCredentials = true;
+  // request.headers.set("Accept-Encoding", "gzip", true);
+
+  return request;
+});
 http.interceptors.response.use(
   (response) => response,
   (error) => {

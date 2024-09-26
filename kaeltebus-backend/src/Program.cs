@@ -4,12 +4,20 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using kaeltebus_backend.Infrastructure.Database;
 using kaeltebus_backend.shared;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    // options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+});
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -77,6 +85,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseResponseCompression();
 
 app.UseHttpsRedirection();
 

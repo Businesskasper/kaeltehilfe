@@ -12,6 +12,7 @@ import {
   AdminHome,
   Clients,
   Devices,
+  Distributions,
   Goods,
   Shifts,
   Volunteers,
@@ -62,6 +63,10 @@ export const router = createBrowserRouter([
           {
             path: "volunteers",
             element: <Volunteers />,
+          },
+          {
+            path: "distributions",
+            element: <Distributions />,
           },
         ],
       },

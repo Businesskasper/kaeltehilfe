@@ -18,6 +18,7 @@ import {
   MRT_ColumnDef,
   MRT_ColumnFiltersState,
   MRT_ColumnSizingState,
+  MRT_PaginationState,
   MRT_RowSelectionState,
   MRT_ShowHideColumnsButton,
   MRT_SortingState,
@@ -135,6 +136,10 @@ export const Table = <T extends Record<string, any>>({
       key: `${tableKey}_filters`,
       defaultValue: [],
     });
+  const [pagination, setPagination] = useLocalStorage<MRT_PaginationState>({
+    key: `${tableKey}_pagination`,
+    defaultValue: { pageIndex: 0, pageSize: 20 },
+  });
 
   const table = useMantineReactTable<T>({
     localization: MRT_Localization_DE,
@@ -160,6 +165,7 @@ export const Table = <T extends Record<string, any>>({
       rowSelection,
       columnSizing,
       columnFilters,
+      pagination,
     },
     onRowSelectionChange: setRowSelection,
     initialState: {
@@ -178,6 +184,7 @@ export const Table = <T extends Record<string, any>>({
     enableColumnResizing: true,
     onColumnSizingChange: setColumnSizing,
     onColumnFiltersChange: setColumnFilters,
+    onPaginationChange: setPagination,
   });
 
   React.useEffect(() => {
