@@ -1,4 +1,11 @@
-import { Button, Select, TagsInput, TextInput, Textarea } from "@mantine/core";
+import {
+  Button,
+  NumberInput,
+  Select,
+  TagsInput,
+  TextInput,
+  Textarea,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import React from "react";
 import {
@@ -100,6 +107,13 @@ export const GoodModal = ({ isOpen, close, existing }: GoodModalProps) => {
             withAsterisk
             label="Typ"
             placeholder="Typ"
+            mt="md"
+            mb="md"
+          />
+          <NumberInput
+            {...form.getInputProps("twoWeekThreshold")}
+            label="Zwei-Wochen-Warnung"
+            placeholder="Zwei-Wochen-Warnung"
             mt="md"
             mb="md"
           />

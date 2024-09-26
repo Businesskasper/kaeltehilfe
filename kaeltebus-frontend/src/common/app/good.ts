@@ -15,6 +15,7 @@ export type Good = {
   description?: string;
   tags: Array<string>;
   goodType?: GoodType;
+  twoWeekThreshold?: number;
 };
 
 export const GoodTypeTranslation: {

@@ -130,7 +130,7 @@ export const FormClients = () => {
             id: undefined,
             name: "",
             approxAge: undefined,
-            gender: undefined,
+            gender: null,
           })
         }
       >

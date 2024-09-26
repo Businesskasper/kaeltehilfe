@@ -1,6 +1,8 @@
 import {
   InfiniteData,
+  QueryFunctionContext,
   useInfiniteQuery,
+  useQueries,
   useQueryClient,
 } from "@tanstack/react-query";
 import React from "react";
@@ -97,4 +99,31 @@ export const useDistributionsPaginated = () => {
   };
 
   return { queryDistributionsPaginated, invalidate };
+};
+
+export const useDistributionsByClients = (clientIds: number[]) => {
+  const getDistributionsByClient = getBaseQuery<Distribution>(`/distributions`);
+
+  const queryClient = useQueryClient();
+
+  const queries = useQueries({
+    queries: clientIds.map((clientId) => ({
+      queryKey: ["distributionsByClientId", clientId.toString()],
+      queryFn: (params: QueryFunctionContext) =>
+        getDistributionsByClient(params.signal, {
+          clientId: clientId.toString(),
+        }),
+    })),
+    combine: (result) => result.flatMap((r) => r.data),
+  });
+
+  const invalidate = (clientId: number) =>
+    queryClient.invalidateQueries({
+      queryKey: ["distributionsByClientId", [clientId.toString()]],
+    });
+
+  return {
+    invalidate,
+    queries,
+  };
 };

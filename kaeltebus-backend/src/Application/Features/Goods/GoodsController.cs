@@ -24,6 +24,7 @@ public class GoodCreateDto
     public string? Description { get; set; }
     public GoodType? GoodType { get; set; }
     public List<string>? Tags { get; set; }
+    public int? TwoWeekThreshold { get; set; }
 }
 
 public class GoodUpdateDto : GoodCreateDto;
@@ -50,8 +51,9 @@ public class GoodCreateDtoValidator : AbstractValidator<GoodCreateDto>
 {
     public GoodCreateDtoValidator()
     {
-        RuleFor(x => x.Name).NotNull().MinimumLength(3);
-        RuleFor(x => x.GoodType).NotNull().IsInEnum();
+        RuleFor(g => g.Name).NotNull().MinimumLength(3);
+        RuleFor(g => g.GoodType).NotNull().IsInEnum();
+        RuleFor(g => g.TwoWeekThreshold).GreaterThan(0).When(g => g.TwoWeekThreshold.HasValue);
     }
 }
 
@@ -59,7 +61,8 @@ public class GoodUpdateDtoValidator : AbstractValidator<GoodUpdateDto>
 {
     public GoodUpdateDtoValidator()
     {
-        RuleFor(x => x.Name).MinimumLength(3).When(x => x.Name is not null);
-        RuleFor(x => x.GoodType).IsInEnum().When(x => x.GoodType is not null);
+        RuleFor(g => g.Name).MinimumLength(3).When(g => g.Name is not null);
+        RuleFor(g => g.GoodType).IsInEnum().When(g => g.GoodType is not null);
+        RuleFor(g => g.TwoWeekThreshold).GreaterThan(0).When(g => g.TwoWeekThreshold.HasValue);
     }
 }

@@ -51,6 +51,10 @@ export const Goods = () => {
       },
     },
     {
+      header: "Zwei-Wochen-Warnung",
+      accessorKey: "twoWeekThreshold",
+    },
+    {
       header: "Tags",
       accessorFn: ({ tags }) => tags?.join(", "),
       Cell: ({

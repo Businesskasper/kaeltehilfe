@@ -157,6 +157,7 @@ public class KbContext : DbContext
                 GoodType = GoodType.FOOD,
                 AddOn = DateTime.UtcNow,
                 IsDeleted = false,
+                Tags = ["Heißgetränk"],
             },
             new Good
             {
@@ -165,6 +166,7 @@ public class KbContext : DbContext
                 GoodType = GoodType.FOOD,
                 AddOn = DateTime.UtcNow,
                 IsDeleted = false,
+                Tags = ["Heißgetränk"],
             },
             new Good
             {
@@ -173,6 +175,7 @@ public class KbContext : DbContext
                 GoodType = GoodType.CLOTHING,
                 AddOn = DateTime.UtcNow,
                 IsDeleted = false,
+                TwoWeekThreshold = 2,
             },
             new Good
             {
@@ -181,6 +184,7 @@ public class KbContext : DbContext
                 GoodType = GoodType.CLOTHING,
                 AddOn = DateTime.UtcNow,
                 IsDeleted = false,
+                TwoWeekThreshold = 3,
             },
             new Good
             {
@@ -189,6 +193,7 @@ public class KbContext : DbContext
                 GoodType = GoodType.CONSUMABLE,
                 AddOn = DateTime.UtcNow,
                 IsDeleted = false,
+                Tags = ["Hygiene"],
             },
             new Good
             {
@@ -197,6 +202,7 @@ public class KbContext : DbContext
                 GoodType = GoodType.CONSUMABLE,
                 AddOn = DateTime.UtcNow,
                 IsDeleted = false,
+                Tags = ["Hygiene"],
             },
         };
         modelBuilder.Entity<Good>().HasData(goods);
@@ -399,14 +405,14 @@ static class DbContextExtensions
 
         while (currentDate <= end)
         {
-            int countDistributions = random.Next(10);
+            int countDistributions = random.Next(6, 10);
 
             for (int i = 0; i <= countDistributions; i++)
             {
                 var clientIndex = random.Next(clients.Count);
                 var locationIndex = random.Next(locations.Count);
                 var goodIndex = random.Next(goods.Count);
-                var quantity = random.Next(3);
+                var quantity = random.Next(1, 3);
 
                 var distribution = new Distribution
                 {
