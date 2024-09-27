@@ -61,7 +61,7 @@ export const Distributions = () => {
     {
       accessorKey: "quantity",
       header: "Anzahl",
-      aggregationFn: "sum", //calc total points for each team by adding up all the points for each player on the team
+      aggregationFn: "sum",
       AggregatedCell: ({ cell }) => cell.getValue() as number,
     },
     {

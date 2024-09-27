@@ -18,6 +18,7 @@ import {
   MRT_ColumnDef,
   MRT_ColumnFiltersState,
   MRT_ColumnSizingState,
+  MRT_GroupingState,
   MRT_PaginationState,
   MRT_RowSelectionState,
   MRT_ShowHideColumnsButton,
@@ -144,6 +145,10 @@ export const Table = <T extends Record<string, any>>({
     key: `${tableKey}_pagination`,
     defaultValue: { pageIndex: 0, pageSize: 20 },
   });
+  const [grouping, setGrouping] = useLocalStorage<MRT_GroupingState>({
+    key: `${tableKey}_grouping`,
+    defaultValue: [],
+  });
 
   const table = useMantineReactTable<T>({
     localization: MRT_Localization_DE,
@@ -173,6 +178,7 @@ export const Table = <T extends Record<string, any>>({
       columnSizing,
       columnFilters,
       pagination,
+      grouping,
     },
     onRowSelectionChange: setRowSelection,
     initialState: {
@@ -193,6 +199,7 @@ export const Table = <T extends Record<string, any>>({
     onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
     enableGrouping,
+    onGroupingChange: setGrouping,
   });
 
   React.useEffect(() => {
