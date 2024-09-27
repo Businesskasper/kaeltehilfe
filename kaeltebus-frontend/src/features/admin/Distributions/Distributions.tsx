@@ -1,4 +1,6 @@
 import { Title } from "@mantine/core";
+import { DatePickerInput } from "@mantine/dates";
+import { useField } from "@mantine/form";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
 import { Distribution, useDistributions } from "../../../common/app";
@@ -8,21 +10,31 @@ import {
   compareByDateTime,
   formatDate,
   formatDateTime,
+  toNormalizedDate,
 } from "../../../common/utils";
 
 export const Distributions = () => {
+  const today = toNormalizedDate(new Date()) || new Date();
+  const oneMonthBefore =
+    toNormalizedDate(new Date(today).setMonth(today.getMonth() - 1)) ||
+    new Date();
+  const rangeFilterField = useField<[Date | null, Date | null]>({
+    mode: "controlled",
+    initialValue: [oneMonthBefore, today],
+  });
+
+  const rangeFilter = rangeFilterField.getValue();
+  const [from, to] = rangeFilter;
+  const fromStart = from ? toNormalizedDate(from) : undefined;
+  const toEnd = to
+    ? toNormalizedDate(new Date(to).setDate(to?.getDate() + 1))
+    : undefined;
+
   const {
-    objs: { data: distributions, isLoading },
+    objs: { data: distributions, isFetching, isFetched },
     remove: { mutate: deleteDistribution, isPending: isDeleting },
     put: { isPending: isPutting },
-  } = useDistributions();
-
-  //   const [isModalOpened, { open: openModal, close: closeModal }] =
-  //     useDisclosure(false);
-
-  //   const [selectedDistributions, setSelectedDistributions] = React.useState<
-  //     Array<Distribution>
-  //   >([]);
+  } = useDistributions({ from: fromStart || null, to: toEnd || null });
 
   const columns: Array<MRT_ColumnDef<Distribution>> = [
     {
@@ -49,6 +61,8 @@ export const Distributions = () => {
     {
       accessorKey: "quantity",
       header: "Anzahl",
+      aggregationFn: "sum", //calc total points for each team by adding up all the points for each player on the team
+      AggregatedCell: ({ cell }) => cell.getValue() as number,
     },
     {
       id: "timestamp",
@@ -88,10 +102,6 @@ export const Distributions = () => {
     },
   };
 
-  //   const handleEdit = React.useCallback(() => {
-  //     openModal();
-  //   }, [openModal]);
-
   const handleDelete = React.useCallback(
     (goods: Array<Distribution>) => {
       goods.forEach((distribution) => deleteDistribution(distribution.id));
@@ -99,6 +109,7 @@ export const Distributions = () => {
     [deleteDistribution]
   );
 
+  const isLoading = !isFetched && isFetching;
   const isTableLoading = isLoading || isPutting || isDeleting;
 
   return (
@@ -106,26 +117,38 @@ export const Distributions = () => {
       <Title size="h1" mb="lg">
         Ausgaben
       </Title>
-
+      <DatePickerInput
+        {...rangeFilterField.getInputProps()}
+        label="Zeitraum"
+        w="300px"
+        mb="sm"
+        type="range"
+        valueFormat="DD MMMM YYYY"
+      />
       <Table
         data={distributions || []}
         isLoading={isTableLoading}
         keyGetter="id"
         columns={columns}
-        // handleAdd={handleAdd}
-        // handleEdit={handleEdit}
         handleDelete={handleDelete}
         exportConfig={exportConfig}
         fillScreen
         tableKey="goods-overview"
-        // setSelected={setSelectedDistributions}
         defaultSorting={[{ id: "timestamp", desc: true }]}
+        enableGrouping
+        // customHeaderChildren={
+        //   <Group ml="xl" w="100%" gap="xl">
+        //     <Divider
+        //       label="jo"
+        //       size="xl"
+        //       color="black"
+        //       h="100%"
+        //       orientation="vertical"
+        //     />
+        //     <DatePickerInput type="range" />
+        //   </Group>
+        // }
       />
-      {/* <GoodModal
-        close={closeModal}
-        isOpen={isModalOpened}
-        existing={selectedDistributions[0]}
-      /> */}
     </>
   );
 };

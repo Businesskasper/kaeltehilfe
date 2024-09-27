@@ -83,6 +83,8 @@ type Props<T extends Record<string, any>> = {
   setSelected?: React.Dispatch<React.SetStateAction<Array<T>>>;
   defaultSorting?: MRT_SortingState;
   customActions?: Array<AdditionalCustomAction<T>>;
+  customHeaderChildren?: React.JSX.Element | Array<React.JSX.Element>;
+  enableGrouping?: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -101,6 +103,8 @@ export const Table = <T extends Record<string, any>>({
   setSelected,
   defaultSorting,
   customActions,
+  customHeaderChildren,
+  enableGrouping,
 }: Props<T>) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const getRowId = React.useCallback(
@@ -147,13 +151,16 @@ export const Table = <T extends Record<string, any>>({
     getRowId: (obj) => String(getRowId(obj)),
     positionToolbarAlertBanner: "bottom",
     renderTopToolbarCustomActions: (table) => (
-      <CustomActions
-        handleAdd={handleAdd}
-        handleDelete={handleDelete}
-        handleEdit={handleEdit}
-        table={table.table}
-        customActions={customActions}
-      />
+      <>
+        <CustomActions
+          handleAdd={handleAdd}
+          handleDelete={handleDelete}
+          handleEdit={handleEdit}
+          table={table.table}
+          customActions={customActions}
+        />
+        {customHeaderChildren && customHeaderChildren}
+      </>
     ),
     renderToolbarInternalActions: ({ table }) => (
       <InternalActions table={table} exportConfig={exportConfig} />
@@ -185,6 +192,7 @@ export const Table = <T extends Record<string, any>>({
     onColumnSizingChange: setColumnSizing,
     onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
+    enableGrouping,
   });
 
   React.useEffect(() => {

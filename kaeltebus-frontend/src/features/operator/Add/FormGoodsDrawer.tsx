@@ -43,7 +43,6 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
     queryDistributionsPaginated: { data: distributionPages },
   } = useDistributionsPaginated();
   const distributions = distributionPages?.pages?.flatMap((p) => p) || [];
-
   const form = useDistributionFormContext();
 
   const goodTypes: Array<GoodType> = ["FOOD", "CLOTHING", "CONSUMABLE"];
@@ -181,18 +180,18 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
                                 (d) => d.client.id === client.id
                               );
 
-                            if (
-                              distributionsForClient.length >
-                              good.twoWeekThreshold
-                            ) {
+                            const totalDistsForClient =
+                              distributionsForClient.reduce(
+                                (sum, acc) => sum + acc.quantity,
+                                0
+                              );
+
+                            if (totalDistsForClient > good.twoWeekThreshold) {
                               clientWarnings.push(
                                 <Text>
                                   In den letzten zwei Wochen{" "}
-                                  <strong>
-                                    {distributionsForClient.length}
-                                  </strong>{" "}
-                                  mal an <strong>{client.name}</strong>{" "}
-                                  ausgegeben
+                                  <strong>{totalDistsForClient}</strong> mal an{" "}
+                                  <strong>{client.name}</strong> ausgegeben
                                 </Text>
                               );
                             }

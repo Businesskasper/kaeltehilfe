@@ -6,4 +6,4 @@ export type Device = {
 };
 
 export const useDevices = () =>
-  useCrudHook<Device, Omit<Device, "id">>("devices");
+  useCrudHook<Device, never, Omit<Device, "id">>({ key: "devices" });

@@ -6,4 +6,4 @@ export type Location = {
 };
 
 export const useLocations = () =>
-  useCrudHook<Location, Omit<Location, "id">>("locations");
+  useCrudHook<Location, never, Omit<Location, "id">>({ key: "locations" });

@@ -17,6 +17,9 @@ export type ShiftPost = {
 };
 
 export const useShifts = () =>
-  useCrudHook<Shift, ShiftPost>("shifts", {
-    date: (date) => toLocalDate(date),
+  useCrudHook<Shift, never, ShiftPost>({
+    key: "shifts",
+    transformer: {
+      date: (date) => toLocalDate(date),
+    },
   });

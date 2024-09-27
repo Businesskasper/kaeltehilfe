@@ -10,4 +10,4 @@ export type Client = {
 };
 
 export const useClients = () =>
-  useCrudHook<Client, Omit<Client, "id">>("clients");
+  useCrudHook<Client, never, Omit<Client, "id">>({ key: "clients" });

@@ -35,4 +35,5 @@ export const GoodTypeTranslation: {
   },
 };
 
-export const useGoods = () => useCrudHook<Good, Omit<Good, "id">>("goods");
+export const useGoods = () =>
+  useCrudHook<Good, never, never, Omit<Good, "id">>({ key: "goods" });

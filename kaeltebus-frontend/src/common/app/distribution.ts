@@ -35,12 +35,23 @@ type DistributionUpdate = {
   quantity: number;
 };
 
-export const useDistributions = () =>
-  useCrudHook<Distribution, never, DistributionUpdate>(
-    "distributions",
-    undefined,
-    ["distributionsPaginated"]
-  );
+type DistributionsQueryParams = {
+  from: Date | null;
+  to: Date | null;
+};
+
+export const useDistributions = (params: DistributionsQueryParams) =>
+  useCrudHook<
+    Distribution,
+    DistributionsQueryParams,
+    never,
+    DistributionUpdate
+  >({
+    key: "distributions",
+    params,
+    additionalInvalidation: ["distributionsPaginated"],
+    enabled: () => !!params?.from && !!params?.to,
+  });
 
 export const useWriteDistributions = () => {
   const httpPatch = getBaseUpdate<DistributionUpdate>(`/distributions`);
@@ -86,7 +97,7 @@ export const useDistributionsPaginated = () => {
   const oneHourAhead = new Date(now.setHours(now.getHours() + 1));
   const oneMonthBefore = toNormalizedDate(
     new Date(new Date(now).setMonth(now.getMonth() - 1).valueOf())
-  );
+  )!;
 
   const queryDistributionsPaginated = useInfiniteQuery<
     Distribution[],

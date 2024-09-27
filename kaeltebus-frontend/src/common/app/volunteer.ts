@@ -12,4 +12,4 @@ export type Volunteer = {
 };
 
 export const useVolunteers = () =>
-  useCrudHook<Volunteer, Omit<Volunteer, "id">>("volunteers");
+  useCrudHook<Volunteer, never, Omit<Volunteer, "id">>({ key: "volunteers" });

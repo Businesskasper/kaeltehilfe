@@ -11,15 +11,26 @@ type Transformer<T> = {
   [K in keyof T]?: (value: T[K]) => T[K];
 };
 
+type UseCrudHookParams<T, TParams extends Record<string, unknown>> = {
+  key: string;
+  params?: TParams;
+  transformer?: Transformer<T>;
+  additionalInvalidation?: Array<string>;
+  enabled?: () => boolean;
+};
+
 export const useCrudHook = <
   T,
+  TParams extends Record<string, unknown>,
   TWriteModel extends Record<string, unknown>,
   TUpdateModel = Partial<TWriteModel>
->(
-  key: string,
-  transformer?: Transformer<T>,
-  additionalInvalidation?: Array<string>
-) => {
+>({
+  key,
+  additionalInvalidation,
+  params,
+  transformer,
+  enabled,
+}: UseCrudHookParams<T, TParams>) => {
   const httpGet = getBaseQuery<T>(`/${key}`);
   const httpPost = getBasePost<TWriteModel>(`/${key}`);
   const httpPUT = getBasePut<TWriteModel>(`/${key}`);
@@ -28,10 +39,41 @@ export const useCrudHook = <
 
   const queryClient = useQueryClient();
 
-  const objs = useQuery({
-    queryKey: [key],
-    queryFn: async ({ signal }) => {
-      const response = await httpGet(signal);
+  // const [lastSetValues, setLastSetValues] = React.useState<TParams>();
+  // const stringifiedParams = JSON.stringify(params);
+
+  // React.useEffect(() => {
+  //   setLastSetValues((old) => {
+  //     const newKeys = Object.keys(params || {});
+  //     const oldKeys = Object.keys(old || {});
+  //     const keys = Array.from(new Set([...newKeys, ...oldKeys]));
+
+  //     const newObj = keys.reduce((sum, currKey) => {
+  //       const newValue = params?.[currKey];
+  //       const oldValue = old?.[currKey];
+  //       return {
+  //         ...sum,
+  //         [currKey]:
+  //           newValue !== null && newValue !== undefined ? newValue : oldValue,
+  //       };
+  //     }, {} as TParams);
+
+  //     return newObj;
+  //   });
+  // }, [stringifiedParams]);
+
+  // const paramValues = Object.values(lastSetValues || {}) || [];
+  const paramValues = Object.values(params || {});
+  // console.log("paramValues", paramValues);
+
+  // const objs = useQuery<T[], Error, TParams, any>({
+  const objs = useQuery<Array<T>>({
+    queryKey: [key, ...paramValues],
+    enabled: enabled ?? true,
+    placeholderData: (previousData) => previousData,
+    queryFn: async ({ signal }): Promise<Array<T>> => {
+      // const response = await httpGet(signal, lastSetValues);
+      const response = await httpGet(signal, params);
       if (!transformer) return response;
 
       return response.map((receivedItem) => {
@@ -53,11 +95,12 @@ export const useCrudHook = <
       });
     },
     refetchOnWindowFocus: "always",
+    refetchOnReconnect: "always",
   });
 
   const invalidate = () => {
     queryClient.invalidateQueries({
-      queryKey: [key],
+      queryKey: [key, ...paramValues],
     });
     additionalInvalidation?.forEach((key) =>
       queryClient.invalidateQueries({ queryKey: [key] })

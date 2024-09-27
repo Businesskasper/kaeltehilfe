@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   Button,
   Grid,
   Group,
@@ -193,13 +192,22 @@ export const DistributionAdd = () => {
                     : "Güter"} */}
                 </Title>
                 {activeStep === FormStep.GOODS && (
-                  <ActionIcon
+                  // <ActionIcon
+                  //   onClick={openDrawer}
+                  //   variant="transparent"
+                  //   color="gray"
+                  // >
+                  //   <IconLayoutSidebarRightExpand />
+                  // </ActionIcon>
+                  <Button
                     onClick={openDrawer}
                     variant="transparent"
                     color="gray"
                   >
-                    <IconLayoutSidebarRightExpand />
-                  </ActionIcon>
+                    <Group gap="sm">
+                      <span>Güter wählen</span> <IconLayoutSidebarRightExpand />
+                    </Group>
+                  </Button>
                 )}
               </Group>
             </Grid.Col>

@@ -133,7 +133,7 @@ export const DistributionCard = ({
               ? GoodTypeTranslation[good.goodType]?.icon
               : undefined;
 
-            const latestDistribution = distributions.sort((a, b) =>
+            const latestDistribution = goodDistributions.sort((a, b) =>
               compareByDateTime(a.timestamp, b.timestamp)
             )[0];
 
