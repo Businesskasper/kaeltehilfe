@@ -86,8 +86,7 @@ export const DistributionAdd = () => {
   });
 
   const onSubmit = (formModel: DistributionForm) => {
-    console.log("formModel", formModel);
-    postBatchDistribution(formModel).then(() => navigate(`/operator`));
+    postBatchDistribution(formModel).then(() => navigate(`/`));
   };
 
   const isLoading =
@@ -273,7 +272,7 @@ export const DistributionAdd = () => {
                 />
               )}
               <Group justify="space-between" mt="xl">
-                <Button onClick={() => navigate("/operator")} variant="default">
+                <Button onClick={() => navigate("/")} variant="default">
                   Abbrechen
                 </Button>
 

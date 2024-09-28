@@ -134,7 +134,7 @@ export const DistributionOverview = () => {
                   radius="md"
                   withBorder
                   h={300}
-                  onClick={() => navigate("/operator/addDistribution")}
+                  onClick={() => navigate("/add")}
                 >
                   <Group h="100%" justify="center" align="center">
                     <IconPlus />

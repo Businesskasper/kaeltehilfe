@@ -138,6 +138,7 @@ export const Shifts = () => {
         tableKey="shifts-overview"
         setSelected={setSelectedShifts}
         defaultSorting={[{ id: "date", desc: true }]}
+        enableGrouping
       />
       <ShiftModal
         close={closeModal}

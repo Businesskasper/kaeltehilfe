@@ -68,7 +68,7 @@ export const Devices = () => {
         handleDelete={handleDelete}
         exportConfig={exportConfig}
         fillScreen
-        tableKey="goods-overview"
+        tableKey="devices-overview"
         setSelected={setSelectedDevices}
         customActions={[
           {
@@ -80,6 +80,7 @@ export const Devices = () => {
             onClick: (selected) => console.log(selected),
           },
         ]}
+        enableGrouping
       />
       <DeviceModal
         close={closeModal}

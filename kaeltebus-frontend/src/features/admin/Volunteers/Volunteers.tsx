@@ -112,6 +112,7 @@ export const Volunteers = () => {
         fillScreen
         tableKey="volunteers-overview"
         setSelected={setSelectedVolunteers}
+        enableGrouping
       />
       <VolunteerModal
         close={closeModal}

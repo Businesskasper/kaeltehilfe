@@ -71,20 +71,20 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        path: "operator",
+        path: "",
         element: (
           <AuthRoute>
             <OperatorHome />
           </AuthRoute>
         ),
         children: [
-          { path: "", element: <Navigate relative="path" to="overview" /> },
+          // { path: "", element: <Navigate relative="path" to="overview" /> },
           {
-            path: "overview",
+            path: "",
             element: <DistributionOverview />,
           },
           {
-            path: "addDistribution",
+            path: "add",
             element: <DistributionAdd />,
           },
         ],

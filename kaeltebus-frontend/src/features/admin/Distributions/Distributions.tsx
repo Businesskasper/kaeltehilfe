@@ -133,7 +133,7 @@ export const Distributions = () => {
         handleDelete={handleDelete}
         exportConfig={exportConfig}
         fillScreen
-        tableKey="goods-overview"
+        tableKey="distributions-overview"
         defaultSorting={[{ id: "timestamp", desc: true }]}
         enableGrouping
         // customHeaderChildren={

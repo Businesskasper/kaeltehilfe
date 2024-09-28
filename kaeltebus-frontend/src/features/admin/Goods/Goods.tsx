@@ -123,6 +123,7 @@ export const Goods = () => {
         fillScreen
         tableKey="goods-overview"
         setSelected={setSelectedGoods}
+        enableGrouping
       />
       <GoodModal
         close={closeModal}

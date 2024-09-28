@@ -76,8 +76,9 @@ export const Clients = () => {
         handleEdit={handleEdit}
         exportConfig={exportConfig}
         fillScreen
-        tableKey="volunteers-overview"
+        tableKey="clients-overview"
         setSelected={setSelectedClients}
+        enableGrouping
       />
       <ClientModal
         close={closeModal}
