@@ -1,5 +1,6 @@
 using AutoMapper;
 using FluentValidation;
+using kaeltebus_backend.Infrastructure.Auth;
 using kaeltebus_backend.Infrastructure.Database;
 using kaeltebus_backend.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -11,14 +12,14 @@ namespace kaeltebus_backend.Features.Devices;
 public class DevicesController
     : CRUDQController<Device, DeviceCreateDto, DeviceUpdateDto, DeviceListDto>
 {
-    private readonly IAuthService _authService;
+    private readonly IUserService _authService;
 
     public DevicesController(
         ILogger<CRUDQController<Device, DeviceCreateDto, DeviceUpdateDto, DeviceListDto>> logger,
         KbContext kbContext,
         IMapper mapper,
         IValidator<DeviceCreateDto> validator,
-        IAuthService authService
+        IUserService authService
     )
         : base(logger, kbContext, mapper, validator)
     {

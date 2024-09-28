@@ -2,6 +2,7 @@ using AutoMapper;
 using FluentValidation;
 using kaeltebus_backend.Infrastructure.Database;
 using kaeltebus_backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,7 @@ public class DistributionsController : ControllerBase
     }
 
     [HttpGet()]
+    [Authorize(Roles = "Admin,Operator")]
     public async Task<IEnumerable<DistributionQueryDto>> Query(
         [FromQuery] DateTime? from,
         [FromQuery] DateTime? to
@@ -49,6 +51,7 @@ public class DistributionsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin,Operator")]
     public async Task<ActionResult<DistributionQueryDto>> Get([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Distributions.FindAsync(id);
@@ -56,6 +59,7 @@ public class DistributionsController : ControllerBase
     }
 
     [HttpPost()]
+    [Authorize(Roles = "Admin,Operator")]
     public async Task<IActionResult> Create([FromBody()] DistributionCreateDto dto)
     {
         // TODO: Adjust device lookup for calling device
@@ -89,6 +93,7 @@ public class DistributionsController : ControllerBase
     }
 
     [HttpPatch("{id}")]
+    [Authorize(Roles = "Admin,Operator")]
     public async Task<IActionResult> Update(
         [FromRoute(Name = "id")] int id,
         [FromBody()] DistributionUpdateDto dto
@@ -105,6 +110,7 @@ public class DistributionsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin,Operator")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
         var distribution = await _kbContext.Distributions.FindAsync(id);

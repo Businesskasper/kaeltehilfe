@@ -2,6 +2,7 @@ using AutoMapper;
 using FluentValidation;
 using kaeltebus_backend.Infrastructure.Database;
 using kaeltebus_backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,7 @@ public class BatchDistributionsController : ControllerBase
     }
 
     [HttpPost()]
+    [Authorize(Roles = "Admin,Operator")]
     public async Task<IActionResult> Create([FromBody] BatchDistributionCreateDto dto)
     {
         // TODO: Adjust device lookup for calling device

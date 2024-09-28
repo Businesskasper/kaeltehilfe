@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {}
+    "c:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {}
   },
   "projects": {
-    "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {
+    "c:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+        "projectUniqueName": "c:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
         "projectName": "kaeltebus-backend",
-        "projectPath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+        "projectPath": "c:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
         "packagesPath": "C:\\Users\\LukaW\\.nuget\\packages\\",
-        "outputPath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\obj\\",
+        "outputPath": "c:\\git\\kaeltebus\\kaeltebus-backend\\src\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\LukaW\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -60,6 +60,10 @@
             "FluentValidation.DependencyInjectionExtensions": {
               "target": "Package",
               "version": "[11.9.2, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.8, )"
             },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",

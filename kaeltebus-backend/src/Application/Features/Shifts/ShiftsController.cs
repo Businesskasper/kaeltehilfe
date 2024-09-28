@@ -2,6 +2,7 @@ using AutoMapper;
 using FluentValidation;
 using kaeltebus_backend.Infrastructure.Database;
 using kaeltebus_backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
@@ -28,6 +29,7 @@ public class ShiftsController : ControllerBase
     }
 
     [HttpGet()]
+    [Authorize(Roles = "Admin")]
     public async Task<IEnumerable<ShiftQueryDto>> Query()
     {
         var objs = await _kbContext
@@ -42,6 +44,7 @@ public class ShiftsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ShiftQueryDto>> Get([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext
@@ -53,6 +56,7 @@ public class ShiftsController : ControllerBase
     }
 
     [HttpPost()]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Create([FromBody()] ShiftCreateDto dto)
     {
         var obj = _mapper.Map<Shift>(dto);
@@ -73,6 +77,7 @@ public class ShiftsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> Put(
         [FromRoute(Name = "id")] int id,
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] ShiftCreateDto dto
@@ -112,6 +117,7 @@ public class ShiftsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Shifts.FindAsync(id);

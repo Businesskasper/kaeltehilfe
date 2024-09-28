@@ -1,4 +1,6 @@
-public class Keycloak : IAuthService
+namespace kaeltebus_backend.Infrastructure.Auth;
+
+public class Keycloak : IUserService
 {
     private readonly ILogger<Keycloak> _logger;
 

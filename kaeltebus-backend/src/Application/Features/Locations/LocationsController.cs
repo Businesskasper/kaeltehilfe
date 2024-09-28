@@ -1,5 +1,6 @@
 using AutoMapper;
 using FluentValidation;
+using kaeltebus_backend.Infrastructure.Auth;
 using kaeltebus_backend.Infrastructure.Database;
 using kaeltebus_backend.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -11,8 +12,6 @@ namespace kaeltebus_backend.Features.Locations;
 public class LocationsController
     : CRUDQController<Location, LocationCreateDto, LocationUpdateDto, LocationListDto>
 {
-    private readonly IAuthService _authService;
-
     public LocationsController(
         ILogger<
             CRUDQController<Location, LocationCreateDto, LocationUpdateDto, LocationListDto>
