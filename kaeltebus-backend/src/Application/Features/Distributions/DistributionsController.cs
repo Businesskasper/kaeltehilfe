@@ -4,8 +4,9 @@ using kaeltebus_backend.Infrastructure.Database;
 using kaeltebus_backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+
+namespace kaeltebus_backend.Features.Distributions;
 
 [Route("/api/[controller]")]
 public class DistributionsController : ControllerBase
@@ -13,24 +14,21 @@ public class DistributionsController : ControllerBase
     private readonly ILogger<DistributionsController> _logger;
     private readonly KbContext _kbContext;
     private readonly IMapper _mapper;
-    private readonly IValidator<DistributionCreateDto> _validator;
 
     public DistributionsController(
         ILogger<DistributionsController> logger,
         KbContext kbContext,
-        IMapper mapper,
-        IValidator<DistributionCreateDto> validator
+        IMapper mapper
     )
     {
         _logger = logger;
         _kbContext = kbContext;
         _mapper = mapper;
-        _validator = validator;
     }
 
     [HttpGet()]
     [Authorize(Roles = "Admin,Operator")]
-    public async Task<IEnumerable<DistributionQueryDto>> Query(
+    public async Task<IEnumerable<DistributionDto>> Query(
         [FromQuery] DateTime? from,
         [FromQuery] DateTime? to
     )
@@ -45,17 +43,17 @@ public class DistributionsController : ControllerBase
 
         var objs = await query.ToListAsync();
 
-        var dtos = _mapper.Map<List<DistributionQueryDto>>(objs ?? []);
+        var dtos = _mapper.Map<List<DistributionDto>>(objs ?? []);
 
         return dtos;
     }
 
     [HttpGet("{id}")]
     [Authorize(Roles = "Admin,Operator")]
-    public async Task<ActionResult<DistributionQueryDto>> Get([FromRoute(Name = "id")] int id)
+    public async Task<ActionResult<DistributionDto>> Get([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Distributions.FindAsync(id);
-        return obj != null ? _mapper.Map<DistributionQueryDto>(obj) : NotFound();
+        return obj != null ? _mapper.Map<DistributionDto>(obj) : NotFound();
     }
 
     [HttpPost()]
@@ -121,79 +119,5 @@ public class DistributionsController : ControllerBase
         await _kbContext.SaveChangesAsync();
 
         return NoContent();
-    }
-}
-
-public class DistributionQueryDto
-{
-    public int Id { get; set; }
-    public DistributionQueryDevicetDto? Device { get; set; }
-    public DistributionClientDto? Client { get; set; }
-    public DistributionQueryGoodDto? Good { get; set; }
-    public DateTime Timestamp { get; set; }
-    public int Quantity { get; set; }
-}
-
-public class DistributionQueryDevicetDto
-{
-    public int Id { get; set; }
-    public string RegistrationNumber { get; set; } = "";
-}
-
-public class DistributionClientDto
-{
-    public int? Id { get; set; }
-    public string Name { get; set; } = "";
-}
-
-public class DistributionQueryGoodDto
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = "";
-}
-
-public class DistributionCreateDto
-{
-    public DistributionClientDto? Client { get; set; }
-    public int GoodId { get; set; }
-    public int Quantity { get; set; }
-}
-
-public class DistributionUpdateDto
-{
-    public int Quantity { get; set; }
-}
-
-public class DistributionDtoProfile : Profile
-{
-    public DistributionDtoProfile()
-    {
-        CreateMap<Distribution, DistributionQueryDto>()
-            .ForMember(d => d.Timestamp, src => src.MapFrom(src => src.AddOn));
-        CreateMap<Device, DistributionQueryDevicetDto>();
-        CreateMap<Good, DistributionQueryGoodDto>();
-        CreateMap<Client, DistributionClientDto>();
-    }
-}
-
-public class DistributionCreateDtoValidator : AbstractValidator<DistributionCreateDto>
-{
-    public DistributionCreateDtoValidator()
-    {
-        RuleFor(d => d.GoodId).NotNull();
-        RuleFor(d => d.Quantity).GreaterThan(0);
-        RuleFor(d => d.Client).NotNull();
-        RuleFor(d => d.Client!.Id)
-            .NotNull()
-            .When(d => d.Client != null && String.IsNullOrEmpty(d.Client?.Name));
-        RuleFor(d => d.Client!.Name).Empty().When(d => d.Client != null && d.Client?.Id != null);
-    }
-}
-
-public class DistributionUpdateDtoValidator : AbstractValidator<DistributionUpdateDto>
-{
-    public DistributionUpdateDtoValidator()
-    {
-        RuleFor(d => d.Quantity).GreaterThan(0);
     }
 }

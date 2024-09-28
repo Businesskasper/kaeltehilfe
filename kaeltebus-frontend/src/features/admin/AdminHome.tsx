@@ -64,19 +64,19 @@ export const AdminHome = () => {
       <AppShell.Navbar p="md">
         <NavigationSection label="Schichtplanung">
           <NavigationItem
-            onNavigate={toggle}
+            // onNavigate={toggle}
             label="Freiwillige"
             Icon={IconUser}
             target="volunteers"
           />
           <NavigationItem
-            onNavigate={toggle}
+            // onNavigate={toggle}
             label="Schichtträger"
             Icon={IconBus}
             target="devices"
           />
           <NavigationItem
-            onNavigate={toggle}
+            // onNavigate={toggle}
             label="Schichten"
             Icon={IconCalendar}
             target="shifts"
@@ -84,19 +84,19 @@ export const AdminHome = () => {
         </NavigationSection>
         <NavigationSection label="Ausgabeverwaltung">
           <NavigationItem
-            onNavigate={toggle}
+            // onNavigate={toggle}
             label="Güter"
             target="goods"
             Icon={IconSoup}
           />
           <NavigationItem
-            onNavigate={toggle}
+            // onNavigate={toggle}
             label="Klienten"
             target="clients"
             Icon={IconBedFlat}
           />
           <NavigationItem
-            onNavigate={toggle}
+            // onNavigate={toggle}
             label="Ausgaben"
             target="distributions"
             Icon={IconBedFlat}

@@ -4,28 +4,23 @@ using kaeltebus_backend.Infrastructure.Database;
 using kaeltebus_backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+
+namespace kaeltebus_backend.Features.BatchDistributions;
 
 [Route("/api/[controller]")]
 public class BatchDistributionsController : ControllerBase
 {
     private readonly ILogger<BatchDistributionsController> _logger;
     private readonly KbContext _kbContext;
-    private readonly IMapper _mapper;
-    private readonly IValidator<DistributionCreateDto> _validator;
 
     public BatchDistributionsController(
         ILogger<BatchDistributionsController> logger,
-        KbContext kbContext,
-        IMapper mapper,
-        IValidator<DistributionCreateDto> validator
+        KbContext kbContext
     )
     {
         _logger = logger;
         _kbContext = kbContext;
-        _mapper = mapper;
-        _validator = validator;
     }
 
     [HttpPost()]
@@ -132,57 +127,5 @@ public class BatchDistributionsController : ControllerBase
         return await _kbContext
             .Goods.Where(g => goodIds.Contains(g.Id))
             .ToDictionaryAsync((Good g) => g.Id);
-    }
-}
-
-public class BatchDistributionCreateDto
-{
-    public string LocationName { get; set; } = "";
-    public List<BatchDistributionClientDto> Clients { get; set; } = [];
-    public List<BatchDistributionGoodDto> Goods { get; set; } = [];
-}
-
-public class BatchDistributionClientDto
-{
-    public int? Id { get; set; }
-    public string Name { get; set; } = "";
-    public Gender? Gender { get; set; }
-    public int ApproxAge { get; set; }
-}
-
-public class BatchDistributionGoodDto
-{
-    public int Id { get; set; }
-    public int Quantity { get; set; }
-}
-
-public class BatchDistributionCreateDtoValidator : AbstractValidator<BatchDistributionCreateDto>
-{
-    public BatchDistributionCreateDtoValidator()
-    {
-        RuleFor(b => b.LocationName).NotNull().NotEmpty();
-        RuleFor(d => d.Clients).NotNull().NotEmpty();
-        RuleForEach(d => d.Clients).SetValidator(new BatchDistributionClientDtoValidator());
-        RuleFor(d => d.Goods).NotNull().NotEmpty();
-        RuleForEach(d => d.Goods).SetValidator(new BatchDistributionGoodDtoValidator());
-    }
-}
-
-public class BatchDistributionGoodDtoValidator : AbstractValidator<BatchDistributionGoodDto>
-{
-    public BatchDistributionGoodDtoValidator()
-    {
-        RuleFor(g => g.Id).NotEmpty();
-        RuleFor(g => g.Quantity).NotEmpty();
-    }
-}
-
-public class BatchDistributionClientDtoValidator : AbstractValidator<BatchDistributionClientDto>
-{
-    public BatchDistributionClientDtoValidator()
-    {
-        RuleFor(c => c.Id).NotNull().When(c => String.IsNullOrWhiteSpace(c.Name));
-        RuleFor(c => c.Name).NotEmpty();
-        RuleFor(c => c.ApproxAge).NotEmpty();
     }
 }

@@ -7,30 +7,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
+namespace kaeltebus_backend.Features.Shifts;
+
 [Route("/api/[controller]")]
 public class ShiftsController : ControllerBase
 {
     private readonly ILogger<ShiftsController> _logger;
     private readonly KbContext _kbContext;
     private readonly IMapper _mapper;
-    private readonly IValidator<ShiftCreateDto> _validator;
 
-    public ShiftsController(
-        ILogger<ShiftsController> logger,
-        KbContext kbContext,
-        IMapper mapper,
-        IValidator<ShiftCreateDto> validator
-    )
+    public ShiftsController(ILogger<ShiftsController> logger, KbContext kbContext, IMapper mapper)
     {
         _logger = logger;
         _kbContext = kbContext;
         _mapper = mapper;
-        _validator = validator;
     }
 
     [HttpGet()]
     [Authorize(Roles = "Admin")]
-    public async Task<IEnumerable<ShiftQueryDto>> Query()
+    public async Task<IEnumerable<ShiftDto>> Query()
     {
         var objs = await _kbContext
             .Shifts.Where(x => !x.IsDeleted)
@@ -38,21 +33,21 @@ public class ShiftsController : ControllerBase
             .Include(s => s.ShiftVolunteers)
             .ThenInclude(sv => sv.Volunteer)
             .ToListAsync();
-        var dtos = _mapper.Map<List<ShiftQueryDto>>(objs ?? []);
+        var dtos = _mapper.Map<List<ShiftDto>>(objs ?? []);
 
         return dtos;
     }
 
     [HttpGet("{id}")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<ShiftQueryDto>> Get([FromRoute(Name = "id")] int id)
+    public async Task<ActionResult<ShiftDto>> Get([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext
             .Shifts.Include(s => s.Device)
             .Include(s => s.ShiftVolunteers)
             .ThenInclude(sv => sv.Volunteer)
             .FirstOrDefaultAsync(s => s.Id == id);
-        return obj != null ? _mapper.Map<ShiftQueryDto>(obj) : NotFound();
+        return obj != null ? _mapper.Map<ShiftDto>(obj) : NotFound();
     }
 
     [HttpPost()]
@@ -156,103 +151,5 @@ static class ShiftsExtensions
                 }
             )
             .ToList();
-    }
-}
-
-public class ShiftCreateDto
-{
-    public int DeviceId { get; set; }
-    public DateOnly? Date { get; set; }
-    public List<ShiftCreateVolunteerDto> Volunteers { get; set; } = [];
-}
-
-public class ShiftCreateVolunteerDto
-{
-    public int Id { get; set; }
-}
-
-public class ShiftUpdateDto : ShiftCreateDto;
-
-public class ShiftQueryDto
-{
-    public int Id { get; set; }
-    public int DeviceId { get; set; }
-    public string RegistrationNumber { get; set; } = "";
-    public DateOnly? Date { get; set; }
-    public List<ShiftListVolunteerDto>? Volunteers { get; set; }
-}
-
-public class ShiftListVolunteerDto
-{
-    public int Id { get; set; }
-    public string Fullname { get; set; } = "";
-    public Gender Gender { get; set; }
-    public bool IsDriver { get; set; }
-}
-
-public class ShiftDtoProfile : Profile
-{
-    public ShiftDtoProfile()
-    {
-        CreateMap<ShiftCreateDto, Shift>();
-
-        CreateMap<Shift, ShiftQueryDto>()
-            .ForMember(
-                dest => dest.Volunteers,
-                opt =>
-                    opt.MapFrom(src =>
-                        src.ShiftVolunteers.OrderBy(sv => sv.Order)
-                            .Select(sv => new ShiftListVolunteerDto
-                            {
-                                Id = sv.Volunteer.Id,
-                                Fullname = sv.Volunteer.Fullname,
-                                Gender = sv.Volunteer.Gender,
-                                IsDriver = sv.Volunteer.IsDriver,
-                            })
-                            .ToList()
-                    )
-            )
-            .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
-            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.DeviceId, opt => opt.MapFrom(src => src.DeviceId))
-            .ForMember(
-                dest => dest.RegistrationNumber,
-                opt => opt.MapFrom(src => src.Device.RegistrationNumber)
-            );
-    }
-}
-
-public class ShiftCreateDtoValidator : AbstractValidator<ShiftCreateDto>
-{
-    public ShiftCreateDtoValidator()
-    {
-        RuleFor(shift => shift.Date).NotNull();
-        RuleFor(shift => shift.DeviceId).NotNull();
-        RuleFor(shift => shift.Volunteers).NotNull();
-        RuleForEach(shift => shift.Volunteers).SetValidator(new ShiftVolunteerDtoValidator());
-        RuleFor(shift => shift.Volunteers)
-            .Must(volunteers => !HasDuplicates(volunteers))
-            .WithMessage("Volunteers can only be assigned once to a single shift");
-    }
-
-    private bool HasDuplicates(List<ShiftCreateVolunteerDto> volunteers)
-    {
-        return volunteers.GroupBy(volunteer => volunteer.Id).Any(group => group.Count() > 1);
-    }
-}
-
-public class ShiftUpdateDtoValidator : AbstractValidator<ShiftUpdateDto>
-{
-    public ShiftUpdateDtoValidator()
-    {
-        RuleForEach(x => x.Volunteers).SetValidator(new ShiftVolunteerDtoValidator());
-    }
-}
-
-public class ShiftVolunteerDtoValidator : AbstractValidator<ShiftCreateVolunteerDto>
-{
-    public ShiftVolunteerDtoValidator()
-    {
-        RuleFor(shift => shift.Id).NotNull();
     }
 }

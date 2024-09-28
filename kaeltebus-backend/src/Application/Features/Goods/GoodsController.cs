@@ -2,67 +2,89 @@ using AutoMapper;
 using FluentValidation;
 using kaeltebus_backend.Infrastructure.Database;
 using kaeltebus_backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 
 namespace kaeltebus_backend.Features.Goods;
 
 [Route("/api/[controller]")]
-public class GoodsController : CRUDQController<Good, GoodCreateDto, GoodUpdateDto, GoodListDto>
+public class GoodsController : ControllerBase
 {
-    public GoodsController(
-        ILogger<CRUDQController<Good, GoodCreateDto, GoodUpdateDto, GoodListDto>> logger,
-        KbContext kbContext,
-        IMapper mapper,
-        IValidator<GoodCreateDto> validator
+    protected readonly ILogger<GoodsController> _logger;
+    protected readonly KbContext _kbContext;
+    protected readonly IMapper _mapper;
+
+    public GoodsController(ILogger<GoodsController> logger, KbContext kbContext, IMapper mapper)
+    {
+        _logger = logger;
+        _kbContext = kbContext;
+        _mapper = mapper;
+    }
+
+    [HttpGet()]
+    [Authorize(Roles = "Admin,Operator")]
+    public async Task<IEnumerable<GoodDto>> Query()
+    {
+        var objs = await _kbContext.Goods.Where(x => !x.IsDeleted).ToListAsync();
+        var dtos = _mapper.Map<List<GoodDto>>(objs);
+
+        return dtos;
+    }
+
+    [HttpGet("{id}")]
+    [Authorize(Roles = "Admin,Operator")]
+    public async Task<ActionResult<GoodDto>> Get([FromRoute(Name = "id")] int id)
+    {
+        var obj = await _kbContext.Goods.FirstOrDefaultAsync(x => x.Id == id);
+        return obj != null ? _mapper.Map<GoodDto>(obj) : NotFound();
+    }
+
+    [HttpPost()]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Create([FromBody()] GoodCreateDto dto)
+    {
+        var obj = _mapper.Map<Good>(dto);
+        var result = _kbContext.Goods.Attach(obj);
+        await _kbContext.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(Get), routeValues: new { id = result.Entity.Id }, null);
+    }
+
+    [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> Put(
+        [FromRoute(Name = "id")] int id,
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] GoodCreateDto dto
     )
-        : base(logger, kbContext, mapper, validator) { }
-}
-
-public class GoodCreateDto
-{
-    public string? Name { get; set; }
-    public string? Description { get; set; }
-    public GoodType? GoodType { get; set; }
-    public List<string>? Tags { get; set; }
-    public int? TwoWeekThreshold { get; set; }
-}
-
-public class GoodUpdateDto : GoodCreateDto;
-
-public class GoodListDto : GoodCreateDto
-{
-    public int Id { get; set; }
-}
-
-public class GoodDtoToObjProfile : Profile
-{
-    public GoodDtoToObjProfile()
     {
-        CreateMap<GoodCreateDto, Good>();
-        CreateMap<Good, GoodCreateDto>();
+        var existing = await _kbContext.Goods.FindAsync(id);
+        if (existing is null)
+            return NotFound();
 
-        CreateMap<Good, GoodListDto>();
+        // var updatedEntity = _mapper.Map(dto, existing);
+        var updatedEntity = _mapper.Map<Good>(dto);
+        updatedEntity.Id = existing.Id;
+        updatedEntity.AddOn = existing.AddOn;
 
-        CreateMap<GoodUpdateDto, Good>();
+        _kbContext.Entry(existing).CurrentValues.SetValues(updatedEntity);
+        await _kbContext.SaveChangesAsync();
+
+        return NoContent();
     }
-}
 
-public class GoodCreateDtoValidator : AbstractValidator<GoodCreateDto>
-{
-    public GoodCreateDtoValidator()
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
-        RuleFor(g => g.Name).NotNull().MinimumLength(3);
-        RuleFor(g => g.GoodType).NotNull().IsInEnum();
-        RuleFor(g => g.TwoWeekThreshold).GreaterThan(0).When(g => g.TwoWeekThreshold.HasValue);
-    }
-}
+        var obj = await _kbContext.Goods.FindAsync(id);
+        if (obj == null)
+            return NotFound();
 
-public class GoodUpdateDtoValidator : AbstractValidator<GoodUpdateDto>
-{
-    public GoodUpdateDtoValidator()
-    {
-        RuleFor(g => g.Name).MinimumLength(3).When(g => g.Name is not null);
-        RuleFor(g => g.GoodType).IsInEnum().When(g => g.GoodType is not null);
-        RuleFor(g => g.TwoWeekThreshold).GreaterThan(0).When(g => g.TwoWeekThreshold.HasValue);
+        obj.IsDeleted = true;
+        await _kbContext.SaveChangesAsync();
+
+        return NoContent();
     }
 }

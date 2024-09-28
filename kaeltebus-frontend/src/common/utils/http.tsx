@@ -1,6 +1,8 @@
 import { NotificationData, notifications } from "@mantine/notifications";
 import { IconX } from "@tabler/icons-react";
 import axios, { isAxiosError } from "axios";
+import { userManager } from "../../UserManager";
+
 const { VITE_API_BASE_URL } = import.meta.env;
 
 const http = axios.create({
@@ -16,10 +18,14 @@ const notificationProps: Partial<NotificationData> = {
   withCloseButton: true,
   mb: "xs",
 };
-http.interceptors.request.use((request) => {
+http.interceptors.request.use(async (request) => {
   request.withCredentials = true;
   // request.headers.set("Accept-Encoding", "gzip", true);
-
+  const user = await userManager.getUser();
+  const { access_token } = user || {};
+  if (access_token) {
+    request.headers.setAuthorization(`Bearer ${access_token}`);
+  }
   return request;
 });
 http.interceptors.response.use(

@@ -2,67 +2,89 @@ using AutoMapper;
 using FluentValidation;
 using kaeltebus_backend.Infrastructure.Database;
 using kaeltebus_backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 
 namespace kaeltebus_backend.Features.Clients;
 
 [Route("/api/[controller]")]
-public class ClientsController
-    : CRUDQController<Client, ClientCreateDto, ClientUpdateDto, ClientListDto>
+public class ClientsController : ControllerBase
 {
-    public ClientsController(
-        ILogger<CRUDQController<Client, ClientCreateDto, ClientUpdateDto, ClientListDto>> logger,
-        KbContext kbContext,
-        IMapper mapper,
-        IValidator<ClientCreateDto> validator
+    protected readonly ILogger<ClientsController> _logger;
+    protected readonly KbContext _kbContext;
+    protected readonly IMapper _mapper;
+
+    public ClientsController(ILogger<ClientsController> logger, KbContext kbContext, IMapper mapper)
+    {
+        _logger = logger;
+        _kbContext = kbContext;
+        _mapper = mapper;
+    }
+
+    [HttpGet()]
+    [Authorize(Roles = "Admin,Operator")]
+    public async Task<IEnumerable<ClientDto>> Query()
+    {
+        var objs = await _kbContext.Clients.Where(x => !x.IsDeleted).ToListAsync();
+        var dtos = _mapper.Map<List<ClientDto>>(objs);
+
+        return dtos;
+    }
+
+    [HttpGet("{id}")]
+    [Authorize(Roles = "Admin,Operator")]
+    public async Task<ActionResult<ClientDto>> Get([FromRoute(Name = "id")] int id)
+    {
+        var obj = await _kbContext.Clients.FirstOrDefaultAsync(x => x.Id == id);
+        return obj != null ? _mapper.Map<ClientDto>(obj) : NotFound();
+    }
+
+    [HttpPost()]
+    [Authorize(Roles = "Admin,Operator")]
+    public async Task<IActionResult> Create([FromBody()] ClientCreateDto dto)
+    {
+        var obj = _mapper.Map<Client>(dto);
+        var result = _kbContext.Clients.Attach(obj);
+        await _kbContext.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(Get), routeValues: new { id = result.Entity.Id }, null);
+    }
+
+    [HttpPut("{id}")]
+    [Authorize(Roles = "Admin,Operator")]
+    public async Task<ActionResult> Put(
+        [FromRoute(Name = "id")] int id,
+        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] ClientCreateDto dto
     )
-        : base(logger, kbContext, mapper, validator) { }
-}
-
-public class ClientCreateDto
-{
-    public string? Name { get; set; }
-    public Gender? Gender { get; set; }
-    public int? ApproxAge { get; set; }
-    public string? Remarks { get; set; }
-}
-
-public class ClientUpdateDto : ClientCreateDto;
-
-public class ClientListDto : ClientCreateDto
-{
-    public int Id { get; set; }
-}
-
-public class ClientDtoToObjProfile : Profile
-{
-    public ClientDtoToObjProfile()
     {
-        CreateMap<ClientCreateDto, Client>();
-        CreateMap<Client, ClientCreateDto>();
+        var existing = await _kbContext.Clients.FindAsync(id);
+        if (existing is null)
+            return NotFound();
 
-        CreateMap<Client, ClientListDto>();
+        // var updatedEntity = _mapper.Map(dto, existing);
+        var updatedEntity = _mapper.Map<Client>(dto);
+        updatedEntity.Id = existing.Id;
+        updatedEntity.AddOn = existing.AddOn;
 
-        CreateMap<ClientUpdateDto, Client>();
+        _kbContext.Entry(existing).CurrentValues.SetValues(updatedEntity);
+        await _kbContext.SaveChangesAsync();
+
+        return NoContent();
     }
-}
 
-public class ClientCreateDtoValidator : AbstractValidator<ClientCreateDto>
-{
-    public ClientCreateDtoValidator()
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
-        RuleFor(x => x.Name).NotNull().MinimumLength(3);
-        RuleFor(x => x.Gender).NotNull().IsInEnum();
-        RuleFor(x => x.ApproxAge).NotNull().InclusiveBetween(0, 100);
-    }
-}
+        var obj = await _kbContext.Clients.FindAsync(id);
+        if (obj == null)
+            return NotFound();
 
-public class ClientUpdateDtoValidator : AbstractValidator<ClientUpdateDto>
-{
-    public ClientUpdateDtoValidator()
-    {
-        RuleFor(x => x.Name).MinimumLength(3).When(x => x.Name is not null);
-        RuleFor(x => x.Gender).IsInEnum().When(x => x.Gender is not null);
-        RuleFor(x => x.ApproxAge).InclusiveBetween(0, 100).When(x => x.ApproxAge is not null);
+        obj.IsDeleted = true;
+        await _kbContext.SaveChangesAsync();
+
+        return NoContent();
     }
 }
