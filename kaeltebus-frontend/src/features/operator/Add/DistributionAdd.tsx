@@ -72,7 +72,7 @@ export const DistributionAdd = () => {
             (c) => c.name?.trim() === value?.toString()?.trim()
           );
           if (allClientsByName.length > 1) {
-            return "Clienten können nicht mehrfach gewählt werden";
+            return "Klienten können nicht mehrfach gewählt werden";
           }
         },
         approxAge: (value) => validators(value, requiredValidator()),
