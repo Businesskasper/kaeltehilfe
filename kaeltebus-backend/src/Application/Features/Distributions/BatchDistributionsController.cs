@@ -30,7 +30,7 @@ public class BatchDistributionsController : ControllerBase
         // TODO: Adjust device lookup for calling device
         var device = await _kbContext.Devices.FirstOrDefaultAsync();
         if (device == null)
-            this.ThrowModelStateError("DeviceId", "No matching shift was found");
+            throw this.GetModelStateError("DeviceId", "No matching shift was found");
 
         var location = await _kbContext.Locations.FirstOrDefaultAsync(l =>
             l.Name == dto.LocationName

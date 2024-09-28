@@ -62,7 +62,7 @@ public class ShiftsController : ControllerBase
 
         var device = await _kbContext.Devices.FindAsync(dto.DeviceId);
         if (device == null)
-            this.ThrowModelStateError("deviceId", "Device not found");
+            throw this.GetModelStateError("deviceId", "Device not found");
         obj.Device = device;
 
         var result = await _kbContext.Shifts.AddAsync(obj);
@@ -100,7 +100,7 @@ public class ShiftsController : ControllerBase
         {
             var device = await _kbContext.Devices.FindAsync(receivedObj.DeviceId);
             if (device == null)
-                this.ThrowModelStateError("DeviceId", "Device not found");
+                throw this.GetModelStateError("DeviceId", "Device not found");
             existing.Device = device;
             existing.DeviceId = receivedObj.DeviceId;
         }

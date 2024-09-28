@@ -63,18 +63,18 @@ public class DistributionsController : ControllerBase
         // TODO: Adjust device lookup for calling device
         var device = await _kbContext.Devices.FirstOrDefaultAsync();
         if (device == null)
-            this.ThrowModelStateError("DeviceId", "No matching shift was found");
+            throw this.GetModelStateError("DeviceId", "No matching shift was found");
 
         var client =
             dto.Client?.Id != null
                 ? await _kbContext.Clients.FindAsync(dto.Client.Id)
                 : new Client { Name = dto.Client?.Name ?? "" };
         if (client == null)
-            this.ThrowModelStateError("client", $"Client {dto.Client?.Id} was not found");
+            throw this.GetModelStateError("client", $"Client {dto.Client?.Id} was not found");
 
         var good = await _kbContext.Goods.FindAsync(dto.GoodId);
         if (good == null)
-            this.ThrowModelStateError("goodId", $"Good {dto.GoodId} was not found");
+            throw this.GetModelStateError("goodId", $"Good {dto.GoodId} was not found");
 
         var distribution = new Distribution
         {
