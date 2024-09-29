@@ -1,0 +1,41 @@
+# Build
+build/publish-backend/*
+build/publish-frontend/*
+build/images/*
+
+# Backend
+kaeltebus-backend/**/bin
+kaeltebus-backend/**/obj
+kaeltebus-backend/**/*.db
+kaeltebus-backend\src\KaeltebusDatabase.db
+kaeltebus-backend/**/*.db-shm
+kaeltebus-backend\src\KaeltebusDatabase.db-shm
+kaeltebus-backend/**/*.db-wal
+kaeltebus-backend\src\KaeltebusDatabase.db-wal
+
+# Frontend
+kaeltebus-frontend/logs
+kaeltebus-frontend/*.log
+kaeltebus-frontend/npm-debug.log*
+kaeltebus-frontend/yarn-debug.log*
+kaeltebus-frontend/yarn-error.log*
+kaeltebus-frontend/pnpm-debug.log*
+kaeltebus-frontend/lerna-debug.log*
+
+kaeltebus-frontend/node_modules
+kaeltebus-frontend/dist
+kaeltebus-frontend/dist-ssr
+kaeltebus-frontend/*.local
+
+# # Editor directories and files
+# kaeltebus-*/.vscode/*
+# kaeltebus-*/!.vscode/extensions.json
+# kaeltebus-*/.idea
+# kaeltebus-*/.DS_Store
+# kaeltebus-*/*.suo
+# kaeltebus-*/*.ntvs*
+# kaeltebus-*/*.njsproj
+# kaeltebus-*/*.sln
+# kaeltebus-*/*.sw?
+
+

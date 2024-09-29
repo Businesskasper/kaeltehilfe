@@ -44,14 +44,19 @@ builder.Services.AddDbContext<KbContext>(
     }
 );
 
-var CORS_POLICY = "CorsOriginsKey";
+var CORS_POLICY = "CorsPolicy";
+
+// Get the CORS origins from environment variables, default to "http://localhost:5173"
+var corsOrigins = Environment.GetEnvironmentVariable("CORS_ORIGINS") ?? "http://localhost:5173";
+var origins = corsOrigins.Split(",", StringSplitOptions.RemoveEmptyEntries);
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         name: CORS_POLICY,
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173");
+            policy.WithOrigins(origins);
             // policy.AllowAnyOrigin();
             policy.AllowAnyHeader();
             policy.AllowAnyMethod();
@@ -112,48 +117,51 @@ builder
                     "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" // map role claims
                 ,
             };
-            o.Events = new JwtBearerEvents()
+            if (builder.Environment.IsDevelopment())
             {
-                OnMessageReceived = msg =>
+                o.Events = new JwtBearerEvents()
                 {
-                    var token = msg?.Request.Headers.Authorization.ToString();
-                    string path = msg?.Request.Path ?? "";
-                    if (!string.IsNullOrEmpty(token))
+                    OnMessageReceived = msg =>
                     {
-                        Console.WriteLine("Access token");
-                        Console.WriteLine($"URL: {path}");
-                        Console.WriteLine($"Token: {token}\r\n");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Access token");
-                        Console.WriteLine("URL: " + path);
-                        Console.WriteLine("Token: No access token provided\r\n");
-                    }
-                    return Task.CompletedTask;
-                },
-                OnTokenValidated = ctx =>
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("Claims from the access token");
-                    if (ctx?.Principal != null)
-                    {
-                        foreach (var claim in ctx.Principal.Claims)
+                        var token = msg?.Request.Headers.Authorization.ToString();
+                        string path = msg?.Request.Path ?? "";
+                        if (!string.IsNullOrEmpty(token))
                         {
-                            Console.WriteLine($"{claim.Type} - {claim.Value}");
+                            Console.WriteLine("Access token");
+                            Console.WriteLine($"URL: {path}");
+                            Console.WriteLine($"Token: {token}\r\n");
                         }
-                    }
-                    Console.WriteLine();
-                    return Task.CompletedTask;
-                },
-                OnAuthenticationFailed = ctx =>
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("Auth failed");
-                    var c = ctx;
-                    return Task.CompletedTask;
-                },
-            };
+                        else
+                        {
+                            Console.WriteLine("Access token");
+                            Console.WriteLine("URL: " + path);
+                            Console.WriteLine("Token: No access token provided\r\n");
+                        }
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = ctx =>
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Claims from the access token");
+                        if (ctx?.Principal != null)
+                        {
+                            foreach (var claim in ctx.Principal.Claims)
+                            {
+                                Console.WriteLine($"{claim.Type} - {claim.Value}");
+                            }
+                        }
+                        Console.WriteLine();
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = ctx =>
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("Auth failed");
+                        var c = ctx;
+                        return Task.CompletedTask;
+                    },
+                };
+            }
         }
     );
 

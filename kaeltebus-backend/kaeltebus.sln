@@ -5,9 +5,9 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kaeltebus-backend", "kaeltebus-backend", "{D6A795F3-A61A-4889-8B26-CE6DFBE5E9BF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kaeltebus-backend", "kaeltebus-backend\src\kaeltebus-backend.csproj", "{D5104294-D6E5-470E-9373-49DD4E90F625}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kaeltebus-backend", "src\kaeltebus-backend.csproj", "{D5104294-D6E5-470E-9373-49DD4E90F625}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kaeltebus-test", "kaeltebus-backend\test\kaeltebus-test.csproj", "{AF83C12A-F204-42E5-9EAC-DCDD2AF38F11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kaeltebus-test", "test\kaeltebus-test.csproj", "{AF83C12A-F204-42E5-9EAC-DCDD2AF38F11}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

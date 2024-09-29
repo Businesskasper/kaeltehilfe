@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  proxy:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ../nginx/data:/data
+      - ../nginx/letsencrypt:/etc/letsencrypt
+    network_mode: 'host'
+  keycloak:
+    ports:
+      - '8080:8080'
+      - '9000:9000'
+    image: quay.io/keycloak/keycloak:latest
+    command: start
+    environment:
+        KC_HOSTNAME: 'auth.lukaweis.de'
+        KC_PROXY: 'edge'
+        KEYCLOAK_ADMIN: 'admin'
+        KEYCLOAK_ADMIN_PASSWORD: 'admin'
+        QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
+    volumes:
+        - ../keycloak:/opt/keycloak/data
+    restart: unless-stopped
+  kaeltebus-api:
+    ports:
+      - '8081:8080'
+    image: kaeltebusapi:latest
+    environment:
+        ASPNETCORE_ENVIRONMENT: 'Production'
+        CORS_ORIGINS: 'https://kb.lukaweis.de'
+    volumes:
+        - ../backend/db:/opt/kaeltebus-api/db
+    restart: unless-stopped
+  kaeltebus-ui:
+    ports:
+      - '8082:80'
+    image: kaeltebusui:latest
+    environment:
+        VITE_API_BASE_URL: 'https://kb.lukaweis.de/api'
+    restart: unless-stopped

@@ -1,0 +1,17 @@
+# Use a small base image with Nginx
+FROM nginx:alpine
+
+# Set the working directory in the Nginx container
+WORKDIR /usr/share/nginx/html
+
+# Copy the built files from your local machine to the Nginx server
+COPY ./publish-frontend/ ./
+
+# Optional: Copy a custom Nginx configuration file
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
