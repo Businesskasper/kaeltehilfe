@@ -5,13 +5,11 @@ build/images/*
 
 # Backend
 kaeltebus-backend/**/bin
-kaeltebus-backend/**/obj
+kaeltebus-backend/**/obj/Debug
+kaeltebus-backend/**/obj/Release
 kaeltebus-backend/**/*.db
-kaeltebus-backend/src/KaeltebusDatabase.db
 kaeltebus-backend/**/*.db-shm
-kaeltebus-backend/src/KaeltebusDatabase.db-shm
 kaeltebus-backend/**/*.db-wal
-kaeltebus-backend/src/KaeltebusDatabase.db-wal
 
 
 # Frontend
