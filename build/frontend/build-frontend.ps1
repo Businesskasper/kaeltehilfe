@@ -1,5 +1,5 @@
 if ($psISE) {
-    $global:root = $psISE.CurrentFile | select -ExpandProperty FullPath | Split-Path -Parent
+    $global:root = $psISE.CurrentFile | Select-Object -ExpandProperty FullPath | Split-Path -Parent
 }
 elseif ($profile -match "VSCode") { 
     $global:root = $psEditor.GetEditorContext().CurrentFile.Path | Split-Path -Parent

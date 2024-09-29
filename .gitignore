@@ -7,11 +7,12 @@ build/images/*
 kaeltebus-backend/**/bin
 kaeltebus-backend/**/obj
 kaeltebus-backend/**/*.db
-kaeltebus-backend\src\KaeltebusDatabase.db
+kaeltebus-backend/src/KaeltebusDatabase.db
 kaeltebus-backend/**/*.db-shm
-kaeltebus-backend\src\KaeltebusDatabase.db-shm
+kaeltebus-backend/src/KaeltebusDatabase.db-shm
 kaeltebus-backend/**/*.db-wal
-kaeltebus-backend\src\KaeltebusDatabase.db-wal
+kaeltebus-backend/src/KaeltebusDatabase.db-wal
+
 
 # Frontend
 kaeltebus-frontend/logs
