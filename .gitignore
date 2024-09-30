@@ -3,6 +3,9 @@ build/publish-backend/*
 build/publish-frontend/*
 build/images/*
 
+# Dev env
+dev/keycloak/*
+
 # Backend
 kaeltebus-backend/**/bin
 kaeltebus-backend/**/obj/Debug

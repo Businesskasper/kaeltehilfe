@@ -39,34 +39,8 @@ export const useCrudHook = <
 
   const queryClient = useQueryClient();
 
-  // const [lastSetValues, setLastSetValues] = React.useState<TParams>();
-  // const stringifiedParams = JSON.stringify(params);
-
-  // React.useEffect(() => {
-  //   setLastSetValues((old) => {
-  //     const newKeys = Object.keys(params || {});
-  //     const oldKeys = Object.keys(old || {});
-  //     const keys = Array.from(new Set([...newKeys, ...oldKeys]));
-
-  //     const newObj = keys.reduce((sum, currKey) => {
-  //       const newValue = params?.[currKey];
-  //       const oldValue = old?.[currKey];
-  //       return {
-  //         ...sum,
-  //         [currKey]:
-  //           newValue !== null && newValue !== undefined ? newValue : oldValue,
-  //       };
-  //     }, {} as TParams);
-
-  //     return newObj;
-  //   });
-  // }, [stringifiedParams]);
-
-  // const paramValues = Object.values(lastSetValues || {}) || [];
   const paramValues = Object.values(params || {});
-  // console.log("paramValues", paramValues);
 
-  // const objs = useQuery<T[], Error, TParams, any>({
   const objs = useQuery<Array<T>>({
     queryKey: [key, ...paramValues],
     enabled: enabled ?? true,

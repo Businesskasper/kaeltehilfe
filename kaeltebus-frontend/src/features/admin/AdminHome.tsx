@@ -10,6 +10,7 @@ import {
   IconBedFlat,
   IconBus,
   IconCalendar,
+  IconCubeSend,
   IconMoon,
   IconSoup,
   IconSun,
@@ -99,7 +100,7 @@ export const AdminHome = () => {
             // onNavigate={toggle}
             label="Ausgaben"
             target="distributions"
-            Icon={IconBedFlat}
+            Icon={IconCubeSend}
           />
         </NavigationSection>
       </AppShell.Navbar>

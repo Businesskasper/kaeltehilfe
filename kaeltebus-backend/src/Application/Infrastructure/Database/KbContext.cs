@@ -20,7 +20,9 @@ public class KbContext : DbContext
     public KbContext(DbContextOptions<KbContext> options, IWebHostEnvironment environment)
         : base(options)
     {
-        _seedData = environment.EnvironmentName == "Development";
+        // This does not really make sense, since the seeding is run via a migration.
+        // The Migration is not created at runtime but on the developer machine.
+        _seedData = environment.IsDevelopment();
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -134,6 +136,8 @@ public class KbContext : DbContext
             .HasForeignKey(sv => sv.VolunteerId);
         modelBuilder.Entity<ShiftVolunteer>().Property(sv => sv.Order).IsRequired();
 
+        // This does not really make sense, since the seeding is run via a migration.
+        // The Migration is not created at runtime but on the developer machine.
         if (_seedData)
             Seed(modelBuilder);
     }

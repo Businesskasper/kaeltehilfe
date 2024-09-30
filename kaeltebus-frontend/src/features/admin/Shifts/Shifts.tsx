@@ -35,7 +35,6 @@ export const Shifts = () => {
   ).map((index) => ({
     id: `volunteer_${index + 1}`,
     header: `Freiwilliger ${index + 1}`,
-    // accessorKey: `volunteers[${index}].fullname`,
     accessorFn: ({ volunteers }) => volunteers?.[index]?.fullname,
   }));
 
@@ -66,17 +65,26 @@ export const Shifts = () => {
         ) : (
           <>
             {!driver && (
-              <Tooltip label="Kein Fahrer">
+              <Tooltip
+                events={{ hover: true, touch: true, focus: true }}
+                label="Kein Fahrer"
+              >
                 <IconSteeringWheelFilled fill="red" />
               </Tooltip>
             )}
             {!female && (
-              <Tooltip label="Keine weibliche Freiwillige">
+              <Tooltip
+                events={{ hover: true, touch: true, focus: true }}
+                label="Keine weibliche Freiwillige"
+              >
                 <IconWomanFilled fill="red" />
               </Tooltip>
             )}
             {count < 3 && (
-              <Tooltip label="Mindestanzahl nicht erreicht">
+              <Tooltip
+                events={{ hover: true, touch: true, focus: true }}
+                label="Mindestanzahl nicht erreicht"
+              >
                 <IconUsersGroup fill="red" style={{ color: "red" }} />
               </Tooltip>
             )}
@@ -129,7 +137,6 @@ export const Shifts = () => {
         isLoading={isTableLoading}
         keyGetter="id"
         columns={columns}
-        // columns={isLoading ? [] : columns}
         handleAdd={handleAdd}
         handleEdit={handleEdit}
         handleDelete={handleDelete}

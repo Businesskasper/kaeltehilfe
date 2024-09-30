@@ -34,8 +34,9 @@ try {
     Write-Host "Artifacts are located in $($publishDir)" -ForegroundColor Cyan
 }
 catch [Exception] {
-    Write-Host "Build failed" -ForegroundColor Red
+    Write-Host "Publish failed" -ForegroundColor Red
     Write-Host $_.Exception.ToString()
+    break
 }
 
 # Build image
@@ -47,6 +48,7 @@ try {
 catch [Exception] {
     Write-Host "Image build failed" -ForegroundColor Red
     Write-Host $_.Exception.ToString()
+    break
 }
 
 # Export image
@@ -57,4 +59,5 @@ try {
 catch [Exception] {
     Write-Host "Image export failed" -ForegroundColor Red
     Write-Host $_.Exception.ToString()
+    break
 }

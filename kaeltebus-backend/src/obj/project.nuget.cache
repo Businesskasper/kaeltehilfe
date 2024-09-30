@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "31ayL6NPdhg=",
+  "dgSpecHash": "P3YXe0dTYbs=",
   "success": true,
-  "projectFilePath": "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+  "projectFilePath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\LukaW\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",

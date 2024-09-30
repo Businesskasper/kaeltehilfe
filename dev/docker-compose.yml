@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  keycloak:
+    ports:
+      - '8050:8080'
+      - '8051:9000'
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev
+    environment:
+        KC_HOSTNAME: 'localhost'
+        # KC_PROXY: 'edge'
+        KEYCLOAK_ADMIN: 'admin'
+        KEYCLOAK_ADMIN_PASSWORD: 'admin'
+        QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
+    volumes:
+        - ./keycloak:/opt/keycloak/data

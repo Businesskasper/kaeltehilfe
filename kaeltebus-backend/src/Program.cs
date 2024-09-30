@@ -105,6 +105,9 @@ builder
     .AddJwtBearer(
         (o) =>
         {
+            if (builder.Environment.IsDevelopment())
+                o.RequireHttpsMetadata = false;
+
             o.Authority = builder.Configuration.GetValue<string>("Authorization:Authority");
             // o.Audience = builder.Configuration.GetValue<string>("Authorization:Client");
             o.Audience = builder.Configuration.GetValue<string>("Authorization:Audience");
