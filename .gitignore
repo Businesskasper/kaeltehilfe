@@ -1,6 +1,6 @@
 # Build
-build/publish-backend/*
-build/publish-frontend/*
+build/backend/publish-backend/*
+build/frontend/publish-frontend/*
 build/images/*
 
 # Dev env
