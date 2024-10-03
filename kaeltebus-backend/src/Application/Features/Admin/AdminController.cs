@@ -17,7 +17,7 @@ public class AdminController : ControllerBase
         _kbSeeder = kbSeeder;
     }
 
-    [HttpPost("/Seed")]
+    [HttpPost("Seed")]
     [Authorize(Roles = "Admin")]
     public IActionResult Seed()
     {
