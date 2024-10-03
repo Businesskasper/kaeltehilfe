@@ -182,7 +182,7 @@ export const DistributionOverview = () => {
         {isFetchingNextPage ? (
           <Loader size="sm" />
         ) : (
-          <Text>Scrollen um weitere Ergebnisse zu laden</Text>
+          hasNextPage && <Text>Scrollen um weitere Ergebnisse zu laden</Text>
         )}
       </Group>
     </div>
