@@ -44,6 +44,8 @@ builder.Services.AddDbContext<KbContext>(
     }
 );
 
+builder.Services.AddSeeder<KbContext, KbSeeder>();
+
 var CORS_POLICY = "CorsPolicy";
 
 // Get the CORS origins from environment variables, default to "http://localhost:5173"
@@ -209,5 +211,7 @@ app.UseSqliteUniqueExceptionHandler();
 app.MapControllers();
 
 app.RunMigrations<KbContext>();
+
+app.RunSeeder<KbContext>(_ => app.Environment.IsDevelopment());
 
 app.Run();

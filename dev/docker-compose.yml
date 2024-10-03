@@ -7,10 +7,13 @@ services:
     image: quay.io/keycloak/keycloak:latest
     command: start-dev
     environment:
-        KC_HOSTNAME: 'localhost'
-        # KC_PROXY: 'edge'
-        KEYCLOAK_ADMIN: 'admin'
-        KEYCLOAK_ADMIN_PASSWORD: 'admin'
-        QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
+      KC_HOSTNAME: 'localhost'
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
     volumes:
         - ./keycloak:/opt/keycloak/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"

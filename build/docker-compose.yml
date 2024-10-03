@@ -11,6 +11,10 @@ services:
       - ../nginx/data:/data
       - ../nginx/letsencrypt:/etc/letsencrypt
     network_mode: 'host'
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
   keycloak:
     ports:
       - '8080:8080'
@@ -20,12 +24,16 @@ services:
     environment:
         KC_HOSTNAME: 'auth.lukaweis.de'
         KC_PROXY: 'edge'
-        KEYCLOAK_ADMIN: 'admin'
-        KEYCLOAK_ADMIN_PASSWORD: 'admin'
+        KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+        KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
         QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
     volumes:
         - ../keycloak:/opt/keycloak/data
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
   kaeltebus-api:
     ports:
       - '8081:8080'
@@ -36,6 +44,10 @@ services:
     volumes:
         - ../backend/db:/opt/kaeltebus-api/db
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
   kaeltebus-ui:
     ports:
       - '8082:80'
@@ -43,3 +55,7 @@ services:
     environment:
         VITE_API_BASE_URL: 'https://ulm.kaelte-bus.de/api'
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
