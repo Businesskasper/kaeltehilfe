@@ -9,6 +9,7 @@ import {
 } from "@mantine/core";
 import { IconMinus, IconPlus } from "@tabler/icons-react";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Distribution,
   GoodTypeTranslation,
@@ -22,16 +23,20 @@ import {
 } from "../../../common/utils";
 
 export type DistributionCardProps = {
+  clientId: number;
   clientName: string;
   distributions: Array<Distribution>;
   isToday: boolean;
 };
 
 export const DistributionCard = ({
+  clientId,
   clientName,
   distributions,
   isToday,
 }: DistributionCardProps) => {
+  const navigate = useNavigate();
+
   const {
     objs: { data: goods },
   } = useGoods();
@@ -43,7 +48,6 @@ export const DistributionCard = ({
   } = useWriteDistributions();
 
   // TODO: Gruppierung um Ort?
-  // TODO: Sortierung innerhalb der Gruppe?
   const byGood = groupBy(distributions, (d) => d.good?.id);
   const sortedGoodIds = Array.from(byGood.keys()).sort((goodId1, goodId2) => {
     const dists1 = byGood.get(goodId1) || [];
@@ -111,9 +115,19 @@ export const DistributionCard = ({
     );
   };
 
+  const newDistribution = () => {
+    navigate("/add", { state: { clientId } });
+  };
+
   return (
     <Card padding="md" radius="md" withBorder h={300}>
-      <Card.Section withBorder inheritPadding py="xs">
+      <Card.Section
+        onClick={() => newDistribution()}
+        withBorder
+        inheritPadding
+        py="xs"
+        style={{ cursor: "pointer" }}
+      >
         <Group justify="space-between">
           <Title order={4}>{clientName}</Title>
         </Group>

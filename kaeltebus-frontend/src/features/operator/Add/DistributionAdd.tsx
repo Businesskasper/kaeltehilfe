@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Gender,
   useClients,
@@ -31,6 +31,7 @@ import { FormLocation } from "./FormLocation";
 
 import { IconLayoutSidebarRightExpand } from "@tabler/icons-react";
 import { useBreakpoint } from "../../../common/utils";
+import { useOperatorContext } from "../OperatorContext";
 import "./DistributionAdd.scss";
 
 export const DistributionAdd = () => {
@@ -42,23 +43,50 @@ export const DistributionAdd = () => {
   const {
     objs: { isLoading: isGoodsLoading },
   } = useGoods();
+  const {
+    objs: { data: clients },
+  } = useClients();
 
   const {
     isPending: isBatchDistributionPosting,
     mutateAsync: postBatchDistribution,
   } = usePostBatchDistribution();
 
+  const {
+    lastLocationState: [lastLocation, setLastLocation],
+  } = useOperatorContext();
+
+  const { state: locationState } = useLocation();
+  const selectedClient = locationState?.clientId
+    ? clients?.find((c) => c.id === locationState?.clientId)
+    : undefined;
+
+  const defaultClient: DistributionForm["clients"][number] = selectedClient
+    ? {
+        id: selectedClient.id,
+        name: selectedClient.name,
+        approxAge: selectedClient.approxAge as number,
+        gender: selectedClient.gender as Gender,
+      }
+    : {
+        id: undefined as unknown as number,
+        name: "",
+        approxAge: undefined as unknown as number,
+        gender: undefined as unknown as Gender,
+      };
+
   const form = useDistributionForm({
     mode: "controlled",
     initialValues: {
-      locationName: "",
+      locationName: lastLocation || "",
       clients: [
-        {
-          id: undefined as unknown as number,
-          name: "",
-          approxAge: undefined as unknown as number,
-          gender: undefined as unknown as Gender,
-        },
+        // {
+        //   id: undefined as unknown as number,
+        //   name: "",
+        //   approxAge: undefined as unknown as number,
+        //   gender: undefined as unknown as Gender,
+        // },
+        defaultClient,
       ],
       goods: [],
     },
@@ -86,7 +114,10 @@ export const DistributionAdd = () => {
   });
 
   const onSubmit = (formModel: DistributionForm) => {
-    postBatchDistribution(formModel).then(() => navigate(`/`));
+    postBatchDistribution(formModel).then(() => {
+      setLastLocation(formModel.locationName);
+      navigate(`/`);
+    });
   };
 
   const isLoading =
@@ -131,8 +162,19 @@ export const DistributionAdd = () => {
     if (!hasError) setActiveStep(newStep);
   };
 
+  const [isDrawerInitiallyOpened, setIsDrawerInitiallyOpened] =
+    React.useState(false);
   const [isDrawerOpen, { open: openDrawer, close: closeDrawer }] =
-    useDisclosure(true);
+    useDisclosure(false);
+  React.useEffect(() => {
+    if (activeStep === FormStep.GOODS && !isDrawerInitiallyOpened) {
+      setTimeout(() => {
+        openDrawer();
+        setIsDrawerInitiallyOpened(true);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeStep, isDrawerInitiallyOpened]);
 
   const breakpoint = useBreakpoint();
   const isDesktop =

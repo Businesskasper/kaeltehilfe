@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { useDistributionsPaginated } from "../../../common/app";
 import {
   compareByDateOnly,
+  compareByDateTime,
   formatDate,
   groupBy,
   toNormalizedDate,
@@ -25,10 +26,6 @@ import { DistributionCard } from "./DistributionCard";
 import "./DistributionOverview.scss";
 
 export const DistributionOverview = () => {
-  // const {
-  //   objs: { data: distributions, isLoading },
-  // } = useDistributions();
-
   const {
     queryDistributionsPaginated: {
       data,
@@ -108,6 +105,26 @@ export const DistributionOverview = () => {
           (d) => d.client.id
         );
 
+        const sortedClientIds = Array.from(byClientId.keys()).sort(
+          (clientId1, clientId2) => {
+            const oldestDistribution1 = byClientId
+              .get(clientId1)
+              ?.sort((dist1, dist2) =>
+                compareByDateTime(dist1.timestamp, dist2.timestamp)
+              )[0];
+            const oldestDistribution2 = byClientId
+              .get(clientId2)
+              ?.sort((dist1, dist2) =>
+                compareByDateTime(dist1.timestamp, dist2.timestamp)
+              )[0];
+
+            return compareByDateTime(
+              oldestDistribution2?.timestamp,
+              oldestDistribution1?.timestamp
+            );
+          }
+        );
+
         return (
           <div key={String(distributionDate)}>
             <Title mb="xs" order={4}>
@@ -141,14 +158,16 @@ export const DistributionOverview = () => {
                   </Group>
                 </Card>
               )}
-              {Array.from(byClientId.keys()).map((clientId) => {
+              {sortedClientIds.map((clientId) => {
                 const distributions =
                   byDate
                     .get(distributionDate)
                     ?.filter((d) => d.client.id === clientId) || [];
+
                 return (
                   <DistributionCard
                     key={String(clientId)}
+                    clientId={distributions?.[0]?.client?.id}
                     clientName={distributions?.[0]?.client?.name || ""}
                     distributions={distributions || []}
                     isToday={!!distributionDate && isToday(distributionDate)}

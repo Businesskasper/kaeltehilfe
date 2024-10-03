@@ -1,22 +1,21 @@
 import { AppShell, Group, Switch, useMantineColorScheme } from "@mantine/core";
 import { IconMoon, IconSun } from "@tabler/icons-react";
+import React from "react";
 import { useAuth } from "react-oidc-context";
 import { Outlet } from "react-router-dom";
 import LogoLight from "../../common/assets/drk_logo.png";
 import LogoDark from "../../common/assets/drk_logo_dark.png";
+import { OperatorContextType } from "./OperatorContext";
 
 export const OperatorHome = () => {
   const { toggleColorScheme, colorScheme } = useMantineColorScheme();
 
-  // const pinned = useHeadroom({ fixedAt: 0 });
   const auth = useAuth();
 
+  const lastLocationState = React.useState<string>();
+
   return (
-    <AppShell
-      // header={{ height: 80, collapsed: !pinned, offset: true }}
-      header={{ height: 80 }}
-      padding="md"
-    >
+    <AppShell header={{ height: 80 }} padding="md">
       <AppShell.Header h="0" pos="relative" withBorder={false}>
         <Group px="md" justify="space-between">
           <Group>
@@ -39,7 +38,7 @@ export const OperatorHome = () => {
       </AppShell.Header>
 
       <AppShell.Main id="operator-main">
-        <Outlet />
+        <Outlet context={{ lastLocationState } satisfies OperatorContextType} />
       </AppShell.Main>
     </AppShell>
   );

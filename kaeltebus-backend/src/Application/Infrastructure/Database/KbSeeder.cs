@@ -1,4 +1,3 @@
-using kaeltebus_backend.Infrastructure.Database;
 using kaeltebus_backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -191,9 +190,10 @@ public class KbSeeder : ISeeder<KbContext>
         _kbContext.Locations.AddRange(locations);
         _kbContext.SaveChanges();
 
+        var now = DateTime.Now;
         var distributions = GetRandomDistributions(
-            DateTime.Now.AddDays(-10),
-            DateTime.Now,
+            now.AddDays(-10),
+            now,
             clients,
             goods,
             locations,
