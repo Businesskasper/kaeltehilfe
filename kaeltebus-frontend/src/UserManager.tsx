@@ -11,6 +11,9 @@ const userManagerProps: UserManagerSettings = {
   authority: VITE_IDP_AUTHORITY,
   redirect_uri: window.location.href,
   userStore: new WebStorageStateStore({ store: window.localStorage }),
+  extraQueryParams: {
+    theme: localStorage.getItem("mantine-color-scheme-value") || "light",
+  },
 };
 
 export const userManager = new UserManager(userManagerProps);

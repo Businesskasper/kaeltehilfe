@@ -1,11 +1,12 @@
 import ReactDOM from "react-dom/client";
 import { AuthProvider, AuthProviderProps } from "react-oidc-context";
 import {
-  createBrowserRouter,
   Navigate,
   RouterProvider,
+  createBrowserRouter,
 } from "react-router-dom";
 import App from "./App.tsx";
+import { userManager } from "./UserManager.tsx";
 import { AuthRoute } from "./common/components";
 import {
   AdminHome,
@@ -28,7 +29,6 @@ import "@mantine/notifications/styles.css";
 import "mantine-react-table/styles.css";
 
 import "./index.scss";
-import { userManager } from "./UserManager.tsx";
 
 export const router = createBrowserRouter([
   {
@@ -99,12 +99,7 @@ const onSigninCallback = (): void => {
 
 const authProvProps: AuthProviderProps = {
   userManager,
-  // client_id: "kaeltebus",
-  // authority: "https://auth.lukaweis.de/realms/drk",
-  // redirect_uri: window.location.href,
-  // userStore: new WebStorageStateStore({ store: window.localStorage }),
   onSigninCallback,
-  // automaticSilentRenew: true,
 };
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

@@ -5,6 +5,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import React from "react";
 import { hasAuthParams, useAuth } from "react-oidc-context";
 import { Outlet } from "react-router-dom";
 
@@ -14,7 +15,6 @@ import { DatesProvider } from "@mantine/dates";
 import dayjs from "dayjs";
 import "dayjs/locale/de";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import React from "react";
 dayjs.extend(customParseFormat);
 
 function App() {

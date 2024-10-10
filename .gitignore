@@ -4,7 +4,11 @@ build/frontend/publish-frontend/*
 build/images/*
 
 # Dev env
-dev/keycloak/*
+dev/keycloak
+dev/keycloak-themes
+
+# Theme
+kaeltebus-keycloak-theme/dist_keycloak
 
 # Backend
 kaeltebus-backend/**/bin

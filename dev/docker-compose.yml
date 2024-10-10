@@ -13,6 +13,7 @@ services:
       QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
     volumes:
         - ./keycloak:/opt/keycloak/data
+        - ./keycloak-themes:/opt/keycloak/providers
     logging:
       driver: "json-file"
       options:
