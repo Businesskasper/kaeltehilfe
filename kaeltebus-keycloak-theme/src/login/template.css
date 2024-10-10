@@ -1,0 +1,8 @@
+.login-wrapper {
+    padding-top: 0;
+}
+
+.login-info-wrapper {
+    padding: unset !important;
+    background-color: unset !important;
+}
