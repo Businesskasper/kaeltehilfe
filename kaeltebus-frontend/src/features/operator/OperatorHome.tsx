@@ -7,6 +7,7 @@ import LogoLight from "../../common/assets/drk_logo.png";
 import LogoDark from "../../common/assets/drk_logo_dark.png";
 import { OperatorContextType } from "./OperatorContext";
 
+import { useViewportSize } from "@mantine/hooks";
 import "./OperatorHome.scss";
 
 export const OperatorHome = () => {
@@ -14,13 +15,21 @@ export const OperatorHome = () => {
 
   const auth = useAuth();
 
+  const { width } = useViewportSize();
+  const isSmall = width < 450;
+
   const lastLocationState = React.useState<string>();
 
   return (
     <AppShell header={{ height: 80 }} padding="md">
       <AppShell.Header h="0" pos="relative" withBorder={false}>
-        <Group wrap="nowrap" px="md" justify="space-between">
-          <Group>
+        <Group
+          gap={isSmall ? 0 : undefined}
+          wrap="nowrap"
+          px="md"
+          justify="space-between"
+        >
+          <Group className="BurgerMenu">
             <img
               height={80}
               src={colorScheme === "dark" ? LogoDark : LogoLight}

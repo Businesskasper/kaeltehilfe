@@ -5,7 +5,7 @@ import {
   Switch,
   useMantineColorScheme,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useViewportSize } from "@mantine/hooks";
 import {
   IconBedFlat,
   IconBus,
@@ -31,6 +31,9 @@ export const AdminHome = () => {
 
   const auth = useAuth();
 
+  const { width } = useViewportSize();
+  const isSmall = width < 450;
+
   return (
     <AppShell
       header={{ height: 80 }}
@@ -42,8 +45,13 @@ export const AdminHome = () => {
       padding="md"
     >
       <AppShell.Header withBorder={false}>
-        <Group wrap="nowrap" px="md" justify="space-between">
-          <Group>
+        <Group
+          gap={isSmall ? 0 : undefined}
+          wrap="nowrap"
+          px="md"
+          justify="space-between"
+        >
+          <Group className="BurgerMenu">
             <Burger opened={opened} onClick={toggle} size="sm" />
             <img
               height={80}
