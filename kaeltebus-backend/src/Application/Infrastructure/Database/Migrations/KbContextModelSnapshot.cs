@@ -23,18 +23,18 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("AddOn")
+                    b.Property<long>("AddOn")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
                     b.Property<int>("ApproxAge")
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime?>("ChangeOn")
+                    b.Property<long?>("ChangeOn")
                         .ValueGeneratedOnUpdate()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
                     b.Property<int?>("Gender")
                         .HasColumnType("INTEGER");
@@ -69,15 +69,15 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("AddOn")
+                    b.Property<long>("AddOn")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
-                    b.Property<DateTime?>("ChangeOn")
+                    b.Property<long?>("ChangeOn")
                         .ValueGeneratedOnUpdate()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -105,15 +105,15 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("AddOn")
+                    b.Property<long>("AddOn")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
-                    b.Property<DateTime?>("ChangeOn")
+                    b.Property<long?>("ChangeOn")
                         .ValueGeneratedOnUpdate()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
                     b.Property<int>("ClientId")
                         .HasColumnType("INTEGER");
@@ -158,15 +158,15 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("AddOn")
+                    b.Property<long>("AddOn")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
-                    b.Property<DateTime?>("ChangeOn")
+                    b.Property<long?>("ChangeOn")
                         .ValueGeneratedOnUpdate()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -208,15 +208,15 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("AddOn")
+                    b.Property<long>("AddOn")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
-                    b.Property<DateTime?>("ChangeOn")
+                    b.Property<long?>("ChangeOn")
                         .ValueGeneratedOnUpdate()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -244,15 +244,15 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("AddOn")
+                    b.Property<long>("AddOn")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
-                    b.Property<DateTime?>("ChangeOn")
+                    b.Property<long?>("ChangeOn")
                         .ValueGeneratedOnUpdate()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("TEXT");
@@ -302,15 +302,15 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<DateTime>("AddOn")
+                    b.Property<long>("AddOn")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
-                    b.Property<DateTime?>("ChangeOn")
+                    b.Property<long?>("ChangeOn")
                         .ValueGeneratedOnUpdate()
-                        .HasColumnType("TEXT")
-                        .HasDefaultValueSql("datetime()");
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
 
                     b.Property<string>("Firstname")
                         .IsRequired()

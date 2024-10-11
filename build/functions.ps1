@@ -6,9 +6,6 @@ function invokeNpmScript([string]$projectPath, [string]$scriptName) {
 }
 
 function invokeDotnetCommand([string]$projectPath, [string]$command) {
-    write-host "hier"
-    write-host $projectPath
-    write-host $command
     $result = Start-Process -FilePath "C:\Program Files\dotnet\dotnet.exe" -ArgumentList @($command) -Wait -PassThru -WorkingDirectory $projectPath
     if ($result.ExitCode -ne 0) {
         throw [Exception]::new("Dotnet command failed with exit code $($result.ExitCode)")

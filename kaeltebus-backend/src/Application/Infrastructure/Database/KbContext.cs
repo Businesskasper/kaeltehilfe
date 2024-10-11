@@ -1,6 +1,7 @@
 using kaeltebus_backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace kaeltebus_backend.Infrastructure.Database;
 
@@ -140,11 +141,16 @@ static class DbContextExtensions
     {
         modelBuilder.HasIndex(x => x.IsDeleted);
         modelBuilder.Property(x => x.Id).ValueGeneratedOnAdd();
-        modelBuilder.Property(x => x.AddOn).ValueGeneratedOnAdd().HasDefaultValueSql("datetime()");
+        modelBuilder
+            .Property(x => x.AddOn)
+            .ValueGeneratedOnAdd()
+            .HasDefaultValueSql("unixepoch('now')")
+            .HasConversion(new UnixEpochDateTimeConverter());
         modelBuilder
             .Property(x => x.ChangeOn)
             .ValueGeneratedOnUpdate()
-            .HasDefaultValueSql("datetime()");
+            .HasDefaultValueSql("unixepoch('now')")
+            .HasConversion(new UnixEpochDateTimeConverter());
         modelBuilder.Property(x => x.IsDeleted).HasDefaultValue(false);
 
         return modelBuilder;
@@ -157,4 +163,13 @@ static class DbContextExtensions
         using var context = scope.ServiceProvider.GetRequiredService<TContext>();
         context?.Database.Migrate();
     }
+}
+
+public class UnixEpochDateTimeConverter : ValueConverter<DateTime, long>
+{
+    public UnixEpochDateTimeConverter()
+        : base(
+            v => ((DateTimeOffset)v).ToUnixTimeSeconds(),
+            v => DateTimeOffset.FromUnixTimeSeconds(v).UtcDateTime
+        ) { }
 }
