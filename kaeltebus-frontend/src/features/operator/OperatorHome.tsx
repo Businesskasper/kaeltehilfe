@@ -7,6 +7,8 @@ import LogoLight from "../../common/assets/drk_logo.png";
 import LogoDark from "../../common/assets/drk_logo_dark.png";
 import { OperatorContextType } from "./OperatorContext";
 
+import "./OperatorHome.scss";
+
 export const OperatorHome = () => {
   const { toggleColorScheme, colorScheme } = useMantineColorScheme();
 
@@ -17,14 +19,14 @@ export const OperatorHome = () => {
   return (
     <AppShell header={{ height: 80 }} padding="md">
       <AppShell.Header h="0" pos="relative" withBorder={false}>
-        <Group px="md" justify="space-between">
+        <Group wrap="nowrap" px="md" justify="space-between">
           <Group>
             <img
               height={80}
               src={colorScheme === "dark" ? LogoDark : LogoLight}
             />
           </Group>
-          <Group>
+          <Group className="UserMenu">
             {auth.isAuthenticated && <span>{auth?.user?.profile.name}</span>}
             <Switch
               size="md"

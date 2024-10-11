@@ -42,7 +42,7 @@ export const AdminHome = () => {
       padding="md"
     >
       <AppShell.Header withBorder={false}>
-        <Group px="md" justify="space-between">
+        <Group wrap="nowrap" px="md" justify="space-between">
           <Group>
             <Burger opened={opened} onClick={toggle} size="sm" />
             <img
@@ -50,7 +50,7 @@ export const AdminHome = () => {
               src={colorScheme === "dark" ? LogoDark : LogoLight}
             />
           </Group>
-          <Group>
+          <Group className="UserMenu">
             {auth.isAuthenticated && <span>{auth?.user?.profile.name}</span>}
             <Switch
               size="md"
