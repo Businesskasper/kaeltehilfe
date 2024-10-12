@@ -1,5 +1,13 @@
-import { Button, Checkbox, Select, TextInput, Textarea } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Checkbox,
+  Select,
+  TextInput,
+  Textarea,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconX } from "@tabler/icons-react";
 import React from "react";
 import { Gender, GenderTranslation } from "../../../common/app/gender";
 import { Volunteer, useVolunteers } from "../../../common/app/volunteer";
@@ -93,6 +101,18 @@ export const VolunteerModal = ({
             placeholder="Vorname (min. 3 Zeichen)"
             withAsterisk
             mb="md"
+            rightSection={
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.firstname}
+                onClick={() => {
+                  form.setFieldValue("firstname", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            }
           />
           <TextInput
             {...form.getInputProps("lastname")}
@@ -103,6 +123,18 @@ export const VolunteerModal = ({
             withAsterisk
             mt="md"
             mb="md"
+            rightSection={
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.lastname}
+                onClick={() => {
+                  form.setFieldValue("lastname", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            }
           />
           {/* <Group mt="md" mb="md" align="center">
             <Checkbox

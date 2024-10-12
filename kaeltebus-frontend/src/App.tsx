@@ -69,6 +69,27 @@ function App() {
     });
   }, [auth]);
 
+  // Prevent automatic zoom in on iPhones
+  const isIphone = navigator?.userAgent?.includes("iPhone");
+  React.useLayoutEffect(() => {
+    if (!isIphone) return;
+
+    const metaTags = document.getElementsByTagName("meta");
+    const viewportMetaTag = Array.from(metaTags).find(
+      (meta) => meta.name === "viewport"
+    );
+    if (viewportMetaTag) {
+      viewportMetaTag.content =
+        "minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no";
+    } else {
+      const newViewportMetaTag = document.createElement("meta");
+      newViewportMetaTag.name = "viewport";
+      newViewportMetaTag.content =
+        "minimum-scale=1, initial-scale=1, width=device-width, user-scalable=no";
+      document.getElementsByTagName("head")[0].appendChild(newViewportMetaTag);
+    }
+  }, [isIphone]);
+
   return (
     <React.StrictMode>
       <MantineProvider
@@ -89,6 +110,11 @@ function App() {
             country_gray: colorsTuple("#D9D9D9"),
           },
           primaryColor: "blue",
+          // Should prevent iphones from zooming in on select focus
+          // Does not work, the problem is solved with above meta tag
+          // fontSizes: {
+          //   xs: "16px",
+          // },
         }}
       >
         <DatesProvider settings={{ locale: "de" }}>

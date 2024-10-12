@@ -8,6 +8,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { IconLayoutSidebarRightExpand } from "@tabler/icons-react";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -16,10 +17,12 @@ import {
   useGoods,
   usePostBatchDistribution,
 } from "../../../common/app";
+import { useBreakpoint } from "../../../common/utils";
 import {
   requiredValidator,
   validators,
 } from "../../../common/utils/validators";
+import { useOperatorContext } from "../OperatorContext";
 import {
   DistributionForm,
   DistributionFormProvider,
@@ -29,9 +32,6 @@ import { FormClients } from "./FormClients";
 import { FormGoods } from "./FormGoods";
 import { FormLocation } from "./FormLocation";
 
-import { IconLayoutSidebarRightExpand } from "@tabler/icons-react";
-import { useBreakpoint } from "../../../common/utils";
-import { useOperatorContext } from "../OperatorContext";
 import "./DistributionAdd.scss";
 
 export const DistributionAdd = () => {

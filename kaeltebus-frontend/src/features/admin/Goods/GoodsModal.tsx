@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Button,
   NumberInput,
   Select,
@@ -7,6 +8,7 @@ import {
   Textarea,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconX } from "@tabler/icons-react";
 import React from "react";
 import {
   Good,
@@ -93,6 +95,18 @@ export const GoodModal = ({ isOpen, close, existing }: GoodModalProps) => {
             placeholder="Name (min. 3 Zeichen)"
             withAsterisk
             mb="md"
+            rightSection={
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.name}
+                onClick={() => {
+                  form.setFieldValue("name", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            }
           />
           <Textarea
             {...form.getInputProps("description")}

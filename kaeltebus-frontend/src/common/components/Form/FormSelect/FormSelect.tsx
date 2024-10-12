@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Combobox,
   Input,
   InputBase,
@@ -11,6 +12,7 @@ import { useForm } from "@mantine/form";
 import React from "react";
 import { ValueTypeProps } from "../../../utils";
 
+import { IconX } from "@tabler/icons-react";
 import "./FormSelect.scss";
 
 export type FormSelectProps<T extends { [key in string]: unknown }> = {
@@ -148,6 +150,20 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
               onBlur && onBlur();
             }}
             error={formProps.error}
+            rightSection={
+              <ActionIcon
+                size="xs"
+                disabled={!formProps.value}
+                onClick={() => {
+                  combobox.resetSelectedOption();
+                  formProps.onChange("");
+                  onItemSelected && onItemSelected(undefined);
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            }
           />
         ) : (
           <InputBase

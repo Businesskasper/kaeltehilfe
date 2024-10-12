@@ -1,5 +1,6 @@
-import { Button, TextInput } from "@mantine/core";
+import { ActionIcon, Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconX } from "@tabler/icons-react";
 import React from "react";
 import { Device, useDevices } from "../../../common/app";
 import { AppModal, ModalActions, ModalMain } from "../../../common/components";
@@ -73,6 +74,18 @@ export const DeviceModal = ({ isOpen, close, existing }: DeviceModalProps) => {
             placeholder="Nummernschild (min. 3 Zeichen, keine Leerzeichen)"
             withAsterisk
             mb="md"
+            rightSection={
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.registrationNumber}
+                onClick={() => {
+                  form.setFieldValue("registrationNumber", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            }
           />
         </ModalMain>
         <ModalActions>

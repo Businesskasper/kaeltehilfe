@@ -1,4 +1,5 @@
 import {
+  ActionIcon,
   Button,
   NumberInput,
   Select,
@@ -6,6 +7,7 @@ import {
   Textarea,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconX } from "@tabler/icons-react";
 import React from "react";
 import { Client, useClients } from "../../../common/app/client";
 import { Gender, GenderTranslation } from "../../../common/app/gender";
@@ -86,6 +88,18 @@ export const ClientModal = ({ isOpen, close, existing }: ClientsModalProps) => {
             placeholder="Name (min. 3 Zeichen)"
             withAsterisk
             mb="md"
+            rightSection={
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.name}
+                onClick={() => {
+                  form.setFieldValue("name", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            }
           />
           <Select
             {...form.getInputProps("gender")}
