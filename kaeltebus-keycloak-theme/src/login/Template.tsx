@@ -6,9 +6,10 @@ import type { TemplateProps } from "keycloakify/login/TemplateProps";
 import { getKcClsx } from "keycloakify/login/lib/kcClsx";
 import { clsx } from "keycloakify/tools/clsx";
 import { useSetClassName } from "keycloakify/tools/useSetClassName";
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import type { KcContext } from "./KcContext";
 import type { I18n } from "./i18n";
+import { useBreakpoint } from "./useBreakpoint";
 
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
@@ -47,6 +48,21 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
     const { msg, msgStr } = i18n;
 
     const { auth, url, message, isAppInitiatedAction } = kcContext;
+
+    // Set favicon
+    useLayoutEffect(() => {
+        const faviconTag = document.querySelector('link[rel="icon"]') as HTMLLinkElement | undefined;
+        if (faviconTag) {
+            faviconTag.type = "image/svg+xml";
+            faviconTag.href = encodedFavIconHref;
+        } else {
+            const newFaviconTag = document.createElement("link");
+            newFaviconTag.setAttribute("rel", "icon");
+            newFaviconTag.type = "image/svg+xml";
+            newFaviconTag.href = encodedFavIconHref;
+            document.getElementsByTagName("head")[0].appendChild(newFaviconTag);
+        }
+    }, []);
 
     useEffect(() => {
         document.title = documentTitle ?? msgStr("loginTitle", kcContext.realm.displayName);
@@ -94,6 +110,9 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
         className: bodyClassName ?? kcClsx("kcBodyClass")
     });
 
+    const breakpoint = useBreakpoint();
+    const isMobile = breakpoint === "BASE";
+
     const { isReadyToRender } = useInitialize({ kcContext, doUseDefaultCss });
 
     if (!isReadyToRender) {
@@ -118,7 +137,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
     );
 
     return (
-        <Card w="400px" padding="md" radius="md" withBorder>
+        <Card className={clsx({ "kb-template-card": true, "full-width": isMobile })} padding="md" radius="md" withBorder={!isMobile}>
             <Card.Section withBorder inheritPadding py="md">
                 {displayRequiredFields ? (
                     <div className={kcClsx("kcContentWrapperClass")}>
@@ -215,3 +234,6 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
         </Card>
     );
 }
+
+const encodedFavIconHref =
+    "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJpY29uIGljb24tdGFibGVyIGljb25zLXRhYmxlci1vdXRsaW5lIGljb24tdGFibGVyLWNvZmZlZSB0aGVtZS1kZXBlbmRlbnQtc3Ryb2tlIj4KICA8cGF0aCBzdHJva2U9Im5vbmUiIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz4KICA8cGF0aCBkPSJNMyAxNGMuODMgLjY0MiAyLjA3NyAxLjAxNyAzLjUgMWMxLjQyMy4wMTcgMi42Ny0uMzU4IDMuNS0xIC44My0uNjQyIDIuMDc3LTEuMDE3IDMuNS0xIDEuNDIzLjAxNyAyLjY3LjM1OCAzLjUgMSIvPgogIDxwYXRoIGQ9Ik04IDNhMi40IDIuNCAwIDAgMC0xIDJhMi40IDIuNCAwIDAgMCAxIDIiLz4KICA8cGF0aCBkPSJNMTIgM2EyLjQgMi40IDAgMCAwLTEgMmEyLjQgMi40IDAgMCAwIDEgMiIvPgogIDxwYXRoIGQ9Ik0zIDEwaDE0djVhNiA2IDAgMCAxLTYgNkg5YTYgNiAwIDAgMS02LTZ2LTV6Ii8+CiAgPHBhdGggZD0iTTE2Ljc0NiAxNi43MjZhMyAzIDAgMSAwIC4yNTIgLTUuNTU1Ii8+CiAgPHN0eWxlPgogICAgLnRoZW1lLWRlcGVuZGVudC1zdHJva2UgewogICAgICAgIHN0cm9rZTogYmxhY2s7CiAgICAgIH0KCiAgICAgIEBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmsgKSB7CiAgICAgICAgLnRoZW1lLWRlcGVuZGVudC1zdHJva2UgewogICAgICAgIHN0cm9rZTogd2hpdGU7CiAgICAgICAgfQogICAgICB9CiAgPC9zdHlsZT4KPC9zdmc+Cg==";

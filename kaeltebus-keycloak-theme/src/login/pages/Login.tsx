@@ -1,12 +1,12 @@
+import { Anchor, Button, Card, Checkbox, Divider, Group, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
 import { kcSanitize } from "keycloakify/lib/kcSanitize";
 import { getKcClsx } from "keycloakify/login/lib/kcClsx";
 import type { PageProps } from "keycloakify/login/pages/PageProps";
+import { clsx } from "keycloakify/tools/clsx";
 import { useState } from "react";
 import type { KcContext } from "../KcContext";
 import type { I18n } from "../i18n";
 
-import { Anchor, Button, Card, Checkbox, Divider, Group, PasswordInput, Stack, Text, TextInput } from "@mantine/core";
-import { clsx } from "keycloakify/tools/clsx";
 import "./login.css";
 
 export default function Login(props: PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n>) {

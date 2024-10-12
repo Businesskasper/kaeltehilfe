@@ -1,8 +1,14 @@
-.login-wrapper {
-    padding-top: 0;
-}
+.kb-template-card {
 
-.login-info-wrapper {
-    padding: unset !important;
-    background-color: unset !important;
+    width: 400px;
+
+    &.full-width {
+        width: 100%;
+    }
+
+
+    .login-info-wrapper {
+        padding: unset !important;
+        background-color: unset !important;
+    }
 }

@@ -1,8 +1,27 @@
-.login-body {
+.kb-template-body {
     height: 100%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+
+    #root {
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    @media screen and (max-width: 576px) {
+        #root {
+            padding-top: 8px;
+            display: block;
+            justify-content: unset;
+            align-items: unset;
+        }
+    }
 
     .signup {
         margin: 0 !important;

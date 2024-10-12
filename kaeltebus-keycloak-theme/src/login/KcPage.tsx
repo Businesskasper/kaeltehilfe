@@ -84,7 +84,7 @@ function KcPageContextualized(props: { kcContext: KcContext }) {
 
 const loginClasses = {
     kcHtmlClass: "",
-    kcBodyClass: "login-body",
+    kcBodyClass: "kb-template-body",
     kcInfoAreaWrapperClass: "login-info-wrapper",
     kcInfoAreaClass: "",
     kcSignUpClass: "signup"
