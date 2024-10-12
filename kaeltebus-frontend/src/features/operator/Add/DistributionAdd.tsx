@@ -44,7 +44,7 @@ export const DistributionAdd = () => {
     objs: { isLoading: isGoodsLoading },
   } = useGoods();
   const {
-    objs: { data: clients },
+    objs: { data: clients, isSuccess: hasClientsBeenLoaded },
   } = useClients();
 
   const {
@@ -56,37 +56,32 @@ export const DistributionAdd = () => {
     lastLocationState: [lastLocation, setLastLocation],
   } = useOperatorContext();
 
-  const { state: locationState } = useLocation();
-  const selectedClient = locationState?.clientId
-    ? clients?.find((c) => c.id === locationState?.clientId)
-    : undefined;
-
-  const defaultClient: DistributionForm["clients"][number] = selectedClient
-    ? {
-        id: selectedClient.id,
-        name: selectedClient.name,
-        approxAge: selectedClient.approxAge as number,
-        gender: selectedClient.gender as Gender,
-      }
-    : {
-        id: undefined as unknown as number,
-        name: "",
-        approxAge: undefined as unknown as number,
-        gender: undefined as unknown as Gender,
-      };
+  // const defaultClient: DistributionForm["clients"][number] = selectedClient
+  //   ? {
+  //       id: selectedClient.id,
+  //       name: selectedClient.name,
+  //       approxAge: selectedClient.approxAge as number,
+  //       gender: selectedClient.gender as Gender,
+  //     }
+  //   : {
+  //       id: undefined as unknown as number,
+  //       name: "",
+  //       approxAge: undefined as unknown as number,
+  //       gender: undefined as unknown as Gender,
+  //     };
 
   const form = useDistributionForm({
     mode: "controlled",
     initialValues: {
       locationName: lastLocation || "",
       clients: [
-        // {
-        //   id: undefined as unknown as number,
-        //   name: "",
-        //   approxAge: undefined as unknown as number,
-        //   gender: undefined as unknown as Gender,
-        // },
-        defaultClient,
+        {
+          id: undefined as unknown as number,
+          name: "",
+          approxAge: undefined as unknown as number,
+          gender: undefined as unknown as Gender,
+        },
+        // defaultClient,
       ],
       goods: [],
     },
@@ -119,6 +114,26 @@ export const DistributionAdd = () => {
       navigate(`/`);
     });
   };
+
+  const { state: locationState } = useLocation();
+  React.useEffect(() => {
+    if (!locationState?.clientId) return;
+
+    const selectedClient = locationState?.clientId
+      ? clients?.find((c) => c.id === locationState?.clientId)
+      : undefined;
+    if (!selectedClient) return;
+
+    form.setFieldValue("clients", [
+      {
+        approxAge: selectedClient.approxAge as number,
+        gender: selectedClient.gender as Gender,
+        id: selectedClient.id,
+        name: selectedClient.name,
+      },
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasClientsBeenLoaded, locationState]);
 
   const isLoading =
     isClientsLoading || isGoodsLoading || isBatchDistributionPosting;
