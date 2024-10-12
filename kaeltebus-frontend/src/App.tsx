@@ -48,7 +48,7 @@ function App() {
 
   const isDev = import.meta.env.DEV;
   React.useEffect(() => {
-    if (!auth || isDev) return;
+    if (!auth || !isDev) return;
 
     auth.events.addAccessTokenExpiring((a) => {
       console.log("Access token is about to expire...", a);
