@@ -10,24 +10,18 @@ export const FormLocation = () => {
 
   const form = useDistributionFormContext();
 
-  console.log(form.values.locationName);
-
   return (
     <>
       <InputLabel required w="100%" mb="xs">
         Ort
       </InputLabel>
       <FormSelect
-        // label="Ort"
         withAsterisk
         searchable
         items={locations || []}
         valueGetter="name"
         sort
         formProps={form.getInputProps("locationName")}
-        onItemSelected={(a) => {
-          console.log("onItemSelected", a);
-        }}
       />
     </>
   );

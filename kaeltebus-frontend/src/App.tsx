@@ -46,8 +46,9 @@ function App() {
     }
   }, [auth, hasTriedSignin]);
 
+  const isDev = import.meta.env.DEV;
   React.useEffect(() => {
-    if (!auth) return;
+    if (!auth || isDev) return;
 
     auth.events.addAccessTokenExpiring((a) => {
       console.log("Access token is about to expire...", a);
@@ -67,7 +68,7 @@ function App() {
     auth.events.addUserLoaded((user) => {
       console.log("New user profile loaded:", user);
     });
-  }, [auth]);
+  }, [auth, isDev]);
 
   // Prevent automatic zoom in on iPhones
   const isIphone = navigator?.userAgent?.includes("iPhone");

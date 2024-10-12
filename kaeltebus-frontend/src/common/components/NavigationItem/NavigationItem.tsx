@@ -27,8 +27,6 @@ export const NavigationItem = ({ target, label, Icon, onNavigate }: Props) => {
     { path: resolvedpath.pathname, end: true },
     location.pathname
   );
-  //   const isActive2 = useMatch({ path: resolvedpath.pathname, end: true });
-  //   console.log(target, isActive1, isActive2);
 
   return (
     <>
