@@ -18,7 +18,7 @@ The service also includes a certificate manager, which allows convenient SSL con
 ### Authentication
 Authentication is realized via "Keycloak". Users can authenticate through username and password or through a client certificate. NGINX is configured to accept client certificates and forward them as base64 via a dedicated header to Keycloak.
 
-Client certificate authentication is especially useful for operator tablets, since not all users can be expected to register, the administrator cannot be expected to support many users. On top of that, this prevents users from connecting to the app from their home PCs. Using a single "machine" user for the tablet also avoids GDPR issues.
+Client certificate authentication is especially useful for operator tablets, since not all users can be expected to register and manage credentials and the administrator cannot be expected to support users and their logins. On top of that, this prevents users from connecting to the app from private devices. Using a single "machine" user for the tablet also avoids GDPR issues with user registrations.
 
 
 ### Backend
