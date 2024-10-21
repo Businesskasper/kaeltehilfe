@@ -15,13 +15,13 @@ Write-Host "Build frontend container image" -ForegroundColor Cyan
 $frontendDir = [System.IO.Path]::Combine($global:root, "..", "..", "kaeltebus-frontend")
 $publishDir = [System.IO.Path]::Combine($global:root, "publish-frontend")
 
-$dockerImageName = "kaeltebusui:latest"
+$dockerImageName = "kaeltebus-ui:latest"
 if (Test-Path -Path $publishDir) {
     Write-Host "Clean up previous publish directory"
     Remove-Item -Recurse -Force $publishDir -ErrorAction SilentlyContinue | Out-Null
 }
     
-$dockerImageExportPath = [System.IO.Path]::Combine($global:root, "..", "images", "kaeltebusui.tar")
+$dockerImageExportPath = [System.IO.Path]::Combine($global:root, "..", "result", "docker", "images", "kaeltebus-ui.tar")
 if (Test-Path -Path $dockerImageExportPath) {
     Write-Host "Clean up previous exported image"
     Remove-Item -Force $dockerImageExportPath -ErrorAction SilentlyContinue | Out-Null
@@ -30,36 +30,19 @@ if (Test-Path -Path $dockerImageExportPath) {
 # Publish
 try {
     # Out dir is hard coded to build/publish-frontend in frontends vite config
-    Write-Host "Publish" -ForegroundColor Blue
-
+    Write-Host "Build project to $($publishDir)"
     invokeNpmScript -projectPath $frontendDir -scriptName "build"
-    Write-Host "Artifacts are located in $($publishDir)" -ForegroundColor Cyan
-}
-catch [Exception] {
-    Write-Host "Build failed" -ForegroundColor Red
-    Write-Host $_.Exception.ToString()
-    break
-}
 
-# Build image
-try {
     Write-Host "Build image"
     buildDockerImage -dockerFileDir $global:root -dockerImageName $dockerImageName
     Write-Host "Image built as $($dockerImageName)"
-}
-catch [Exception] {
-    Write-Host "Image build failed" -ForegroundColor Red
-    Write-Host $_.Exception.ToString()
-    break
-}
 
-# Export image
-try {
     Write-Host "Export image"
     exportDockerImage -dockerImageName $dockerImageName -exportPath $dockerImageExportPath
 }
 catch [Exception] {
-    Write-Host "Image export failed" -ForegroundColor Red
+    Write-Host "Frontend build failed" -ForegroundColor Red
     Write-Host $_.Exception.ToString()
     break
 }
+

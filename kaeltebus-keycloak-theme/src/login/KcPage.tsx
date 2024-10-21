@@ -15,6 +15,8 @@ const UserProfileFormFields = lazy(
 
 const Login = lazy(() => import("./pages/Login"));
 
+const LoginX509Info = lazy(() => import("./pages/LoginX509Info"));
+
 const doMakeUserConfirmPassword = true;
 
 export default function KcPage(props: { kcContext: KcContext }) {
@@ -64,6 +66,14 @@ function KcPageContextualized(props: { kcContext: KcContext }) {
                                 doUseDefaultCss={true}
                             />
                         );
+                    case "login-x509-info.ftl":
+                        return (
+                            <LoginX509Info
+                                {...{ kcContext, i18n, classes: x509Classes }}
+                                Template={Template}
+                                doUseDefaultCss={true}
+                            />
+                        );
                     default:
                         return (
                             <DefaultPage
@@ -88,6 +98,17 @@ const loginClasses = {
     kcInfoAreaWrapperClass: "login-info-wrapper",
     kcInfoAreaClass: "",
     kcSignUpClass: "signup"
+    // kcLoginClass: "login-modal-wrapper"
+} satisfies {
+    [key in ClassKey]?: string;
+};
+
+const x509Classes = {
+    kcHtmlClass: "",
+    kcBodyClass: "kb-template-body"
+    // kcInfoAreaWrapperClass: "login-info-wrapper",
+    // kcInfoAreaClass: "",
+    // kcSignUpClass: "signup"
     // kcLoginClass: "login-modal-wrapper"
 } satisfies {
     [key in ClassKey]?: string;

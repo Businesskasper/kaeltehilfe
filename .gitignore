@@ -1,7 +1,7 @@
 # Build
 build/backend/publish-backend/*
 build/frontend/publish-frontend/*
-build/images/*
+# build/result/*
 
 # Dev env
 dev/keycloak

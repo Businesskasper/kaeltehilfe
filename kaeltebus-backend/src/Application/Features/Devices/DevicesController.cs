@@ -17,18 +17,21 @@ public class DevicesController : ControllerBase
     protected readonly KbContext _kbContext;
     protected readonly IMapper _mapper;
     protected readonly IUserService _userService;
+    protected readonly ICertService _certService;
 
     public DevicesController(
         ILogger<DevicesController> logger,
         KbContext kbContext,
         IMapper mapper,
-        IUserService userService
+        IUserService userService,
+        ICertService certService
     )
     {
         _logger = logger;
         _kbContext = kbContext;
         _mapper = mapper;
         _userService = userService;
+        _certService = certService;
     }
 
     [HttpGet()]
@@ -126,4 +129,30 @@ public class DevicesController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPost("{id}/CertificateRequest")]
+    public async Task<IActionResult> CreateCert(
+        [FromRoute(Name = "id")] int id,
+        [FromBody] CreateCertRequest createCertRequest
+    )
+    {
+        _logger.LogInformation($"Generate certificate for {id}");
+        var device = await _kbContext.Devices.FindAsync(id);
+        if (device == null)
+            return NotFound();
+
+        _logger.LogDebug($"Found device with registration number {device.RegistrationNumber}");
+
+        var encodedCertChain = await _certService.GenerateClientCert(
+            device.RegistrationNumber,
+            "Passw0rd!"
+        );
+
+        return Ok(new { EncodedCertChain = encodedCertChain });
+    }
+}
+
+public class CreateCertRequest
+{
+    public string PfxPassword { get; set; } = "";
 }

@@ -22,37 +22,46 @@ services:
     image: quay.io/keycloak/keycloak:latest
     command: start
     environment:
-        KC_HOSTNAME: 'auth.lukaweis.de'
-        KC_PROXY: 'edge'
         KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
         KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
         QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
+        KC_PROXY_HEADERS: 'xforwarded'
+        KC_HTTP_ENABLED: 'true'
+        KC_HOSTNAME_STRICT: 'false'
+        KC_HTTP_RELATIVE_PATH: /
+        KC_PROXY_ADDRESS_FORWARDING: 'true'
+        KC_SPI_X509CERT_LOOKUP_PROVIDER: 'nginx'
+        KC_SPI_X509CERT_LOOKUP_NGINX_SSL_CLIENT_CERT: 'X-Client-Cert'
+        X509_CA_BUNDLE: '/etc/x509/https/rootCA.crt'
     volumes:
         - ../keycloak:/opt/keycloak/data
         - ../keycloak-themes:/opt/keycloak/providers
+        - ../keycloak/x509:/etc/x509/https
     restart: unless-stopped
     logging:
       driver: "json-file"
       options:
         max-size: "50m"
-  kaeltebus-api:
+  api:
     ports:
       - '8081:8080'
-    image: kaeltebusapi:latest
+    image: kaeltebus-api:latest
     environment:
         ASPNETCORE_ENVIRONMENT: 'Production'
         CORS_ORIGINS: 'https://ulm.kaelte-bus.de'
+        ROOT_CERT_PASSWORD: ${ROOT_CERT_PASSWORD}
     volumes:
-        - ../backend/db:/opt/kaeltebus-api/db
+        - ../api/db:/opt/kaeltebus-api/db
+        - ../api/cert:/opt/kaeltebus-api/cert
     restart: unless-stopped
     logging:
       driver: "json-file"
       options:
         max-size: "50m"
-  kaeltebus-ui:
+  ui:
     ports:
       - '8082:80'
-    image: kaeltebusui:latest
+    image: :latest
     environment:
         VITE_API_BASE_URL: 'https://ulm.kaelte-bus.de/api'
     restart: unless-stopped

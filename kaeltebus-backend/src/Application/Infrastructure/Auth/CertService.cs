@@ -1,0 +1,99 @@
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using kaeltebus_backend.Infrastructure.Auth;
+using Microsoft.Extensions.Configuration;
+
+namespace kaeltebus_backend.Infrastructure.Auth;
+
+public class CertService : ICertService
+{
+    private readonly X509Certificate2 _rootCertificate;
+
+    public CertService(IConfiguration configuration)
+    {
+        // Get the root certificate path from appsettings.json
+        var rootCertPath = configuration["CertificateSettings:RootCertPath"];
+        if (string.IsNullOrWhiteSpace(rootCertPath))
+            throw new Exception("RootCertPath is not defined in appsettings");
+
+        // Get the root certificate password from the environment variable
+        var rootCertPasswordVar = configuration["CertificateSettings:RootCertPasswordVar"];
+        if (string.IsNullOrWhiteSpace(rootCertPasswordVar))
+            throw new Exception("RootCertPasswordVar is not defined in appsettings");
+        var rootCertPassword =
+            Environment.GetEnvironmentVariable(rootCertPasswordVar)
+            ?? throw new InvalidOperationException(
+                "Root certificate password is not set in environment variables."
+            );
+
+        // Load the root certificate (with private key for signing)
+        _rootCertificate = new X509Certificate2(
+            rootCertPath,
+            rootCertPassword,
+            X509KeyStorageFlags.Exportable | X509KeyStorageFlags.MachineKeySet
+        );
+
+        // Ensure that the root certificate has a private key
+        if (_rootCertificate.GetRSAPrivateKey() == null)
+            throw new InvalidOperationException("Root certificate does not contain a private key.");
+    }
+
+    public async Task<string> GenerateClientCert(string commonName, string pfxPassword)
+    {
+        // Create a subject name for the client certificate
+        var distinguishedName = new X500DistinguishedName($"CN={commonName}");
+
+        using (RSA rsa = RSA.Create(2048)) // Generate a new RSA key pair for the client certificate
+        {
+            // Create a certificate request for the client certificate
+            var request = new CertificateRequest(
+                distinguishedName,
+                rsa,
+                HashAlgorithmName.SHA256,
+                RSASignaturePadding.Pkcs1
+            );
+
+            // Add certificate extensions (example: digital signature and key usage)
+            // Not a CA
+            request.CertificateExtensions.Add(
+                new X509BasicConstraintsExtension(false, false, 0, false)
+            );
+            // Digital signature
+            request.CertificateExtensions.Add(
+                new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, false)
+            );
+            // Subject Key Identifier
+            request.CertificateExtensions.Add(
+                new X509SubjectKeyIdentifierExtension(request.PublicKey, false)
+            );
+
+            // Set the validity period (1 year in this case)
+            var notBefore = DateTimeOffset.UtcNow;
+            var notAfter = notBefore.AddYears(1);
+
+            // Create the client certificate, signed by the root certificate
+            var clientCertificate = request.Create(
+                _rootCertificate,
+                notBefore,
+                notAfter,
+                Guid.NewGuid().ToByteArray()
+            );
+
+            // Combine the client certificate with the root certificate to form the certificate chain
+            var certificateChain = new X509Certificate2Collection(
+                new X509Certificate2[] { clientCertificate, _rootCertificate }
+            );
+
+            // Export the client certificate with the private key and the certificate chain
+            var clientCertWithKey = clientCertificate.CopyWithPrivateKey(rsa);
+
+            // Export the .pfx (including the private key and the entire chain) and protect it with a password
+            var pfxBytes = clientCertWithKey.Export(X509ContentType.Pfx, pfxPassword);
+
+            // Convert the .pfx to a Base64 string
+            var base64Pfx = Convert.ToBase64String(pfxBytes);
+
+            return await Task.FromResult(base64Pfx); // Return the Base64-encoded .pfx
+        }
+    }
+}
