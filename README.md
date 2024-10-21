@@ -2,7 +2,7 @@
 
 Kaeltebus allows planning, recording and analytics of good distributions to people in need.
 
-[Architecture]('./docs/architecture.md')
+[Architecture](./docs/architecture.md)
 
 [Concept and notes](./docs/concept_notes.md)
 
