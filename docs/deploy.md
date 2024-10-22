@@ -57,7 +57,7 @@ Import the previously built docker image using `docker load -i /home/kaeltebus/d
 After all files and directories were copied and both docker images were imported, launch all services using `docker compose up` from inside the `/home/kaeltebus/docker` directory.
 
 > [!CAUTION]
-> Comment out "kaelteus-api" and "kaeltebus-ui" in docker-compose.yml if Keycloak and NGINX were not yet configured.
+> Comment out "kaelteus-api" and "kaeltebus-ui" in docker-compose.yml if Keycloak and NGINX were not yet configured. Comment them back in after successful configuration and "docker compose up" again.
 
 ## Setup NGINX Proxy Manager
 Connect to NGINX Proxy manager via the browser (http://{your-ip}:81) and log in using the default credentials:
@@ -137,3 +137,9 @@ Create the Roles "Admin" and "Operator".
 ![X509Flow](./img/kc_add_roles.png)
 
 Add your admin User in "Users". Assign the "Admin" and "Operator" Roles in "Role mapping" and create a Password in "Credentials".
+
+
+#### Set Theme
+Configure the client to use the Kaeltebus Theme by selecting "keycloak" in `admin/master/console/#/my-realm/realm-settings/themes` as the "Login theme".
+
+![X509Flow](./img/kc_set_theme.png)
