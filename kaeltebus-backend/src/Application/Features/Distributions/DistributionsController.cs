@@ -27,17 +27,16 @@ public class DistributionsController : ControllerBase
     }
 
     [HttpGet()]
-    [Authorize(Roles = "Admin,Operator")]
-    public async Task<IEnumerable<DistributionDto>> Query(
+    [Authorize(Roles = "ADMIN,OPERATOR")]
+    public async Task<ActionResult<IEnumerable<DistributionDto>>> Query(
         [FromQuery] DateTime? from,
         [FromQuery] DateTime? to
     )
     {
-        // TODO: Nur die eigenen Schichten wenn User Operator
         var query = _kbContext.Distributions.AsQueryable().Where(x => !x.IsDeleted);
         // if (pageSize != null && page != null)
         //     query = query.Skip(((int)page - 1) * (int)pageSize);
-        _logger.LogInformation($"Received ${from} - ${to} query params");
+        _logger.LogInformation($"Query distributions from {from} to {to}");
         if (from.HasValue && to.HasValue)
             query = query.Where(x => x.AddOn >= from && x.AddOn <= to);
 
@@ -49,7 +48,7 @@ public class DistributionsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult<DistributionDto>> Get([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Distributions.FindAsync(id);
@@ -57,29 +56,29 @@ public class DistributionsController : ControllerBase
     }
 
     [HttpPost()]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<IActionResult> Create([FromBody()] DistributionCreateDto dto)
     {
-        // TODO: Adjust device lookup for calling device
-        var device = await _kbContext.Devices.FirstOrDefaultAsync();
-        if (device == null)
-            throw this.GetModelStateError("DeviceId", "No matching shift was found");
+        var bus =
+            await _kbContext.Busses.FirstOrDefaultAsync(b =>
+                b.RegistrationNumber == dto.BusRegistrationNumber
+            ) ?? throw this.GetModelStateError("BusId", "No matching shift was found");
 
         var client =
-            dto.Client?.Id != null
-                ? await _kbContext.Clients.FindAsync(dto.Client.Id)
-                : new Client { Name = dto.Client?.Name ?? "" };
-        if (client == null)
-            throw this.GetModelStateError("client", $"Client {dto.Client?.Id} was not found");
+            (
+                dto.Client?.Id != null
+                    ? await _kbContext.Clients.FindAsync(dto.Client.Id)
+                    : new Client { Name = dto.Client?.Name ?? "" }
+            ) ?? throw this.GetModelStateError("client", $"Client {dto.Client?.Id} was not found");
 
-        var good = await _kbContext.Goods.FindAsync(dto.GoodId);
-        if (good == null)
-            throw this.GetModelStateError("goodId", $"Good {dto.GoodId} was not found");
+        var good =
+            await _kbContext.Goods.FindAsync(dto.GoodId)
+            ?? throw this.GetModelStateError("goodId", $"Good {dto.GoodId} was not found");
 
         var distribution = new Distribution
         {
             Client = client,
-            Device = device,
+            Bus = bus,
             Good = good,
             Quantity = dto.Quantity,
         };
@@ -91,7 +90,7 @@ public class DistributionsController : ControllerBase
     }
 
     [HttpPatch("{id}")]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<IActionResult> Update(
         [FromRoute(Name = "id")] int id,
         [FromBody()] DistributionUpdateDto dto
@@ -108,7 +107,7 @@ public class DistributionsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
         var distribution = await _kbContext.Distributions.FindAsync(id);

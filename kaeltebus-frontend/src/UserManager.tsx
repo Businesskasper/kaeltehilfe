@@ -14,6 +14,7 @@ const userManagerProps: UserManagerSettings = {
   extraQueryParams: {
     theme: localStorage.getItem("mantine-color-scheme-value") || "light",
   },
+  scope: "openid profile roles",
 };
 
 export const userManager = new UserManager(userManagerProps);

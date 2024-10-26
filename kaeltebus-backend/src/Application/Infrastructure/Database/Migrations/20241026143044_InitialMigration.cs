@@ -12,6 +12,22 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Busses",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    RegistrationNumber = table.Column<string>(type: "TEXT", nullable: false),
+                    AddOn = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "unixepoch('now')"),
+                    ChangeOn = table.Column<long>(type: "INTEGER", nullable: true, defaultValueSql: "unixepoch('now')"),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Busses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Clients",
                 columns: table => new
                 {
@@ -28,22 +44,6 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Clients", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Devices",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    RegistrationNumber = table.Column<string>(type: "TEXT", nullable: false),
-                    AddOn = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "unixepoch('now')"),
-                    ChangeOn = table.Column<long>(type: "INTEGER", nullable: true, defaultValueSql: "unixepoch('now')"),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Devices", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -83,6 +83,25 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Logins",
+                columns: table => new
+                {
+                    Username = table.Column<string>(type: "TEXT", nullable: false),
+                    IdentityProviderId = table.Column<string>(type: "TEXT", nullable: false),
+                    Email = table.Column<string>(type: "TEXT", nullable: false),
+                    CreateOn = table.Column<long>(type: "INTEGER", nullable: false),
+                    Role = table.Column<int>(type: "INTEGER", nullable: false),
+                    Firstname = table.Column<string>(type: "TEXT", nullable: true),
+                    Lastname = table.Column<string>(type: "TEXT", nullable: true),
+                    RegistrationNumber = table.Column<string>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Logins", x => x.Username);
+                    table.UniqueConstraint("AK_Logins_IdentityProviderId", x => x.IdentityProviderId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Volunteers",
                 columns: table => new
                 {
@@ -108,7 +127,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    DeviceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    BusId = table.Column<int>(type: "INTEGER", nullable: false),
                     Date = table.Column<DateOnly>(type: "TEXT", nullable: false),
                     AddOn = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "unixepoch('now')"),
                     ChangeOn = table.Column<long>(type: "INTEGER", nullable: true, defaultValueSql: "unixepoch('now')"),
@@ -118,9 +137,9 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 {
                     table.PrimaryKey("PK_Shifts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Shifts_Devices_DeviceId",
-                        column: x => x.DeviceId,
-                        principalTable: "Devices",
+                        name: "FK_Shifts_Busses_BusId",
+                        column: x => x.BusId,
+                        principalTable: "Busses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -131,7 +150,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    DeviceId = table.Column<int>(type: "INTEGER", nullable: false),
+                    BusId = table.Column<int>(type: "INTEGER", nullable: false),
                     ClientId = table.Column<int>(type: "INTEGER", nullable: false),
                     GoodId = table.Column<int>(type: "INTEGER", nullable: false),
                     LocationId = table.Column<int>(type: "INTEGER", nullable: false),
@@ -144,15 +163,15 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 {
                     table.PrimaryKey("PK_Distributions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Distributions_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
+                        name: "FK_Distributions_Busses_BusId",
+                        column: x => x.BusId,
+                        principalTable: "Busses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Distributions_Devices_DeviceId",
-                        column: x => x.DeviceId,
-                        principalTable: "Devices",
+                        name: "FK_Distributions_Clients_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -195,6 +214,18 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Busses_IsDeleted",
+                table: "Busses",
+                column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Busses_RegistrationNumber",
+                table: "Busses",
+                column: "RegistrationNumber",
+                unique: true,
+                filter: "IsDeleted = 0");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Clients_IsDeleted",
                 table: "Clients",
                 column: "IsDeleted");
@@ -207,31 +238,19 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 filter: "IsDeleted = 0");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Devices_IsDeleted",
-                table: "Devices",
-                column: "IsDeleted");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Devices_RegistrationNumber",
-                table: "Devices",
-                column: "RegistrationNumber",
-                unique: true,
-                filter: "IsDeleted = 0");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Distributions_AddOn",
                 table: "Distributions",
                 column: "AddOn");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Distributions_BusId",
+                table: "Distributions",
+                column: "BusId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Distributions_ClientId",
                 table: "Distributions",
                 column: "ClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Distributions_DeviceId",
-                table: "Distributions",
-                column: "DeviceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Distributions_GoodId",
@@ -273,16 +292,16 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 filter: "IsDeleted = 0");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Shifts_BusId",
+                table: "Shifts",
+                column: "BusId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Shifts_Date",
                 table: "Shifts",
                 column: "Date",
                 unique: true,
                 filter: "IsDeleted = 0");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Shifts_DeviceId",
-                table: "Shifts",
-                column: "DeviceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Shifts_IsDeleted",
@@ -314,6 +333,9 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 name: "Distributions");
 
             migrationBuilder.DropTable(
+                name: "Logins");
+
+            migrationBuilder.DropTable(
                 name: "ShiftVolunteers");
 
             migrationBuilder.DropTable(
@@ -332,7 +354,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 name: "Volunteers");
 
             migrationBuilder.DropTable(
-                name: "Devices");
+                name: "Busses");
         }
     }
 }

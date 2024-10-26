@@ -17,22 +17,15 @@ public class GoodsControllerTest
     private KbContext _kbContext;
     private Mock<ILogger<GoodsController>> _logger;
     private Mock<IMapper> _mapperMock;
-    private Mock<IValidator<GoodCreateDto>> _validatorMock;
 
     [SetUp]
     public void SetUp()
     {
         _kbContext = new TestingKbContext();
         _mapperMock = new Mock<IMapper>();
-        _validatorMock = new Mock<IValidator<GoodCreateDto>>();
         _logger = new Mock<ILogger<GoodsController>>();
 
-        _controller = new GoodsController(
-            _logger.Object,
-            _kbContext,
-            _mapperMock.Object,
-            _validatorMock.Object
-        );
+        _controller = new GoodsController(_logger.Object, _kbContext, _mapperMock.Object);
     }
 
     [Test]

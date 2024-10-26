@@ -1,14 +1,22 @@
 import { useAuth } from "react-oidc-context";
+import { UserRole } from "../../app";
+import { useProfile } from "../../utils/useProfile";
 
-type PrivateRouteProps = React.PropsWithChildren;
+type PrivateRouteProps = React.PropsWithChildren & { roles?: Array<UserRole> };
 
-export const AuthRoute = ({ children }: PrivateRouteProps) => {
+export const AuthRoute = ({ children, roles }: PrivateRouteProps) => {
   const auth = useAuth();
-
   const isLoggedIn = auth.isAuthenticated;
 
-  if (!isLoggedIn) {
-    // keycloak.init({ onLoad: "login-required" });
-  }
-  return isLoggedIn ? children : null;
+  const profile = useProfile();
+  const isAuthorized =
+    !roles ||
+    roles?.length === 0 ||
+    (profile?.role && roles.includes(profile.role));
+
+  // if (!isLoggedIn) {
+  //   auth.signinSilent({});
+  // }
+
+  return isLoggedIn && isAuthorized ? children : null;
 };

@@ -1,6 +1,6 @@
 namespace kaeltebus_backend.Models;
 
-public class Device : BaseEntity
+public class Bus : BaseEntity
 {
     public string RegistrationNumber { get; set; } = "";
     public virtual List<Shift> Shifts { get; set; } = [];

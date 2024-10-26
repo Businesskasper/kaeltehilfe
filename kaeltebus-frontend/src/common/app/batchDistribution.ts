@@ -4,6 +4,7 @@ import { Gender } from "./gender";
 
 export type BatchDistribution = {
   locationName: string;
+  busRegistrationNumber: string;
   clients: Array<{
     id?: number;
     name?: string;

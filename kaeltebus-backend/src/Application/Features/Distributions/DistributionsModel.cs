@@ -7,14 +7,14 @@ namespace kaeltebus_backend.Features.Distributions;
 public class DistributionDto
 {
     public int Id { get; set; }
-    public DistributionDeviceDto? Device { get; set; }
+    public DistributionBusDto? Bus { get; set; }
     public DistributionClientDto? Client { get; set; }
     public DistributionGoodDto? Good { get; set; }
     public DateTime Timestamp { get; set; }
     public int Quantity { get; set; }
 }
 
-public class DistributionDeviceDto
+public class DistributionBusDto
 {
     public int Id { get; set; }
     public string RegistrationNumber { get; set; } = "";
@@ -36,6 +36,7 @@ public class DistributionCreateDto
 {
     public DistributionClientDto? Client { get; set; }
     public int GoodId { get; set; }
+    public string BusRegistrationNumber { get; set; } = "";
     public int Quantity { get; set; }
 }
 
@@ -50,7 +51,7 @@ public class DistributionDtoProfile : Profile
     {
         CreateMap<Distribution, DistributionDto>()
             .ForMember(d => d.Timestamp, src => src.MapFrom(src => src.AddOn));
-        CreateMap<Device, DistributionDeviceDto>();
+        CreateMap<Bus, DistributionBusDto>();
         CreateMap<Good, DistributionGoodDto>();
         CreateMap<Client, DistributionClientDto>();
     }
@@ -67,6 +68,7 @@ public class DistributionCreateDtoValidator : AbstractValidator<DistributionCrea
             .NotNull()
             .When(d => d.Client != null && String.IsNullOrEmpty(d.Client?.Name));
         RuleFor(d => d.Client!.Name).Empty().When(d => d.Client != null && d.Client?.Id != null);
+        RuleFor(d => d.BusRegistrationNumber).NotEmpty().MinimumLength(5);
     }
 }
 

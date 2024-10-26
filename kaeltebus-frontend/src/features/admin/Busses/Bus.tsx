@@ -1,34 +1,31 @@
 import { Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconLogin } from "@tabler/icons-react";
+// import { IconLogin } from "@tabler/icons-react";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
-import { Device, useDevices } from "../../../common/app";
+import { Bus, useBusses } from "../../../common/app";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
-import { DeviceModal } from "./DeviceModal";
+import { BusModal } from "./BusModal";
 
-export const Devices = () => {
+export const Busses = () => {
   const {
-    objs: { data: devices, isLoading },
-    // put: { isPending: isPutting },
-    remove: { isPending: isDeleting, mutate: deleteDevice },
-  } = useDevices();
+    objs: { data: busses, isLoading },
+    remove: { isPending: isDeleting, mutate: deleteBus },
+  } = useBusses();
 
   const [isModalOpened, { open: openModal, close: closeModal }] =
     useDisclosure(false);
 
-  const [selectedDevices, setSelectedDevices] = React.useState<Array<Device>>(
-    []
-  );
+  const [selectedBusses, setSelectedBusses] = React.useState<Array<Bus>>([]);
 
-  const columns: Array<MRT_ColumnDef<Device>> = [
+  const columns: Array<MRT_ColumnDef<Bus>> = [
     {
       accessorKey: "registrationNumber",
       header: "Nummernschild",
     },
   ];
 
-  const exportConfig: ExportConfig<Device> = {
+  const exportConfig: ExportConfig<Bus> = {
     fileName: () =>
       `KB-Schichtträger-${new Date()
         .toLocaleDateString()
@@ -40,10 +37,10 @@ export const Devices = () => {
   }, [openModal]);
 
   const handleDelete = React.useCallback(
-    (goods: Array<Device>) => {
-      goods.forEach((good) => deleteDevice(good.id));
+    (busses: Array<Bus>) => {
+      busses.forEach((bus) => deleteBus(bus.id));
     },
-    [deleteDevice]
+    [deleteBus]
   );
 
   const handleAdd = React.useCallback(() => {
@@ -59,7 +56,7 @@ export const Devices = () => {
       </Title>
 
       <Table
-        data={devices || []}
+        data={busses || []}
         isLoading={isTableLoading}
         keyGetter="id"
         columns={columns}
@@ -68,24 +65,24 @@ export const Devices = () => {
         handleDelete={handleDelete}
         exportConfig={exportConfig}
         fillScreen
-        tableKey="devices-overview"
-        setSelected={setSelectedDevices}
-        customActions={[
-          {
-            label: "Passwort vergeben",
-            icon: IconLogin,
-            isDisabled: (selected) => selected?.length !== 1,
-            color: "blue",
-            variant: "light",
-            onClick: (selected) => console.log(selected),
-          },
-        ]}
+        tableKey="busses-overview"
+        setSelected={setSelectedBusses}
+        // customActions={[
+        //   {
+        //     label: "Passwort vergeben",
+        //     icon: IconLogin,
+        //     isDisabled: (selected) => selected?.length !== 1,
+        //     color: "blue",
+        //     variant: "light",
+        //     onClick: (selected) => console.log(selected),
+        //   },
+        // ]}
         enableGrouping
       />
-      <DeviceModal
+      <BusModal
         close={closeModal}
         isOpen={isModalOpened}
-        existing={selectedDevices[0]}
+        existing={selectedBusses[0]}
       />
     </>
   );

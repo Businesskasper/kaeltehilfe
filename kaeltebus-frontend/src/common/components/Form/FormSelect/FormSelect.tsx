@@ -9,10 +9,10 @@ import {
   useCombobox,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconX } from "@tabler/icons-react";
 import React from "react";
 import { ValueTypeProps } from "../../../utils";
 
-import { IconX } from "@tabler/icons-react";
 import "./FormSelect.scss";
 
 export type FormSelectProps<T extends { [key in string]: unknown }> = {

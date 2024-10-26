@@ -1,5 +1,9 @@
 # Deploy
 
+> [!WARNING] TODO
+> - Add documentation for secrets
+>
+
 > [!NOTE]
 > For the initial deployment of the [docker-compose.yml](../build/result/docker/docker-compose.yml) services "proxy" and "keycloak", the build and deployment steps for "api" and "ui" must be skipped. Both services require configuration details from Keycloak and the NGINX Proxy Manager which need to be set up first.
 >
@@ -128,18 +132,44 @@ Configure URLs accordingly to your domain and proxy settings (https://myinstance
 
 ![X509Flow](./img/kc_add_client_login.png)
 
+#### Add a new user attribute "registrationNumber" to the realm
+The attribute is used to assign a (tablet) user to a bus. Go to `admin/master/console/#/my-realm/realm-settings/user-profile` to add a new Attribute "registrationNumber". Make sure "User" can view the attribute and annotate it as "inputType": "text".
 
-#### Create a new client
-In the new realm, create a new client for your kaeltebus instance. 
-![X509Flow](./img/kc_add_client_capability.png)
+![Add registrationNumber attribute](./img/kc_add_registrationNumber_attribute.png)
 
-Create the Roles "Admin" and "Operator".
-![X509Flow](./img/kc_add_roles.png)
+Since the frontend and backend need to validate user permissions based on the role and registrationNumber, we need to include the attribute into the access token.
 
-Add your admin User in "Users". Assign the "Admin" and "Operator" Roles in "Role mapping" and create a Password in "Credentials".
+In your new realm, select `Client scopes` -> `profile` -> `Mappers` -> `Add mapper` -> `By configuration` -> `User attribute`.
 
+Add "registrationNumber" as shown below:
+
+![Add registrationNumber to tokens](./img/kc_add_registrationNumber_to_tokens.png)
 
 #### Set Theme
-Configure the client to use the Kaeltebus Theme by selecting "keycloak" in `admin/master/console/#/my-realm/realm-settings/themes` as the "Login theme".
+Configure the realm to use the Kaeltebus Theme by selecting "kaeltebus" in `admin/master/console/#/my-realm/realm-settings/themes` as the "Login theme".
 
 ![X509Flow](./img/kc_set_theme.png)
+
+#### Create a new client for user authentication
+In the new realm, create a new client for your kaeltebus instance. Make sure to check "Standard flow" and "Direct access grants".
+
+![X509Flow](./img/kc_add_client_capability.png)
+
+In the newly ceated client, create the Roles "ADMIN" and "OPERATOR".
+![X509Flow](./img/kc_add_roles.png)
+
+To make sure that roles are included in the token and profile, select `Client Scopes` -> `Mappers` -> `client roles`. Check each switch to include the roles in all tokens and userinfo.
+
+![Add roles to profile](./img/kc_add_roles_to_profile.png)
+
+#### Create a new client for machine authentication
+The client is used by the backend to manage users. When creating the client, make sure to check "Client authentication" and to only select "Service account roles".
+![Machine client capabilities](./img/kc_add_machine_client_capabilities.png)
+
+Grant the newly created client required permissions "view-users", "view-realm", "view-clients", "query-users", "query-groups", "query-clients" and "manage-users".
+![Allow user management](./img/kc_allow_user_mgmt.png)
+
+
+#### Add initial user
+
+Add an initial admin User in "Users". Assign the "ADMIN" Role in "Role mapping" and create a Password in "Credentials".

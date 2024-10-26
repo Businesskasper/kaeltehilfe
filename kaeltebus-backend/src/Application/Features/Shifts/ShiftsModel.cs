@@ -7,7 +7,7 @@ namespace kaeltebus_backend.Features.Shifts;
 public class ShiftDto
 {
     public int Id { get; set; }
-    public int DeviceId { get; set; }
+    public int BusId { get; set; }
     public string RegistrationNumber { get; set; } = "";
     public DateOnly? Date { get; set; }
     public List<ShiftVolunteerDto>? Volunteers { get; set; }
@@ -23,7 +23,7 @@ public class ShiftVolunteerDto
 
 public class ShiftCreateDto
 {
-    public int DeviceId { get; set; }
+    public int BusId { get; set; }
     public DateOnly? Date { get; set; }
     public List<ShiftCreateVolunteerDto> Volunteers { get; set; } = [];
 }
@@ -57,10 +57,10 @@ public class ShiftDtoProfile : Profile
             )
             .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Date))
             .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.DeviceId, opt => opt.MapFrom(src => src.DeviceId))
+            .ForMember(dest => dest.BusId, opt => opt.MapFrom(src => src.BusId))
             .ForMember(
                 dest => dest.RegistrationNumber,
-                opt => opt.MapFrom(src => src.Device.RegistrationNumber)
+                opt => opt.MapFrom(src => src.Bus.RegistrationNumber)
             );
     }
 }
@@ -70,7 +70,7 @@ public class ShiftCreateDtoValidator : AbstractValidator<ShiftCreateDto>
     public ShiftCreateDtoValidator()
     {
         RuleFor(shift => shift.Date).NotNull();
-        RuleFor(shift => shift.DeviceId).NotNull();
+        RuleFor(shift => shift.BusId).NotNull();
         RuleFor(shift => shift.Volunteers).NotNull();
         RuleForEach(shift => shift.Volunteers).SetValidator(new ShiftVolunteerDtoValidator());
         RuleFor(shift => shift.Volunteers)

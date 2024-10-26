@@ -38,11 +38,16 @@ function App() {
       !hasAuthParams() &&
       !auth.isAuthenticated &&
       !auth.activeNavigator &&
-      !auth.isLoading &&
-      !hasTriedSignin
+      !auth.isLoading
+      // !hasTriedSignin
     ) {
-      auth.signinRedirect();
-      setHasTriedSignin(true);
+      console.log("hm", hasTriedSignin);
+      if (!hasTriedSignin) {
+        auth.signinRedirect();
+        setHasTriedSignin(true);
+      } else {
+        auth.signinSilent();
+      }
     }
   }, [auth, hasTriedSignin]);
 

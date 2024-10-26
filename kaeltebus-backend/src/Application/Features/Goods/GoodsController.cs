@@ -24,7 +24,7 @@ public class GoodsController : ControllerBase
     }
 
     [HttpGet()]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<IEnumerable<GoodDto>> Query()
     {
         var objs = await _kbContext.Goods.Where(x => !x.IsDeleted).ToListAsync();
@@ -34,7 +34,7 @@ public class GoodsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult<GoodDto>> Get([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Goods.FirstOrDefaultAsync(x => x.Id == id);
@@ -42,7 +42,7 @@ public class GoodsController : ControllerBase
     }
 
     [HttpPost()]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Create([FromBody()] GoodCreateDto dto)
     {
         var obj = _mapper.Map<Good>(dto);
@@ -53,7 +53,7 @@ public class GoodsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Put(
         [FromRoute(Name = "id")] int id,
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] GoodCreateDto dto
@@ -75,7 +75,7 @@ public class GoodsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Goods.FindAsync(id);

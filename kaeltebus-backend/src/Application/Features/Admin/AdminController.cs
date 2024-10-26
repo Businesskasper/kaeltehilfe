@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace kaeltebus_backend.Features.Admin;
 
 [Route("/api/[controller]")]
-[Authorize(Roles = "Admin")]
+[Authorize(Roles = "ADMIN")]
 public class AdminController : ControllerBase
 {
     protected readonly ILogger<AdminController> _logger;
@@ -18,7 +18,7 @@ public class AdminController : ControllerBase
     }
 
     [HttpPost("Seed")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public IActionResult Seed()
     {
         _logger.LogInformation("Received seeding request");

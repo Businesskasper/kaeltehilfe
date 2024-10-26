@@ -14,7 +14,11 @@ public class KbContext : DbContext
     public virtual DbSet<ShiftVolunteer> ShiftVolunteers { get; set; }
     public virtual DbSet<Client> Clients { get; set; }
     public virtual DbSet<Distribution> Distributions { get; set; }
-    public virtual DbSet<Device> Devices { get; set; }
+    public virtual DbSet<Bus> Busses { get; set; }
+    public virtual DbSet<Login> Logins { get; set; }
+
+    // public virtual DbSet<AdminLogin> AdminLogins { get; set; }
+    // public virtual DbSet<OperatorLogin> OperatorLogins { get; set; }
 
     public KbContext(DbContextOptions<KbContext> options)
         : base(options) { }
@@ -29,22 +33,22 @@ public class KbContext : DbContext
             .WithOne(d => d.Good)
             .HasForeignKey(d => d.GoodId);
 
-        modelBuilder.Entity<Device>().ConfigureBaseEntity();
+        modelBuilder.Entity<Bus>().ConfigureBaseEntity();
         modelBuilder
-            .Entity<Device>()
+            .Entity<Bus>()
             .HasIndex(d => d.RegistrationNumber)
             .IsUnique()
             .HasFilter("IsDeleted = 0");
         modelBuilder
-            .Entity<Device>()
+            .Entity<Bus>()
             .HasMany(d => d.Shifts)
-            .WithOne(s => s.Device)
-            .HasForeignKey(s => s.DeviceId);
+            .WithOne(s => s.Bus)
+            .HasForeignKey(s => s.BusId);
         modelBuilder
-            .Entity<Device>()
+            .Entity<Bus>()
             .HasMany(di => di.Distributions)
-            .WithOne(de => de.Device)
-            .HasForeignKey(di => di.DeviceId);
+            .WithOne(de => de.Bus)
+            .HasForeignKey(di => di.BusId);
 
         modelBuilder.Entity<Volunteer>().ConfigureBaseEntity();
         modelBuilder
@@ -67,9 +71,9 @@ public class KbContext : DbContext
             .HasForeignKey(sv => sv.ShiftId);
         modelBuilder
             .Entity<Shift>()
-            .HasOne(s => s.Device)
+            .HasOne(s => s.Bus)
             .WithMany(d => d.Shifts)
-            .HasForeignKey(s => s.DeviceId);
+            .HasForeignKey(s => s.BusId);
 
         modelBuilder.Entity<Client>().ConfigureBaseEntity();
         modelBuilder.Entity<Client>().HasIndex(c => c.Name).IsUnique().HasFilter("IsDeleted = 0");
@@ -88,7 +92,7 @@ public class KbContext : DbContext
             .HasForeignKey(d => d.LocationId);
 
         modelBuilder.Entity<Distribution>().ConfigureBaseEntity();
-        modelBuilder.Entity<Distribution>().HasIndex(x => x.DeviceId);
+        modelBuilder.Entity<Distribution>().HasIndex(x => x.BusId);
         modelBuilder.Entity<Distribution>().HasIndex(x => x.ClientId);
         modelBuilder.Entity<Distribution>().HasIndex(x => x.GoodId);
         modelBuilder.Entity<Distribution>().HasIndex(x => x.AddOn);
@@ -106,10 +110,10 @@ public class KbContext : DbContext
         modelBuilder.Entity<Distribution>().Navigation(d => d.Client).AutoInclude();
         modelBuilder
             .Entity<Distribution>()
-            .HasOne(d => d.Device)
+            .HasOne(d => d.Bus)
             .WithMany(d => d.Distributions)
-            .HasForeignKey(d => d.DeviceId);
-        modelBuilder.Entity<Distribution>().Navigation(d => d.Device).AutoInclude();
+            .HasForeignKey(d => d.BusId);
+        modelBuilder.Entity<Distribution>().Navigation(d => d.Bus).AutoInclude();
         modelBuilder
             .Entity<Distribution>()
             .HasOne(d => d.Location)
@@ -129,6 +133,38 @@ public class KbContext : DbContext
             .WithMany(v => v.ShiftVolunteers)
             .HasForeignKey(sv => sv.VolunteerId);
         modelBuilder.Entity<ShiftVolunteer>().Property(sv => sv.Order).IsRequired();
+
+        modelBuilder.Entity<Login>().HasKey(l => l.Username);
+
+        modelBuilder
+            .Entity<Login>()
+            .HasDiscriminator<Role>(nameof(Role))
+            .HasValue<AdminLogin>(Role.ADMIN)
+            .HasValue<OperatorLogin>(Role.OPERATOR);
+        modelBuilder.Entity<Login>().HasAlternateKey(a => a.IdentityProviderId);
+        modelBuilder
+            .Entity<Login>()
+            .Property(x => x.CreateOn)
+            .HasConversion(new UnixEpochDateTimeConverter());
+
+        // Configure properties for AdminLogin
+        modelBuilder.Entity<AdminLogin>().Property(a => a.Firstname).IsRequired();
+        modelBuilder.Entity<AdminLogin>().Property(a => a.Lastname).IsRequired();
+
+        // Configure properties for OperatorLogin
+        modelBuilder.Entity<OperatorLogin>().Property(o => o.RegistrationNumber).IsRequired();
+
+        // modelBuilder
+        //     .Entity<AdminLogin>()
+        //     .HasDiscriminator<string>("role")
+        //     .HasValue<AdminLogin>("ADMIN");
+        // modelBuilder.Entity<AdminLogin>().Property(a => a.Email).IsRequired();
+
+        // modelBuilder
+        //     .Entity<OperatorLogin>()
+        //     .HasDiscriminator<string>("role")
+        //     .HasValue<OperatorLogin>("OPERATOR");
+        // modelBuilder.Entity<OperatorLogin>().Property(o => o.RegistrationNumber).IsRequired();
     }
 }
 

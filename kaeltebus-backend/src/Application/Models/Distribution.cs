@@ -2,8 +2,8 @@ namespace kaeltebus_backend.Models;
 
 public class Distribution : BaseEntity
 {
-    public int DeviceId { get; set; }
-    public virtual Device? Device { get; set; }
+    public int BusId { get; set; }
+    public virtual Bus? Bus { get; set; }
     public int ClientId { get; set; }
     public virtual Client? Client { get; set; }
     public int GoodId { get; set; }

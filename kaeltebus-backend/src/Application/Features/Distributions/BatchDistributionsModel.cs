@@ -6,6 +6,7 @@ namespace kaeltebus_backend.Features.BatchDistributions;
 public class BatchDistributionCreateDto
 {
     public string LocationName { get; set; } = "";
+    public string BusRegistrationNumber { get; set; } = "";
     public List<BatchDistributionClientDto> Clients { get; set; } = [];
     public List<BatchDistributionGoodDto> Goods { get; set; } = [];
 }
@@ -33,6 +34,7 @@ public class BatchDistributionCreateDtoValidator : AbstractValidator<BatchDistri
         RuleForEach(d => d.Clients).SetValidator(new BatchDistributionClientDtoValidator());
         RuleFor(d => d.Goods).NotNull().NotEmpty();
         RuleForEach(d => d.Goods).SetValidator(new BatchDistributionGoodDtoValidator());
+        RuleFor(d => d.BusRegistrationNumber).NotEmpty().MinimumLength(5);
     }
 }
 

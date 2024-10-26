@@ -11,7 +11,7 @@ using kaeltebus_backend.Infrastructure.Database;
 namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(KbContext))]
-    [Migration("20241011201805_InitialMigration")]
+    [Migration("20241026143044_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -19,6 +19,42 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
+
+            modelBuilder.Entity("kaeltebus_backend.Models.Bus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("AddOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
+
+                    b.Property<long?>("ChangeOn")
+                        .ValueGeneratedOnUpdate()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("RegistrationNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("RegistrationNumber")
+                        .IsUnique()
+                        .HasFilter("IsDeleted = 0");
+
+                    b.ToTable("Busses");
+                });
 
             modelBuilder.Entity("kaeltebus_backend.Models.Client", b =>
                 {
@@ -66,42 +102,6 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     b.ToTable("Clients");
                 });
 
-            modelBuilder.Entity("kaeltebus_backend.Models.Device", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("AddOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValueSql("unixepoch('now')");
-
-                    b.Property<long?>("ChangeOn")
-                        .ValueGeneratedOnUpdate()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValueSql("unixepoch('now')");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("RegistrationNumber")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IsDeleted");
-
-                    b.HasIndex("RegistrationNumber")
-                        .IsUnique()
-                        .HasFilter("IsDeleted = 0");
-
-                    b.ToTable("Devices");
-                });
-
             modelBuilder.Entity("kaeltebus_backend.Models.Distribution", b =>
                 {
                     b.Property<int>("Id")
@@ -113,15 +113,15 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValueSql("unixepoch('now')");
 
+                    b.Property<int>("BusId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long?>("ChangeOn")
                         .ValueGeneratedOnUpdate()
                         .HasColumnType("INTEGER")
                         .HasDefaultValueSql("unixepoch('now')");
 
                     b.Property<int>("ClientId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("DeviceId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("GoodId")
@@ -142,9 +142,9 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 
                     b.HasIndex("AddOn");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex("BusId");
 
-                    b.HasIndex("DeviceId");
+                    b.HasIndex("ClientId");
 
                     b.HasIndex("GoodId");
 
@@ -241,6 +241,36 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     b.ToTable("Locations");
                 });
 
+            modelBuilder.Entity("kaeltebus_backend.Models.Login", b =>
+                {
+                    b.Property<string>("Username")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("CreateOn")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdentityProviderId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Username");
+
+                    b.HasAlternateKey("IdentityProviderId");
+
+                    b.ToTable("Logins");
+
+                    b.HasDiscriminator<int>("Role");
+
+                    b.UseTphMappingStrategy();
+                });
+
             modelBuilder.Entity("kaeltebus_backend.Models.Shift", b =>
                 {
                     b.Property<int>("Id")
@@ -252,6 +282,9 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValueSql("unixepoch('now')");
 
+                    b.Property<int>("BusId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long?>("ChangeOn")
                         .ValueGeneratedOnUpdate()
                         .HasColumnType("INTEGER")
@@ -260,9 +293,6 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("DeviceId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
@@ -270,11 +300,11 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BusId");
+
                     b.HasIndex("Date")
                         .IsUnique()
                         .HasFilter("IsDeleted = 0");
-
-                    b.HasIndex("DeviceId");
 
                     b.HasIndex("IsDeleted");
 
@@ -349,17 +379,43 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     b.ToTable("Volunteers");
                 });
 
+            modelBuilder.Entity("kaeltebus_backend.Models.AdminLogin", b =>
+                {
+                    b.HasBaseType("kaeltebus_backend.Models.Login");
+
+                    b.Property<string>("Firstname")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Lastname")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasDiscriminator().HasValue(0);
+                });
+
+            modelBuilder.Entity("kaeltebus_backend.Models.OperatorLogin", b =>
+                {
+                    b.HasBaseType("kaeltebus_backend.Models.Login");
+
+                    b.Property<string>("RegistrationNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasDiscriminator().HasValue(1);
+                });
+
             modelBuilder.Entity("kaeltebus_backend.Models.Distribution", b =>
                 {
-                    b.HasOne("kaeltebus_backend.Models.Client", "Client")
+                    b.HasOne("kaeltebus_backend.Models.Bus", "Bus")
                         .WithMany("Distributions")
-                        .HasForeignKey("ClientId")
+                        .HasForeignKey("BusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("kaeltebus_backend.Models.Device", "Device")
+                    b.HasOne("kaeltebus_backend.Models.Client", "Client")
                         .WithMany("Distributions")
-                        .HasForeignKey("DeviceId")
+                        .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -375,9 +431,9 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Client");
+                    b.Navigation("Bus");
 
-                    b.Navigation("Device");
+                    b.Navigation("Client");
 
                     b.Navigation("Good");
 
@@ -386,13 +442,13 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("kaeltebus_backend.Models.Shift", b =>
                 {
-                    b.HasOne("kaeltebus_backend.Models.Device", "Device")
+                    b.HasOne("kaeltebus_backend.Models.Bus", "Bus")
                         .WithMany("Shifts")
-                        .HasForeignKey("DeviceId")
+                        .HasForeignKey("BusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Device");
+                    b.Navigation("Bus");
                 });
 
             modelBuilder.Entity("kaeltebus_backend.Models.ShiftVolunteer", b =>
@@ -414,16 +470,16 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     b.Navigation("Volunteer");
                 });
 
-            modelBuilder.Entity("kaeltebus_backend.Models.Client", b =>
-                {
-                    b.Navigation("Distributions");
-                });
-
-            modelBuilder.Entity("kaeltebus_backend.Models.Device", b =>
+            modelBuilder.Entity("kaeltebus_backend.Models.Bus", b =>
                 {
                     b.Navigation("Distributions");
 
                     b.Navigation("Shifts");
+                });
+
+            modelBuilder.Entity("kaeltebus_backend.Models.Client", b =>
+                {
+                    b.Navigation("Distributions");
                 });
 
             modelBuilder.Entity("kaeltebus_backend.Models.Good", b =>

@@ -28,7 +28,7 @@ public class VolunteersController : ControllerBase
     }
 
     [HttpGet()]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IEnumerable<VolunteerDto>> Query()
     {
         var objs = await _kbContext.Volunteers.Where(x => !x.IsDeleted).ToListAsync();
@@ -38,7 +38,7 @@ public class VolunteersController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult<VolunteerDto>> Get([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Volunteers.FirstOrDefaultAsync(x => x.Id == id);
@@ -46,7 +46,7 @@ public class VolunteersController : ControllerBase
     }
 
     [HttpPost()]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Create([FromBody()] VolunteerCreateDto dto)
     {
         var obj = _mapper.Map<Volunteer>(dto);
@@ -57,7 +57,7 @@ public class VolunteersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Put(
         [FromRoute(Name = "id")] int id,
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] VolunteerCreateDto dto
@@ -79,7 +79,7 @@ public class VolunteersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Volunteers.FindAsync(id);

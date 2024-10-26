@@ -2,7 +2,7 @@ import { ActionIcon, Button, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { IconX } from "@tabler/icons-react";
 import React from "react";
-import { Device, useDevices } from "../../../common/app";
+import { Bus, useBusses } from "../../../common/app";
 import { AppModal, ModalActions, ModalMain } from "../../../common/components";
 import {
   minLengthValidator,
@@ -10,25 +10,25 @@ import {
   validators,
 } from "../../../common/utils/validators";
 
-type DeviceModalProps = {
+type BusModalProps = {
   isOpen: boolean;
   close: () => void;
-  existing?: Device;
+  existing?: Bus;
 };
 
-type DeviceForm = Omit<Device, "id">;
+type BusForm = Omit<Bus, "id">;
 
-export const DeviceModal = ({ isOpen, close, existing }: DeviceModalProps) => {
+export const BusModal = ({ isOpen, close, existing }: BusModalProps) => {
   const {
     post: { mutate: post },
     put: { mutate: put },
-  } = useDevices();
+  } = useBusses();
 
-  const initialValues: DeviceForm = {
+  const initialValues: BusForm = {
     registrationNumber: "",
   };
 
-  const form = useForm<DeviceForm>({
+  const form = useForm<BusForm>({
     mode: "controlled",
     initialValues,
     validate: {
@@ -49,7 +49,7 @@ export const DeviceModal = ({ isOpen, close, existing }: DeviceModalProps) => {
     close();
   };
 
-  const onSubmit = (formModel: DeviceForm) => {
+  const onSubmit = (formModel: BusForm) => {
     if (existing) {
       put({ id: existing.id, update: formModel }, { onSuccess: closeModal });
     } else {

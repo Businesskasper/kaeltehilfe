@@ -1,19 +1,16 @@
-import { AppShell, Group, Switch, useMantineColorScheme } from "@mantine/core";
-import { IconMoon, IconSun } from "@tabler/icons-react";
+import { AppShell, Group, useMantineColorScheme } from "@mantine/core";
+import { useViewportSize } from "@mantine/hooks";
 import React from "react";
-import { useAuth } from "react-oidc-context";
 import { Outlet } from "react-router-dom";
 import LogoLight from "../../common/assets/drk_logo.png";
 import LogoDark from "../../common/assets/drk_logo_dark.png";
+import { UserMenu } from "../../common/components";
 import { OperatorContextType } from "./OperatorContext";
 
-import { useViewportSize } from "@mantine/hooks";
 import "./OperatorHome.scss";
 
 export const OperatorHome = () => {
-  const { toggleColorScheme, colorScheme } = useMantineColorScheme();
-
-  const auth = useAuth();
+  const { colorScheme } = useMantineColorScheme();
 
   const { width } = useViewportSize();
   const isSmall = width < 450;
@@ -35,7 +32,7 @@ export const OperatorHome = () => {
               src={colorScheme === "dark" ? LogoDark : LogoLight}
             />
           </Group>
-          <Group className="UserMenu">
+          {/* <Group className="UserMenu">
             {auth.isAuthenticated && <span>{auth?.user?.profile.name}</span>}
             <Switch
               size="md"
@@ -44,6 +41,9 @@ export const OperatorHome = () => {
               onLabel={<IconMoon style={{ padding: "2px" }} />}
               offLabel={<IconSun style={{ padding: "2px" }} />}
             />
+          </Group> */}
+          <Group className="UserMenu">
+            <UserMenu />
           </Group>
         </Group>
       </AppShell.Header>

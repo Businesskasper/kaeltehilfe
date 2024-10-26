@@ -4,7 +4,7 @@ import { Volunteer } from "./volunteer";
 
 export type Shift = {
   id: number;
-  deviceId: number;
+  busId: number;
   registrationNumber: string;
   date?: Date;
   volunteers?: Array<Volunteer>;
@@ -12,7 +12,7 @@ export type Shift = {
 
 export type ShiftPost = {
   date: string;
-  deviceId: number;
+  busId: number;
   volunteers: Array<{ id: number }>;
 };
 

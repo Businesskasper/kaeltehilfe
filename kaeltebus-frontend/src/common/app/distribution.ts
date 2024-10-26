@@ -16,7 +16,7 @@ import {
 export type Distribution = {
   id: number;
   timestamp: Date;
-  device: {
+  bus: {
     id: number;
     registrationNumber: string;
   };

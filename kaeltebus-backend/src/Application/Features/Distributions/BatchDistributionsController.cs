@@ -24,13 +24,13 @@ public class BatchDistributionsController : ControllerBase
     }
 
     [HttpPost()]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<IActionResult> Create([FromBody] BatchDistributionCreateDto dto)
     {
-        // TODO: Adjust device lookup for calling device
-        var device = await _kbContext.Devices.FirstOrDefaultAsync();
-        if (device == null)
-            throw this.GetModelStateError("DeviceId", "No matching shift was found");
+        var bus =
+            await _kbContext.Busses.FirstOrDefaultAsync(b =>
+                b.RegistrationNumber == dto.BusRegistrationNumber
+            ) ?? throw this.GetModelStateError("BusId", "No matching shift was found");
 
         var location = await _kbContext.Locations.FirstOrDefaultAsync(l =>
             l.Name == dto.LocationName
@@ -55,7 +55,7 @@ public class BatchDistributionsController : ControllerBase
                         Client = client,
                         Good = good,
                         Location = location,
-                        Device = device,
+                        Bus = bus,
                         Quantity = g.Quantity,
                         IsDeleted = false,
                     };
@@ -78,43 +78,47 @@ public class BatchDistributionsController : ControllerBase
         foreach (var clientDto in clientDtos)
         {
             Client? client;
-
             if (clientDto.Id.HasValue)
             {
-                client = await _kbContext.Clients.FindAsync(clientDto.Id);
-
-                if (client == null)
-                {
-                    throw this.GetModelStateError(
+                client =
+                    await _kbContext.Clients.FindAsync(clientDto.Id)
+                    ?? throw this.GetModelStateError(
                         "Clients",
                         $"Client {clientDto.Id} was not found"
                     );
-                }
-            }
-
-            client = await _kbContext.Clients.FirstOrDefaultAsync(c => c.Name == clientDto.Name);
-            if (client != null)
-            {
-                if (client.ApproxAge != clientDto.ApproxAge || client.Gender != clientDto.Gender)
-                {
-                    client.Gender = clientDto.Gender;
-                    client.ApproxAge = clientDto.ApproxAge;
-
-                    _kbContext.Clients.Update(client);
-                    await _kbContext.SaveChangesAsync();
-                }
             }
             else
             {
-                client = new Client
+                client = await _kbContext.Clients.FirstOrDefaultAsync(c =>
+                    c.Name == clientDto.Name
+                );
+                if (client != null)
                 {
-                    Name = clientDto.Name,
-                    Gender = clientDto.Gender,
-                    ApproxAge = clientDto.ApproxAge,
-                };
-                await _kbContext.Clients.AddAsync(client);
-                await _kbContext.SaveChangesAsync();
+                    if (
+                        client.ApproxAge != clientDto.ApproxAge
+                        || client.Gender != clientDto.Gender
+                    )
+                    {
+                        client.Gender = clientDto.Gender;
+                        client.ApproxAge = clientDto.ApproxAge;
+
+                        _kbContext.Clients.Update(client);
+                        await _kbContext.SaveChangesAsync();
+                    }
+                }
+                else
+                {
+                    client = new Client
+                    {
+                        Name = clientDto.Name,
+                        Gender = clientDto.Gender,
+                        ApproxAge = clientDto.ApproxAge,
+                    };
+                    await _kbContext.Clients.AddAsync(client);
+                    await _kbContext.SaveChangesAsync();
+                }
             }
+
             clients.Add(clientDto.Name, client);
         }
 

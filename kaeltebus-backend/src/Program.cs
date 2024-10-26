@@ -46,6 +46,8 @@ builder.Services.AddDbContext<KbContext>(
 
 builder.Services.AddSeeder<KbContext, KbSeeder>();
 
+builder.Services.AddLoginInitializer<KbContext, LoginInitializer>();
+
 var CORS_POLICY = "CorsPolicy";
 
 // Get the CORS origins from environment variables, default to "http://localhost:5173"
@@ -96,7 +98,9 @@ builder.Services.AddTransient<SqliteUniqueExceptionHandler>();
 builder.Services.AddScoped<ICertService, CertService>();
 
 // Register authentication service to keycloak
-builder.Services.AddScoped<IUserService, Keycloak>();
+builder.Services.AddHttpClient();
+
+builder.Services.AddScoped<IUserService, KeycloakUserService>();
 
 // Register JWT token handling
 builder.Services.AddTransient<IClaimsTransformation, KeycloakClaimsTransformer>();
@@ -114,16 +118,15 @@ builder
                 o.RequireHttpsMetadata = false;
 
             o.Authority = builder.Configuration.GetValue<string>("Authorization:Authority");
-            // o.Audience = builder.Configuration.GetValue<string>("Authorization:Client");
             o.Audience = builder.Configuration.GetValue<string>("Authorization:Audience");
             o.TokenValidationParameters = new TokenValidationParameters()
             {
                 ValidateAudience = true,
-                NameClaimType =
-                    "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress", // map name to identity name
-                RoleClaimType =
-                    "http://schemas.microsoft.com/ws/2008/06/identity/claims/role" // map role claims
-                ,
+                NameClaimType = "preferred_username",
+                // "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/preferred_username",
+                RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                // NameClaimType = "preferred_username",
+                // RoleClaimType = "roles",
             };
             if (builder.Environment.IsDevelopment())
             {
@@ -133,31 +136,22 @@ builder
                     {
                         var token = msg?.Request.Headers.Authorization.ToString();
                         string path = msg?.Request.Path ?? "";
-                        if (!string.IsNullOrEmpty(token))
-                        {
-                            Console.WriteLine("Access token");
-                            Console.WriteLine($"URL: {path}");
-                            Console.WriteLine($"Token: {token}\r\n");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Access token");
-                            Console.WriteLine("URL: " + path);
+                        Console.WriteLine("Access token");
+                        Console.WriteLine($"URL: {path}");
+                        if (string.IsNullOrEmpty(token))
                             Console.WriteLine("Token: No access token provided\r\n");
-                        }
+                        else
+                            Console.WriteLine($"Token: {token}\r\n");
+
                         return Task.CompletedTask;
                     },
                     OnTokenValidated = ctx =>
                     {
                         Console.WriteLine();
                         Console.WriteLine("Claims from the access token");
-                        if (ctx?.Principal != null)
-                        {
+                        if (ctx?.Principal is not null)
                             foreach (var claim in ctx.Principal.Claims)
-                            {
                                 Console.WriteLine($"{claim.Type} - {claim.Value}");
-                            }
-                        }
                         Console.WriteLine();
                         return Task.CompletedTask;
                     },
@@ -175,8 +169,8 @@ builder
 
 // builder.Services.AddAuthorization(options =>
 // {
-//     options.AddPolicy("Admin", policy => policy.RequireClaim("Admin", "true"));
-//     options.AddPolicy("Operator", policy => policy.RequireClaim("Operator", "true"));
+//     options.AddPolicy("ADMIN", policy => policy.RequireClaim("ADMIN", "true"));
+//     options.AddPolicy("OPERATOR", policy => policy.RequireClaim("OPERATOR", "true"));
 // });
 
 var app = builder.Build();
@@ -216,5 +210,7 @@ app.MapControllers();
 app.RunMigrations<KbContext>();
 
 app.RunSeeder<KbContext>(_ => app.Environment.IsDevelopment());
+
+app.RunLoginInitializer<KbContext>();
 
 app.Run();

@@ -38,7 +38,11 @@ public class KeycloakClaimsTransformer : IClaimsTransformation
             {
                 var clientName = _configuration["Authorization:Client"];
                 if (
-                    document.RootElement.TryGetProperty(clientName, out JsonElement clientElement)
+                    !string.IsNullOrWhiteSpace(clientName)
+                    && document.RootElement.TryGetProperty(
+                        clientName,
+                        out JsonElement clientElement
+                    )
                     && clientElement.TryGetProperty("roles", out JsonElement rolesElement)
                     && rolesElement.ValueKind == JsonValueKind.Array
                 )
@@ -46,7 +50,7 @@ public class KeycloakClaimsTransformer : IClaimsTransformation
                     foreach (var role in rolesElement.EnumerateArray())
                     {
                         var roleValue = role.GetString();
-                        if (String.IsNullOrWhiteSpace(roleValue))
+                        if (string.IsNullOrWhiteSpace(roleValue))
                             continue;
 
                         transformedIdentity.AddClaim(

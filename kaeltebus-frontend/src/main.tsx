@@ -10,8 +10,9 @@ import { userManager } from "./UserManager.tsx";
 import { AuthRoute } from "./common/components";
 import {
   AdminHome,
+  Admins,
+  Busses,
   Clients,
-  Devices,
   Distributions,
   Goods,
   Shifts,
@@ -38,7 +39,7 @@ export const router = createBrowserRouter([
       {
         path: "admin",
         element: (
-          <AuthRoute>
+          <AuthRoute roles={["ADMIN"]}>
             <AdminHome />
           </AuthRoute>
         ),
@@ -49,8 +50,12 @@ export const router = createBrowserRouter([
             element: <Shifts />,
           },
           {
-            path: "devices",
-            element: <Devices />,
+            path: "admins",
+            element: <Admins />,
+          },
+          {
+            path: "busses",
+            element: <Busses />,
           },
           {
             path: "clients",
@@ -73,7 +78,7 @@ export const router = createBrowserRouter([
       {
         path: "",
         element: (
-          <AuthRoute>
+          <AuthRoute roles={["ADMIN", "OPERATOR"]}>
             <OperatorHome />
           </AuthRoute>
         ),

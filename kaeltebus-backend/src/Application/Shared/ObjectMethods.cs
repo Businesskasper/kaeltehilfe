@@ -49,4 +49,51 @@ public static class ObjectMethods
 
         return updated;
     }
+
+    public static object? GetJsonElementValue(JsonElement element)
+    {
+        return element.ValueKind switch
+        {
+            JsonValueKind.String => element.GetString(),
+            JsonValueKind.Number => element.TryGetInt64(out var longVal)
+                ? longVal
+                : element.GetDouble(),
+            JsonValueKind.True => true,
+            JsonValueKind.False => false,
+            JsonValueKind.Object => element, // Return as JsonElement for further parsing if necessary
+            JsonValueKind.Array => element, // Return as JsonElement for further parsing if necessary
+            JsonValueKind.Null => null,
+            _ => null,
+        };
+    }
+
+    public static Tuple<bool, T> GetUpdated<T>(T existing, Dictionary<string, object> update)
+        where T : ICloneable
+    {
+        var clone = existing.Clone();
+        var hasUpdate = false;
+
+        var keys = update.Keys;
+        var properties = clone.GetType().GetProperties();
+        foreach (var key in keys)
+        {
+            var prop = properties.FirstOrDefault(p =>
+                p.Name.Equals(key, StringComparison.CurrentCultureIgnoreCase)
+            );
+            if (prop is null)
+                continue;
+
+            var updatedValue = update.GetValueOrDefault(key);
+            if (updatedValue is not JsonElement)
+                continue;
+            var parsedUpdatedValue = GetJsonElementValue((JsonElement)updatedValue);
+            if (prop.GetValue(existing) != parsedUpdatedValue)
+            {
+                prop.SetValue(clone, parsedUpdatedValue);
+                hasUpdate = true;
+            }
+        }
+
+        return Tuple.Create(hasUpdate, (T)clone);
+    }
 }

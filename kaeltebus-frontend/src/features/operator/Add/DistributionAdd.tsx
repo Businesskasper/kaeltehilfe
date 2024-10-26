@@ -13,6 +13,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Gender,
+  useBusses,
   useClients,
   useGoods,
   usePostBatchDistribution,
@@ -32,10 +33,14 @@ import { FormClients } from "./FormClients";
 import { FormGoods } from "./FormGoods";
 import { FormLocation } from "./FormLocation";
 
+import { notifications } from "@mantine/notifications";
+import { useProfile } from "../../../common/utils/useProfile";
 import "./DistributionAdd.scss";
 
 export const DistributionAdd = () => {
   const navigate = useNavigate();
+
+  const profile = useProfile();
 
   const {
     objs: { isLoading: isClientsLoading },
@@ -46,6 +51,13 @@ export const DistributionAdd = () => {
   const {
     objs: { data: clients, isSuccess: hasClientsBeenLoaded },
   } = useClients();
+  const {
+    objs: {
+      data: busses,
+      isLoading: isBussesLoading,
+      isSuccess: hasBussesBeenLoaded,
+    },
+  } = useBusses();
 
   const {
     isPending: isBatchDistributionPosting,
@@ -74,6 +86,7 @@ export const DistributionAdd = () => {
     mode: "controlled",
     initialValues: {
       locationName: lastLocation || "",
+      busRegistrationNumber: profile?.registrationNumber || "",
       clients: [
         {
           id: undefined as unknown as number,
@@ -115,6 +128,7 @@ export const DistributionAdd = () => {
     });
   };
 
+  // Initialize client if user clicked on client directly in overview
   const { state: locationState } = useLocation();
   React.useEffect(() => {
     if (!locationState?.clientId) return;
@@ -135,8 +149,57 @@ export const DistributionAdd = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasClientsBeenLoaded, locationState]);
 
+  // Initialize busRegistrationNumber
+  React.useEffect(() => {
+    if (!hasBussesBeenLoaded || !profile) return;
+    const availableRegistrationNumbers = busses.map(
+      (b) => b.registrationNumber
+    );
+    if (!profile?.registrationNumber) {
+      if (availableRegistrationNumbers.length === 0) {
+        // BAD
+        notifications.show({
+          message: `Mindestens ein Bus muss durch einen Admin angelegt und zugewiesen werden`,
+          withBorder: true,
+          withCloseButton: true,
+          w: "100%",
+          my: "sm",
+          autoClose: false,
+          color: "red",
+        });
+      } else {
+        form.setFieldValue(
+          "busRegistrationNumber",
+          availableRegistrationNumbers[0]
+        );
+      }
+    } else {
+      const registrationNumberExists = !!availableRegistrationNumbers.find(
+        (ar) => ar == profile.registrationNumber
+      );
+      if (registrationNumberExists) {
+        form.setFieldValue("busRegistrationNumber", profile.registrationNumber);
+      } else {
+        // BAD
+        notifications.show({
+          message: `Der zugewiesene Bus "${profile.registrationNumber}" muss durch einen Admin angelegt werden`,
+          withBorder: true,
+          withCloseButton: true,
+          w: "100%",
+          my: "sm",
+          autoClose: false,
+          color: "red",
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.registrationNumber, hasBussesBeenLoaded]);
+
   const isLoading =
-    isClientsLoading || isGoodsLoading || isBatchDistributionPosting;
+    isClientsLoading ||
+    isGoodsLoading ||
+    isBatchDistributionPosting ||
+    isBussesLoading;
 
   enum FormStep {
     LOCATION,

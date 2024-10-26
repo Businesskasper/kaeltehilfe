@@ -2,8 +2,8 @@ namespace kaeltebus_backend.Models;
 
 public class Shift : BaseEntity
 {
-    public int DeviceId { get; set; }
-    public virtual Device? Device { get; set; }
+    public int BusId { get; set; }
+    public virtual Bus? Bus { get; set; }
     public DateOnly Date { get; set; }
     public virtual List<ShiftVolunteer> ShiftVolunteers { get; set; } = [];
 }

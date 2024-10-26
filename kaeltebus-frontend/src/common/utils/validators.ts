@@ -53,8 +53,8 @@ const isValueSet = (value: unknown, type?: "Date" | "Id" | "Array") => {
 };
 
 export const isDuplicate =
-  <T>(existingValues: Array<T>, message: string) =>
-  (value: T) => {
+  <T>(existingValues: Array<T | undefined>, message: string) =>
+  (value: T | undefined) => {
     return existingValues
       .map((existingValue) => toString(existingValue))
       ?.includes(toString(value))
@@ -67,3 +67,12 @@ const toString = (value: unknown) => {
     ? value.toString()
     : String(value);
 };
+
+export type RegexValdiatorRequirements = {
+  matcher: RegExp;
+  error: string;
+};
+export const regexValidator =
+  (requirements: Array<RegexValdiatorRequirements>) => (value?: string) => {
+    return requirements.find((r) => value && !r.matcher.test(value))?.error;
+  };

@@ -115,8 +115,8 @@ public class KbSeeder : ISeeder<KbContext>
         _kbContext.Volunteers.AddRange(volunteers);
         _kbContext.SaveChanges();
 
-        var device = new Device { RegistrationNumber = "UL-RK1013", IsDeleted = false };
-        _kbContext.Devices.Add(device);
+        var bus = new Bus { RegistrationNumber = "UL-RK1013", IsDeleted = false };
+        _kbContext.Busses.Add(bus);
         _kbContext.SaveChanges();
 
         var shift = new Shift
@@ -124,7 +124,7 @@ public class KbSeeder : ISeeder<KbContext>
             Date = DateOnly.FromDateTime(DateTime.Now),
             AddOn = DateTime.UtcNow,
             IsDeleted = false,
-            DeviceId = device.Id,
+            BusId = bus.Id,
         };
         _kbContext.Shifts.Add(shift);
         _kbContext.SaveChanges();
@@ -197,7 +197,7 @@ public class KbSeeder : ISeeder<KbContext>
             clients,
             goods,
             locations,
-            device.Id
+            bus.Id
         );
         _kbContext.Distributions.AddRange(distributions);
         _kbContext.SaveChanges();
@@ -209,7 +209,7 @@ public class KbSeeder : ISeeder<KbContext>
         List<Client> clients,
         List<Good> goods,
         List<Location> locations,
-        int deviceId
+        int busId
     )
     {
         var distributions = new List<Distribution>();
@@ -230,7 +230,7 @@ public class KbSeeder : ISeeder<KbContext>
                 var distribution = new Distribution
                 {
                     AddOn = currentDate,
-                    DeviceId = deviceId,
+                    BusId = busId,
                     ClientId = clients[clientIndex].Id,
                     GoodId = goods[goodIndex].Id,
                     LocationId = locations[locationIndex].Id,

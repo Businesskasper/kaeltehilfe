@@ -28,7 +28,7 @@ public class LocationsController : ControllerBase
     }
 
     [HttpGet()]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<IEnumerable<LocationDto>> Query()
     {
         var objs = await _kbContext.Locations.Where(x => !x.IsDeleted).ToListAsync();
@@ -38,7 +38,7 @@ public class LocationsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult<LocationDto>> Get([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Locations.FirstOrDefaultAsync(x => x.Id == id);
@@ -46,7 +46,7 @@ public class LocationsController : ControllerBase
     }
 
     [HttpPost()]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<IActionResult> Create([FromBody()] LocationCreateDto dto)
     {
         var obj = _mapper.Map<Location>(dto);
@@ -57,7 +57,7 @@ public class LocationsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Put(
         [FromRoute(Name = "id")] int id,
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] LocationCreateDto dto
@@ -79,7 +79,7 @@ public class LocationsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Locations.FindAsync(id);

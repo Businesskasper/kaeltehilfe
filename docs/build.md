@@ -1,5 +1,9 @@
 # Build
 
+> [!WARNING] TODO
+> - Add documentation for secrets
+>
+
 > [!NOTE]
 > For the initial deployment of services "proxy" and "keycloak" (from [docker-compose.yml](../build/result/docker/docker-compose.yml)), the build and deployment steps for "kaeltebus-api" and "ui" must be skipped, since both require configuration details from Keycloak and the NGINX Proxy Manager.
 >

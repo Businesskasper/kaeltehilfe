@@ -15,6 +15,7 @@ export type DistributionFormGood = {
 
 export type DistributionForm = {
   locationName: string;
+  busRegistrationNumber: string;
   clients: Array<DistributionFormClient>;
   goods: Array<DistributionFormGood>;
 };

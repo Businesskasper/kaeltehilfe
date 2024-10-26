@@ -24,12 +24,12 @@ public class ShiftsController : ControllerBase
     }
 
     [HttpGet()]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IEnumerable<ShiftDto>> Query()
     {
         var objs = await _kbContext
             .Shifts.Where(x => !x.IsDeleted)
-            .Include(s => s.Device)
+            .Include(s => s.Bus)
             .Include(s => s.ShiftVolunteers)
             .ThenInclude(sv => sv.Volunteer)
             .ToListAsync();
@@ -39,11 +39,11 @@ public class ShiftsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult<ShiftDto>> Get([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext
-            .Shifts.Include(s => s.Device)
+            .Shifts.Include(s => s.Bus)
             .Include(s => s.ShiftVolunteers)
             .ThenInclude(sv => sv.Volunteer)
             .FirstOrDefaultAsync(s => s.Id == id);
@@ -51,7 +51,7 @@ public class ShiftsController : ControllerBase
     }
 
     [HttpPost()]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Create([FromBody()] ShiftCreateDto dto)
     {
         var obj = _mapper.Map<Shift>(dto);
@@ -60,10 +60,10 @@ public class ShiftsController : ControllerBase
             .ToDictionaryAsync(x => x.Id);
         obj.ShiftVolunteers = dto.Volunteers.ToShiftVolunteers(volunteers);
 
-        var device = await _kbContext.Devices.FindAsync(dto.DeviceId);
-        if (device == null)
-            throw this.GetModelStateError("deviceId", "Device not found");
-        obj.Device = device;
+        var bus =
+            await _kbContext.Busses.FindAsync(dto.BusId)
+            ?? throw this.GetModelStateError("busId", "Bus not found");
+        obj.Bus = bus;
 
         var result = await _kbContext.Shifts.AddAsync(obj);
         await _kbContext.SaveChangesAsync();
@@ -72,14 +72,14 @@ public class ShiftsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Put(
         [FromRoute(Name = "id")] int id,
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] ShiftCreateDto dto
     )
     {
         var existing = await _kbContext
-            .Shifts.Include(s => s.Device)
+            .Shifts.Include(s => s.Bus)
             .Include(s => s.ShiftVolunteers)
             .ThenInclude(sv => sv.Volunteer)
             .FirstOrDefaultAsync(s => s.Id == id);
@@ -96,13 +96,13 @@ public class ShiftsController : ControllerBase
             .ToDictionaryAsync(x => x.Id);
         existing.ShiftVolunteers = dto.Volunteers.ToShiftVolunteers(volunteers);
 
-        if (existing.DeviceId != receivedObj.DeviceId)
+        if (existing.BusId != receivedObj.BusId)
         {
-            var device = await _kbContext.Devices.FindAsync(receivedObj.DeviceId);
-            if (device == null)
-                throw this.GetModelStateError("DeviceId", "Device not found");
-            existing.Device = device;
-            existing.DeviceId = receivedObj.DeviceId;
+            var bus =
+                await _kbContext.Busses.FindAsync(receivedObj.BusId)
+                ?? throw this.GetModelStateError("BusId", "Bus not found");
+            existing.Bus = bus;
+            existing.BusId = receivedObj.BusId;
         }
 
         _kbContext.Shifts.Update(existing);
@@ -112,7 +112,7 @@ public class ShiftsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Shifts.FindAsync(id);

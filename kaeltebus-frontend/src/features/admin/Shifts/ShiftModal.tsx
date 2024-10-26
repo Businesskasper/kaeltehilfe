@@ -6,7 +6,7 @@ import React from "react";
 import {
   Shift,
   ShiftPost,
-  useDevices,
+  useBusses,
   useShifts,
   useVolunteers,
 } from "../../../common/app";
@@ -31,7 +31,7 @@ type ShiftModalProps = {
 
 type ShiftForm = {
   date: Date;
-  deviceId: number;
+  busId: number;
   registrationNumber: string;
   volunteers: Array<{ id: number; fullname: string }>;
 };
@@ -48,25 +48,23 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
   } = useVolunteers();
 
   const {
-    objs: { data: devices },
-  } = useDevices();
+    objs: { data: busses },
+  } = useBusses();
 
   const initialValues = React.useMemo<ShiftForm>(
     () => ({
       date: undefined as unknown as Date,
-      deviceId:
-        devices?.length === 1
-          ? devices[0].id
-          : (undefined as unknown as number),
+      busId:
+        busses?.length === 1 ? busses[0].id : (undefined as unknown as number),
       registrationNumber:
-        devices?.length === 1 ? devices[0].registrationNumber : "",
+        busses?.length === 1 ? busses[0].registrationNumber : "",
       volunteers: [
         { id: undefined as unknown as number, fullname: "" },
         { id: undefined as unknown as number, fullname: "" },
         { id: undefined as unknown as number, fullname: "" },
       ],
     }),
-    [devices]
+    [busses]
   );
 
   const form = useForm<ShiftForm>({
@@ -80,8 +78,7 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
           isDuplicate(
             shifts
               ?.filter(
-                (s) =>
-                  s.date !== existing?.date && s.deviceId === existing?.deviceId
+                (s) => s.date !== existing?.date && s.busId === existing?.busId
               )
               ?.map(({ date }) => date) || [],
             "Eine Schicht zum angegebenem Datum existiert bereits"
@@ -125,7 +122,7 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
     if (existing) {
       form.setValues({
         date: existing.date,
-        deviceId: existing.deviceId,
+        busId: existing.busId,
         registrationNumber: existing.registrationNumber,
         volunteers:
           existing.volunteers?.map(({ id, fullname }) => ({
@@ -153,7 +150,7 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
         month: "2-digit",
         day: "2-digit",
       }),
-      deviceId: formModel.deviceId,
+      busId: formModel.busId,
       volunteers: formModel.volunteers.map(({ id }) => ({ id })),
     };
     if (existing) {
@@ -248,13 +245,13 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
           />
           <FormSelect
             label="Fahrzeug"
-            items={devices || []}
+            items={busses || []}
             style={{ marginBottom: "var(--mantine-spacing-sm)" }}
             valueGetter="registrationNumber"
             sort
             formProps={form.getInputProps("registrationNumber")}
-            onItemSelected={(selectedDevice) => {
-              form.setFieldValue("deviceId", selectedDevice?.id || 1);
+            onItemSelected={(selectedBus) => {
+              form.setFieldValue("busId", selectedBus?.id || 1);
             }}
           />
           <InputLabel required w="100%">

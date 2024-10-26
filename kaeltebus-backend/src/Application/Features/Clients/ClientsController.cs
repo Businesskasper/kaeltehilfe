@@ -24,7 +24,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpGet()]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<IEnumerable<ClientDto>> Query()
     {
         var objs = await _kbContext.Clients.Where(x => !x.IsDeleted).ToListAsync();
@@ -34,7 +34,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult<ClientDto>> Get([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Clients.FirstOrDefaultAsync(x => x.Id == id);
@@ -42,7 +42,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpPost()]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<IActionResult> Create([FromBody()] ClientCreateDto dto)
     {
         var obj = _mapper.Map<Client>(dto);
@@ -53,7 +53,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin,Operator")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult> Put(
         [FromRoute(Name = "id")] int id,
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] ClientCreateDto dto
@@ -75,7 +75,7 @@ public class ClientsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Clients.FindAsync(id);

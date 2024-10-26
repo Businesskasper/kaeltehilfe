@@ -46,7 +46,7 @@ export const Distributions = () => {
       },
     },
     {
-      accessorKey: "device.registrationNumber",
+      accessorKey: "bus.registrationNumber",
       header: "Schichtträger",
     },
     {
@@ -78,9 +78,9 @@ export const Distributions = () => {
     fileName: () =>
       `KB-Ausgaben-${new Date().toLocaleDateString().replace(".", "_")}.xlsx`,
     transformators: {
-      device: {
+      bus: {
         columnName: "Schichtträger",
-        transformFn: ({ device }) => device.registrationNumber || "",
+        transformFn: ({ bus }) => bus.registrationNumber || "",
       },
       client: {
         columnName: "Klient",
