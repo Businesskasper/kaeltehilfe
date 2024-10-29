@@ -41,7 +41,19 @@ function App() {
       !auth.isLoading
       // !hasTriedSignin
     ) {
-      console.log("hm", hasTriedSignin);
+      // if (!hasTriedSignin) {
+      //   auth
+      //     .signinSilent()
+      //     .then(() => console.log("asdf"))
+      //     .catch(() => {
+      //       console.log("bsdf");
+      //       return auth.signinRedirect();
+      //     })
+      //     .finally(() => setHasTriedSignin(true));
+      // } else {
+      //   auth.signinSilent();
+      // }
+
       if (!hasTriedSignin) {
         auth.signinRedirect();
         setHasTriedSignin(true);

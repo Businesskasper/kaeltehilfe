@@ -23,14 +23,22 @@ export type OperatorLogin = {
 
 export type Login = AdminLogin | OperatorLogin;
 
+export type LoginPost = {
+  role: "ADMIN";
+  email: string;
+  firstname: string;
+  lastname: string;
+  password: string;
+};
+
+export type LoginPatch = {
+  email?: string;
+  firstname?: string;
+  lastname?: string;
+};
+
 export const useLogins = () =>
-  useCrudHook<
-    Login,
-    never,
-    Omit<Login, "username" | "identityProviderId" | "createOn"> & {
-      password?: string;
-    }
-  >({
+  useCrudHook<Login, never, LoginPost, LoginPatch>({
     key: "logins",
     transformer: { createOn: (value) => toDate(value) ?? new Date() },
   });

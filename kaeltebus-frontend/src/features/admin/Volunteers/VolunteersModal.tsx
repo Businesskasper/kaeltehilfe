@@ -34,6 +34,7 @@ export const VolunteerModal = ({
   const {
     post: { mutate: post },
     put: { mutate: put },
+    invalidate,
   } = useVolunteers();
 
   const initialValues: VolunteerForm = {
@@ -73,15 +74,30 @@ export const VolunteerModal = ({
   }, [existing]);
 
   const closeModal = () => {
-    form.reset();
     close();
+    setTimeout(() => form.reset(), 200);
   };
 
   const onSubmit = (formModel: VolunteerForm) => {
     if (existing) {
-      put({ id: existing.id, update: formModel }, { onSuccess: closeModal });
+      put(
+        { id: existing.id, update: formModel },
+        {
+          onSuccess: closeModal,
+          onSettled: () => {
+            console.log("DEBUG: invalidate from hook");
+            invalidate();
+          },
+        }
+      );
     } else {
-      post(formModel, { onSuccess: closeModal });
+      post(formModel, {
+        onSuccess: closeModal,
+        onSettled: () => {
+          console.log("DEBUG: invalidate from hook");
+          invalidate();
+        },
+      });
     }
   };
 

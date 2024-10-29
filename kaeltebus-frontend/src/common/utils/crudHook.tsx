@@ -74,8 +74,13 @@ export const useCrudHook = <
 
   const invalidate = () => {
     queryClient.invalidateQueries({
-      queryKey: [key, ...paramValues],
+      // queryKey: [key, ...paramValues],
+      queryKey: paramValues ? [key, ...paramValues] : [key],
+      refetchType: "all",
+      // stale: false,
+      type: "all",
     });
+    queryClient.refetchQueries(); // Test
     additionalInvalidation?.forEach((key) =>
       queryClient.invalidateQueries({ queryKey: [key] })
     );
@@ -83,7 +88,10 @@ export const useCrudHook = <
 
   const post = useMutation({
     mutationFn: httpPost,
-    onSettled: invalidate,
+    onSettled: () => {
+      console.log("DEBUG: invalidate from hook");
+      invalidate();
+    },
   });
 
   const update = useMutation<
@@ -93,7 +101,10 @@ export const useCrudHook = <
     unknown
   >({
     mutationFn: ({ id, update }) => httpPatch(id, update),
-    onSettled: invalidate,
+    onSettled: () => {
+      console.log("DEBUG: invalidate from hook");
+      invalidate();
+    },
   });
 
   const put = useMutation<
@@ -103,12 +114,18 @@ export const useCrudHook = <
     unknown
   >({
     mutationFn: ({ id, update }) => httpPUT(id, update),
-    onSettled: invalidate,
+    onSettled: () => {
+      console.log("DEBUG: invalidate from hook");
+      invalidate();
+    },
   });
 
   const remove = useMutation({
     mutationFn: httpDelete,
-    onSettled: invalidate,
+    onSettled: () => {
+      console.log("DEBUG: invalidate from hook");
+      invalidate();
+    },
   });
 
   return {
@@ -117,5 +134,6 @@ export const useCrudHook = <
     put,
     remove,
     objs,
+    invalidate,
   };
 };

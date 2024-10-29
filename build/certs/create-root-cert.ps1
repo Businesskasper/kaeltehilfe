@@ -15,7 +15,7 @@ else {
 
 . ([System.IO.Path]::Combine($global:root, "..", "functions.ps1"))
 
-$pfxPath = [System.IO.Path]::Combine($global:root, "..", "result", "api", "cert", "root.pfx")
+$pfxPath = [System.IO.Path]::Combine($global:root, "..", "result", "api", "cert", "root", "root.pfx")
 Remove-Item -Path $pfxPath -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
 $caPath = [System.IO.Path]::Combine($global:root, "..", "result", "keycloak", "x509", "root.ca")
 Remove-Item -Path $caPath -Recurse -Force -ErrorAction sil SilentlyContinue | Out-Null

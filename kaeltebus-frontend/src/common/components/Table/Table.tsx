@@ -86,6 +86,8 @@ type Props<T extends Record<string, any>> = {
   customActions?: Array<AdditionalCustomAction<T>>;
   customHeaderChildren?: React.JSX.Element | Array<React.JSX.Element>;
   enableGrouping?: boolean;
+  hideTopToolbarActions?: boolean;
+  disablePagination?: boolean;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,6 +108,8 @@ export const Table = <T extends Record<string, any>>({
   customActions,
   customHeaderChildren,
   enableGrouping,
+  hideTopToolbarActions,
+  disablePagination,
 }: Props<T>) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const getRowId = React.useCallback(
@@ -155,6 +159,14 @@ export const Table = <T extends Record<string, any>>({
     enableRowSelection: true,
     getRowId: (obj) => String(getRowId(obj)),
     positionToolbarAlertBanner: "bottom",
+    renderTopToolbar:
+      hideTopToolbarActions &&
+      !handleDelete &&
+      !handleEdit &&
+      !handleAdd &&
+      (!customActions || customActions.length === 0)
+        ? false
+        : undefined,
     renderTopToolbarCustomActions: (table) => (
       <>
         <CustomActions
@@ -167,9 +179,12 @@ export const Table = <T extends Record<string, any>>({
         {customHeaderChildren && customHeaderChildren}
       </>
     ),
-    renderToolbarInternalActions: ({ table }) => (
-      <InternalActions table={table} exportConfig={exportConfig} />
-    ),
+    renderToolbarInternalActions: ({ table }) =>
+      hideTopToolbarActions ? (
+        false
+      ) : (
+        <InternalActions table={table} exportConfig={exportConfig} />
+      ),
     selectAllMode: "page",
     layoutMode: "grid",
     state: {
@@ -200,6 +215,8 @@ export const Table = <T extends Record<string, any>>({
     onPaginationChange: setPagination,
     enableGrouping,
     onGroupingChange: setGrouping,
+    enablePagination: !disablePagination,
+    enableBottomToolbar: !disablePagination,
   });
 
   React.useEffect(() => {

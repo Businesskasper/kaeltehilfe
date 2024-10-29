@@ -21,20 +21,25 @@ public class KeycloakUserService : IUserService
     {
         _httpClientFactory = httpClientFactory;
 
-        _authority = configuration["Authorization:Authority"] ?? "";
+        _authority = configuration.RequireConfigValue("Authorization:Authority");
 
         // Client for user auth
-        _client = configuration["Authorization:Client"] ?? "";
-        _clientId = configuration["Authorization:ClientId"] ?? "";
+        _client = configuration.RequireConfigValue("Authorization:Client");
+        _clientId = configuration.RequireConfigValue("Authorization:ClientId");
 
         // Client for machine auth
-        _keycloakApiBaseUrl = configuration["Authorization:ApiBaseUrl"] ?? "";
-        _machineClientId = configuration["Authorization:MachineClientId"] ?? "";
-        _machineClient = configuration["Authorization:MachineClient"] ?? "";
-        var clientSecretVar = configuration["Authorization:MachineClientSecretVar"];
-        if (string.IsNullOrWhiteSpace(clientSecretVar))
-            throw new Exception("Authorization:ClientSecretVar must be defined");
-        _machineClientSecret = Environment.GetEnvironmentVariable(clientSecretVar) ?? "";
+        _keycloakApiBaseUrl = configuration.RequireConfigValue("Authorization:ApiBaseUrl");
+        _machineClientId = configuration.RequireConfigValue("Authorization:MachineClientId");
+        _machineClient = configuration.RequireConfigValue("Authorization:MachineClient");
+        var clientSecretVar = configuration.RequireConfigValue(
+            "Authorization:MachineClientSecretVar"
+        );
+
+        _machineClientSecret =
+            Environment.GetEnvironmentVariable(clientSecretVar)
+            ?? throw new InvalidOperationException(
+                $"{clientSecretVar} is not set in environment variables."
+            );
     }
 
     public async Task<CreateUserResponse> CreateLogin(
@@ -58,7 +63,7 @@ public class KeycloakUserService : IUserService
                     {
                         type = "password",
                         value = password,
-                        temporary = false,
+                        temporary = true,
                     },
                 }
                 : null,
@@ -176,12 +181,45 @@ public class KeycloakUserService : IUserService
         return logins;
     }
 
+    public async Task<Login?> GetLogin(string username)
+    {
+        var keycloakUsers = await KeycloakGet<List<KeycloakUser>>(
+            $"{_keycloakApiBaseUrl}/users?username={username}"
+        );
+        if (keycloakUsers is null || keycloakUsers.Count == 0)
+            return null;
+
+        var keycloakUser = keycloakUsers[0];
+        var role = await GetKeycloakUserRole(keycloakUser.Id);
+        var createdOffset = DateTimeOffset.FromUnixTimeMilliseconds(keycloakUser.CreatedTimestamp);
+        var createdDate = createdOffset.UtcDateTime;
+
+        return role == Role.ADMIN
+            ? new AdminLogin
+            {
+                Firstname = keycloakUser.FirstName,
+                Lastname = keycloakUser.LastName,
+                Username = keycloakUser.Username,
+                IdentityProviderId = keycloakUser.Id,
+                Email = keycloakUser.Email,
+                CreateOn = createdDate,
+            }
+            : new OperatorLogin
+            {
+                RegistrationNumber = keycloakUser.Attributes.RegistrationNumber?[0] ?? "",
+                Username = keycloakUser.Username,
+                IdentityProviderId = keycloakUser.Id,
+                Email = keycloakUser.Email,
+                CreateOn = createdDate,
+            };
+    }
+
     public async Task SetPassword(string identityProviderId, string password)
     {
         var passwordPayload = new
         {
             type = "password",
-            temporary = false,
+            temporary = true,
             value = password,
         };
 

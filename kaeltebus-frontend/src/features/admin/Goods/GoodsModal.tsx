@@ -40,6 +40,7 @@ export const GoodModal = ({ isOpen, close, existing }: GoodModalProps) => {
   const {
     post: { mutate: post },
     put: { mutate: put },
+    invalidate,
   } = useGoods();
 
   const initialValues: GoodForm = {
@@ -67,15 +68,30 @@ export const GoodModal = ({ isOpen, close, existing }: GoodModalProps) => {
   }, [existing]);
 
   const closeModal = () => {
-    form.reset();
     close();
+    setTimeout(() => form.reset(), 200);
   };
 
   const onSubmit = (formModel: GoodForm) => {
     if (existing) {
-      put({ id: existing.id, update: formModel }, { onSuccess: closeModal });
+      put(
+        { id: existing.id, update: formModel },
+        {
+          onSuccess: closeModal,
+          onSettled: () => {
+            console.log("DEBUG: invalidate from hook");
+            invalidate();
+          },
+        }
+      );
     } else {
-      post(formModel, { onSuccess: closeModal });
+      post(formModel, {
+        onSuccess: closeModal,
+        onSettled: () => {
+          console.log("DEBUG: invalidate from hook");
+          invalidate();
+        },
+      });
     }
   };
 

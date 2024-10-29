@@ -11,11 +11,14 @@ export const useProfile = (): KbProfile | undefined => {
   const profile = React.useMemo<KbProfile | undefined>(() => {
     if (!auth?.isAuthenticated) return;
 
+    const username = auth.user?.profile.preferred_username;
+
     const clientId = userManager.settings.client_id;
     const kbprofile = auth.user?.profile as KcProfile<typeof clientId>;
     const roles = kbprofile.resource_access?.[clientId]?.roles;
 
     return {
+      username,
       role: roles?.find((r) => r.toUpperCase() === "ADMIN")
         ? "ADMIN"
         : roles?.find((r) => r.toUpperCase() === "OPERATOR")
@@ -31,6 +34,7 @@ export const useProfile = (): KbProfile | undefined => {
 };
 
 type KbProfile = {
+  username?: string;
   role?: UserRole;
   registrationNumber?: string;
 };

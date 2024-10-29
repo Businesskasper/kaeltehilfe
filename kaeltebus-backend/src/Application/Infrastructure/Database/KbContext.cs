@@ -16,6 +16,7 @@ public class KbContext : DbContext
     public virtual DbSet<Distribution> Distributions { get; set; }
     public virtual DbSet<Bus> Busses { get; set; }
     public virtual DbSet<Login> Logins { get; set; }
+    public virtual DbSet<LoginCertificate> LoginCertificates { get; set; }
 
     // public virtual DbSet<AdminLogin> AdminLogins { get; set; }
     // public virtual DbSet<OperatorLogin> OperatorLogins { get; set; }
@@ -135,7 +136,6 @@ public class KbContext : DbContext
         modelBuilder.Entity<ShiftVolunteer>().Property(sv => sv.Order).IsRequired();
 
         modelBuilder.Entity<Login>().HasKey(l => l.Username);
-
         modelBuilder
             .Entity<Login>()
             .HasDiscriminator<Role>(nameof(Role))
@@ -165,6 +165,22 @@ public class KbContext : DbContext
         //     .HasDiscriminator<string>("role")
         //     .HasValue<OperatorLogin>("OPERATOR");
         // modelBuilder.Entity<OperatorLogin>().Property(o => o.RegistrationNumber).IsRequired();
+
+        modelBuilder.Entity<LoginCertificate>().HasKey(lc => lc.Thumbprint);
+        modelBuilder
+            .Entity<LoginCertificate>()
+            .HasOne(lc => lc.Login)
+            .WithMany(l => l.LoginCertificates)
+            .HasForeignKey(lc => lc.LoginUsername)
+            .OnDelete(DeleteBehavior.NoAction); // Prevent cascade delete
+        modelBuilder
+            .Entity<LoginCertificate>()
+            .Property(lc => lc.ValidFrom)
+            .HasConversion(new UnixEpochDateTimeConverter());
+        modelBuilder
+            .Entity<LoginCertificate>()
+            .Property(lc => lc.ValidTo)
+            .HasConversion(new UnixEpochDateTimeConverter());
     }
 }
 

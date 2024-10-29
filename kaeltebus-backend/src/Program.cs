@@ -94,6 +94,9 @@ builder.Services.AddTransient<InvalidModelStateExceptionHandler>();
 // Register middleware service to catch UNIQUE constraint exceptions
 builder.Services.AddTransient<SqliteUniqueExceptionHandler>();
 
+// Register file service to save and get client certificates
+builder.Services.AddScoped<IFileService, FileService>();
+
 // Register certificate service to keycloak
 builder.Services.AddScoped<ICertService, CertService>();
 

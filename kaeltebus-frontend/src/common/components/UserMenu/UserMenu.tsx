@@ -5,13 +5,30 @@ import {
   Text,
   useMantineColorScheme,
 } from "@mantine/core";
-import { IconLogout, IconMoon, IconSun } from "@tabler/icons-react";
+import {
+  IconBus,
+  IconLogout,
+  IconMoon,
+  IconSun,
+  IconUserShield,
+} from "@tabler/icons-react";
 import { useAuth } from "react-oidc-context";
+import { matchPath, useNavigate, useResolvedPath } from "react-router-dom";
+import { useProfile } from "../../utils/useProfile";
 
 export const UserMenu = () => {
   const auth = useAuth();
+  const profile = useProfile();
+
+  const navigate = useNavigate();
 
   const { toggleColorScheme, colorScheme } = useMantineColorScheme();
+
+  const adminResolvedPath = useResolvedPath("/admin");
+  const isOnAdminPage = !!matchPath(
+    { path: adminResolvedPath.pathname, end: false },
+    location.pathname
+  );
 
   return (
     <Group className="UserMenu">
@@ -22,19 +39,32 @@ export const UserMenu = () => {
           </Text>
         </Menu.Target>
         <Menu.Dropdown>
+          {!isOnAdminPage && profile?.role === "ADMIN" ? (
+            <Menu.Item>
+              <Group justify="space-between">
+                <Text onClick={() => navigate("/admin")}>Admin Panel</Text>
+                <IconUserShield />
+              </Group>
+            </Menu.Item>
+          ) : (
+            <Menu.Item onClick={() => navigate("/")}>
+              <Group justify="space-between">
+                <Text>Erfasser Seite</Text>
+                <IconBus />
+              </Group>
+            </Menu.Item>
+          )}
           <Menu.Item
-            onClick={
-              () =>
-                auth
-                  .signoutSilent({
-                    post_logout_redirect_uri: window.location.href,
-                    silentRequestTimeoutInSeconds: 0,
-                  })
-                  .then(() => auth.signinRedirect())
-              // .then(() => (window.location.href = `${window.location.href}`))
+            onClick={() =>
+              auth
+                .signoutSilent({
+                  post_logout_redirect_uri: window.location.href,
+                  silentRequestTimeoutInSeconds: 0,
+                })
+                .then(() => auth.signinRedirect())
             }
           >
-            <Group>
+            <Group justify="space-between">
               <Text>Ausloggen</Text>
               <IconLogout />
             </Group>

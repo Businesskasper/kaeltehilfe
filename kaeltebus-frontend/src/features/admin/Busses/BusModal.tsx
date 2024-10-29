@@ -1,5 +1,5 @@
 import { ActionIcon, Button, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
+import { matches, useForm } from "@mantine/form";
 import { IconX } from "@tabler/icons-react";
 import React from "react";
 import { Bus, useBusses } from "../../../common/app";
@@ -22,6 +22,7 @@ export const BusModal = ({ isOpen, close, existing }: BusModalProps) => {
   const {
     post: { mutate: post },
     put: { mutate: put },
+    invalidate,
   } = useBusses();
 
   const initialValues: BusForm = {
@@ -33,7 +34,16 @@ export const BusModal = ({ isOpen, close, existing }: BusModalProps) => {
     initialValues,
     validate: {
       registrationNumber: (value) =>
-        validators(value, requiredValidator(), minLengthValidator(3)),
+        validators(
+          value,
+          requiredValidator(),
+          minLengthValidator(5),
+          (value) =>
+            matches(
+              /^[A-ZÄÖÜ]{1,3}-[A-Z]{1,2}\d{1,4}$/,
+              "Kein valides Kennzeichen"
+            )(value)?.toString() || null
+        ),
     },
   });
 
@@ -45,17 +55,42 @@ export const BusModal = ({ isOpen, close, existing }: BusModalProps) => {
   }, [existing]);
 
   const closeModal = () => {
-    form.reset();
     close();
+    setTimeout(() => form.reset(), 200);
   };
 
   const onSubmit = (formModel: BusForm) => {
     if (existing) {
-      put({ id: existing.id, update: formModel }, { onSuccess: closeModal });
+      put(
+        {
+          id: existing.id,
+          update: formModel,
+        },
+        {
+          onSuccess: closeModal,
+          onSettled: () => {
+            console.log("DEBUG: invalidate from hook");
+            invalidate();
+          },
+        }
+      );
     } else {
-      post(formModel, { onSuccess: closeModal });
+      post(formModel, {
+        onSuccess: closeModal,
+        onSettled: () => {
+          console.log("DEBUG: invalidate from hook");
+          invalidate();
+        },
+      });
     }
   };
+
+  // React.useEffect(() => {
+  //   form.setFieldValue(
+  //     "registrationNumber",
+  //     form.values.registrationNumber?.toUpperCase() || ""
+  //   );
+  // }, [form, form.values.registrationNumber]);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
@@ -67,11 +102,24 @@ export const BusModal = ({ isOpen, close, existing }: BusModalProps) => {
         <ModalMain>
           <TextInput
             {...form.getInputProps("registrationNumber")}
+            onChange={undefined}
+            onKeyDown={(e) => {
+              if (e.key === " ") {
+                e.preventDefault();
+                e.bubbles = false;
+              }
+            }}
+            onInput={(event) => {
+              event.preventDefault();
+              event.bubbles = false;
+              const uppercased = event.currentTarget.value.toUpperCase();
+              form.setFieldValue("registrationNumber", uppercased);
+            }}
             data-autofocus
             label="Nummernschild"
             key={form.key("registrationNumer")}
             disabled={!!existing}
-            placeholder="Nummernschild (min. 3 Zeichen, keine Leerzeichen)"
+            placeholder='Nummernschild (Format "UL-RK12345")'
             withAsterisk
             mb="md"
             rightSection={

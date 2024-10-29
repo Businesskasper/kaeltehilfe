@@ -26,7 +26,10 @@ export const usePostBatchDistribution = () => {
 
   const post = useMutation({
     mutationFn: httpPost,
-    onSettled: invalidateDistributions,
+    onSettled: () => {
+      console.log("DEBUG: invalidate from hook");
+      invalidateDistributions();
+    },
   });
 
   return post;

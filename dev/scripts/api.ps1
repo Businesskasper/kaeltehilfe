@@ -11,7 +11,6 @@ function GetLocalToken([string]$username, [string]$password, [string]$realm, [st
         scope='openid profile roles'
     }
     $tokenResult = Invoke-WebRequest -Method POST -Uri $authUrl -ContentType "application/x-www-form-urlencoded" -Body $authBody | ConvertFrom-Json
-    Write-Host $tokenResult
     $token = $tokenResult | select -ExpandProperty access_token
     return $token
 }
@@ -22,11 +21,31 @@ $password = "Passw0rd"
 
 $token = GetLocalToken -username $username -password $password -realm $realm
 
-$token | Set-Clipboard
 
+function GetLogins([string]$baseUrl, [string]$token) {
 
+    $url = "$($baseUrl)/logins"
+
+    $response = Invoke-WebRequest -Uri $url -UseBasicParsing -Method Get -Headers @{Authorization = "Bearer $($token)"} 
+
+    return ($response | ConvertFrom-Json)
+}
+
+function UpdateLogin([string]$username, [PSCustomObject]$update, [string]$baseUrl, [string]$token) {
+    $url = "$($baseUrl)/logins/$($username)"
+
+    $response = Invoke-WebRequest -Uri $url -UseBasicParsing -Method Patch -Headers @{Authorization = "Bearer $($token)"} -Body ($update | ConvertTo-Json -Depth 99) -ContentType "application/json" 
+
+    return $response
+}
 
 $baseUrl = "http://localhost:5280/api"
+
+$logins = GetLogins -baseUrl $baseUrl -token $token
+
+UpdateLogin -username $logins[0].username -update ([PSCustomObject]@{firstname = "Lukas"}) -baseUrl $baseUrl -token $token
+
+<#
 $endpoint = "logins/lukat.weis"
 
 $body = @{
@@ -35,4 +54,4 @@ $body = @{
 }
 
 Invoke-WebRequest -Uri "$($baseUrl)/$($endpoint)" -UseBasicParsing -Method Put -Headers @{Authorization = "Bearer $($token)"} -Body ($body | ConvertTo-Json -Depth 99) -ContentType "application/json"
-
+#>

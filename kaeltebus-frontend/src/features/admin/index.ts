@@ -1,6 +1,6 @@
 export * from "./AdminHome";
 export * from "./Admins/Admins";
-export * from "./Busses/Bus";
+export * from "./Busses/Busses";
 export * from "./Clients/Clients";
 export * from "./Distributions/Distributions";
 export * from "./Goods/Goods";

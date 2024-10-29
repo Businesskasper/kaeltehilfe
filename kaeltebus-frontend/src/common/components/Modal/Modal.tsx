@@ -1,4 +1,4 @@
-import { Modal, Title } from "@mantine/core";
+import { MantineSize, Modal, Title } from "@mantine/core";
 import React from "react";
 import { classes, useBreakpoint } from "../../utils";
 
@@ -8,12 +8,23 @@ type ModalProps = {
   isOpen: boolean;
   close: () => void;
   title: string;
-  children?: Array<
-    React.ReactElement<ModalMainProps> | React.ReactElement<ModalActionProps>
-  >;
+  size?: number | MantineSize;
+  children?:
+    | Array<
+        | React.ReactElement<ModalMainProps>
+        | React.ReactElement<ModalActionProps>
+      >
+    | React.ReactElement<ModalMainProps>
+    | React.ReactElement<ModalActionProps>;
 };
 
-export const AppModal = ({ isOpen, close, title, children }: ModalProps) => {
+export const AppModal = ({
+  isOpen,
+  close,
+  title,
+  children,
+  size,
+}: ModalProps) => {
   const breakpoint = useBreakpoint();
   const isMobile = breakpoint === "BASE" || breakpoint === "XS";
 
@@ -26,7 +37,7 @@ export const AppModal = ({ isOpen, close, title, children }: ModalProps) => {
       opened={isOpen}
       onClose={close}
       centered
-      size="lg"
+      size={size || "lg"}
       fullScreen={isMobile}
       transitionProps={{ transition: "fade", duration: 200 }}
     >

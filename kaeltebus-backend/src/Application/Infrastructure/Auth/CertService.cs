@@ -12,18 +12,16 @@ public class CertService : ICertService
     public CertService(IConfiguration configuration)
     {
         // Get the root certificate path from appsettings.json
-        var rootCertPath = configuration["CertificateSettings:RootCertPath"];
-        if (string.IsNullOrWhiteSpace(rootCertPath))
-            throw new Exception("RootCertPath is not defined in appsettings");
+        var rootCertPath = configuration.RequireConfigValue("CertificateSettings:RootCertPath");
 
         // Get the root certificate password from the environment variable
-        var rootCertPasswordVar = configuration["CertificateSettings:RootCertPasswordVar"];
-        if (string.IsNullOrWhiteSpace(rootCertPasswordVar))
-            throw new Exception("RootCertPasswordVar is not defined in appsettings");
+        var rootCertPasswordVar = configuration.RequireConfigValue(
+            "CertificateSettings:RootCertPasswordVar"
+        );
         var rootCertPassword =
             Environment.GetEnvironmentVariable(rootCertPasswordVar)
             ?? throw new InvalidOperationException(
-                "Root certificate password is not set in environment variables."
+                $"{rootCertPasswordVar} is not set in environment variables."
             );
 
         // Load the root certificate (with private key for signing)
@@ -38,7 +36,10 @@ public class CertService : ICertService
             throw new InvalidOperationException("Root certificate does not contain a private key.");
     }
 
-    public async Task<string> GenerateClientCert(string commonName, string pfxPassword)
+    public async Task<GenerateClientCertResult> GenerateClientCert(
+        string commonName,
+        string pfxPassword
+    )
     {
         // Create a subject name for the client certificate
         var distinguishedName = new X500DistinguishedName($"CN={commonName}");
@@ -93,7 +94,14 @@ public class CertService : ICertService
             // Convert the .pfx to a Base64 string
             var base64Pfx = Convert.ToBase64String(pfxBytes);
 
-            return await Task.FromResult(base64Pfx); // Return the Base64-encoded .pfx
+            return await Task.FromResult(
+                new GenerateClientCertResult(
+                    clientCertificate.Thumbprint,
+                    clientCertificate.NotBefore,
+                    clientCertificate.NotAfter,
+                    base64Pfx
+                )
+            );
         }
     }
 }

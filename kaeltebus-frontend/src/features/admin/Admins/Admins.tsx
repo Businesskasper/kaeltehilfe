@@ -1,14 +1,17 @@
 import { Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 // import { IconLogin } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
 import { AdminLogin, isAdminLogin, useLogins } from "../../../common/app";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
 import { formatDateTime } from "../../../common/utils";
+import { useProfile } from "../../../common/utils/useProfile";
 import { AdminModal } from "./AdminModal";
 
 export const Admins = () => {
+  const profile = useProfile();
   const {
     objs: { data: logins, isLoading },
     remove: { isPending: isDeleting, mutate: deleteLogin },
@@ -58,12 +61,55 @@ export const Admins = () => {
 
   const handleDelete = React.useCallback(
     (logins: Array<AdminLogin>) => {
-      logins.forEach((login) =>
-        deleteLogin(login.username as unknown as number)
-      );
+      logins.forEach((login) => {
+        if (login.username !== profile?.username)
+          deleteLogin(login.username as unknown as number);
+        else {
+          notifications.show({
+            message: `Der eigene Benutzer kann nicht gelöscht werden`,
+            withBorder: true,
+            withCloseButton: true,
+            w: "100%",
+            my: "sm",
+            autoClose: false,
+            color: "red",
+          });
+        }
+      });
     },
-    [deleteLogin]
+    [deleteLogin, profile?.username]
   );
+
+  // const handleDelete = React.useCallback(
+  //   (logins: Array<AdminLogin>) => {
+  //     const handleDeletes = logins.map((login) => {
+  //       return new Promise<void>((resolve, reject) => {
+  //         if (login.username !== profile?.username)
+  //           deleteLogin(login.username as unknown as number, {
+  //             onSettled: resolve,
+  //             onError: reject,
+  //           });
+  //         else {
+  //           notifications.show({
+  //             message: `Der eigene Benutzer kann nicht gelöscht werden`,
+  //             withBorder: true,
+  //             withCloseButton: true,
+  //             w: "100%",
+  //             my: "sm",
+  //             autoClose: false,
+  //             color: "red",
+  //           });
+  //           resolve();
+  //         }
+  //       });
+  //     });
+  //     Promise.allSettled(handleDeletes).then(() => {
+  //       console.log("refetch all");
+  //       invalidate();
+  //     });
+  //   },
+  //   [deleteLogin, invalidate, profile?.username]
+  // );
 
   const handleAdd = React.useCallback(() => {
     openModal();
@@ -74,7 +120,7 @@ export const Admins = () => {
   return (
     <>
       <Title size="h1" mb="lg">
-        Administratoren
+        Admin-Logins
       </Title>
 
       <Table

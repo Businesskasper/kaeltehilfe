@@ -1,6 +1,6 @@
 export const validators = <T>(
   value: T | undefined,
-  ...validators: Array<(value: T | undefined) => string | undefined>
+  ...validators: Array<(value: T | undefined) => string | null>
 ) => {
   for (const validator of validators) {
     const result = validator(value);
@@ -11,6 +11,7 @@ export const requiredValidator =
   (type?: "Date" | "Id" | "Array", message = "Erforderlich") =>
   (value: unknown) => {
     if (!isValueSet(value, type)) return message;
+    return null;
   };
 
 export const minLengthValidator =
@@ -18,12 +19,14 @@ export const minLengthValidator =
     if ((value?.toString()?.trim()?.length || 0) < minLength) {
       return `Mindestens ${minLength} Zeichen`;
     }
+    return null;
   };
 
 export const noSpacesValidator = () => (value?: string) => {
   if (value?.toString()?.includes(" ")) {
     return "Darf keine Leerzeichen enthalten";
   }
+  return null;
 };
 
 const isValueSet = (value: unknown, type?: "Date" | "Id" | "Array") => {
@@ -59,7 +62,7 @@ export const isDuplicate =
       .map((existingValue) => toString(existingValue))
       ?.includes(toString(value))
       ? message
-      : undefined;
+      : null;
   };
 
 const toString = (value: unknown) => {
@@ -74,5 +77,7 @@ export type RegexValdiatorRequirements = {
 };
 export const regexValidator =
   (requirements: Array<RegexValdiatorRequirements>) => (value?: string) => {
-    return requirements.find((r) => value && !r.matcher.test(value))?.error;
+    return (
+      requirements.find((r) => value && !r.matcher.test(value))?.error || null
+    );
   };

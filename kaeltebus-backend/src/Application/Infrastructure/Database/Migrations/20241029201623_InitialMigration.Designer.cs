@@ -11,7 +11,7 @@ using kaeltebus_backend.Infrastructure.Database;
 namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(KbContext))]
-    [Migration("20241026143044_InitialMigration")]
+    [Migration("20241029201623_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -271,6 +271,32 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("kaeltebus_backend.Models.LoginCertificate", b =>
+                {
+                    b.Property<string>("Thumbprint")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LoginUsername")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<long>("ValidFrom")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("ValidTo")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Thumbprint");
+
+                    b.HasIndex("LoginUsername");
+
+                    b.ToTable("LoginCertificates");
+                });
+
             modelBuilder.Entity("kaeltebus_backend.Models.Shift", b =>
                 {
                     b.Property<int>("Id")
@@ -440,6 +466,17 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     b.Navigation("Location");
                 });
 
+            modelBuilder.Entity("kaeltebus_backend.Models.LoginCertificate", b =>
+                {
+                    b.HasOne("kaeltebus_backend.Models.Login", "Login")
+                        .WithMany("LoginCertificates")
+                        .HasForeignKey("LoginUsername")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Login");
+                });
+
             modelBuilder.Entity("kaeltebus_backend.Models.Shift", b =>
                 {
                     b.HasOne("kaeltebus_backend.Models.Bus", "Bus")
@@ -490,6 +527,11 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
             modelBuilder.Entity("kaeltebus_backend.Models.Location", b =>
                 {
                     b.Navigation("Distributions");
+                });
+
+            modelBuilder.Entity("kaeltebus_backend.Models.Login", b =>
+                {
+                    b.Navigation("LoginCertificates");
                 });
 
             modelBuilder.Entity("kaeltebus_backend.Models.Shift", b =>

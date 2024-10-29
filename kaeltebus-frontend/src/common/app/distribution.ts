@@ -71,12 +71,18 @@ export const useWriteDistributions = () => {
     unknown
   >({
     mutationFn: ({ id, update }) => httpPatch(id, update),
-    onSettled: invalidate,
+    onSettled: () => {
+      console.log("DEBUG: invalidate from hook");
+      invalidate();
+    },
   });
 
   const remove = useMutation({
     mutationFn: httpDelete,
-    onSettled: invalidate,
+    onSettled: () => {
+      console.log("DEBUG: invalidate from hook");
+      invalidate();
+    },
   });
 
   return {

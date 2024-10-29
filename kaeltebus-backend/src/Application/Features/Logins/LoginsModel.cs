@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using AutoMapper;
 using FluentValidation;
 using kaeltebus_backend.Models;
@@ -25,12 +27,7 @@ public class LoginCreateDto
     public string? Password { get; set; }
 }
 
-public class LoginUpdateDto
-{
-    public string? Email { get; set; }
-    public string? Firstname { get; set; }
-    public string? Lastname { get; set; }
-}
+public class LoginUpdateDto : Dictionary<string, object> { }
 
 public class LoginDtoToObjProfile : Profile
 {
@@ -95,16 +92,81 @@ public class LoginCreateDtoValidator : AbstractValidator<LoginCreateDto>
     }
 }
 
-public class CreateCertRequest
+public class LoginUpdateDtoValidator : AbstractValidator<LoginUpdateDto>
 {
-    public string PfxPassword { get; set; } = "";
-}
-
-public class CreateCertValidator : AbstractValidator<CreateCertRequest>
-{
-    public CreateCertValidator()
+    public LoginUpdateDtoValidator()
     {
-        RuleFor(l => l.PfxPassword).NotEmpty().MinimumLength(8);
+        RuleForEach(x => x.Keys)
+            .Must(key => key == "firstname" || key == "lastname" || key == "email")
+            .WithMessage("Only 'firstname', 'lastname', or 'email' are allowed as keys.");
+
+        RuleFor(x => x)
+            .Must(dto =>
+                dto.ContainsKey("firstname")
+                || dto.ContainsKey("lastname")
+                || dto.ContainsKey("email")
+            )
+            .WithMessage("At least one of 'firstname', 'lastname', or 'email' must be present.");
+
+        When(
+            x => x.ContainsKey("firstname"),
+            () =>
+            {
+                RuleFor(x => x["firstname"])
+                    .NotNull()
+                    .WithMessage("'firstname' cannot be null.")
+                    .Must(value =>
+                    {
+                        if (value is not JsonElement)
+                            return false;
+                        var parsed = ObjectMethods.GetJsonElementValue((JsonElement)value);
+                        return parsed is not null
+                            && parsed is string
+                            && ((string)parsed).Length >= 3;
+                    })
+                    .WithMessage(
+                        (a, b) => $"{b.GetType()}'firstname' must be at least 3 characters long."
+                    );
+            }
+        );
+
+        When(
+            x => x.ContainsKey("lastname"),
+            () =>
+            {
+                RuleFor(x => x["lastname"])
+                    .NotNull()
+                    .WithMessage("'lastname' cannot be null.")
+                    .Must(value =>
+                    {
+                        if (value is not JsonElement)
+                            return false;
+                        var parsed = ObjectMethods.GetJsonElementValue((JsonElement)value);
+                        return parsed is not null
+                            && parsed is string
+                            && ((string)parsed).Length >= 3;
+                    })
+                    .WithMessage("'lastname' must be at least 3 characters long.");
+            }
+        );
+
+        When(
+            x => x.ContainsKey("email"),
+            () =>
+            {
+                RuleFor(x => x["email"])
+                    .NotNull()
+                    .WithMessage("'email' cannot be null.")
+                    .Must(value =>
+                    {
+                        if (value is not JsonElement)
+                            return false;
+                        var parsed = ObjectMethods.GetJsonElementValue((JsonElement)value);
+                        return parsed is not null && new EmailAddressAttribute().IsValid(parsed);
+                    })
+                    .WithMessage("Invalid email format.");
+            }
+        );
     }
 }
 

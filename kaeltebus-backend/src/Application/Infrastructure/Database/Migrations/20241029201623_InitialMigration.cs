@@ -189,6 +189,26 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LoginCertificates",
+                columns: table => new
+                {
+                    Thumbprint = table.Column<string>(type: "TEXT", nullable: false),
+                    ValidFrom = table.Column<long>(type: "INTEGER", nullable: false),
+                    ValidTo = table.Column<long>(type: "INTEGER", nullable: false),
+                    FileName = table.Column<string>(type: "TEXT", nullable: false),
+                    LoginUsername = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoginCertificates", x => x.Thumbprint);
+                    table.ForeignKey(
+                        name: "FK_LoginCertificates_Logins_LoginUsername",
+                        column: x => x.LoginUsername,
+                        principalTable: "Logins",
+                        principalColumn: "Username");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ShiftVolunteers",
                 columns: table => new
                 {
@@ -292,6 +312,11 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 filter: "IsDeleted = 0");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LoginCertificates_LoginUsername",
+                table: "LoginCertificates",
+                column: "LoginUsername");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Shifts_BusId",
                 table: "Shifts",
                 column: "BusId");
@@ -333,7 +358,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 name: "Distributions");
 
             migrationBuilder.DropTable(
-                name: "Logins");
+                name: "LoginCertificates");
 
             migrationBuilder.DropTable(
                 name: "ShiftVolunteers");
@@ -346,6 +371,9 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "Locations");
+
+            migrationBuilder.DropTable(
+                name: "Logins");
 
             migrationBuilder.DropTable(
                 name: "Shifts");

@@ -41,6 +41,7 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
     objs: { data: shifts },
     post: { mutate: post },
     put: { mutate: put },
+    invalidate,
   } = useShifts();
 
   const {
@@ -139,8 +140,8 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
   }, [existing, initialValues]);
 
   const closeModal = () => {
-    form.reset();
     close();
+    setTimeout(() => form.reset(), 200);
   };
 
   const onSubmit = (formModel: ShiftForm) => {
@@ -154,9 +155,24 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
       volunteers: formModel.volunteers.map(({ id }) => ({ id })),
     };
     if (existing) {
-      put({ id: existing.id, update: submitModel }, { onSuccess: closeModal });
+      put(
+        { id: existing.id, update: submitModel },
+        {
+          onSuccess: closeModal,
+          onSettled: () => {
+            console.log("DEBUG: invalidate from hook");
+            invalidate();
+          },
+        }
+      );
     } else {
-      post(submitModel, { onSuccess: closeModal });
+      post(submitModel, {
+        onSuccess: closeModal,
+        onSettled: () => {
+          console.log("DEBUG: invalidate from hook");
+          invalidate();
+        },
+      });
     }
   };
 

@@ -1,6 +1,4 @@
-using System.Text.Json;
 using AutoMapper;
-using FluentValidation;
 using kaeltebus_backend.Infrastructure.Auth;
 using kaeltebus_backend.Infrastructure.Database;
 using kaeltebus_backend.Models;
@@ -8,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Update;
 
 namespace kaeltebus_backend.Features.Logins;
 
@@ -19,21 +16,22 @@ public class LoginsController : ControllerBase
     protected readonly KbContext _kbContext;
     protected readonly IMapper _mapper;
     protected readonly IUserService _userService;
-    protected readonly ICertService _certService;
+    protected readonly string _certFileDir;
 
     public LoginsController(
+        IConfiguration configuration,
         ILogger<LoginsController> logger,
         KbContext kbContext,
         IMapper mapper,
-        IUserService userService,
-        ICertService certService
+        IUserService userService
     )
     {
         _logger = logger;
         _kbContext = kbContext;
         _mapper = mapper;
         _userService = userService;
-        _certService = certService;
+
+        _certFileDir = configuration.RequireConfigValue("CertificateSettings:ClientCertDir");
     }
 
     [HttpGet()]
@@ -136,7 +134,7 @@ public class LoginsController : ControllerBase
     [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Update(
         [FromRoute(Name = "username")] string username,
-        [FromBody] Dictionary<string, object> update
+        [FromBody] LoginUpdateDto update
     )
     {
         var login = await _kbContext.Logins.FindAsync(username);
@@ -158,25 +156,5 @@ public class LoginsController : ControllerBase
         await _kbContext.SaveChangesAsync();
 
         return NoContent();
-    }
-
-    [HttpPost("{username}/Certificate")]
-    [Authorize(Roles = "ADMIN")]
-    public async Task<IActionResult> CreateCert(
-        [FromRoute(Name = "username")] string username,
-        [FromBody] CreateCertRequest createCertRequest
-    )
-    {
-        _logger.LogInformation($"Generate certificate for {username}");
-        var login = await _kbContext.Logins.FindAsync(username);
-        if (login == null)
-            return NotFound();
-
-        var encodedCertChain = await _certService.GenerateClientCert(
-            username,
-            createCertRequest.PfxPassword
-        );
-
-        return Ok(new { EncodedCertChain = encodedCertChain });
     }
 }

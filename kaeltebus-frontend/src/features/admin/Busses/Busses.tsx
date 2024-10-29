@@ -1,11 +1,19 @@
 import { Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 // import { IconLogin } from "@tabler/icons-react";
+import { IconCertificate } from "@tabler/icons-react";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
-import { Bus, useBusses } from "../../../common/app";
+import {
+  Bus,
+  OperatorLogin,
+  isOperatorLogin,
+  useBusses,
+  useLogins,
+} from "../../../common/app";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
 import { BusModal } from "./BusModal";
+import { LoginCertificatesModal } from "./LoginCertificatesModal";
 
 export const Busses = () => {
   const {
@@ -13,10 +21,26 @@ export const Busses = () => {
     remove: { isPending: isDeleting, mutate: deleteBus },
   } = useBusses();
 
-  const [isModalOpened, { open: openModal, close: closeModal }] =
+  const {
+    objs: { data: logins },
+  } = useLogins();
+
+  const [isCrudModalOpened, { open: openCrudModal, close: closeCrudModal }] =
+    useDisclosure(false);
+
+  const [isCertModalOpened, { open: openCertModal, close: closeCertModal }] =
     useDisclosure(false);
 
   const [selectedBusses, setSelectedBusses] = React.useState<Array<Bus>>([]);
+  const selectedBusLogin: OperatorLogin | undefined =
+    selectedBusses.length === 1
+      ? logins?.find(
+          (l): l is OperatorLogin =>
+            isOperatorLogin(l) &&
+            l.registrationNumber.toUpperCase() ===
+              selectedBusses[0].registrationNumber.toUpperCase()
+        )
+      : undefined;
 
   const columns: Array<MRT_ColumnDef<Bus>> = [
     {
@@ -33,8 +57,8 @@ export const Busses = () => {
   };
 
   const handleEdit = React.useCallback(() => {
-    openModal();
-  }, [openModal]);
+    openCrudModal();
+  }, [openCrudModal]);
 
   const handleDelete = React.useCallback(
     (busses: Array<Bus>) => {
@@ -44,8 +68,8 @@ export const Busses = () => {
   );
 
   const handleAdd = React.useCallback(() => {
-    openModal();
-  }, [openModal]);
+    openCrudModal();
+  }, [openCrudModal]);
 
   const isTableLoading = isLoading || isDeleting;
 
@@ -67,22 +91,28 @@ export const Busses = () => {
         fillScreen
         tableKey="busses-overview"
         setSelected={setSelectedBusses}
-        // customActions={[
-        //   {
-        //     label: "Passwort vergeben",
-        //     icon: IconLogin,
-        //     isDisabled: (selected) => selected?.length !== 1,
-        //     color: "blue",
-        //     variant: "light",
-        //     onClick: (selected) => console.log(selected),
-        //   },
-        // ]}
+        customActions={[
+          {
+            label: "Anmeldezertifikate verwalten",
+            icon: IconCertificate,
+            isDisabled: (selected) => selected?.length !== 1,
+            color: "blue",
+            variant: "light",
+            onClick: openCertModal,
+          },
+        ]}
         enableGrouping
       />
       <BusModal
-        close={closeModal}
-        isOpen={isModalOpened}
+        close={closeCrudModal}
+        isOpen={isCrudModalOpened}
         existing={selectedBusses[0]}
+      />
+      <LoginCertificatesModal
+        login={selectedBusLogin}
+        bus={selectedBusses[0]}
+        close={closeCertModal}
+        isOpen={isCertModalOpened && !!selectedBusLogin && !!selectedBusses[0]}
       />
     </>
   );

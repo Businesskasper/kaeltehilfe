@@ -79,15 +79,15 @@ export const AdminHome = () => {
         <NavigationSection label="Schichtplanung">
           <NavigationItem
             // onNavigate={toggle}
-            label="Freiwillige"
-            Icon={IconUser}
-            target="volunteers"
-          />
-          <NavigationItem
-            // onNavigate={toggle}
             label="Schichtträger"
             Icon={IconBus}
             target="busses"
+          />
+          <NavigationItem
+            // onNavigate={toggle}
+            label="Freiwillige"
+            Icon={IconUser}
+            target="volunteers"
           />
           <NavigationItem
             // onNavigate={toggle}

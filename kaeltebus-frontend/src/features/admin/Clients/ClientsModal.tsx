@@ -30,6 +30,7 @@ export const ClientModal = ({ isOpen, close, existing }: ClientsModalProps) => {
   const {
     post: { mutate: post },
     put: { mutate: put },
+    invalidate,
   } = useClients();
 
   const initialValues: ClientsForm = {
@@ -60,15 +61,30 @@ export const ClientModal = ({ isOpen, close, existing }: ClientsModalProps) => {
   }, [existing]);
 
   const closeModal = () => {
-    form.reset();
     close();
+    setTimeout(() => form.reset(), 200);
   };
 
   const onSubmit = (formModel: ClientsForm) => {
     if (existing) {
-      put({ id: existing.id, update: formModel }, { onSuccess: closeModal });
+      put(
+        { id: existing.id, update: formModel },
+        {
+          onSuccess: closeModal,
+          onSettled: () => {
+            console.log("DEBUG: invalidate from hook");
+            invalidate();
+          },
+        }
+      );
     } else {
-      post(formModel, { onSuccess: closeModal });
+      post(formModel, {
+        onSuccess: closeModal,
+        onSettled: () => {
+          console.log("DEBUG: invalidate from hook");
+          invalidate();
+        },
+      });
     }
   };
 
