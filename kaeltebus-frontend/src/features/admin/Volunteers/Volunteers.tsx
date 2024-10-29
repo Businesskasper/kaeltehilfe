@@ -1,11 +1,11 @@
 import { Checkbox, Title } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
 import { GenderTranslation } from "../../../common/app/gender";
 import { Volunteer, useVolunteers } from "../../../common/app/volunteer";
+import { openAppModal } from "../../../common/components";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
-import { VolunteerModal } from "./VolunteersModal";
+import { VolunteerModalContent } from "./VolunteersModalContent";
 
 export const Volunteers = () => {
   const {
@@ -14,12 +14,19 @@ export const Volunteers = () => {
     remove: { isPending: isDeleting, mutate: deleteVolunteer },
   } = useVolunteers();
 
-  const [isModalOpened, { open: openModal, close: closeModal }] =
-    useDisclosure(false);
-
   const [selectedVolunteers, setSelectedVolunteers] = React.useState<
     Array<Volunteer>
   >([]);
+
+  const openModal = React.useCallback(
+    () =>
+      openAppModal({
+        title: selectedVolunteers[0] ? "Bearbeiten" : "Hinzufügen",
+        modalId: "VolunteersModal",
+        children: <VolunteerModalContent existing={selectedVolunteers[0]} />,
+      }),
+    [selectedVolunteers]
+  );
 
   const columns: Array<MRT_ColumnDef<Volunteer>> = [
     {
@@ -113,11 +120,6 @@ export const Volunteers = () => {
         tableKey="volunteers-overview"
         setSelected={setSelectedVolunteers}
         enableGrouping
-      />
-      <VolunteerModal
-        close={closeModal}
-        isOpen={isModalOpened}
-        existing={selectedVolunteers[0]}
       />
     </>
   );

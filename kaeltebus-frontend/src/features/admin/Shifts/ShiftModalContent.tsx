@@ -1,6 +1,7 @@
 import { ActionIcon, Button, Group, InputLabel } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
+import { modals } from "@mantine/modals";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import React from "react";
 import {
@@ -11,7 +12,6 @@ import {
   useVolunteers,
 } from "../../../common/app";
 import {
-  AppModal,
   FormSelect,
   ModalActions,
   ModalMain,
@@ -23,9 +23,7 @@ import {
   validators,
 } from "../../../common/utils/validators";
 
-type ShiftModalProps = {
-  isOpen: boolean;
-  close: () => void;
+type ShiftModalContentProps = {
   existing?: Shift;
 };
 
@@ -36,12 +34,11 @@ type ShiftForm = {
   volunteers: Array<{ id: number; fullname: string }>;
 };
 
-export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
+export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
   const {
     objs: { data: shifts },
     post: { mutate: post },
     put: { mutate: put },
-    invalidate,
   } = useShifts();
 
   const {
@@ -79,7 +76,11 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
           isDuplicate(
             shifts
               ?.filter(
-                (s) => s.date !== existing?.date && s.busId === existing?.busId
+                (s) =>
+                  !(
+                    s.date?.valueOf() === existing?.date?.valueOf() &&
+                    s.busId === existing?.busId
+                  )
               )
               ?.map(({ date }) => date) || [],
             "Eine Schicht zum angegebenem Datum existiert bereits"
@@ -140,11 +141,11 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
   }, [existing, initialValues]);
 
   const closeModal = () => {
-    close();
-    setTimeout(() => form.reset(), 200);
+    modals.close("ShiftsModal");
   };
 
   const onSubmit = (formModel: ShiftForm) => {
+    console.log("submit - existing", existing);
     const submitModel: ShiftPost = {
       date: formModel.date.toLocaleString("en-CA", {
         year: "numeric",
@@ -155,24 +156,9 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
       volunteers: formModel.volunteers.map(({ id }) => ({ id })),
     };
     if (existing) {
-      put(
-        { id: existing.id, update: submitModel },
-        {
-          onSuccess: closeModal,
-          onSettled: () => {
-            console.log("DEBUG: invalidate from hook");
-            invalidate();
-          },
-        }
-      );
+      put({ id: existing.id, update: submitModel }, { onSuccess: closeModal });
     } else {
-      post(submitModel, {
-        onSuccess: closeModal,
-        onSettled: () => {
-          console.log("DEBUG: invalidate from hook");
-          invalidate();
-        },
-      });
+      post(submitModel, { onSuccess: closeModal });
     }
   };
 
@@ -223,7 +209,16 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
         top="3px"
         right="0px"
         color="red"
-        onClick={() => form.removeListItem("volunteers", index)}
+        onClick={() => {
+          form.removeListItem("volunteers", index);
+          form.setTouched((prev) => {
+            console.log("prev", prev);
+            return {
+              ...prev,
+              volunteers: true,
+            };
+          });
+        }}
       >
         <IconTrash size="1rem" />
       </ActionIcon>
@@ -232,68 +227,62 @@ export const ShiftModal = ({ isOpen, close, existing }: ShiftModalProps) => {
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>
-      <AppModal
-        close={closeModal}
-        isOpen={isOpen}
-        title={existing ? "Bearbeiten" : "Hinzufügen"}
-      >
-        <ModalMain>
-          <DateInput
-            {...form.getInputProps("date")}
-            data-autofocus={existing ? undefined : true}
-            label="Datum"
-            key={form.key("date")}
-            placeholder="Datum"
-            withAsterisk
-            mb="md"
-            locale="de"
-            valueFormat="DD.MM.YYYY"
-            preserveTime={false}
-            clearable
-            getDayProps={(date) => {
-              const entryExists = !!shifts?.find(
-                (s) => compareByDateOnly(s.date, date) === 0
-              );
-              return {
-                disabled: entryExists,
-              };
-            }}
-          />
-          <FormSelect
-            label="Fahrzeug"
-            items={busses || []}
-            style={{ marginBottom: "var(--mantine-spacing-sm)" }}
-            valueGetter="registrationNumber"
-            sort
-            formProps={form.getInputProps("registrationNumber")}
-            onItemSelected={(selectedBus) => {
-              form.setFieldValue("busId", selectedBus?.id || 1);
-            }}
-          />
-          <InputLabel required w="100%">
-            Freiwillige
-          </InputLabel>
-          {volunteerFields}
-          <ActionIcon
-            mt={form.getValues().volunteers?.length > 0 ? undefined : "md"}
-            onClick={() =>
-              form.insertListItem("volunteers", { id: "", name: "" })
-            }
-          >
-            <IconPlus />
-          </ActionIcon>
-        </ModalMain>
-        <ModalActions>
-          <Button
-            disabled={!form.isTouched() || !form.isDirty()}
-            onClick={() => form.onSubmit(onSubmit)()}
-            fullWidth
-            mt="xl"
-          >
-            Abschicken
-          </Button>
-        </ModalActions>
-      </AppModal>
+      <ModalMain>
+        <DateInput
+          {...form.getInputProps("date")}
+          data-autofocus={existing ? undefined : true}
+          label="Datum"
+          key={form.key("date")}
+          placeholder="Datum"
+          withAsterisk
+          mb="md"
+          locale="de"
+          valueFormat="DD.MM.YYYY"
+          preserveTime={false}
+          clearable
+          getDayProps={(date) => {
+            const entryExists = !!shifts?.find(
+              (s) => compareByDateOnly(s.date, date) === 0
+            );
+            return {
+              disabled: entryExists,
+            };
+          }}
+        />
+        <FormSelect
+          label="Fahrzeug"
+          items={busses || []}
+          style={{ marginBottom: "var(--mantine-spacing-sm)" }}
+          valueGetter="registrationNumber"
+          sort
+          formProps={form.getInputProps("registrationNumber")}
+          onItemSelected={(selectedBus) => {
+            form.setFieldValue("busId", selectedBus?.id || 1);
+          }}
+        />
+        <InputLabel required w="100%">
+          Freiwillige
+        </InputLabel>
+        {volunteerFields}
+        <ActionIcon
+          mt={form.getValues().volunteers?.length > 0 ? undefined : "md"}
+          onClick={() =>
+            form.insertListItem("volunteers", { id: "", name: "" })
+          }
+        >
+          <IconPlus />
+        </ActionIcon>
+      </ModalMain>
+      <ModalActions>
+        <Button
+          disabled={!form.isTouched() || !form.isDirty()}
+          onClick={() => form.onSubmit(onSubmit)()}
+          fullWidth
+          mt="xl"
+        >
+          Abschicken
+        </Button>
+      </ModalActions>
     </form>
   );
 };

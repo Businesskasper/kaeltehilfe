@@ -1,2 +1,26 @@
-.App {
+// .App {
+.modal {
+    &.full-width {
+        .mantine-Modal-content {
+            display: flex !important;
+            flex-direction: column;
+            width: 100%;
+
+            .mantine-Modal-body {
+                display: flex;
+                flex-direction: column;
+                flex-grow: 1;
+
+                .modal-main {
+                    flex-grow: 1;
+                }
+
+                // .modal-actions {
+
+                // }
+            }
+        }
+    }
 }
+
+// }

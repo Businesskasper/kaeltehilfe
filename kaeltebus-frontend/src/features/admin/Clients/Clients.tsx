@@ -1,11 +1,11 @@
 import { Title } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
 import { Client, useClients } from "../../../common/app/client";
 import { GenderTranslation } from "../../../common/app/gender";
+import { openAppModal } from "../../../common/components";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
-import { ClientModal } from "./ClientsModal";
+import { ClientModalContent } from "./ClientsModalContent";
 
 export const Clients = () => {
   const {
@@ -13,11 +13,18 @@ export const Clients = () => {
     put: { isPending: isPutting },
   } = useClients();
 
-  const [isModalOpened, { open: openModal, close: closeModal }] =
-    useDisclosure(false);
-
   const [selectedClients, setSelectedClients] = React.useState<Array<Client>>(
     []
+  );
+
+  const openModal = React.useCallback(
+    () =>
+      openAppModal({
+        title: selectedClients[0] ? "Bearbeiten" : "Hinzufügen",
+        modalId: "ClientsModal",
+        children: <ClientModalContent existing={selectedClients[0]} />,
+      }),
+    [selectedClients]
   );
 
   const columns: Array<MRT_ColumnDef<Client>> = [
@@ -79,11 +86,6 @@ export const Clients = () => {
         tableKey="clients-overview"
         setSelected={setSelectedClients}
         enableGrouping
-      />
-      <ClientModal
-        close={closeModal}
-        isOpen={isModalOpened}
-        existing={selectedClients[0]}
       />
     </>
   );

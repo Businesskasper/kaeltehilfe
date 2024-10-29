@@ -19,7 +19,7 @@ public class VolunteerCreateDto
 {
     public string? Firstname { get; set; }
     public string? Lastname { get; set; }
-    public Gender? Gender { get; set; }
+    public string? Gender { get; set; }
     public bool? IsDriver { get; set; }
     public string? Remarks { get; set; }
 }
@@ -31,7 +31,17 @@ public class VolunteerDtoToObjProfile : Profile
         CreateMap<VolunteerDto, Volunteer>();
         CreateMap<Volunteer, VolunteerDto>();
 
-        CreateMap<VolunteerCreateDto, Volunteer>();
+        CreateMap<VolunteerCreateDto, Volunteer>()
+            .ForMember(
+                v => v.Gender,
+                (m) =>
+                    m.MapFrom(
+                        (dto) =>
+                            string.IsNullOrWhiteSpace(dto.Gender)
+                                ? (Gender?)null
+                                : Enum.Parse<Gender>(dto.Gender)
+                    )
+            );
     }
 }
 

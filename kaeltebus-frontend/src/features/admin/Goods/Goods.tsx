@@ -1,10 +1,10 @@
 import { Box, Pill, PillGroup, Title } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
 import { Good, GoodTypeTranslation, useGoods } from "../../../common/app/good";
+import { openAppModal } from "../../../common/components";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
-import { GoodModal } from "./GoodsModal";
+import { GoodModalContent } from "./GoodsModalContent";
 
 export const Goods = () => {
   const {
@@ -13,10 +13,17 @@ export const Goods = () => {
     remove: { isPending: isDeleting, mutate: deleteGood },
   } = useGoods();
 
-  const [isModalOpened, { open: openModal, close: closeModal }] =
-    useDisclosure(false);
-
   const [selectedGoods, setSelectedGoods] = React.useState<Array<Good>>([]);
+
+  const openModal = React.useCallback(
+    () =>
+      openAppModal({
+        title: selectedGoods[0] ? "Bearbeiten" : "Hinzufügen",
+        modalId: "GoodsModal",
+        children: <GoodModalContent existing={selectedGoods[0]} />,
+      }),
+    [selectedGoods]
+  );
 
   const columns: Array<MRT_ColumnDef<Good>> = [
     {
@@ -124,11 +131,6 @@ export const Goods = () => {
         tableKey="goods-overview"
         setSelected={setSelectedGoods}
         enableGrouping
-      />
-      <GoodModal
-        close={closeModal}
-        isOpen={isModalOpened}
-        existing={selectedGoods[0]}
       />
     </>
   );

@@ -1,5 +1,4 @@
 import { Title, Tooltip } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import {
   IconCircleCheckFilled,
   IconSteeringWheelFilled,
@@ -9,9 +8,14 @@ import {
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
 import { Shift, useShifts } from "../../../common/app";
-import { ExportConfig, Table, TransformFn } from "../../../common/components";
+import {
+  ExportConfig,
+  Table,
+  TransformFn,
+  openAppModal,
+} from "../../../common/components";
 import { compareByDateOnly, formatDate } from "../../../common/utils";
-import { ShiftModal } from "./ShiftModal";
+import { ShiftModalContent } from "./ShiftModalContent";
 
 export const Shifts = () => {
   const {
@@ -22,8 +26,15 @@ export const Shifts = () => {
 
   const [selectedShifts, setSelectedShifts] = React.useState<Array<Shift>>([]);
 
-  const [isModalOpened, { open: openModal, close: closeModal }] =
-    useDisclosure(false);
+  const openModal = React.useCallback(
+    () =>
+      openAppModal({
+        title: selectedShifts[0] ? "Bearbeiten" : "Hinzufügen",
+        modalId: "ShiftsModal",
+        children: <ShiftModalContent existing={selectedShifts[0]} />,
+      }),
+    [selectedShifts]
+  );
 
   const countVolunteers = shifts?.reduce((sum, shift) => {
     const countVolunteers = shift.volunteers?.length || 0;
@@ -146,11 +157,6 @@ export const Shifts = () => {
         setSelected={setSelectedShifts}
         defaultSorting={[{ id: "date", desc: true }]}
         enableGrouping
-      />
-      <ShiftModal
-        close={closeModal}
-        isOpen={isModalOpened}
-        existing={selectedShifts[0]}
       />
     </>
   );

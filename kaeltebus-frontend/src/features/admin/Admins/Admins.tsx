@@ -1,14 +1,14 @@
 import { Title } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 // import { IconLogin } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
 import { AdminLogin, isAdminLogin, useLogins } from "../../../common/app";
+import { openAppModal } from "../../../common/components";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
 import { formatDateTime } from "../../../common/utils";
 import { useProfile } from "../../../common/utils/useProfile";
-import { AdminModal } from "./AdminModal";
+import { AdminLoginModalContent } from "./AdminModalContent";
 
 export const Admins = () => {
   const profile = useProfile();
@@ -22,11 +22,18 @@ export const Admins = () => {
     [logins]
   );
 
-  const [isModalOpened, { open: openModal, close: closeModal }] =
-    useDisclosure(false);
-
   const [selectedLogins, setSelectedLogins] = React.useState<Array<AdminLogin>>(
     []
+  );
+
+  const openModal = React.useCallback(
+    () =>
+      openAppModal({
+        title: selectedLogins[0] ? "Bearbeiten" : "Hinzufügen",
+        modalId: "AdminLoginModal",
+        children: <AdminLoginModalContent existing={selectedLogins[0]} />,
+      }),
+    [selectedLogins]
   );
 
   const columns: Array<MRT_ColumnDef<AdminLogin>> = [
@@ -146,11 +153,6 @@ export const Admins = () => {
         //   },
         // ]}
         enableGrouping
-      />
-      <AdminModal
-        close={closeModal}
-        isOpen={isModalOpened}
-        existing={selectedLogins[0]}
       />
     </>
   );

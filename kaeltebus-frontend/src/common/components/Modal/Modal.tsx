@@ -1,4 +1,5 @@
 import { MantineSize, Modal, Title } from "@mantine/core";
+import { modals } from "@mantine/modals";
 import React from "react";
 import { classes, useBreakpoint } from "../../utils";
 
@@ -18,6 +19,43 @@ type ModalProps = {
     | React.ReactElement<ModalActionProps>;
 };
 
+type OpenAppModalProps = {
+  modalId?: string;
+  title: string;
+  size?: number | MantineSize;
+  children:
+    | Array<
+        | React.ReactElement<ModalMainProps>
+        | React.ReactElement<ModalActionProps>
+      >
+    | React.ReactElement<ModalMainProps>
+    | React.ReactElement<ModalActionProps>;
+};
+export const openAppModal = (props: OpenAppModalProps) => {
+  modals.open({
+    modalId: props.modalId,
+    // withinPortal: false,
+    // title: props.title,
+    // title: <Title order={3}>{props.title}</Title>,
+    withCloseButton: false,
+    size: props.size || "lg",
+    children: (
+      <>
+        <Modal.Header>
+          <Title order={3}>{props.title}</Title>
+          <Modal.CloseButton />
+        </Modal.Header>
+        <Modal.Body>{props.children}</Modal.Body>
+      </>
+    ),
+  });
+};
+
+/**
+ * @deprecated Use {@link openAppModal} instead!
+ * @param param0
+ * @returns
+ */
 export const AppModal = ({
   isOpen,
   close,

@@ -1,4 +1,5 @@
 import { MantineProvider, colorsTuple } from "@mantine/core";
+import { ModalsProvider } from "@mantine/modals";
 import { Notifications } from "@mantine/notifications";
 import {
   QueryCache,
@@ -7,7 +8,6 @@ import {
 } from "@tanstack/react-query";
 import React from "react";
 import { hasAuthParams, useAuth } from "react-oidc-context";
-import { Outlet } from "react-router-dom";
 
 import "./App.scss";
 
@@ -15,6 +15,8 @@ import { DatesProvider } from "@mantine/dates";
 import dayjs from "dayjs";
 import "dayjs/locale/de";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { Outlet } from "react-router-dom";
+import { classes, useBreakpoint } from "./common/utils";
 dayjs.extend(customParseFormat);
 
 function App() {
@@ -108,6 +110,37 @@ function App() {
     }
   }, [isIphone]);
 
+  // const openFirstModal = () => {
+  //   modals.open({
+  //     modalId: "asdf",
+  //     title: "asdf",
+  //     children: (
+  //       <>
+  //         <Button onClick={() => modals.close("asdf")}>Close</Button>
+  //         <Button
+  //           onClick={() =>
+  //             modals.open({
+  //               title: "Modal 2",
+  //               modalId: "bsdf",
+  //               children: (
+  //                 <>
+  //                   <Button onClick={() => modals.close("bsdf")}>
+  //                     Close All
+  //                   </Button>
+  //                 </>
+  //               ),
+  //             })
+  //           }
+  //         >
+  //           Open Next
+  //         </Button>
+  //       </>
+  //     ),
+  //   });
+  // };
+  const breakpoint = useBreakpoint();
+  const isMobile = breakpoint === "BASE" || breakpoint === "XS";
+
   return (
     <React.StrictMode>
       <MantineProvider
@@ -138,7 +171,20 @@ function App() {
         <DatesProvider settings={{ locale: "de" }}>
           <Notifications position="bottom-center" />
           <QueryClientProvider client={queryClient}>
-            <Outlet />
+            <ModalsProvider
+              modalProps={{
+                fullScreen: isMobile,
+                centered: true,
+                transitionProps: { transition: "fade", duration: 200 },
+                className: classes({
+                  modal: true,
+                  "full-width": !!isMobile,
+                }),
+              }}
+            >
+              {/* <Button onClick={openFirstModal}>Open</Button> */}
+              <Outlet />
+            </ModalsProvider>
           </QueryClientProvider>
         </DatesProvider>
       </MantineProvider>

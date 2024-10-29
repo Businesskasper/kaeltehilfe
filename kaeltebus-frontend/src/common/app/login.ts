@@ -23,7 +23,7 @@ export type OperatorLogin = {
 
 export type Login = AdminLogin | OperatorLogin;
 
-export type LoginPost = {
+export type AdminLoginPost = {
   role: "ADMIN";
   email: string;
   firstname: string;
@@ -38,7 +38,7 @@ export type LoginPatch = {
 };
 
 export const useLogins = () =>
-  useCrudHook<Login, never, LoginPost, LoginPatch>({
+  useCrudHook<Login, never, AdminLoginPost, LoginPatch>({
     key: "logins",
     transformer: { createOn: (value) => toDate(value) ?? new Date() },
   });

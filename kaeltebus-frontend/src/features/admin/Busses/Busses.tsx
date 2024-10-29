@@ -1,5 +1,4 @@
 import { Title } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 // import { IconLogin } from "@tabler/icons-react";
 import { IconCertificate } from "@tabler/icons-react";
 import { MRT_ColumnDef } from "mantine-react-table";
@@ -11,9 +10,10 @@ import {
   useBusses,
   useLogins,
 } from "../../../common/app";
+import { openAppModal } from "../../../common/components";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
-import { BusModal } from "./BusModal";
-import { LoginCertificatesModal } from "./LoginCertificatesModal";
+import { BusModalContent } from "./BusModalContent";
+import { ManageLoginCertificatesModalContent } from "./ManageLoginCertificatesModalContent";
 
 export const Busses = () => {
   const {
@@ -25,22 +25,44 @@ export const Busses = () => {
     objs: { data: logins },
   } = useLogins();
 
-  const [isCrudModalOpened, { open: openCrudModal, close: closeCrudModal }] =
-    useDisclosure(false);
-
-  const [isCertModalOpened, { open: openCertModal, close: closeCertModal }] =
-    useDisclosure(false);
-
   const [selectedBusses, setSelectedBusses] = React.useState<Array<Bus>>([]);
-  const selectedBusLogin: OperatorLogin | undefined =
-    selectedBusses.length === 1
-      ? logins?.find(
-          (l): l is OperatorLogin =>
-            isOperatorLogin(l) &&
-            l.registrationNumber.toUpperCase() ===
-              selectedBusses[0].registrationNumber.toUpperCase()
-        )
-      : undefined;
+  const selectedBusLogin = React.useMemo<OperatorLogin | undefined>(
+    () =>
+      selectedBusses.length === 1
+        ? logins?.find(
+            (l): l is OperatorLogin =>
+              isOperatorLogin(l) &&
+              l.registrationNumber.toUpperCase() ===
+                selectedBusses[0].registrationNumber.toUpperCase()
+          )
+        : undefined,
+    [logins, selectedBusses]
+  );
+
+  const openCrudModal = React.useCallback(
+    () =>
+      openAppModal({
+        title: selectedBusses[0] ? "Bearbeiten" : "Hinzufügen",
+        modalId: "BusModal",
+        children: <BusModalContent existing={selectedBusses[0]} />,
+      }),
+    [selectedBusses]
+  );
+
+  const openCertModal = React.useCallback(
+    () =>
+      openAppModal({
+        title: `Anmeldezertifikate für ${selectedBusses[0]?.registrationNumber?.toUpperCase()}`,
+        size: "xl",
+        children: (
+          <ManageLoginCertificatesModalContent
+            bus={selectedBusses[0]}
+            login={selectedBusLogin}
+          />
+        ),
+      }),
+    [selectedBusLogin, selectedBusses]
+  );
 
   const columns: Array<MRT_ColumnDef<Bus>> = [
     {
@@ -56,9 +78,9 @@ export const Busses = () => {
         .replace(".", "_")}.xlsx`,
   };
 
-  const handleEdit = React.useCallback(() => {
-    openCrudModal();
-  }, [openCrudModal]);
+  // const handleEdit = React.useCallback(() => {
+  //   openCrudModal();
+  // }, [openCrudModal]);
 
   const handleDelete = React.useCallback(
     (busses: Array<Bus>) => {
@@ -85,7 +107,7 @@ export const Busses = () => {
         keyGetter="id"
         columns={columns}
         handleAdd={handleAdd}
-        handleEdit={handleEdit}
+        // handleEdit={handleEdit}
         handleDelete={handleDelete}
         exportConfig={exportConfig}
         fillScreen
@@ -102,17 +124,6 @@ export const Busses = () => {
           },
         ]}
         enableGrouping
-      />
-      <BusModal
-        close={closeCrudModal}
-        isOpen={isCrudModalOpened}
-        existing={selectedBusses[0]}
-      />
-      <LoginCertificatesModal
-        login={selectedBusLogin}
-        bus={selectedBusses[0]}
-        close={closeCertModal}
-        isOpen={isCertModalOpened && !!selectedBusLogin && !!selectedBusses[0]}
       />
     </>
   );
