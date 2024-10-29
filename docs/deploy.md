@@ -36,9 +36,11 @@ The build result directory `build/result` must be copied to the docker host (.gi
         │   └───images
         │           kaeltebus-api.tar
         │           kaeltebus-ui.tar
-        ├───api
+        ├───kaeltebus-api
         │   ├───cert
-        │   │       root.pfx
+        │   │   ├───client
+        │   │   └───root
+        │   │           root.pfx
         │   └───db
         ├───keycloak
         │   ├───data
