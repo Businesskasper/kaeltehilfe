@@ -59,7 +59,9 @@ public class ClientsController : ControllerBase
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] ClientCreateDto dto
     )
     {
-        var existing = await _kbContext.Clients.FindAsync(id);
+        var existing = await _kbContext.Clients.FirstOrDefaultAsync(c =>
+            c.Id == id && !c.IsDeleted
+        );
         if (existing is null)
             return NotFound();
 
@@ -78,7 +80,7 @@ public class ClientsController : ControllerBase
     [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
-        var obj = await _kbContext.Clients.FindAsync(id);
+        var obj = await _kbContext.Clients.FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
         if (obj == null)
             return NotFound();
 

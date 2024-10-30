@@ -270,14 +270,38 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("kaeltebus_backend.Models.LoginCertificate", b =>
                 {
-                    b.Property<string>("Thumbprint")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("AddOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
+
+                    b.Property<long?>("ChangeOn")
+                        .ValueGeneratedOnUpdate()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FileName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("LoginUsername")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Thumbprint")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -287,7 +311,9 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     b.Property<long>("ValidTo")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("Thumbprint");
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsDeleted");
 
                     b.HasIndex("LoginUsername");
 
@@ -468,7 +494,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     b.HasOne("kaeltebus_backend.Models.Login", "Login")
                         .WithMany("LoginCertificates")
                         .HasForeignKey("LoginUsername")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Login");

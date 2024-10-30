@@ -13,6 +13,7 @@ import React from "react";
 import { Gender, GenderTranslation } from "../../../common/app/gender";
 import { Volunteer, useVolunteers } from "../../../common/app/volunteer";
 import { ModalActions, ModalMain } from "../../../common/components";
+import { useIsTouchDevice } from "../../../common/utils";
 
 type VolunteerModalContentProps = {
   existing?: Volunteer;
@@ -32,6 +33,8 @@ export const VolunteerModalContent = ({
     post: { mutate: post },
     put: { mutate: put },
   } = useVolunteers();
+
+  const isTouchDevice = useIsTouchDevice();
 
   const initialValues: VolunteerForm = {
     firstname: "",
@@ -93,16 +96,18 @@ export const VolunteerModalContent = ({
           withAsterisk
           mb="md"
           rightSection={
-            <ActionIcon
-              size="xs"
-              disabled={!form.values.firstname}
-              onClick={() => {
-                form.setFieldValue("firstname", "");
-              }}
-              variant="transparent"
-            >
-              <IconX />
-            </ActionIcon>
+            !isTouchDevice ? undefined : (
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.firstname}
+                onClick={() => {
+                  form.setFieldValue("firstname", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            )
           }
         />
         <TextInput
@@ -115,16 +120,18 @@ export const VolunteerModalContent = ({
           mt="md"
           mb="md"
           rightSection={
-            <ActionIcon
-              size="xs"
-              disabled={!form.values.lastname}
-              onClick={() => {
-                form.setFieldValue("lastname", "");
-              }}
-              variant="transparent"
-            >
-              <IconX />
-            </ActionIcon>
+            !isTouchDevice ? undefined : (
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.lastname}
+                onClick={() => {
+                  form.setFieldValue("lastname", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            )
           }
         />
         {/* <Group mt="md" mb="md" align="center">

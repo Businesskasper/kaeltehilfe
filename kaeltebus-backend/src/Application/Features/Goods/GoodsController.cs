@@ -37,7 +37,7 @@ public class GoodsController : ControllerBase
     [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult<GoodDto>> Get([FromRoute(Name = "id")] int id)
     {
-        var obj = await _kbContext.Goods.FirstOrDefaultAsync(x => x.Id == id);
+        var obj = await _kbContext.Goods.FirstOrDefaultAsync(g => g.Id == id && !g.IsDeleted);
         return obj != null ? _mapper.Map<GoodDto>(obj) : NotFound();
     }
 
@@ -59,7 +59,7 @@ public class GoodsController : ControllerBase
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] GoodCreateDto dto
     )
     {
-        var existing = await _kbContext.Goods.FindAsync(id);
+        var existing = await _kbContext.Goods.FirstOrDefaultAsync(g => g.Id == id && !g.IsDeleted);
         if (existing is null)
             return NotFound();
 
@@ -78,7 +78,7 @@ public class GoodsController : ControllerBase
     [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
-        var obj = await _kbContext.Goods.FindAsync(id);
+        var obj = await _kbContext.Goods.FirstOrDefaultAsync(g => g.Id == id && !g.IsDeleted);
         if (obj == null)
             return NotFound();
 

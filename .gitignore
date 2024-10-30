@@ -6,6 +6,7 @@ build/frontend/publish-frontend/*
 # Dev env
 dev/keycloak
 dev/keycloak-themes
+dev/certs
 
 # Theme
 kaeltebus-keycloak-theme/dist_keycloak

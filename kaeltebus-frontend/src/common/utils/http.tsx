@@ -1,6 +1,6 @@
 import { NotificationData, notifications } from "@mantine/notifications";
 import { IconX } from "@tabler/icons-react";
-import axios, { isAxiosError } from "axios";
+import axios, { AxiosResponse, isAxiosError } from "axios";
 import { userManager } from "../../UserManager";
 
 const { VITE_API_BASE_URL } = import.meta.env;
@@ -90,8 +90,11 @@ const getBaseGet =
   };
 
 const getBasePost =
-  <T extends Record<string, unknown>>(path: string) =>
-  async (item: T, abortSignal?: AbortSignal): Promise<void> => {
+  <T extends Record<string, unknown>, TResult>(path: string) =>
+  async (
+    item: T,
+    abortSignal?: AbortSignal
+  ): Promise<AxiosResponse<TResult, unknown>> => {
     const itemKeys = Object.keys(item);
     const cleanedItem = itemKeys.reduce((obj, key) => {
       const value = item[key];
@@ -101,7 +104,7 @@ const getBasePost =
       };
     }, {} as T);
 
-    await http.post<T>(path, cleanedItem, {
+    return await http.post<T, AxiosResponse<TResult>>(path, cleanedItem, {
       baseURL: VITE_API_BASE_URL,
       signal: abortSignal,
     });

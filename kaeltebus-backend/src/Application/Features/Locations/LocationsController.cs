@@ -41,7 +41,7 @@ public class LocationsController : ControllerBase
     [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult<LocationDto>> Get([FromRoute(Name = "id")] int id)
     {
-        var obj = await _kbContext.Locations.FirstOrDefaultAsync(x => x.Id == id);
+        var obj = await _kbContext.Locations.FirstOrDefaultAsync(l => l.Id == id && !l.IsDeleted);
         return obj != null ? _mapper.Map<LocationDto>(obj) : NotFound();
     }
 
@@ -63,7 +63,9 @@ public class LocationsController : ControllerBase
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] LocationCreateDto dto
     )
     {
-        var existing = await _kbContext.Locations.FindAsync(id);
+        var existing = await _kbContext.Locations.FirstOrDefaultAsync(l =>
+            l.Id == id && !l.IsDeleted
+        );
         if (existing is null)
             return NotFound();
 
@@ -82,7 +84,7 @@ public class LocationsController : ControllerBase
     [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
-        var obj = await _kbContext.Locations.FindAsync(id);
+        var obj = await _kbContext.Locations.FirstOrDefaultAsync(l => l.Id == id && !l.IsDeleted);
         if (obj == null)
             return NotFound();
 

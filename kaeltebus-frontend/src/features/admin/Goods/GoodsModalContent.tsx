@@ -18,6 +18,7 @@ import {
   useGoods,
 } from "../../../common/app/good";
 import { ModalActions, ModalMain } from "../../../common/components";
+import { useIsTouchDevice } from "../../../common/utils";
 import {
   minLengthValidator,
   requiredValidator,
@@ -39,6 +40,8 @@ export const GoodModalContent = ({ existing }: GoodModalContentProps) => {
     post: { mutate: post },
     put: { mutate: put },
   } = useGoods();
+
+  const isTouchDevice = useIsTouchDevice();
 
   const initialValues: GoodForm = {
     name: "",
@@ -88,16 +91,18 @@ export const GoodModalContent = ({ existing }: GoodModalContentProps) => {
           withAsterisk
           mb="md"
           rightSection={
-            <ActionIcon
-              size="xs"
-              disabled={!form.values.name}
-              onClick={() => {
-                form.setFieldValue("name", "");
-              }}
-              variant="transparent"
-            >
-              <IconX />
-            </ActionIcon>
+            !isTouchDevice ? undefined : (
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.name}
+                onClick={() => {
+                  form.setFieldValue("name", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            )
           }
         />
         <Textarea

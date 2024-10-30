@@ -166,13 +166,12 @@ public class KbContext : DbContext
         //     .HasValue<OperatorLogin>("OPERATOR");
         // modelBuilder.Entity<OperatorLogin>().Property(o => o.RegistrationNumber).IsRequired();
 
-        modelBuilder.Entity<LoginCertificate>().HasKey(lc => lc.Thumbprint);
+        modelBuilder.Entity<LoginCertificate>().ConfigureBaseEntity();
         modelBuilder
             .Entity<LoginCertificate>()
             .HasOne(lc => lc.Login)
             .WithMany(l => l.LoginCertificates)
-            .HasForeignKey(lc => lc.LoginUsername)
-            .OnDelete(DeleteBehavior.NoAction); // Prevent cascade delete
+            .HasForeignKey(lc => lc.LoginUsername);
         modelBuilder
             .Entity<LoginCertificate>()
             .Property(lc => lc.ValidFrom)

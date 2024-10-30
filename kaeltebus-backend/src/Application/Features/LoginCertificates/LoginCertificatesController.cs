@@ -57,7 +57,7 @@ public class LoginCertificatesController : ControllerBase
                 createCertRequest.PfxPassword
             );
 
-            var certFileName = $"{certResult.Thumbprint}.pfx";
+            var certFileName = $"{login.Username}_{certResult.Thumbprint}.pfx";
             var certFilePath = Path.Combine(_certFileDir, certFileName);
 
             // Save the certificate
@@ -78,7 +78,7 @@ public class LoginCertificatesController : ControllerBase
 
             await transaction.CommitAsync();
 
-            return Ok(new { certResult.EncodedCertChain });
+            return Ok(new { loginCert.FileName, certResult.EncodedCertChain });
         }
         catch (Exception ex)
         {
@@ -103,20 +103,20 @@ public class LoginCertificatesController : ControllerBase
     [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult<List<LoginCertificateDto>>> Query()
     {
-        var objs = await _kbContext.LoginCertificates.ToListAsync();
+        var objs = await _kbContext.LoginCertificates.Where(lc => !lc.IsDeleted).ToListAsync();
         var dtos = _mapper.Map<List<LoginCertificateDto>>(objs);
 
         return dtos;
     }
 
-    [HttpGet("{thumbprint}/content")]
+    [HttpGet("{id}/content")]
     [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult<LoginCertificateContentDto>> GetCertContent(
-        [FromRoute(Name = "thumbprint")] string thumbprint
+        [FromRoute(Name = "id")] int id
     )
     {
         var cert = await _kbContext.LoginCertificates.FirstOrDefaultAsync(lc =>
-            lc.Thumbprint == thumbprint
+            lc.Id == id && !lc.IsDeleted
         );
         if (cert is null)
             return NotFound();
@@ -126,6 +126,10 @@ public class LoginCertificatesController : ControllerBase
         if (string.IsNullOrWhiteSpace(content))
             return NotFound();
 
-        return new LoginCertificateContentDto { EncodedContent = content };
+        return new LoginCertificateContentDto
+        {
+            FileName = cert.FileName,
+            EncodedCertChain = content,
+        };
     }
 }

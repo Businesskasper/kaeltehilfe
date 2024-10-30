@@ -5,6 +5,7 @@ import { IconX } from "@tabler/icons-react";
 import React from "react";
 import { Bus, useBusses } from "../../../common/app";
 import { ModalActions, ModalMain } from "../../../common/components";
+import { useIsTouchDevice } from "../../../common/utils";
 import {
   minLengthValidator,
   requiredValidator,
@@ -21,6 +22,8 @@ export const BusModalContent = ({ existing }: BusModalContentProps) => {
     post: { mutate: post },
     put: { mutate: put },
   } = useBusses();
+
+  const isTouchDevice = useIsTouchDevice();
 
   const initialValues: BusForm = {
     registrationNumber: "",
@@ -103,16 +106,18 @@ export const BusModalContent = ({ existing }: BusModalContentProps) => {
           withAsterisk
           mb="md"
           rightSection={
-            <ActionIcon
-              size="xs"
-              disabled={!form.values.registrationNumber}
-              onClick={() => {
-                form.setFieldValue("registrationNumber", "");
-              }}
-              variant="transparent"
-            >
-              <IconX />
-            </ActionIcon>
+            !isTouchDevice ? undefined : (
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.registrationNumber}
+                onClick={() => {
+                  form.setFieldValue("registrationNumber", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            )
           }
         />
       </ModalMain>

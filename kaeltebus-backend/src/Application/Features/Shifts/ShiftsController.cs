@@ -46,7 +46,7 @@ public class ShiftsController : ControllerBase
             .Shifts.Include(s => s.Bus)
             .Include(s => s.ShiftVolunteers)
             .ThenInclude(sv => sv.Volunteer)
-            .FirstOrDefaultAsync(s => s.Id == id);
+            .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
         return obj != null ? _mapper.Map<ShiftDto>(obj) : NotFound();
     }
 
@@ -61,7 +61,7 @@ public class ShiftsController : ControllerBase
         obj.ShiftVolunteers = dto.Volunteers.ToShiftVolunteers(volunteers);
 
         var bus =
-            await _kbContext.Busses.FindAsync(dto.BusId)
+            await _kbContext.Busses.FirstOrDefaultAsync(b => b.Id == dto.BusId && !b.IsDeleted)
             ?? throw this.GetModelStateError("busId", "Bus not found");
         obj.Bus = bus;
 
@@ -82,7 +82,7 @@ public class ShiftsController : ControllerBase
             .Shifts.Include(s => s.Bus)
             .Include(s => s.ShiftVolunteers)
             .ThenInclude(sv => sv.Volunteer)
-            .FirstOrDefaultAsync(s => s.Id == id);
+            .FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
         if (existing is null)
             return NotFound();
 
@@ -99,8 +99,9 @@ public class ShiftsController : ControllerBase
         if (existing.BusId != receivedObj.BusId)
         {
             var bus =
-                await _kbContext.Busses.FindAsync(receivedObj.BusId)
-                ?? throw this.GetModelStateError("BusId", "Bus not found");
+                await _kbContext.Busses.FirstOrDefaultAsync(b =>
+                    b.Id == receivedObj.BusId && !b.IsDeleted
+                ) ?? throw this.GetModelStateError("BusId", "Bus not found");
             existing.Bus = bus;
             existing.BusId = receivedObj.BusId;
         }
@@ -115,7 +116,7 @@ public class ShiftsController : ControllerBase
     [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
-        var obj = await _kbContext.Shifts.FindAsync(id);
+        var obj = await _kbContext.Shifts.FirstOrDefaultAsync(s => s.Id == id && !s.IsDeleted);
         if (obj == null)
             return NotFound();
 
@@ -143,7 +144,7 @@ static class ShiftsExtensions
                         var modelState = new ModelStateDictionary();
                         modelState.AddModelError(
                             "Volunteers",
-                            $"Volunteer ${submittedVolunteer.Id} was not found"
+                            $"Volunteer {submittedVolunteer.Id} was not found"
                         );
                         throw new InvalidModelStateException(modelState);
                     }

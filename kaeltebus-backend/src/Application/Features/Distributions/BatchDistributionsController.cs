@@ -29,11 +29,11 @@ public class BatchDistributionsController : ControllerBase
     {
         var bus =
             await _kbContext.Busses.FirstOrDefaultAsync(b =>
-                b.RegistrationNumber == dto.BusRegistrationNumber
+                b.RegistrationNumber == dto.BusRegistrationNumber && !b.IsDeleted
             ) ?? throw this.GetModelStateError("BusId", "No matching shift was found");
 
         var location = await _kbContext.Locations.FirstOrDefaultAsync(l =>
-            l.Name == dto.LocationName
+            l.Name == dto.LocationName && !l.IsDeleted
         );
         if (location == null)
         {
@@ -81,7 +81,9 @@ public class BatchDistributionsController : ControllerBase
             if (clientDto.Id.HasValue)
             {
                 client =
-                    await _kbContext.Clients.FindAsync(clientDto.Id)
+                    await _kbContext.Clients.FirstOrDefaultAsync(c =>
+                        c.Id == clientDto.Id && !c.IsDeleted
+                    )
                     ?? throw this.GetModelStateError(
                         "Clients",
                         $"Client {clientDto.Id} was not found"
@@ -90,7 +92,7 @@ public class BatchDistributionsController : ControllerBase
             else
             {
                 client = await _kbContext.Clients.FirstOrDefaultAsync(c =>
-                    c.Name == clientDto.Name
+                    c.Name == clientDto.Name && !c.IsDeleted
                 );
                 if (client != null)
                 {
@@ -129,7 +131,7 @@ public class BatchDistributionsController : ControllerBase
     {
         var goodIds = goodDtos.Select(g => g.Id).ToList();
         return await _kbContext
-            .Goods.Where(g => goodIds.Contains(g.Id))
+            .Goods.Where(g => goodIds.Contains(g.Id) && !g.IsDeleted)
             .ToDictionaryAsync((Good g) => g.Id);
     }
 }

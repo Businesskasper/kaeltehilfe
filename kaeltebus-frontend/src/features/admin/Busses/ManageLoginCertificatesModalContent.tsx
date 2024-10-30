@@ -1,7 +1,7 @@
 import { IconDownload, IconHandStop, IconPlus } from "@tabler/icons-react";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
-import { Bus, OperatorLogin } from "../../../common/app";
+import { OperatorLogin } from "../../../common/app";
 import {
   LoginCertificate,
   fetchCertificateContent,
@@ -12,12 +12,10 @@ import { formatDateTime } from "../../../common/utils";
 import { CreateLoginCertificateModalContent } from "./CreateLoginCertificateModalContent";
 
 type ManageLoginCertificatesModalContentProps = {
-  bus?: Bus;
   login?: OperatorLogin;
 };
 
 export const ManageLoginCertificatesModalContent = ({
-  bus,
   login,
 }: ManageLoginCertificatesModalContentProps) => {
   // const closeModal = () => {
@@ -48,6 +46,10 @@ export const ManageLoginCertificatesModalContent = ({
       header: "Fingerabdruck",
     },
     {
+      accessorKey: "description",
+      header: "Beschreibung",
+    },
+    {
       accessorFn: ({ validFrom }) => formatDateTime(validFrom),
       header: "Gültig von",
     },
@@ -68,11 +70,9 @@ export const ManageLoginCertificatesModalContent = ({
         title: `Anmeldezertifikat für ${login?.username?.toUpperCase()} erstellen`,
         modalId: "CreateLoginCertModal",
         size: "xl",
-        children: (
-          <CreateLoginCertificateModalContent bus={bus} login={login} />
-        ),
+        children: <CreateLoginCertificateModalContent login={login} />,
       }),
-    [bus, login]
+    [login]
   );
 
   return (
@@ -93,6 +93,16 @@ export const ManageLoginCertificatesModalContent = ({
             isDisabled: (selected) => selected?.length !== 1,
             color: "red",
             variant: "outline",
+            onClick: () => {
+              alert("Kommt noch");
+            },
+          },
+          {
+            label: "Hinzufügen",
+            icon: IconPlus,
+            isDisabled: (selected) => selected?.length !== 0,
+            color: "blue",
+            variant: "light",
             onClick: openCreateModal,
           },
           {
@@ -102,14 +112,6 @@ export const ManageLoginCertificatesModalContent = ({
             color: "blue",
             variant: "light",
             onClick: downloadCert,
-          },
-          {
-            label: "Hinzufügen",
-            icon: IconPlus,
-            isDisabled: (selected) => selected?.length !== 0,
-            color: "blue",
-            variant: "light",
-            onClick: openCreateModal,
           },
         ]}
         // columns={columns}

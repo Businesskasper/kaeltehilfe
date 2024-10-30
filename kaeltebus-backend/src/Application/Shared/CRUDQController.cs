@@ -64,7 +64,9 @@ public abstract class CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>
         if (update is null)
             throw new InvalidModelStateException(new ModelStateDictionary());
 
-        var existing = await _kbContext.Set<TEntity>().FindAsync(id);
+        var existing = await _kbContext
+            .Set<TEntity>()
+            .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
         if (existing is null)
             return NotFound();
 
@@ -87,7 +89,9 @@ public abstract class CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] TCreateDto dto
     )
     {
-        var existing = await _kbContext.Set<TEntity>().FindAsync(id);
+        var existing = await _kbContext
+            .Set<TEntity>()
+            .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
         if (existing is null)
             return NotFound();
 

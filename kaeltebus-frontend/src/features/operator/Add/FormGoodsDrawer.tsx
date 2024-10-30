@@ -26,7 +26,11 @@ import {
   useDistributionsPaginated,
   useGoods,
 } from "../../../common/app";
-import { classes, useBreakpoint } from "../../../common/utils";
+import {
+  classes,
+  useBreakpoint,
+  useIsTouchDevice,
+} from "../../../common/utils";
 import { useDistributionFormContext } from "./DistributionFormContext";
 import { GoodListItem } from "./GoodListItem";
 
@@ -35,6 +39,8 @@ export type FormGoodsDrawerProps = {
   close: () => void;
 };
 export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
+  const isTouchDevice = useIsTouchDevice();
+
   const {
     objs: { isLoading, data: goods },
   } = useGoods();
@@ -125,14 +131,16 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
           placeholder="Suche..."
           {...searchField.getInputProps()}
           rightSection={
-            <ActionIcon
-              size="xs"
-              disabled={!searchValue}
-              onClick={() => searchField.reset()}
-              variant="transparent"
-            >
-              <IconX />
-            </ActionIcon>
+            !isTouchDevice ? undefined : (
+              <ActionIcon
+                size="xs"
+                disabled={!searchValue}
+                onClick={() => searchField.reset()}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            )
           }
         />
         <Accordion

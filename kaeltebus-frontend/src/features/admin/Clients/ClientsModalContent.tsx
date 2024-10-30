@@ -13,6 +13,7 @@ import React from "react";
 import { Client, useClients } from "../../../common/app/client";
 import { Gender, GenderTranslation } from "../../../common/app/gender";
 import { ModalActions, ModalMain } from "../../../common/components";
+import { useIsTouchDevice } from "../../../common/utils";
 
 type ClientsForm = Omit<Client, "id">;
 
@@ -29,6 +30,8 @@ export const ClientModalContent = ({ existing }: ClientsModalContentProps) => {
     post: { mutate: post },
     put: { mutate: put },
   } = useClients();
+
+  const isTouchDevice = useIsTouchDevice();
 
   const initialValues: ClientsForm = {
     name: "",
@@ -81,16 +84,18 @@ export const ClientModalContent = ({ existing }: ClientsModalContentProps) => {
           withAsterisk
           mb="md"
           rightSection={
-            <ActionIcon
-              size="xs"
-              disabled={!form.values.name}
-              onClick={() => {
-                form.setFieldValue("name", "");
-              }}
-              variant="transparent"
-            >
-              <IconX />
-            </ActionIcon>
+            !isTouchDevice ? undefined : (
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.name}
+                onClick={() => {
+                  form.setFieldValue("name", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            )
           }
         />
         <Select

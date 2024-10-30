@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
 using AutoMapper;
 using FluentValidation;
 using kaeltebus_backend.Models;
@@ -9,12 +7,15 @@ namespace kaeltebus_backend.Features.LoginCertificates;
 public class CreateLoginCertificateRequest
 {
     public string LoginUsername { get; set; } = "";
+    public string Description { get; set; } = "";
     public string PfxPassword { get; set; } = "";
 }
 
 public class LoginCertificateDto
 {
+    public int Id { get; set; }
     public string Thumbprint { get; set; } = "";
+    public string Description { get; set; } = "";
     public DateTime ValidFrom { get; set; }
     public DateTime ValidTo { get; set; }
     public string LoginUsername { get; set; } = "";
@@ -22,7 +23,8 @@ public class LoginCertificateDto
 
 public class LoginCertificateContentDto
 {
-    public string EncodedContent { get; set; } = "";
+    public string FileName { get; set; } = "";
+    public string EncodedCertChain { get; set; } = "";
 }
 
 public class CreateCertValidator : AbstractValidator<CreateLoginCertificateRequest>

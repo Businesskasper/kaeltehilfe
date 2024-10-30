@@ -47,7 +47,7 @@ public class BussesController : ControllerBase
     [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult<BusDto>> Get([FromRoute(Name = "id")] int id)
     {
-        var obj = await _kbContext.Busses.FirstOrDefaultAsync(x => x.Id == id);
+        var obj = await _kbContext.Busses.FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted);
         return obj != null ? _mapper.Map<BusDto>(obj) : NotFound();
     }
 
@@ -56,12 +56,12 @@ public class BussesController : ControllerBase
     public async Task<IActionResult> Create([FromBody()] BusCreateDto dto)
     {
         var existing = await _kbContext.Busses.FirstOrDefaultAsync(b =>
-            b.RegistrationNumber == dto.RegistrationNumber
+            b.RegistrationNumber == dto.RegistrationNumber && !b.IsDeleted
         );
         if (existing is not null)
             throw this.GetModelStateError(
                 "registrationNumber",
-                $"A bus with registration number ${dto.RegistrationNumber} already exists"
+                $"A bus with registration number {dto.RegistrationNumber} already exists"
             );
 
         var bus = _mapper.Map<Bus>(dto);
@@ -100,7 +100,7 @@ public class BussesController : ControllerBase
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] BusCreateDto dto
     )
     {
-        var existing = await _kbContext.Busses.FindAsync(id);
+        var existing = await _kbContext.Busses.FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted);
         if (existing is null)
             return NotFound();
 
@@ -119,7 +119,7 @@ public class BussesController : ControllerBase
     [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
-        var obj = await _kbContext.Busses.FindAsync(id);
+        var obj = await _kbContext.Busses.FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted);
         if (obj == null)
             return NotFound();
 

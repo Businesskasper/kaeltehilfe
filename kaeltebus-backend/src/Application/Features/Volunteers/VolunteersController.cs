@@ -41,7 +41,7 @@ public class VolunteersController : ControllerBase
     [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult<VolunteerDto>> Get([FromRoute(Name = "id")] int id)
     {
-        var obj = await _kbContext.Volunteers.FirstOrDefaultAsync(x => x.Id == id);
+        var obj = await _kbContext.Volunteers.FirstOrDefaultAsync(v => v.Id == id && !v.IsDeleted);
         return obj != null ? _mapper.Map<VolunteerDto>(obj) : NotFound();
     }
 
@@ -63,7 +63,9 @@ public class VolunteersController : ControllerBase
         [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] VolunteerCreateDto dto
     )
     {
-        var existing = await _kbContext.Volunteers.FindAsync(id);
+        var existing = await _kbContext.Volunteers.FirstOrDefaultAsync(v =>
+            v.Id == id && !v.IsDeleted
+        );
         if (existing is null)
             return NotFound();
 
@@ -82,7 +84,7 @@ public class VolunteersController : ControllerBase
     [Authorize(Roles = "ADMIN")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
-        var obj = await _kbContext.Volunteers.FindAsync(id);
+        var obj = await _kbContext.Volunteers.FirstOrDefaultAsync(v => v.Id == id && !v.IsDeleted);
         if (obj == null)
             return NotFound();
 

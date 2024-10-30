@@ -23,7 +23,8 @@ export const useCrudHook = <
   T,
   TParams extends Record<string, unknown>,
   TWriteModel extends Record<string, unknown>,
-  TUpdateModel = Partial<TWriteModel>
+  TUpdateModel = Partial<TWriteModel>,
+  TWriteResult = never
 >({
   key,
   additionalInvalidation,
@@ -32,7 +33,7 @@ export const useCrudHook = <
   enabled,
 }: UseCrudHookParams<T, TParams>) => {
   const httpGet = getBaseQuery<T>(`/${key}`);
-  const httpPost = getBasePost<TWriteModel>(`/${key}`);
+  const httpPost = getBasePost<TWriteModel, TWriteResult>(`/${key}`);
   const httpPUT = getBasePut<TWriteModel>(`/${key}`);
   const httpPatch = getBaseUpdate<TUpdateModel>(`/${key}`);
   const httpDelete = getBaseDelete(`/${key}`);
@@ -78,6 +79,7 @@ export const useCrudHook = <
       queryKey: paramValues ? [key, ...paramValues] : [key],
       refetchType: "all",
       // stale: false,
+      stale: true,
       type: "all",
     });
     queryClient.refetchQueries(); // Test

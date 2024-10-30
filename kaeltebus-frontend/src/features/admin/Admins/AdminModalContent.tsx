@@ -14,7 +14,7 @@ import {
   ModalMain,
   NewPassword,
 } from "../../../common/components";
-import { getDiffs } from "../../../common/utils";
+import { getDiffs, useIsTouchDevice } from "../../../common/utils";
 import {
   RegexValdiatorRequirements,
   isDuplicate,
@@ -62,6 +62,8 @@ export const AdminLoginModalContent = ({
     post: { mutate: post },
     update: { mutate: update },
   } = useLogins();
+
+  const isTouchDevice = useIsTouchDevice();
 
   const form = useForm<AdminLoginForm>({
     mode: "controlled",
@@ -180,16 +182,18 @@ export const AdminLoginModalContent = ({
           type="email"
           mb="md"
           rightSection={
-            <ActionIcon
-              size="xs"
-              disabled={!form.values.email}
-              onClick={() => {
-                form.setFieldValue("email", "");
-              }}
-              variant="transparent"
-            >
-              <IconX />
-            </ActionIcon>
+            !isTouchDevice ? undefined : (
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.email}
+                onClick={() => {
+                  form.setFieldValue("email", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            )
           }
         />
         <TextInput
@@ -207,16 +211,18 @@ export const AdminLoginModalContent = ({
           withAsterisk
           mb="md"
           rightSection={
-            <ActionIcon
-              size="xs"
-              disabled={!form.values.firstname}
-              onClick={() => {
-                form.setFieldValue("firstname", "");
-              }}
-              variant="transparent"
-            >
-              <IconX />
-            </ActionIcon>
+            !isTouchDevice ? undefined : (
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.firstname}
+                onClick={() => {
+                  form.setFieldValue("firstname", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            )
           }
         />
         <TextInput
@@ -233,16 +239,18 @@ export const AdminLoginModalContent = ({
           withAsterisk
           mb="md"
           rightSection={
-            <ActionIcon
-              size="xs"
-              disabled={!form.values.lastname}
-              onClick={() => {
-                form.setFieldValue("lastname", "");
-              }}
-              variant="transparent"
-            >
-              <IconX />
-            </ActionIcon>
+            !isTouchDevice ? undefined : (
+              <ActionIcon
+                size="xs"
+                disabled={!form.values.lastname}
+                onClick={() => {
+                  form.setFieldValue("lastname", "");
+                }}
+                variant="transparent"
+              >
+                <IconX />
+              </ActionIcon>
+            )
           }
         />
         {!existing && (
@@ -263,8 +271,7 @@ export const AdminLoginModalContent = ({
               mb="md"
               placeholder="Initiales Passwort"
               minLength={6}
-              // rightSection={
-              //   <ActionIcon
+              // rightSection={!isTouchDevice ? undefined : <ActionIcon
               //     size="xs"
               //     disabled={!form.values.password}
               //     onClick={() => {
@@ -290,8 +297,7 @@ export const AdminLoginModalContent = ({
               withAsterisk
               mb="md"
               placeholder="Passwort wiederholen"
-              // rightSection={
-              //   <ActionIcon
+              // rightSection={!isTouchDevice ? undefined : <ActionIcon
               //     size="xs"
               //     disabled={!form.values.password_}
               //     onClick={() => {

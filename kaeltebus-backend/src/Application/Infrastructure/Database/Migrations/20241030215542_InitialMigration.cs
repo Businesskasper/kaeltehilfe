@@ -192,20 +192,27 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 name: "LoginCertificates",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
                     Thumbprint = table.Column<string>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
                     ValidFrom = table.Column<long>(type: "INTEGER", nullable: false),
                     ValidTo = table.Column<long>(type: "INTEGER", nullable: false),
                     FileName = table.Column<string>(type: "TEXT", nullable: false),
-                    LoginUsername = table.Column<string>(type: "TEXT", nullable: false)
+                    LoginUsername = table.Column<string>(type: "TEXT", nullable: false),
+                    AddOn = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "unixepoch('now')"),
+                    ChangeOn = table.Column<long>(type: "INTEGER", nullable: true, defaultValueSql: "unixepoch('now')"),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LoginCertificates", x => x.Thumbprint);
+                    table.PrimaryKey("PK_LoginCertificates", x => x.Id);
                     table.ForeignKey(
                         name: "FK_LoginCertificates_Logins_LoginUsername",
                         column: x => x.LoginUsername,
                         principalTable: "Logins",
-                        principalColumn: "Username");
+                        principalColumn: "Username",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -310,6 +317,11 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                 column: "Name",
                 unique: true,
                 filter: "IsDeleted = 0");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LoginCertificates_IsDeleted",
+                table: "LoginCertificates",
+                column: "IsDeleted");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LoginCertificates_LoginUsername",

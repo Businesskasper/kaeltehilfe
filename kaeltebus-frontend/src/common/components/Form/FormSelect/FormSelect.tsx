@@ -11,7 +11,7 @@ import {
 import { useForm } from "@mantine/form";
 import { IconX } from "@tabler/icons-react";
 import React from "react";
-import { ValueTypeProps } from "../../../utils";
+import { ValueTypeProps, useIsTouchDevice } from "../../../utils";
 
 import "./FormSelect.scss";
 
@@ -85,6 +85,7 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
       : selectableItems;
   }, [getItemDisabled, getItemValue, items, sort]);
 
+  const isTouchDevice = useIsTouchDevice();
   // const shouldFilterOptions = !options.some(
   //   (option) => option.value === formProps.value
   // );
@@ -151,18 +152,20 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
             }}
             error={formProps.error}
             rightSection={
-              <ActionIcon
-                size="xs"
-                disabled={!formProps.value}
-                onClick={() => {
-                  combobox.resetSelectedOption();
-                  formProps.onChange("");
-                  onItemSelected && onItemSelected(undefined);
-                }}
-                variant="transparent"
-              >
-                <IconX />
-              </ActionIcon>
+              !isTouchDevice ? undefined : (
+                <ActionIcon
+                  size="xs"
+                  disabled={!formProps.value}
+                  onClick={() => {
+                    combobox.resetSelectedOption();
+                    formProps.onChange("");
+                    onItemSelected && onItemSelected(undefined);
+                  }}
+                  variant="transparent"
+                >
+                  <IconX />
+                </ActionIcon>
+              )
             }
           />
         ) : (

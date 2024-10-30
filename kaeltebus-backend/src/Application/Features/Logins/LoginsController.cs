@@ -63,13 +63,13 @@ public class LoginsController : ControllerBase
         if (login is OperatorLogin operatorLogin)
         {
             var bus = await _kbContext.Busses.FirstOrDefaultAsync(b =>
-                b.RegistrationNumber == operatorLogin.RegistrationNumber
+                b.RegistrationNumber == operatorLogin.RegistrationNumber && !b.IsDeleted
             );
 
             if (bus is null)
             {
                 _logger.LogInformation(
-                    $"Add bus with registrationNumber ${operatorLogin.RegistrationNumber}"
+                    $"Add bus with registrationNumber {operatorLogin.RegistrationNumber}"
                 );
                 await _kbContext.Busses.AddAsync(
                     new Bus

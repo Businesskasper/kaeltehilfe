@@ -51,7 +51,9 @@ public class DistributionsController : ControllerBase
     [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult<DistributionDto>> Get([FromRoute(Name = "id")] int id)
     {
-        var obj = await _kbContext.Distributions.FindAsync(id);
+        var obj = await _kbContext.Distributions.FirstOrDefaultAsync(d =>
+            d.Id == id && !d.IsDeleted
+        );
         return obj != null ? _mapper.Map<DistributionDto>(obj) : NotFound();
     }
 
@@ -61,18 +63,20 @@ public class DistributionsController : ControllerBase
     {
         var bus =
             await _kbContext.Busses.FirstOrDefaultAsync(b =>
-                b.RegistrationNumber == dto.BusRegistrationNumber
+                b.RegistrationNumber == dto.BusRegistrationNumber && !b.IsDeleted
             ) ?? throw this.GetModelStateError("BusId", "No matching shift was found");
 
         var client =
             (
                 dto.Client?.Id != null
-                    ? await _kbContext.Clients.FindAsync(dto.Client.Id)
+                    ? await _kbContext.Clients.FirstOrDefaultAsync(c =>
+                        c.Id == dto.Client.Id && !c.IsDeleted
+                    )
                     : new Client { Name = dto.Client?.Name ?? "" }
             ) ?? throw this.GetModelStateError("client", $"Client {dto.Client?.Id} was not found");
 
         var good =
-            await _kbContext.Goods.FindAsync(dto.GoodId)
+            await _kbContext.Goods.FirstOrDefaultAsync(g => g.Id == dto.GoodId && !g.IsDeleted)
             ?? throw this.GetModelStateError("goodId", $"Good {dto.GoodId} was not found");
 
         var distribution = new Distribution
@@ -96,7 +100,9 @@ public class DistributionsController : ControllerBase
         [FromBody()] DistributionUpdateDto dto
     )
     {
-        var distribution = await _kbContext.Distributions.FindAsync(id);
+        var distribution = await _kbContext.Distributions.FirstOrDefaultAsync(d =>
+            d.Id == id && !d.IsDeleted
+        );
         if (distribution is null)
             return NotFound();
 
@@ -110,7 +116,9 @@ public class DistributionsController : ControllerBase
     [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
-        var distribution = await _kbContext.Distributions.FindAsync(id);
+        var distribution = await _kbContext.Distributions.FirstOrDefaultAsync(d =>
+            d.Id == id && !d.IsDeleted
+        );
         if (distribution is null)
             return NotFound();
 
