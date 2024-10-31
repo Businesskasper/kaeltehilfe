@@ -19,11 +19,11 @@ services:
     ports:
       - '8080:8080'
       - '9000:9000'
-    image: quay.io/keycloak/keycloak:latest
+    image: quay.io/keycloak/keycloak:26.0.4
     command: start
     environment:
-        KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-        KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+        KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
+        KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
         QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
         KC_PROXY_HEADERS: 'xforwarded'
         KC_HTTP_ENABLED: 'true'
@@ -34,8 +34,8 @@ services:
         KC_SPI_X509CERT_LOOKUP_NGINX_SSL_CLIENT_CERT: 'X-Client-Cert'
         X509_CA_BUNDLE: '/etc/x509/https/rootCA.crt'
     volumes:
-        - ../keycloak:/opt/keycloak/data
         - ../keycloak-themes:/opt/keycloak/providers
+        - ../keycloak/data:/opt/keycloak/data
         - ../keycloak/x509:/etc/x509/https
     restart: unless-stopped
     logging:

@@ -29,7 +29,7 @@ try {
     Write-Host "Copy results to $($publishDir)" -ForegroundColor Blue
     Copy-Item -Path "$($distDir)/keycloak-theme-for-kc-22-to-25.jar" -Destination $publishDir -Force
     Rename-Item -Path "$($publishDir)/keycloak-theme-for-kc-22-to-25.jar" -NewName "$($themeName).jar" -Force
-    Write-Host "Theme is located in $($publishDir)" -ForegroundColor Cyan
+    Write-Host "Theme is located in $(Resolve-Path -Path $publishDir)" -ForegroundColor Cyan
 }
 catch [Exception] {
     Write-Host "Build failed" -ForegroundColor Red

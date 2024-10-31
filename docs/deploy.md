@@ -32,6 +32,7 @@ The build result directory `build/result` must be copied to the docker host (.gi
 ├── home
     └───kaeltebus
         ├───docker
+        │   │   .env
         │   │   docker-compose.yml
         │   └───images
         │           kaeltebus-api.tar
@@ -52,6 +53,16 @@ The build result directory `build/result` must be copied to the docker host (.gi
             ├───data
             └───letsencrypt
 ```
+
+> [!IMPORTANT] Important
+> Containers need to be able to access all files and folders in the directory tree. Grant access by running `sudo chmod -R 777 /home/kaeltebus` on the target host (TODO: User 1000 should be sufficient -> test).
+
+
+> [!WARNING] Warning
+> Winscp per default does not show hidden files (.env, .gitignore, etc.). 
+> .gitignore files can be removed from the host.
+
+
 
 ## Frontend
 Import the previously built docker image using `docker load -i /home/kaeltebus/docker/images/kaeltebus-ui.tar`
@@ -130,10 +141,6 @@ Under `admin/master/console/#/my-realm/realm-settings`, configure "Require SSL" 
 
 ![X509Flow](./img/kc_bind_flow.png)
 
-Configure URLs accordingly to your domain and proxy settings (https://myinstance.mydomain.de). Optionally add localhost to support a local development environment.
-
-![X509Flow](./img/kc_add_client_login.png)
-
 #### Add a new user attribute "registrationNumber" to the realm
 The attribute is used to assign a (tablet) user to a bus. Go to `admin/master/console/#/my-realm/realm-settings/user-profile` to add a new Attribute "registrationNumber". Make sure "User" can view the attribute and annotate it as "inputType": "text".
 
@@ -156,6 +163,10 @@ Configure the realm to use the Kaeltebus Theme by selecting "kaeltebus" in `admi
 In the new realm, create a new client for your kaeltebus instance. Make sure to check "Standard flow" and "Direct access grants".
 
 ![X509Flow](./img/kc_add_client_capability.png)
+
+Configure URLs accordingly to your domain and proxy settings (https://myinstance.mydomain.de). Optionally add localhost to support a local development environment.
+
+![X509Flow](./img/kc_add_client_login.png)
 
 In the newly ceated client, create the Roles "ADMIN" and "OPERATOR".
 ![X509Flow](./img/kc_add_roles.png)

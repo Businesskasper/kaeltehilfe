@@ -4,12 +4,12 @@ services:
     ports:
       - '8050:8080'
       - '8051:9000'
-    image: quay.io/keycloak/keycloak:latest
+    image: quay.io/keycloak/keycloak:26.0.4
     command: start-dev
     environment:
       KC_HOSTNAME: 'localhost'
-      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
     volumes:
         - ./keycloak:/opt/keycloak/data
