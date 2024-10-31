@@ -17,6 +17,8 @@ const Login = lazy(() => import("./pages/Login"));
 
 const LoginX509Info = lazy(() => import("./pages/LoginX509Info"));
 
+const LoginUpdatePassword = lazy(() => import("./pages/LoginUpdatePassword"));
+
 const doMakeUserConfirmPassword = true;
 
 export default function KcPage(props: { kcContext: KcContext }) {
@@ -74,6 +76,14 @@ function KcPageContextualized(props: { kcContext: KcContext }) {
                                 doUseDefaultCss={true}
                             />
                         );
+                    case "login-update-password.ftl":
+                        return (
+                            <LoginUpdatePassword
+                                {...{ kcContext, i18n, classes: resetPasswordClasses }}
+                                Template={Template}
+                                doUseDefaultCss={true}
+                            />
+                        );
                     default:
                         return (
                             <DefaultPage
@@ -110,6 +120,13 @@ const x509Classes = {
     // kcInfoAreaClass: "",
     // kcSignUpClass: "signup"
     // kcLoginClass: "login-modal-wrapper"
+} satisfies {
+    [key in ClassKey]?: string;
+};
+
+const resetPasswordClasses = {
+    kcHtmlClass: "",
+    kcBodyClass: "kb-template-body"
 } satisfies {
     [key in ClassKey]?: string;
 };
