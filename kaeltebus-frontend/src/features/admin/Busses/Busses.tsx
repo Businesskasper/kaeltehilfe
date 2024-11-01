@@ -55,10 +55,7 @@ export const Busses = () => {
         title: `Anmeldezertifikate für ${selectedBusses[0]?.registrationNumber?.toUpperCase()}`,
         size: "xl",
         children: (
-          <ManageLoginCertificatesModalContent
-            bus={selectedBusses[0]}
-            login={selectedBusLogin}
-          />
+          <ManageLoginCertificatesModalContent login={selectedBusLogin} />
         ),
       }),
     [selectedBusLogin, selectedBusses]

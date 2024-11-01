@@ -1,6 +1,4 @@
-﻿
-
-function GetLocalToken([string]$username, [string]$password, [string]$realm, [string]$keycloakBaseUrl = "http://localhost:8050") {
+﻿function GetLocalToken([string]$username, [string]$password, [string]$realm, [string]$keycloakBaseUrl = "http://localhost:8050") {
     $authUrl = "$($keycloakBaseUrl)/realms/$($realm)/protocol/openid-connect/token"
 
     $authBody = @{
@@ -34,7 +32,18 @@ function GetLogins([string]$baseUrl, [string]$token) {
 function UpdateLogin([string]$username, [PSCustomObject]$update, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/logins/$($username)"
 
-    $response = Invoke-WebRequest -Uri $url -UseBasicParsing -Method Patch -Headers @{Authorization = "Bearer $($token)"} -Body ($update | ConvertTo-Json -Depth 99) -ContentType "application/json" 
+    try {
+        $response = Invoke-WebRequest -Uri $url -UseBasicParsing -Method Patch -Headers @{Authorization = "Bearer $($token)"} -Body ($update | ConvertTo-Json -Depth 99) -ContentType "application/json" 
+    }
+    catch [Exception] {
+        $result = $_.Exception.Response.GetResponseStream()
+        $reader = [System.IO.StreamReader]::new($result)
+        $reader.BaseStream.Position = 0
+        $reader.DiscardBufferedData()
+        $responseBody = $reader.ReadToEnd();
+        
+        throw [Exception]::new("UpdateLogin failed with $($_.Exception.Response.StatusCode.value__): $($responseBody)")
+    }
 
     return $response
 }
@@ -43,7 +52,7 @@ $baseUrl = "http://localhost:5280/api"
 
 $logins = GetLogins -baseUrl $baseUrl -token $token
 
-UpdateLogin -username $logins[0].username -update ([PSCustomObject]@{firstname = "Lukas"}) -baseUrl $baseUrl -token $token
+$a = UpdateLogin -username $logins[0].username -update ([PSCustomObject]@{firstname = "Lukas"}) -baseUrl $baseUrl -token $token
 
 <#
 $endpoint = "logins/lukat.weis"

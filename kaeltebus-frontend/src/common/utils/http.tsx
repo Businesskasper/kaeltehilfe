@@ -90,7 +90,7 @@ const getBaseGet =
   };
 
 const getBasePost =
-  <T extends Record<string, unknown>, TResult>(path: string) =>
+  <T extends Record<string, unknown>, TResult = never>(path: string) =>
   async (
     item: T,
     abortSignal?: AbortSignal

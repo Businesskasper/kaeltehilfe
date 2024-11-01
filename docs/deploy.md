@@ -171,7 +171,7 @@ Configure URLs accordingly to your domain and proxy settings (https://myinstance
 In the newly ceated client, create the Roles "ADMIN" and "OPERATOR".
 ![X509Flow](./img/kc_add_roles.png)
 
-To make sure that roles are included in the token and profile, select `Client Scopes` -> `Mappers` -> `client roles`. Check each switch to include the roles in all tokens and userinfo.
+To make sure that roles are included in the token and profile, select `Client Scopes` -> `roles` -> `Mappers` -> `client roles`. Check each switch to include the roles in all tokens and userinfo.
 
 ![Add roles to profile](./img/kc_add_roles_to_profile.png)
 

@@ -34,6 +34,20 @@ function App() {
 
   const [hasTriedSignin, setHasTriedSignin] = React.useState(false);
 
+  // // automatically sign-in
+  // React.useEffect(() => {
+  //   if (
+  //     !hasAuthParams() &&
+  //     !auth.isAuthenticated &&
+  //     !auth.activeNavigator &&
+  //     !auth.isLoading &&
+  //     !hasTriedSignin
+  //   ) {
+  //     auth.signinRedirect();
+  //     setHasTriedSignin(true);
+  //   }
+  // }, [auth, hasTriedSignin]);
+
   // automatically sign-in
   React.useEffect(() => {
     if (
