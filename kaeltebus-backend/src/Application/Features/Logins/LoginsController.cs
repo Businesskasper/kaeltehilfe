@@ -60,6 +60,8 @@ public class LoginsController : ControllerBase
     {
         var login = _mapper.Map<Login>(dto);
 
+        var firstName = "";
+        var lastName = "";
         if (login is OperatorLogin operatorLogin)
         {
             var bus = await _kbContext.Busses.FirstOrDefaultAsync(b =>
@@ -79,11 +81,21 @@ public class LoginsController : ControllerBase
                     }
                 );
             }
+
+            firstName = "Bus";
+            lastName = operatorLogin.RegistrationNumber;
+        }
+        else if (login is AdminLogin adminLogin)
+        {
+            firstName = adminLogin.Firstname;
+            lastName = adminLogin.Lastname;
         }
 
         var createdUserResponse = await _userService.CreateLogin(
             login.Username,
             login.Email,
+            firstName,
+            lastName,
             dto.Role,
             dto.RegistrationNumber,
             dto.Password

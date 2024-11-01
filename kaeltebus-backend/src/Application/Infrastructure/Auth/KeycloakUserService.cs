@@ -45,6 +45,8 @@ public class KeycloakUserService : IUserService
     public async Task<CreateUserResponse> CreateLogin(
         string username,
         string email,
+        string firstName,
+        string lastName,
         Role role,
         string? registrationNumber,
         string? password
@@ -55,6 +57,8 @@ public class KeycloakUserService : IUserService
             username,
             enabled = true,
             email,
+            firstName,
+            lastName,
             emailVerified = true,
             credentials = !string.IsNullOrWhiteSpace(password)
                 ? new[]

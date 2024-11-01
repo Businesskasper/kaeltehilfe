@@ -7,6 +7,8 @@ public interface IUserService
     public Task<CreateUserResponse> CreateLogin(
         string username,
         string email,
+        string firstName,
+        string lastName,
         Role role,
         string? registrationNumber,
         string? password
