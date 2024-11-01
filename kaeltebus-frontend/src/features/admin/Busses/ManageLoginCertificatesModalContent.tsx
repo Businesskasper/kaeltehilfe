@@ -1,4 +1,11 @@
-import { IconDownload, IconHandStop, IconPlus } from "@tabler/icons-react";
+import { Group, Text } from "@mantine/core";
+import {
+  IconCancel,
+  IconCircleDashedCheck,
+  IconDownload,
+  IconHandStop,
+  IconPlus,
+} from "@tabler/icons-react";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
 import { OperatorLogin } from "../../../common/app";
@@ -6,6 +13,7 @@ import {
   LoginCertificate,
   fetchCertificateContent,
   useLoginCertificates,
+  useRevokeLoginCertificate,
 } from "../../../common/app/loginCertificate";
 import { ModalMain, Table, openAppModal } from "../../../common/components";
 import { formatDateTime } from "../../../common/utils";
@@ -21,6 +29,9 @@ export const ManageLoginCertificatesModalContent = ({
   // const closeModal = () => {
   //   modals.close("LoginCertificatesModal");
   // };
+
+  const { mutate: revokeCertificate, isPending: isCertificateRevoking } =
+    useRevokeLoginCertificate();
 
   const {
     objs: { data: loginCertificates, isLoading: isLoginCertificatesLoading },
@@ -48,6 +59,21 @@ export const ManageLoginCertificatesModalContent = ({
     {
       accessorKey: "description",
       header: "Beschreibung",
+    },
+    {
+      accessorFn: ({ status }) =>
+        status === "ACTIVE" ? (
+          <Group align="flex-start" gap="xs">
+            <Text>Aktiv</Text>
+            <IconCircleDashedCheck color="green" />
+          </Group>
+        ) : (
+          <Group align="flex-start" gap="xs">
+            <Text>Gesperrt</Text>
+            <IconCancel color="red" />
+          </Group>
+        ),
+      header: "Status",
     },
     {
       accessorFn: ({ validFrom }) => formatDateTime(validFrom),
@@ -82,7 +108,7 @@ export const ManageLoginCertificatesModalContent = ({
         tableKey="login-certificates"
         data={currentLoginCertificates}
         columns={columns}
-        isLoading={isLoginCertificatesLoading}
+        isLoading={isLoginCertificatesLoading || isCertificateRevoking}
         keyGetter="thumbprint"
         hideTopToolbarActions
         disablePagination
@@ -90,11 +116,13 @@ export const ManageLoginCertificatesModalContent = ({
           {
             label: "Sperren",
             icon: IconHandStop,
-            isDisabled: (selected) => selected?.length !== 1,
+            isDisabled: (selected) =>
+              selected?.length !== 1 || selected[0].status === "REVOKED",
             color: "red",
             variant: "outline",
-            onClick: () => {
-              alert("Kommt noch");
+            onClick: (selectedCerts) => {
+              if (!selectedCerts || selectedCerts.length !== 1) return;
+              revokeCertificate({ id: selectedCerts[0].id });
             },
           },
           {

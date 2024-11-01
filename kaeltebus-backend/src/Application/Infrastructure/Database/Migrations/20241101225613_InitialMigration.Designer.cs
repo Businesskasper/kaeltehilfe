@@ -11,7 +11,7 @@ using kaeltebus_backend.Infrastructure.Database;
 namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(KbContext))]
-    [Migration("20241030215542_InitialMigration")]
+    [Migration("20241101225613_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -303,6 +303,13 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     b.Property<string>("LoginUsername")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("SerialNumber")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Thumbprint")
                         .IsRequired()

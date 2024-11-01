@@ -195,11 +195,13 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Thumbprint = table.Column<string>(type: "TEXT", nullable: false),
+                    SerialNumber = table.Column<byte[]>(type: "BLOB", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     ValidFrom = table.Column<long>(type: "INTEGER", nullable: false),
                     ValidTo = table.Column<long>(type: "INTEGER", nullable: false),
                     FileName = table.Column<string>(type: "TEXT", nullable: false),
                     LoginUsername = table.Column<string>(type: "TEXT", nullable: false),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
                     AddOn = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "unixepoch('now')"),
                     ChangeOn = table.Column<long>(type: "INTEGER", nullable: true, defaultValueSql: "unixepoch('now')"),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false)

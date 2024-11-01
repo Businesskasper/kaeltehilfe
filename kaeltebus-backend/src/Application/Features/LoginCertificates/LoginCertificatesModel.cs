@@ -19,6 +19,7 @@ public class LoginCertificateDto
     public DateTime ValidFrom { get; set; }
     public DateTime ValidTo { get; set; }
     public string LoginUsername { get; set; } = "";
+    public CertificateStatus Status { get; set; } = CertificateStatus.ACTIVE;
 }
 
 public class LoginCertificateContentDto

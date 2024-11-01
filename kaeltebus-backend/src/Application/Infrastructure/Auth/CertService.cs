@@ -97,11 +97,42 @@ public class CertService : ICertService
             return await Task.FromResult(
                 new GenerateClientCertResult(
                     clientCertificate.Thumbprint,
+                    clientCertificate.GetSerialNumber(),
                     clientCertificate.NotBefore,
                     clientCertificate.NotAfter,
                     base64Pfx
                 )
             );
         }
+    }
+
+    public byte[] AddCertToCrl(byte[] existingCrl, byte[] certSerialNumber)
+    {
+        var crlBuilder = CertificateRevocationListBuilder.Load(existingCrl, out var crlVersion);
+
+        crlBuilder.AddEntry(certSerialNumber);
+
+        return crlBuilder.Build(
+            _rootCertificate,
+            crlVersion + 1,
+            DateTimeOffset.UtcNow.AddYears(10),
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1
+        );
+    }
+
+    public byte[] GenerateCrl()
+    {
+        var crlBuilder = new CertificateRevocationListBuilder();
+        var nextUpdate = DateTimeOffset.UtcNow.AddYears(10);
+        var crl = crlBuilder.Build(
+            _rootCertificate,
+            1,
+            nextUpdate,
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1
+        );
+
+        return crl;
     }
 }

@@ -1,3 +1,5 @@
+namespace kaeltebus_backend.Infrastructure.File;
+
 public class FileService : IFileService
 {
     public FileService() { }
@@ -10,7 +12,17 @@ public class FileService : IFileService
         EnsureDir(fileDir);
 
         var fileBytes = Convert.FromBase64String(encodedFile);
-        await File.WriteAllBytesAsync(filePath, fileBytes);
+        await System.IO.File.WriteAllBytesAsync(filePath, fileBytes);
+    }
+
+    public async Task SaveFile(string filePath, byte[] fileBytes)
+    {
+        var fileDir =
+            Path.GetDirectoryName(filePath)
+            ?? throw new Exception($"Path could not be resolved for {filePath}");
+        EnsureDir(fileDir);
+
+        await System.IO.File.WriteAllBytesAsync(filePath, fileBytes);
     }
 
     public async Task<string?> ReadFile(string filePath)
@@ -18,8 +30,17 @@ public class FileService : IFileService
         if (!ExistsFileOrPath(filePath))
             return null;
 
-        var fileBytes = await File.ReadAllBytesAsync(filePath);
+        var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
         return Convert.ToBase64String(fileBytes);
+    }
+
+    public async Task<byte[]?> ReadFileAsBytes(string filePath)
+    {
+        if (!ExistsFileOrPath(filePath))
+            return null;
+
+        var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
+        return fileBytes;
     }
 
     public void DeleteFile(string filePath)
@@ -27,12 +48,12 @@ public class FileService : IFileService
         if (!ExistsFileOrPath(filePath))
             return;
 
-        File.Delete(filePath);
+        System.IO.File.Delete(filePath);
     }
 
     public bool ExistsFileOrPath(string path)
     {
-        return Path.Exists(path);
+        return System.IO.Path.Exists(path);
     }
 
     private void EnsureDir(string path)
@@ -41,6 +62,6 @@ public class FileService : IFileService
         if (existsPath)
             return;
 
-        Directory.CreateDirectory(path);
+        System.IO.Directory.CreateDirectory(path);
     }
 }

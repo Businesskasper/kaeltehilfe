@@ -180,6 +180,10 @@ public class KbContext : DbContext
             .Entity<LoginCertificate>()
             .Property(lc => lc.ValidTo)
             .HasConversion(new UnixEpochDateTimeConverter());
+        modelBuilder
+            .Entity<LoginCertificate>()
+            .Property(lc => lc.SerialNumber)
+            .HasColumnType("BLOB");
     }
 }
 

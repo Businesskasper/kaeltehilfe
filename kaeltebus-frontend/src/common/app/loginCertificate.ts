@@ -1,4 +1,11 @@
-import { downloadBase64, getBaseGet, toDate, useCrudHook } from "../utils";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  downloadBase64,
+  getBaseGet,
+  http,
+  toDate,
+  useCrudHook,
+} from "../utils";
 
 export type LoginCertificate = {
   id: number;
@@ -7,7 +14,10 @@ export type LoginCertificate = {
   validFrom?: Date;
   validTo?: Date;
   loginUsername: string;
+  status: CertificateStatus;
 };
+
+export type CertificateStatus = "ACTIVE" | "REVOKED";
 
 export type LoginCertificateContent = {
   fileName: string;
@@ -47,3 +57,20 @@ export const fetchCertificateContent = (cert: LoginCertificate) =>
       "application/x-pkcs12"
     )
   );
+
+const revokeCertificate = (id: number) =>
+  http.post(`/loginCertificates/${id}/revocation`, null);
+export const useRevokeLoginCertificate = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<unknown, Error, { id: number }>({
+    mutationFn: ({ id }) => revokeCertificate(id),
+    onSettled: () =>
+      queryClient.invalidateQueries({
+        queryKey: ["loginCertificates"],
+        refetchType: "all",
+        stale: true,
+        type: "all",
+      }),
+  });
+};

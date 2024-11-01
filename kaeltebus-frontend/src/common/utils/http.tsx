@@ -5,7 +5,7 @@ import { userManager } from "../../UserManager";
 
 const { VITE_API_BASE_URL } = import.meta.env;
 
-const http = axios.create({
+export const http = axios.create({
   baseURL: VITE_API_BASE_URL,
 });
 

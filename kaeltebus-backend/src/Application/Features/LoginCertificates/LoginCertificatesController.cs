@@ -1,6 +1,7 @@
 using AutoMapper;
 using kaeltebus_backend.Infrastructure.Auth;
 using kaeltebus_backend.Infrastructure.Database;
+using kaeltebus_backend.Infrastructure.File;
 using kaeltebus_backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ public class LoginCertificatesController : ControllerBase
     protected readonly ICertService _certService;
     protected readonly IFileService _fileService;
     protected readonly string _certFileDir;
+    protected readonly string _crlPath;
 
     public LoginCertificatesController(
         IConfiguration configuration,
@@ -34,6 +36,7 @@ public class LoginCertificatesController : ControllerBase
         _fileService = fileService;
 
         _certFileDir = configuration.RequireConfigValue("CertificateSettings:ClientCertDir");
+        _crlPath = configuration.RequireConfigValue("CertificateSettings:CrlPath");
     }
 
     [HttpPost()]
@@ -66,12 +69,15 @@ public class LoginCertificatesController : ControllerBase
             var loginCert = new LoginCertificate
             {
                 Thumbprint = certResult.EncodedCertChain,
+                Description = createCertRequest.Description,
                 ValidFrom = certResult.ValidFrom,
                 ValidTo = certResult.ValidTo,
                 FileName = certFileName,
+                SerialNumber = certResult.SerialNumber,
                 // Must be manually tracked since the foreign key is not cascade deleted
                 LoginUsername = login.Username,
                 Login = login,
+                Status = CertificateStatus.ACTIVE,
             };
             await _kbContext.LoginCertificates.AddAsync(loginCert);
             await _kbContext.SaveChangesAsync();
@@ -131,5 +137,30 @@ public class LoginCertificatesController : ControllerBase
             FileName = cert.FileName,
             EncodedCertChain = content,
         };
+    }
+
+    [HttpPost("{id}/revocation")]
+    [Authorize(Roles = "ADMIN")]
+    public async Task<ActionResult> RevokeCert([FromRoute(Name = "id")] int id)
+    {
+        var cert = await _kbContext.LoginCertificates.FirstOrDefaultAsync(lc =>
+            lc.Id == id && !lc.IsDeleted
+        );
+        if (cert is null)
+            return NotFound();
+
+        var revocationList =
+            await _fileService.ReadFileAsBytes(_crlPath) ?? _certService.GenerateCrl();
+
+        var updatedRevocationList = _certService.AddCertToCrl(revocationList, cert.SerialNumber);
+        if (updatedRevocationList is null)
+            return Problem("Could not revoke certificate");
+
+        await _fileService.SaveFile(_crlPath, updatedRevocationList);
+
+        cert.Status = CertificateStatus.REVOKED;
+        await _kbContext.SaveChangesAsync();
+
+        return NoContent();
     }
 }

@@ -74,6 +74,8 @@ public class BussesController : ControllerBase
             var createdLogin = await _userService.CreateLogin(
                 dto.RegistrationNumber.ToLower(),
                 email,
+                "Bus",
+                dto.RegistrationNumber,
                 Role.OPERATOR,
                 dto.RegistrationNumber,
                 null
@@ -84,6 +86,7 @@ public class BussesController : ControllerBase
                 Username = bus.RegistrationNumber.ToLower(),
                 Email = email,
                 CreateOn = createdLogin.createdOn,
+                IdentityProviderId = createdLogin.idpUsername,
             };
             await _kbContext.Logins.AddAsync(login);
         }

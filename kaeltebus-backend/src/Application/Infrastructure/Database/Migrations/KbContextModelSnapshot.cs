@@ -301,6 +301,13 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<byte[]>("SerialNumber")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Thumbprint")
                         .IsRequired()
                         .HasColumnType("TEXT");

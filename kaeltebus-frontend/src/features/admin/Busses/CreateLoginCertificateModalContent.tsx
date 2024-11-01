@@ -95,7 +95,6 @@ export const CreateLoginCertificateModalContent = ({
     const { pfxPassword_, ...certificateToCreate } = formModel;
     post(certificateToCreate, {
       onSuccess: (response) => {
-        console.log("response.data", response.data);
         downloadBase64(
           response.data.fileName,
           response.data.encodedCertChain,
@@ -135,7 +134,6 @@ export const CreateLoginCertificateModalContent = ({
           {...form.getInputProps("pfxPassword")}
           onKeyDown={(e) => {
             if (e.key === " ") {
-              console.log("prevent");
               e.preventDefault();
               e.bubbles = false;
             }
@@ -152,7 +150,6 @@ export const CreateLoginCertificateModalContent = ({
           {...form.getInputProps("pfxPassword_")}
           onKeyDown={(e) => {
             if (e.key === " ") {
-              console.log("prevent");
               e.preventDefault();
               e.bubbles = false;
             }

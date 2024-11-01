@@ -4,6 +4,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using kaeltebus_backend.Infrastructure.Auth;
 using kaeltebus_backend.Infrastructure.Database;
+using kaeltebus_backend.Infrastructure.File;
 using kaeltebus_backend.shared;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
