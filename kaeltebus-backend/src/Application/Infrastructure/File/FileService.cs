@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace kaeltebus_backend.Infrastructure.File;
 
 public class FileService : IFileService
@@ -25,6 +27,12 @@ public class FileService : IFileService
         await System.IO.File.WriteAllBytesAsync(filePath, fileBytes);
     }
 
+    public async Task SaveText(string filePath, string text, Encoding encoding)
+    {
+        using var streamWriter = new StreamWriter(filePath, false, encoding);
+        await streamWriter.WriteAsync(text);
+    }
+
     public async Task<string?> ReadFile(string filePath)
     {
         if (!ExistsFileOrPath(filePath))
@@ -41,6 +49,15 @@ public class FileService : IFileService
 
         var fileBytes = await System.IO.File.ReadAllBytesAsync(filePath);
         return fileBytes;
+    }
+
+    public async Task<string?> ReadText(string filePath, Encoding encoding)
+    {
+        if (!ExistsFileOrPath(filePath))
+            return null;
+
+        var fileContent = await System.IO.File.ReadAllTextAsync(filePath, encoding);
+        return fileContent;
     }
 
     public void DeleteFile(string filePath)

@@ -94,10 +94,14 @@ public class CertService : ICertService
             // Convert the .pfx to a Base64 string
             var base64Pfx = Convert.ToBase64String(pfxBytes);
 
+            // Reverse the serial number to big-endian format for CRL compatibility
+            byte[] serialNumber = clientCertificate.GetSerialNumber();
+            Array.Reverse(serialNumber);
+
             return await Task.FromResult(
                 new GenerateClientCertResult(
                     clientCertificate.Thumbprint,
-                    clientCertificate.GetSerialNumber(),
+                    serialNumber,
                     clientCertificate.NotBefore,
                     clientCertificate.NotAfter,
                     base64Pfx
@@ -106,9 +110,12 @@ public class CertService : ICertService
         }
     }
 
-    public byte[] AddCertToCrl(byte[] existingCrl, byte[] certSerialNumber)
+    public byte[] AddCertToCrl(ReadOnlySpan<char> existingCrlPem, byte[] certSerialNumber)
     {
-        var crlBuilder = CertificateRevocationListBuilder.Load(existingCrl, out var crlVersion);
+        var crlBuilder = CertificateRevocationListBuilder.LoadPem(
+            existingCrlPem,
+            out var crlVersion
+        );
 
         crlBuilder.AddEntry(certSerialNumber);
 
@@ -119,6 +126,15 @@ public class CertService : ICertService
             HashAlgorithmName.SHA256,
             RSASignaturePadding.Pkcs1
         );
+    }
+
+    public string CrlToPem(byte[] crl)
+    {
+        string base64Crl = Convert.ToBase64String(crl);
+
+        string pemCrl = "-----BEGIN X509 CRL-----\n" + base64Crl + "\n-----END X509 CRL-----";
+
+        return pemCrl;
     }
 
     public byte[] GenerateCrl()

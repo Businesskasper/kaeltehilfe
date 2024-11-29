@@ -1,3 +1,4 @@
+using System.Text;
 using AutoMapper;
 using kaeltebus_backend.Infrastructure.Auth;
 using kaeltebus_backend.Infrastructure.Database;
@@ -150,13 +151,15 @@ public class LoginCertificatesController : ControllerBase
             return NotFound();
 
         var revocationList =
-            await _fileService.ReadFileAsBytes(_crlPath) ?? _certService.GenerateCrl();
+            await _fileService.ReadText(_crlPath, Encoding.ASCII)
+            ?? _certService.CrlToPem(_certService.GenerateCrl());
 
         var updatedRevocationList = _certService.AddCertToCrl(revocationList, cert.SerialNumber);
         if (updatedRevocationList is null)
             return Problem("Could not revoke certificate");
 
-        await _fileService.SaveFile(_crlPath, updatedRevocationList);
+        var crlAsPem = _certService.CrlToPem(updatedRevocationList);
+        await _fileService.SaveText(_crlPath, crlAsPem, Encoding.ASCII);
 
         cert.Status = CertificateStatus.REVOKED;
         await _kbContext.SaveChangesAsync();

@@ -1,12 +1,11 @@
 # Build
 build/backend/publish-backend/*
 build/frontend/publish-frontend/*
-# build/result/*
+build/result/
 
 # Dev env
-dev/keycloak
-dev/keycloak-themes
-dev/certs
+# dev/keycloak
+# dev/keycloak-themes
 
 # Theme
 kaeltebus-keycloak-theme/dist_keycloak
