@@ -6,6 +6,7 @@ namespace kaeltebus_backend.Features.BatchDistributions;
 public class BatchDistributionCreateDto
 {
     public string LocationName { get; set; } = "";
+    public NetTopologySuite.Geometries.Point? GeoLocation { get; set; }
     public string BusRegistrationNumber { get; set; } = "";
     public List<BatchDistributionClientDto> Clients { get; set; } = [];
     public List<BatchDistributionGoodDto> Goods { get; set; } = [];
@@ -29,7 +30,9 @@ public class BatchDistributionCreateDtoValidator : AbstractValidator<BatchDistri
 {
     public BatchDistributionCreateDtoValidator()
     {
-        RuleFor(b => b.LocationName).NotNull().NotEmpty();
+        RuleFor(b => b)
+            .Must(b => !(IsNullOrWhiteSpace(b.LocationName) && b.GeoLocation == null))
+            .WithMessage("Either Location.LocationName or GeoLocation must be provided");
         RuleFor(d => d.Clients).NotNull().NotEmpty();
         RuleForEach(d => d.Clients).SetValidator(new BatchDistributionClientDtoValidator());
         RuleFor(d => d.Goods).NotNull().NotEmpty();

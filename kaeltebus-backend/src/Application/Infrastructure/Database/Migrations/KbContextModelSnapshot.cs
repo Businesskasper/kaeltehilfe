@@ -134,7 +134,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(false);
 
-                    b.Property<int>("LocationId")
+                    b.Property<int?>("LocationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Quantity")
@@ -488,9 +488,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 
                     b.HasOne("kaeltebus_backend.Models.Location", "Location")
                         .WithMany("Distributions")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
 
                     b.Navigation("Bus");
 

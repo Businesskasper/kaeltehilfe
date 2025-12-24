@@ -12,7 +12,7 @@ using kaeltebus_backend.Infrastructure.Database;
 namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(KbContext))]
-    [Migration("20241130162956_InitialMigration")]
+    [Migration("20251224155039_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -137,7 +137,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(false);
 
-                    b.Property<int>("LocationId")
+                    b.Property<int?>("LocationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Quantity")
@@ -491,9 +491,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 
                     b.HasOne("kaeltebus_backend.Models.Location", "Location")
                         .WithMany("Distributions")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
 
                     b.Navigation("Bus");
 
