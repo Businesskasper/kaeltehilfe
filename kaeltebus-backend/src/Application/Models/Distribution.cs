@@ -1,3 +1,5 @@
+using NetTopologySuite.Geometries;
+
 namespace kaeltebus_backend.Models;
 
 public class Distribution : BaseEntity
@@ -11,4 +13,5 @@ public class Distribution : BaseEntity
     public int LocationId { get; set; }
     public virtual Location? Location { get; set; }
     public int Quantity { get; set; }
+    public Point? GeoLocation { get; set; }
 }

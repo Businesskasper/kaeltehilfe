@@ -9,6 +9,7 @@ import {
 import React from "react";
 import { hasAuthParams, useAuth } from "react-oidc-context";
 
+import "leaflet/dist/leaflet.css";
 import "./App.scss";
 
 import { DatesProvider } from "@mantine/dates";
@@ -34,42 +35,14 @@ function App() {
 
   const [hasTriedSignin, setHasTriedSignin] = React.useState(false);
 
-  // // automatically sign-in
-  // React.useEffect(() => {
-  //   if (
-  //     !hasAuthParams() &&
-  //     !auth.isAuthenticated &&
-  //     !auth.activeNavigator &&
-  //     !auth.isLoading &&
-  //     !hasTriedSignin
-  //   ) {
-  //     auth.signinRedirect();
-  //     setHasTriedSignin(true);
-  //   }
-  // }, [auth, hasTriedSignin]);
-
-  // automatically sign-in
+  // Automatically sign-in
   React.useEffect(() => {
     if (
       !hasAuthParams() &&
       !auth.isAuthenticated &&
       !auth.activeNavigator &&
       !auth.isLoading
-      // !hasTriedSignin
     ) {
-      // if (!hasTriedSignin) {
-      //   auth
-      //     .signinSilent()
-      //     .then(() => console.log("asdf"))
-      //     .catch(() => {
-      //       console.log("bsdf");
-      //       return auth.signinRedirect();
-      //     })
-      //     .finally(() => setHasTriedSignin(true));
-      // } else {
-      //   auth.signinSilent();
-      // }
-
       if (!hasTriedSignin) {
         auth.signinRedirect();
         setHasTriedSignin(true);
@@ -124,34 +97,6 @@ function App() {
     }
   }, [isIphone]);
 
-  // const openFirstModal = () => {
-  //   modals.open({
-  //     modalId: "asdf",
-  //     title: "asdf",
-  //     children: (
-  //       <>
-  //         <Button onClick={() => modals.close("asdf")}>Close</Button>
-  //         <Button
-  //           onClick={() =>
-  //             modals.open({
-  //               title: "Modal 2",
-  //               modalId: "bsdf",
-  //               children: (
-  //                 <>
-  //                   <Button onClick={() => modals.close("bsdf")}>
-  //                     Close All
-  //                   </Button>
-  //                 </>
-  //               ),
-  //             })
-  //           }
-  //         >
-  //           Open Next
-  //         </Button>
-  //       </>
-  //     ),
-  //   });
-  // };
   const breakpoint = useBreakpoint();
   const isMobile = breakpoint === "BASE" || breakpoint === "XS";
 
@@ -196,7 +141,6 @@ function App() {
                 }),
               }}
             >
-              {/* <Button onClick={openFirstModal}>Open</Button> */}
               <Outlet />
             </ModalsProvider>
           </QueryClientProvider>

@@ -41,7 +41,13 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddDbContext<KbContext>(
     (options) =>
     {
-        options.UseSqlite(builder.Configuration.GetConnectionString("SqliteDb"));
+        options.UseSqlite(
+            builder.Configuration.GetConnectionString("SqliteDb"),
+            options =>
+            {
+                options.UseNetTopologySuite();
+            }
+        );
     }
 );
 

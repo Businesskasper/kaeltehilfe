@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 using kaeltebus_backend.Infrastructure.Database;
 
 #nullable disable
@@ -120,6 +121,10 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 
                     b.Property<int>("ClientId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<Point>("GeoLocation")
+                        .HasColumnType("POINT")
+                        .HasAnnotation("Sqlite:Srid", 4326);
 
                     b.Property<int>("GoodId")
                         .HasColumnType("INTEGER");

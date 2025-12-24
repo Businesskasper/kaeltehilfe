@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 using kaeltebus_backend.Infrastructure.Database;
 
 #nullable disable
@@ -11,7 +12,7 @@ using kaeltebus_backend.Infrastructure.Database;
 namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(KbContext))]
-    [Migration("20241101225613_InitialMigration")]
+    [Migration("20241130162956_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -123,6 +124,10 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 
                     b.Property<int>("ClientId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<Point>("GeoLocation")
+                        .HasColumnType("POINT")
+                        .HasAnnotation("Sqlite:Srid", 4326);
 
                     b.Property<int>("GoodId")
                         .HasColumnType("INTEGER");

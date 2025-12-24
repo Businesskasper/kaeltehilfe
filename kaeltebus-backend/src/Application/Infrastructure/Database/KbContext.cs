@@ -102,6 +102,7 @@ public class KbContext : DbContext
             .HasOne(d => d.Good)
             .WithMany(g => g.Distributions)
             .HasForeignKey(d => d.GoodId);
+        modelBuilder.Entity<Distribution>().Property(d => d.GeoLocation).HasSrid(4326);
         modelBuilder.Entity<Distribution>().Navigation(d => d.Good).AutoInclude();
         modelBuilder
             .Entity<Distribution>()

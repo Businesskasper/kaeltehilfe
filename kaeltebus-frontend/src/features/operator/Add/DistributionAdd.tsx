@@ -124,7 +124,8 @@ export const DistributionAdd = () => {
   const onSubmit = (formModel: DistributionForm) => {
     postBatchDistribution(formModel).then(() => {
       setLastLocation(formModel.locationName);
-      navigate(`/`);
+      // navigate(`/`);
+      navigate(-1);
     });
   };
 
@@ -392,7 +393,7 @@ export const DistributionAdd = () => {
                 />
               )}
               <Group justify="space-between" mt="xl">
-                <Button onClick={() => navigate("/")} variant="default">
+                <Button onClick={() => navigate(-1)} variant="default">
                   Abbrechen
                 </Button>
 

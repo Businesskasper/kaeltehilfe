@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {}
+    "c:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {}
   },
   "projects": {
-    "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {
+    "c:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+        "projectUniqueName": "c:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
         "projectName": "kaeltebus-backend",
-        "projectPath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+        "projectPath": "c:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
         "packagesPath": "C:\\Users\\LukaW\\.nuget\\packages\\",
-        "outputPath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\obj\\",
+        "outputPath": "c:\\Git\\kaeltebus\\kaeltebus-backend\\src\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
           "C:\\Users\\LukaW\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -39,7 +43,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -75,7 +80,11 @@
               "target": "Package",
               "version": "[8.0.6, )"
             },
-            "Microsoft.EntityFrameworkCore.Sqlite": {
+            "Microsoft.EntityFrameworkCore.Sqlite.Core": {
+              "target": "Package",
+              "version": "[8.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite.NetTopologySuite": {
               "target": "Package",
               "version": "[8.0.6, )"
             },
@@ -90,6 +99,10 @@
             "Microsoft.Extensions.Configuration.Json": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "SQLitePCLRaw.bundle_e_sqlite3": {
+              "target": "Package",
+              "version": "[2.1.10, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -115,7 +128,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.307/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.307/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

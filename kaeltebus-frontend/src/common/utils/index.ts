@@ -10,4 +10,5 @@ export * from "./http";
 export * from "./splitBy";
 export * from "./types";
 export * from "./useBreakpoint";
+export * from "./useGeolocation";
 export * from "./useIsTouchDevice";

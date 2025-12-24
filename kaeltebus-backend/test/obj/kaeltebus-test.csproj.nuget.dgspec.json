@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\git\\kaeltebus\\kaeltebus-backend\\test\\kaeltebus-test.csproj": {}
+    "c:\\Git\\kaeltebus\\kaeltebus-backend\\test\\kaeltebus-test.csproj": {}
   },
   "projects": {
-    "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {
+    "c:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+        "projectUniqueName": "c:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
         "projectName": "kaeltebus-backend",
-        "projectPath": "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+        "projectPath": "c:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
         "packagesPath": "C:\\Users\\LukaW\\.nuget\\packages\\",
-        "outputPath": "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\obj\\",
+        "outputPath": "c:\\Git\\kaeltebus\\kaeltebus-backend\\src\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
           "C:\\Users\\LukaW\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -39,7 +43,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -75,7 +80,11 @@
               "target": "Package",
               "version": "[8.0.6, )"
             },
-            "Microsoft.EntityFrameworkCore.Sqlite": {
+            "Microsoft.EntityFrameworkCore.Sqlite.Core": {
+              "target": "Package",
+              "version": "[8.0.6, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite.NetTopologySuite": {
               "target": "Package",
               "version": "[8.0.6, )"
             },
@@ -90,6 +99,10 @@
             "Microsoft.Extensions.Configuration.Json": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "SQLitePCLRaw.bundle_e_sqlite3": {
+              "target": "Package",
+              "version": "[2.1.10, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -115,21 +128,25 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.307/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.307/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\git\\kaeltebus\\kaeltebus-backend\\test\\kaeltebus-test.csproj": {
+    "c:\\Git\\kaeltebus\\kaeltebus-backend\\test\\kaeltebus-test.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\git\\kaeltebus\\kaeltebus-backend\\test\\kaeltebus-test.csproj",
+        "projectUniqueName": "c:\\Git\\kaeltebus\\kaeltebus-backend\\test\\kaeltebus-test.csproj",
         "projectName": "kaeltebus-test",
-        "projectPath": "C:\\git\\kaeltebus\\kaeltebus-backend\\test\\kaeltebus-test.csproj",
+        "projectPath": "c:\\Git\\kaeltebus\\kaeltebus-backend\\test\\kaeltebus-test.csproj",
         "packagesPath": "C:\\Users\\LukaW\\.nuget\\packages\\",
-        "outputPath": "C:\\git\\kaeltebus\\kaeltebus-backend\\test\\obj\\",
+        "outputPath": "c:\\Git\\kaeltebus\\kaeltebus-backend\\test\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
           "C:\\Users\\LukaW\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -143,8 +160,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {
-                "projectPath": "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj"
+              "c:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {
+                "projectPath": "c:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj"
               }
             }
           }
@@ -158,7 +175,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -205,7 +223,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.307/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.307/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
