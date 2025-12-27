@@ -3,15 +3,15 @@ import { Title } from "@mantine/core";
 import { IconCertificate } from "@tabler/icons-react";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
+import { openAppModal } from "../../../common/components";
+import { ExportConfig, Table } from "../../../common/components/Table/Table";
 import {
   Bus,
   OperatorLogin,
   isOperatorLogin,
   useBusses,
   useLogins,
-} from "../../../common/app";
-import { openAppModal } from "../../../common/components";
-import { ExportConfig, Table } from "../../../common/components/Table/Table";
+} from "../../../common/data";
 import { BusModalContent } from "./BusModalContent";
 import { ManageLoginCertificatesModalContent } from "./ManageLoginCertificatesModalContent";
 

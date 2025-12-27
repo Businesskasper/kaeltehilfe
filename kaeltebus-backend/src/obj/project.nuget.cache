@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "x50oWLLa6UU=",
+  "dgSpecHash": "vDUG9biIwpY=",
   "success": true,
-  "projectFilePath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+  "projectFilePath": "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\LukaW\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\fluentvalidation\\11.9.2\\fluentvalidation.11.9.2.nupkg.sha512",
@@ -53,6 +53,8 @@
     "C:\\Users\\LukaW\\.nuget\\packages\\mod_spatialite\\4.3.0.1\\mod_spatialite.4.3.0.1.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\nettopologysuite\\2.5.0\\nettopologysuite.2.5.0.nupkg.sha512",
+    "C:\\Users\\LukaW\\.nuget\\packages\\nettopologysuite.features\\2.1.0\\nettopologysuite.features.2.1.0.nupkg.sha512",
+    "C:\\Users\\LukaW\\.nuget\\packages\\nettopologysuite.io.geojson4stj\\4.0.0\\nettopologysuite.io.geojson4stj.4.0.0.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\nettopologysuite.io.spatialite\\2.0.0\\nettopologysuite.io.spatialite.2.0.0.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.10\\sqlitepclraw.bundle_e_sqlite3.2.1.10.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\sqlitepclraw.core\\2.1.10\\sqlitepclraw.core.2.1.10.nupkg.sha512",

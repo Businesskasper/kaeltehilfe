@@ -57,11 +57,11 @@ function App() {
     if (!auth || !isDev) return;
 
     auth.events.addAccessTokenExpiring((a) => {
-      console.log("Access token is about to expire...", a);
+      console.log("DEBUG: Access token is about to expire...", a);
     });
 
     auth.events.addAccessTokenExpired(() => {
-      console.log("Access token has expired...");
+      console.log("DEBUG: Access token has expired...");
       auth.signinSilent().catch((error) => {
         console.error("Silent sign-in failed", error);
       });
@@ -72,7 +72,7 @@ function App() {
     });
 
     auth.events.addUserLoaded((user) => {
-      console.log("New user profile loaded:", user);
+      console.log("DEBUG: New user profile loaded:", user);
     });
   }, [auth, isDev]);
 

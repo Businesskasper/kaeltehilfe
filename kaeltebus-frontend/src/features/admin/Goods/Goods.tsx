@@ -1,9 +1,9 @@
 import { Box, Pill, PillGroup, Title } from "@mantine/core";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
-import { Good, GoodTypeTranslation, useGoods } from "../../../common/app/good";
 import { openAppModal } from "../../../common/components";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
+import { Good, GoodTypeTranslation, useGoods } from "../../../common/data/good";
 import { GoodModalContent } from "./GoodsModalContent";
 
 export const Goods = () => {

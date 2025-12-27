@@ -1,4 +1,4 @@
-import { ActionIcon } from "@mantine/core";
+import { ActionIcon, Button } from "@mantine/core";
 import { IconLocation, IconMinus, IconPlus } from "@tabler/icons-react";
 import L, { LeafletMouseEvent } from "leaflet";
 import React from "react";
@@ -6,13 +6,19 @@ import { useMap, useMapEvents } from "react-leaflet";
 import { ActionGroup } from "../../../../common/components";
 
 type ButtonContainerProps = {
-  top: string;
-  left: string;
+  top?: string;
+  left?: string;
+  right?: string;
+  bottom?: string;
+  centerX?: boolean;
   children: React.ReactNode;
 };
 export const ButtonContainer = ({
   top,
   left,
+  right,
+  bottom,
+  centerX,
   children,
 }: ButtonContainerProps) => {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -35,6 +41,9 @@ export const ButtonContainer = ({
         position: "absolute",
         top,
         left,
+        right,
+        bottom,
+        transform: centerX ? "translateX(50%)" : undefined,
         zIndex: 400, // Ensure it's above the map
         pointerEvents: "auto", // Allow interaction with the buttons
       }}
@@ -272,6 +281,25 @@ export const LocationTracker = ({
       >
         <IconLocation />
       </ActionIcon>
+    </ButtonContainer>
+  );
+};
+
+export const AddDistributionButton = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <ButtonContainer bottom="20px" centerX right="50%">
+      {/* <ActionIcon onClick={onClick} variant="default" size="md">
+        <IconPlus />
+      </ActionIcon> */}
+
+      <Button
+        leftSection={<IconPlus />}
+        onClick={onClick}
+        variant="filled"
+        size="sm"
+      >
+        Ausgabe
+      </Button>
     </ButtonContainer>
   );
 };

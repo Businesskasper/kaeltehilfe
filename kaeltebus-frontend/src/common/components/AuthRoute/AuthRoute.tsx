@@ -1,5 +1,5 @@
 import { useAuth } from "react-oidc-context";
-import { UserRole } from "../../app";
+import { UserRole } from "../../data";
 import { useProfile } from "../../utils/useProfile";
 
 type PrivateRouteProps = React.PropsWithChildren & { roles?: Array<UserRole> };

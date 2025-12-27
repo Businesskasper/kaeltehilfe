@@ -25,7 +25,7 @@ import {
   GoodTypeTranslation,
   useDistributionsPaginated,
   useGoods,
-} from "../../../common/app";
+} from "../../../common/data";
 import {
   classes,
   useBreakpoint,

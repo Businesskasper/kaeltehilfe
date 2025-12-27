@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using NetTopologySuite.IO.Converters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,6 +87,7 @@ builder
     .AddJsonOptions(x =>
     {
         x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        x.JsonSerializerOptions.Converters.Add(new GeoJsonConverterFactory());
     });
 
 // Configure fluent validation

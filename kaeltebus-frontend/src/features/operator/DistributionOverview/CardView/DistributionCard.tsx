@@ -15,7 +15,7 @@ import {
   GoodTypeTranslation,
   useGoods,
   useWriteDistributions,
-} from "../../../../common/app";
+} from "../../../../common/data";
 import {
   compareByDateOnly,
   compareByDateTime,

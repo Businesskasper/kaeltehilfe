@@ -10,9 +10,9 @@ import { useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { IconX } from "@tabler/icons-react";
 import React from "react";
-import { Client, useClients } from "../../../common/app/client";
-import { Gender, GenderTranslation } from "../../../common/app/gender";
 import { ModalActions, ModalMain } from "../../../common/components";
+import { Client, useClients } from "../../../common/data/client";
+import { Gender, GenderTranslation } from "../../../common/data/gender";
 import { useIsTouchDevice } from "../../../common/utils";
 
 type ClientsForm = Omit<Client, "id">;

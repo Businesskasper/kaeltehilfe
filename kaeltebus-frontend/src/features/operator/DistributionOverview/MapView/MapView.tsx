@@ -1,7 +1,12 @@
 import { useDisclosure } from "@mantine/hooks";
 import React from "react";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { LocationTracker, ZoomButtons } from "./MapControls";
+import { useNavigate } from "react-router-dom";
+import {
+  AddDistributionButton,
+  LocationTracker,
+  ZoomButtons,
+} from "./MapControls";
 
 import "./MapView.scss";
 
@@ -23,6 +28,17 @@ export const MapView = () => {
   }>(defaultLocation);
   const updateMapCenter = (center: { lat: number; lng: number }) =>
     setMapCenter(center);
+
+  const navigate = useNavigate();
+  const newDistribution = () => {
+    navigate("/add", {
+      state: {
+        hideLocationForm: true,
+        lat: geoLocation.lat,
+        lng: geoLocation.lng,
+      },
+    });
+  };
 
   return (
     <div className="MapView">
@@ -57,6 +73,7 @@ export const MapView = () => {
           bubbleGeoLocation={updateGeoLocation}
           bubbleMapCenter={updateMapCenter}
         />
+        <AddDistributionButton onClick={newDistribution} />
         {/* <NumbZone /> */}
       </MapContainer>
     </div>

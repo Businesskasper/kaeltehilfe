@@ -17,13 +17,12 @@ import {
   useClients,
   useGoods,
   usePostBatchDistribution,
-} from "../../../common/app";
+} from "../../../common/data";
 import { useBreakpoint } from "../../../common/utils";
 import {
   requiredValidator,
   validators,
 } from "../../../common/utils/validators";
-import { useOperatorContext } from "../OperatorContext";
 import {
   DistributionForm,
   DistributionFormProvider,
@@ -41,6 +40,15 @@ export const DistributionAdd = () => {
   const navigate = useNavigate();
 
   const profile = useProfile();
+
+  // Get "showLocationForm" form query params
+  const { state: locationState } = useLocation();
+
+  const hideLocationForm = locationState.hideLocationForm as
+    | boolean
+    | undefined;
+  const lat = locationState.lat as number | undefined;
+  const lng = locationState.lng as number | undefined;
 
   const {
     objs: { isLoading: isClientsLoading },
@@ -64,9 +72,9 @@ export const DistributionAdd = () => {
     mutateAsync: postBatchDistribution,
   } = usePostBatchDistribution();
 
-  const {
-    lastLocationState: [lastLocation, setLastLocation],
-  } = useOperatorContext();
+  // const {
+  //   lastLocationState: [lastLocation, setLastLocation],
+  // } = useOperatorContext();
 
   // const defaultClient: DistributionForm["clients"][number] = selectedClient
   //   ? {
@@ -85,7 +93,10 @@ export const DistributionAdd = () => {
   const form = useDistributionForm({
     mode: "controlled",
     initialValues: {
-      locationName: lastLocation || "",
+      // locationName: lastLocation || "",
+      locationName: "",
+      geoLocation:
+        lat && lng ? { lat: Number(lat), lng: Number(lng) } : undefined,
       busRegistrationNumber: profile?.registrationNumber || "",
       clients: [
         {
@@ -99,7 +110,7 @@ export const DistributionAdd = () => {
       goods: [],
     },
     validate: {
-      locationName: (value) => validators(value, requiredValidator()),
+      // locationName: (value) => validators(value, requiredValidator()),
       clients: {
         name: (value, values) => {
           if (!value) return "Bitte wählen oder neu eingeben";
@@ -123,14 +134,13 @@ export const DistributionAdd = () => {
 
   const onSubmit = (formModel: DistributionForm) => {
     postBatchDistribution(formModel).then(() => {
-      setLastLocation(formModel.locationName);
+      // setLastLocation(formModel.locationName);
       // navigate(`/`);
       navigate(-1);
     });
   };
 
   // Initialize client if user clicked on client directly in overview
-  const { state: locationState } = useLocation();
   React.useEffect(() => {
     if (!locationState?.clientId) return;
 
@@ -148,7 +158,7 @@ export const DistributionAdd = () => {
       },
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasClientsBeenLoaded, locationState]);
+  }, [hasClientsBeenLoaded, locationState?.clientId]);
 
   // Initialize busRegistrationNumber
   React.useEffect(() => {
@@ -208,15 +218,15 @@ export const DistributionAdd = () => {
     GOODS,
   }
   const countSteps = Object.keys(FormStep).length / 2;
-
-  const [activeStep, setActiveStep] = useState<FormStep>(FormStep.LOCATION);
+  const minStep = hideLocationForm ? FormStep.CLIENTS : FormStep.LOCATION;
+  const [activeStep, setActiveStep] = useState<FormStep>(minStep);
   const lastActiveStep = React.useRef(activeStep);
+
   React.useEffect(() => {
     lastActiveStep.current = activeStep;
   }, [activeStep]);
   const updateActiveStep = (newStep: FormStep) => {
     let hasError = false;
-
     if (newStep > activeStep) {
       const fieldsToValidate: Array<string> =
         lastActiveStep.current === FormStep.LOCATION
@@ -345,23 +355,30 @@ export const DistributionAdd = () => {
             >
               <Stepper
                 active={activeStep}
-                onStepClick={updateActiveStep}
+                onStepClick={(stepIndex) =>
+                  updateActiveStep(hideLocationForm ? stepIndex + 1 : stepIndex)
+                }
                 orientation={isDesktop ? "vertical" : "horizontal"}
                 classNames={{ root: "DistributionStepperRoot" }}
               >
-                <Stepper.Step
-                  orientation="vertical"
-                  label="Ort"
-                  description={
-                    <div
-                      style={{ marginBottom: "12px", wordBreak: "break-word" }}
-                    >
-                      {activeStep !== FormStep.LOCATION
-                        ? form.values.locationName
-                        : undefined}
-                    </div>
-                  }
-                />
+                {!hideLocationForm && (
+                  <Stepper.Step
+                    orientation="vertical"
+                    label="Ort"
+                    description={
+                      <div
+                        style={{
+                          marginBottom: "12px",
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {activeStep !== FormStep.LOCATION
+                          ? form.values.locationName
+                          : undefined}
+                      </div>
+                    }
+                  />
+                )}
                 <Stepper.Step
                   orientation="vertical"
                   label="Klienten"
@@ -384,7 +401,9 @@ export const DistributionAdd = () => {
               </Stepper>
             </Grid.Col>
             <Grid.Col span={{ base: 12, xs: 10, sm: 7, md: 7, lg: 7, xl: 7 }}>
-              {activeStep === FormStep.LOCATION && <FormLocation />}
+              {!hideLocationForm && activeStep === FormStep.LOCATION && (
+                <FormLocation />
+              )}
               {activeStep === FormStep.CLIENTS && <FormClients />}
               {activeStep === FormStep.GOODS && (
                 <FormGoods
@@ -401,10 +420,10 @@ export const DistributionAdd = () => {
                   <Button
                     onClick={() => {
                       updateActiveStep(
-                        activeStep > 0 ? activeStep - 1 : activeStep
+                        activeStep > minStep ? activeStep - 1 : activeStep
                       );
                     }}
-                    disabled={activeStep === FormStep.LOCATION}
+                    disabled={activeStep === minStep}
                     variant="outline"
                   >
                     Zurück

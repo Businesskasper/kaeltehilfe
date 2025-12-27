@@ -13,7 +13,7 @@ import { useHover } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useDistributionsPaginated } from "../../../../common/app";
+import { useDistributionsPaginated } from "../../../../common/data";
 import {
   compareByDateOnly,
   compareByDateTime,

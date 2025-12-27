@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {}
+    "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {}
   },
   "projects": {
-    "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {
+    "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+        "projectUniqueName": "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
         "projectName": "kaeltebus-backend",
-        "projectPath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
+        "projectPath": "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\kaeltebus-backend.csproj",
         "packagesPath": "C:\\Users\\LukaW\\.nuget\\packages\\",
-        "outputPath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\src\\obj\\",
+        "outputPath": "C:\\git\\kaeltebus\\kaeltebus-backend\\src\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -99,6 +99,10 @@
             "Microsoft.Extensions.Configuration.Json": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "NetTopologySuite.IO.GeoJSON4STJ": {
+              "target": "Package",
+              "version": "[4.0.0, )"
             },
             "SQLitePCLRaw.bundle_e_sqlite3": {
               "target": "Package",

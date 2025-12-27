@@ -12,7 +12,7 @@ using kaeltebus_backend.Infrastructure.Database;
 namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(KbContext))]
-    [Migration("20251224155039_InitialMigration")]
+    [Migration("20251225175819_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
