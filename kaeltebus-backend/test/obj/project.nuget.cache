@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3Vd0LinxDyk=",
+  "dgSpecHash": "OkxYv2mFtvM=",
   "success": true,
-  "projectFilePath": "c:\\Git\\kaeltebus\\kaeltebus-backend\\test\\kaeltebus-test.csproj",
+  "projectFilePath": "C:\\Git\\kaeltebus\\kaeltebus-backend\\test\\kaeltebus-test.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\LukaW\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
@@ -53,6 +53,8 @@
     "C:\\Users\\LukaW\\.nuget\\packages\\moq\\4.20.70\\moq.4.20.70.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\netstandard.library\\2.0.0\\netstandard.library.2.0.0.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\nettopologysuite\\2.5.0\\nettopologysuite.2.5.0.nupkg.sha512",
+    "C:\\Users\\LukaW\\.nuget\\packages\\nettopologysuite.features\\2.1.0\\nettopologysuite.features.2.1.0.nupkg.sha512",
+    "C:\\Users\\LukaW\\.nuget\\packages\\nettopologysuite.io.geojson4stj\\4.0.0\\nettopologysuite.io.geojson4stj.4.0.0.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\nettopologysuite.io.spatialite\\2.0.0\\nettopologysuite.io.spatialite.2.0.0.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
     "C:\\Users\\LukaW\\.nuget\\packages\\nuget.frameworks\\6.5.0\\nuget.frameworks.6.5.0.nupkg.sha512",
