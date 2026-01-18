@@ -37,8 +37,6 @@ export const ActionGroup = ({
   };
   return (
     <ButtonGroup p={0} {...groupProps}>
-      {/* <Group p={0} gap={0} {...groupProps}> */}
-
       {options.map((option, index) => {
         const radius =
           index === 0
@@ -68,7 +66,6 @@ export const ActionGroup = ({
           </ActionIcon>
         );
       })}
-      {/* </Group> */}
     </ButtonGroup>
   );
 };

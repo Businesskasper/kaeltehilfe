@@ -70,7 +70,7 @@ export const CreateLoginCertificateModalContent = ({
           value,
           requiredValidator(),
           minLengthValidator(6),
-          regexValidator(passwordRequirements)
+          regexValidator(passwordRequirements),
         ),
       pfxPassword_: (value, values) =>
         value !== values.pfxPassword
@@ -98,7 +98,7 @@ export const CreateLoginCertificateModalContent = ({
         downloadBase64(
           response.data.fileName,
           response.data.encodedCertChain,
-          "application/x-pkcs12"
+          "application/x-pkcs12",
         ).then(closeModal);
       },
     });

@@ -49,13 +49,13 @@ export const useLoginCertificates = () =>
 
 export const fetchCertificateContent = (cert: LoginCertificate) =>
   getBaseGet<LoginCertificateContent>(
-    `/loginCertificates/${cert.id}/content`
+    `/loginCertificates/${cert.id}/content`,
   )().then((result) =>
     downloadBase64(
       `${cert.loginUsername}_${result.fileName}`,
       result.encodedCertChain,
-      "application/x-pkcs12"
-    )
+      "application/x-pkcs12",
+    ),
   );
 
 const revokeCertificate = (id: number) =>

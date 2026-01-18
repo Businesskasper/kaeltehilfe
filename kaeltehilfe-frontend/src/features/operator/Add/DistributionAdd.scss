@@ -1,36 +1,32 @@
 .distribution-add {
-    margin-top: var(--mantine-spacing-xl);
+  margin-top: var(--mantine-spacing-xl);
 
-    .distribution-stepper-root {
-        @media screen and (min-width: 62em) {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
+  .distribution-stepper-root {
+    @media screen and (min-width: 62em) {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
     }
+  }
 }
 
-
 .good-list-item {
-    width: 100%;
-    height: 55px;
-    border: 1px solid var(--mantine-color-country_gray-light-color);
-    border-radius: 8px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
+  width: 100%;
+  height: 55px;
+  border: 1px solid var(--mantine-color-country_gray-light-color);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
 }
 
 .form-good-drawer {
-    &.is-loading {
-        .mantine-Drawer-header {
-            background: var(--overlay-bg);
-        }
+  &.is-loading {
+    .mantine-Drawer-header {
+      background: var(--overlay-bg);
     }
-
+  }
 }
-
-
 
 // Breakpoint	Viewport width	Value in px
 // xs	36em	576px

@@ -1,7 +1,7 @@
 /** Infers types of a template literal with a separator that occurs once or multiple times, e.g. TEST#${string} */
 export type SplitBy<
   T extends string,
-  S extends string
+  S extends string,
 > = T extends `${infer A}${S}${infer B}` ? [A, ...SplitBy<B, S>] : [T];
 
 /**

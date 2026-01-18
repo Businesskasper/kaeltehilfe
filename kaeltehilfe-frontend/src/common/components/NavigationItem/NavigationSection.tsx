@@ -25,7 +25,6 @@ export const NavigationSection = ({
             ) : (
               <IconArrowDown size="15px" />
             )}
-            {/* {isOpen ? <IconCaretUp /> : <IconCaretDown />} */}
           </Group>
         }
       ></NavLink>

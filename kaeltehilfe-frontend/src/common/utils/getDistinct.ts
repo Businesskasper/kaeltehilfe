@@ -18,7 +18,7 @@ export function getDistinct<T, K extends keyof T>(items: T[], key: K): T[];
 export function getDistinct<T, V>(items: T[], getKey: (item: T) => V): T[];
 export function getDistinct<T, V, K extends keyof T>(
   items: T[],
-  keyGetter: (item: T) => V | K
+  keyGetter: (item: T) => V | K,
 ): T[] {
   const grouped = groupBy(items, keyGetter);
 

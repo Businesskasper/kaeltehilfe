@@ -107,7 +107,7 @@ export const useDistributionsPaginated = () => {
   const now = new Date();
   const oneHourAhead = new Date(now.setHours(now.getHours() + 1));
   const oneMonthBefore = toNormalizedDate(
-    new Date(new Date(now).setMonth(now.getMonth() - 1).valueOf())
+    new Date(new Date(now).setMonth(now.getMonth() - 1).valueOf()),
   )!;
 
   const queryDistributionsPaginated = useInfiniteQuery<
@@ -140,7 +140,7 @@ export const useDistributionsPaginated = () => {
         // Calculate the next page's "from" and "to" date range
         const to = lastPageParams.from;
         const from = new Date(
-          new Date(to).setMonth(to.getMonth() - 1).valueOf()
+          new Date(to).setMonth(to.getMonth() - 1).valueOf(),
         );
         return {
           from,
@@ -148,7 +148,7 @@ export const useDistributionsPaginated = () => {
         };
       },
     },
-    queryClient
+    queryClient,
   );
 
   const invalidate = () => {

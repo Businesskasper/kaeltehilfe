@@ -1,10 +1,16 @@
 .map-view {
-    height: calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height, 0px) - 32px ); // Idk why -32px are still necessary
+  height: calc(
+    100vh - var(--app-shell-header-height, 0px) - var(
+        --app-shell-footer-height,
+        0px
+      ) -
+      32px
+  ); // Idk why -32px are still necessary
 }
 
 .add-button-group {
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    row-gap: .5rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5rem;
 }

@@ -58,7 +58,7 @@ export const useGeolocation = () => {
             });
             break;
         }
-      }
+      },
     );
   }, []);
 
@@ -78,7 +78,7 @@ export const useGeolocation = () => {
         enableHighAccuracy: true,
         // timeout: 200
         maximumAge: 10000,
-      }
+      },
     );
     watchId.current = newWatchId;
 
