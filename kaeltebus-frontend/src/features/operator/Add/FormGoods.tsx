@@ -8,7 +8,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { IconMinus, IconPlus, IconTrash } from "@tabler/icons-react";
-import { useGoods } from "../../../common/app";
+import { useGoods } from "../../../common/data";
 import {
   DistributionFormGood,
   useDistributionFormContext,

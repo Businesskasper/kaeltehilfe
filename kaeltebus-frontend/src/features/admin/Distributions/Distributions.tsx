@@ -3,8 +3,8 @@ import { DatePickerInput } from "@mantine/dates";
 import { useField } from "@mantine/form";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
-import { Distribution, useDistributions } from "../../../common/app";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
+import { Distribution, useDistributions } from "../../../common/data";
 import {
   compareByDateOnly,
   compareByDateTime,

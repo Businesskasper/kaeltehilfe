@@ -6,10 +6,11 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 import App from "./App.tsx";
+import { AppShell } from "./AppShell.tsx";
 import { userManager } from "./UserManager.tsx";
 import { AuthRoute } from "./common/components";
 import {
-  AdminHome,
+  AdminNavigation,
   Admins,
   Busses,
   Clients,
@@ -19,9 +20,12 @@ import {
   Volunteers,
 } from "./features/admin";
 import {
+  CardView,
+  ClientSearch,
   DistributionAdd,
   DistributionOverview,
-  OperatorHome,
+  MapView,
+  OperatorNavigation,
 } from "./features/operator";
 
 import "@mantine/core/styles.css";
@@ -40,7 +44,7 @@ export const router = createBrowserRouter([
         path: "admin",
         element: (
           <AuthRoute roles={["ADMIN"]}>
-            <AdminHome />
+            <AppShell navigation={<AdminNavigation />} />
           </AuthRoute>
         ),
         children: [
@@ -79,14 +83,28 @@ export const router = createBrowserRouter([
         path: "",
         element: (
           <AuthRoute roles={["ADMIN", "OPERATOR"]}>
-            <OperatorHome />
+            <AppShell navigation={<OperatorNavigation />} />
           </AuthRoute>
         ),
         children: [
-          // { path: "", element: <Navigate relative="path" to="overview" /> },
+          { path: "", element: <Navigate relative="path" to="overview/map" /> },
           {
-            path: "",
+            path: "overview",
             element: <DistributionOverview />,
+            children: [
+              {
+                path: "tiles",
+                element: <CardView />,
+              },
+              {
+                path: "map",
+                element: <MapView />,
+              },
+              {
+                path: "search",
+                element: <ClientSearch />,
+              },
+            ],
           },
           {
             path: "add",
@@ -108,7 +126,9 @@ const authProvProps: AuthProviderProps = {
 };
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
+  // <HelmetProvider
   <AuthProvider {...authProvProps}>
     <RouterProvider router={router} />
   </AuthProvider>
+  // </HelmetProvider>
 );

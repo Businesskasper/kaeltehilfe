@@ -29,6 +29,11 @@ export type Distribution = {
     name: string;
   };
   quantity: number;
+  location?: {
+    id: number;
+    name: string;
+  };
+  geoLocation?: { latitude: number; longitude: number };
 };
 
 type DistributionUpdate = {
@@ -96,7 +101,7 @@ export const useDistributionsPaginated = () => {
 
   const queryClient = useQueryClient();
 
-  // Track empty results to stop paginatoin
+  // Track empty results to stop pagination
   const emptyPageCountRef = React.useRef(0);
 
   const now = new Date();

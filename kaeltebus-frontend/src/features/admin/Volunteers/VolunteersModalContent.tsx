@@ -10,9 +10,9 @@ import { useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { IconX } from "@tabler/icons-react";
 import React from "react";
-import { Gender, GenderTranslation } from "../../../common/app/gender";
-import { Volunteer, useVolunteers } from "../../../common/app/volunteer";
 import { ModalActions, ModalMain } from "../../../common/components";
+import { Gender, GenderTranslation } from "../../../common/data/gender";
+import { Volunteer, useVolunteers } from "../../../common/data/volunteer";
 import { useIsTouchDevice } from "../../../common/utils";
 
 type VolunteerModalContentProps = {

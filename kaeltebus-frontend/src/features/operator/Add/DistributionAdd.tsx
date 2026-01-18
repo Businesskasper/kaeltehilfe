@@ -8,6 +8,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
 import { IconLayoutSidebarRightExpand } from "@tabler/icons-react";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -17,13 +18,13 @@ import {
   useClients,
   useGoods,
   usePostBatchDistribution,
-} from "../../../common/app";
+} from "../../../common/data";
 import { useBreakpoint } from "../../../common/utils";
+import { useProfile } from "../../../common/utils/useProfile";
 import {
   requiredValidator,
   validators,
 } from "../../../common/utils/validators";
-import { useOperatorContext } from "../OperatorContext";
 import {
   DistributionForm,
   DistributionFormProvider,
@@ -33,14 +34,19 @@ import { FormClients } from "./FormClients";
 import { FormGoods } from "./FormGoods";
 import { FormLocation } from "./FormLocation";
 
-import { notifications } from "@mantine/notifications";
-import { useProfile } from "../../../common/utils/useProfile";
 import "./DistributionAdd.scss";
 
 export const DistributionAdd = () => {
   const navigate = useNavigate();
 
   const profile = useProfile();
+
+  // Get "showLocationForm" form query params
+  const { state: locationState } = useLocation();
+
+  const lat = locationState?.lat as number | undefined;
+  const lng = locationState?.lng as number | undefined;
+  const hasGeoLocation = lat !== undefined && lng !== undefined;
 
   const {
     objs: { isLoading: isClientsLoading },
@@ -64,9 +70,9 @@ export const DistributionAdd = () => {
     mutateAsync: postBatchDistribution,
   } = usePostBatchDistribution();
 
-  const {
-    lastLocationState: [lastLocation, setLastLocation],
-  } = useOperatorContext();
+  // const {
+  //   lastLocationState: [lastLocation, setLastLocation],
+  // } = useOperatorContext();
 
   // const defaultClient: DistributionForm["clients"][number] = selectedClient
   //   ? {
@@ -85,7 +91,11 @@ export const DistributionAdd = () => {
   const form = useDistributionForm({
     mode: "controlled",
     initialValues: {
-      locationName: lastLocation || "",
+      // locationName: lastLocation || "",
+      locationName: "",
+      geoLocation: hasGeoLocation
+        ? { lat: Number(lat), lng: Number(lng) }
+        : undefined,
       busRegistrationNumber: profile?.registrationNumber || "",
       clients: [
         {
@@ -99,7 +109,9 @@ export const DistributionAdd = () => {
       goods: [],
     },
     validate: {
-      locationName: (value) => validators(value, requiredValidator()),
+      ...(hasGeoLocation
+        ? {}
+        : { locationName: (value) => validators(value, requiredValidator()) }),
       clients: {
         name: (value, values) => {
           if (!value) return "Bitte wählen oder neu eingeben";
@@ -123,13 +135,13 @@ export const DistributionAdd = () => {
 
   const onSubmit = (formModel: DistributionForm) => {
     postBatchDistribution(formModel).then(() => {
-      setLastLocation(formModel.locationName);
-      navigate(`/`);
+      // setLastLocation(formModel.locationName);
+      // navigate(`/`);
+      navigate(-1);
     });
   };
 
   // Initialize client if user clicked on client directly in overview
-  const { state: locationState } = useLocation();
   React.useEffect(() => {
     if (!locationState?.clientId) return;
 
@@ -147,7 +159,7 @@ export const DistributionAdd = () => {
       },
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasClientsBeenLoaded, locationState]);
+  }, [hasClientsBeenLoaded, locationState?.clientId]);
 
   // Initialize busRegistrationNumber
   React.useEffect(() => {
@@ -206,16 +218,34 @@ export const DistributionAdd = () => {
     CLIENTS,
     GOODS,
   }
-  const countSteps = Object.keys(FormStep).length / 2;
 
-  const [activeStep, setActiveStep] = useState<FormStep>(FormStep.LOCATION);
+  const [activeStep, setActiveStep] = useState<FormStep>(
+    hasGeoLocation ? FormStep.CLIENTS : FormStep.LOCATION
+  );
   const lastActiveStep = React.useRef(activeStep);
+
   React.useEffect(() => {
     lastActiveStep.current = activeStep;
   }, [activeStep]);
+
+  // Map FormStep to stepper index (accounting for skipped LOCATION step)
+  const getStepperIndex = (step: FormStep): number => {
+    if (hasGeoLocation) {
+      return step === FormStep.CLIENTS ? 0 : step === FormStep.GOODS ? 1 : 0;
+    }
+    return step;
+  };
+
+  // Map stepper index to FormStep (accounting for skipped LOCATION step)
+  const getFormStepFromIndex = (index: number): FormStep => {
+    if (hasGeoLocation) {
+      return index === 0 ? FormStep.CLIENTS : FormStep.GOODS;
+    }
+    return index as FormStep;
+  };
+
   const updateActiveStep = (newStep: FormStep) => {
     let hasError = false;
-
     if (newStep > activeStep) {
       const fieldsToValidate: Array<string> =
         lastActiveStep.current === FormStep.LOCATION
@@ -343,24 +373,31 @@ export const DistributionAdd = () => {
               display={breakpoint === "BASE" ? "none" : undefined}
             >
               <Stepper
-                active={activeStep}
-                onStepClick={updateActiveStep}
+                active={getStepperIndex(activeStep)}
+                onStepClick={(index) =>
+                  updateActiveStep(getFormStepFromIndex(index))
+                }
                 orientation={isDesktop ? "vertical" : "horizontal"}
                 classNames={{ root: "DistributionStepperRoot" }}
               >
-                <Stepper.Step
-                  orientation="vertical"
-                  label="Ort"
-                  description={
-                    <div
-                      style={{ marginBottom: "12px", wordBreak: "break-word" }}
-                    >
-                      {activeStep !== FormStep.LOCATION
-                        ? form.values.locationName
-                        : undefined}
-                    </div>
-                  }
-                />
+                {!hasGeoLocation && (
+                  <Stepper.Step
+                    orientation="vertical"
+                    label="Ort"
+                    description={
+                      <div
+                        style={{
+                          marginBottom: "12px",
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {activeStep !== FormStep.LOCATION
+                          ? form.values.locationName
+                          : undefined}
+                      </div>
+                    }
+                  />
+                )}
                 <Stepper.Step
                   orientation="vertical"
                   label="Klienten"
@@ -383,7 +420,9 @@ export const DistributionAdd = () => {
               </Stepper>
             </Grid.Col>
             <Grid.Col span={{ base: 12, xs: 10, sm: 7, md: 7, lg: 7, xl: 7 }}>
-              {activeStep === FormStep.LOCATION && <FormLocation />}
+              {!hasGeoLocation && activeStep === FormStep.LOCATION && (
+                <FormLocation />
+              )}
               {activeStep === FormStep.CLIENTS && <FormClients />}
               {activeStep === FormStep.GOODS && (
                 <FormGoods
@@ -392,7 +431,7 @@ export const DistributionAdd = () => {
                 />
               )}
               <Group justify="space-between" mt="xl">
-                <Button onClick={() => navigate("/")} variant="default">
+                <Button onClick={() => navigate(-1)} variant="default">
                   Abbrechen
                 </Button>
 
@@ -403,7 +442,11 @@ export const DistributionAdd = () => {
                         activeStep > 0 ? activeStep - 1 : activeStep
                       );
                     }}
-                    disabled={activeStep === FormStep.LOCATION}
+                    disabled={
+                      hasGeoLocation
+                        ? activeStep === FormStep.CLIENTS
+                        : activeStep === FormStep.LOCATION
+                    }
                     variant="outline"
                   >
                     Zurück
@@ -423,14 +466,15 @@ export const DistributionAdd = () => {
                   ) : (
                     <Button
                       onClick={() => {
+                        const maxStep = hasGeoLocation
+                          ? FormStep.GOODS
+                          : FormStep.GOODS;
                         updateActiveStep(
-                          activeStep < countSteps - 1
-                            ? activeStep + 1
-                            : activeStep
+                          activeStep < maxStep ? activeStep + 1 : activeStep
                         );
                       }}
                       disabled={
-                        activeStep === FormStep.LOCATION
+                        !hasGeoLocation && activeStep === FormStep.LOCATION
                           ? !form.values.locationName
                           : activeStep === FormStep.CLIENTS
                           ? !form.values.clients ||

@@ -15,12 +15,12 @@ import {
   GoodTypeTranslation,
   useGoods,
   useWriteDistributions,
-} from "../../../common/app";
+} from "../../../../common/data";
 import {
   compareByDateOnly,
   compareByDateTime,
   groupBy,
-} from "../../../common/utils";
+} from "../../../../common/utils";
 
 export type DistributionCardProps = {
   clientId: number;
