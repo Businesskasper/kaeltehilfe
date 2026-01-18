@@ -234,9 +234,6 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
                                   </Popover.Target>
                                   <Popover.Dropdown>
                                     {clientWarnings}
-                                    {/* {clientWarnings.map((warning) => (
-                                      <Text>{warning}</Text>
-                                    ))} */}
                                   </Popover.Dropdown>
                                 </Popover>
                               )}

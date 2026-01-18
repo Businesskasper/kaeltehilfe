@@ -1,50 +1,50 @@
 #main:has(.table-fill-screen) {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .brand {
-    height: 70px;
-    display: flex;
-    align-items: anchor-center;
-    gap: 12px;
-    margin-left: 24px;
+  height: 70px;
+  display: flex;
+  align-items: anchor-center;
+  gap: 12px;
+  margin-left: 24px;
 
-    svg {
-        margin-bottom: 4px;;
-    }
+  svg {
+    margin-bottom: 4px;
+  }
 
-    .company {
-        font-size: 32px;
-        font-weight: 100;
-    }
+  .company {
+    font-family: "Inter Variable";
+    font-size: 32px;
+    font-weight: 100;
+  }
 }
 
 .user-menu {
-    row-gap: 4px !important;
+  row-gap: 4px !important;
 }
 
 .burger-menu {
-    flex-wrap: nowrap !important;
+  flex-wrap: nowrap !important;
 }
 
-
 .modal {
-    &.full-width {
-        .mantine-Modal-content {
-            display: flex !important;
-            flex-direction: column;
-            width: 100%;
+  &.full-width {
+    .mantine-Modal-content {
+      display: flex !important;
+      flex-direction: column;
+      width: 100%;
 
-            .mantine-Modal-body {
-                display: flex;
-                flex-direction: column;
-                flex-grow: 1;
+      .mantine-Modal-body {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
 
-                .modal-main {
-                    flex-grow: 1;
-                }
-            }
+        .modal-main {
+          flex-grow: 1;
         }
+      }
     }
+  }
 }

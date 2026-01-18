@@ -334,22 +334,8 @@ export const DistributionAdd = () => {
               <Group justify="space-between" align="baseline">
                 <Title mb="md" order={3}>
                   Ausgabe
-                  {/* {breakpoint !== "BASE"
-                    ? "Ausgabe"
-                    : activeStep === FormStep.LOCATION
-                    ? "Ort"
-                    : activeStep === FormStep.CLIENTS
-                    ? "Klienten"
-                    : "Güter"} */}
                 </Title>
                 {activeStep === FormStep.GOODS && (
-                  // <ActionIcon
-                  //   onClick={openDrawer}
-                  //   variant="transparent"
-                  //   color="gray"
-                  // >
-                  //   <IconLayoutSidebarRightExpand />
-                  // </ActionIcon>
                   <Button
                     onClick={openDrawer}
                     variant="transparent"
@@ -418,7 +404,6 @@ export const DistributionAdd = () => {
                   }
                 />
                 <Stepper.Step orientation="vertical" label="Güter" />
-                {/* <Stepper.Step orientation="vertical" label="Senden" /> */}
               </Stepper>
             </Grid.Col>
             <Grid.Col span={{ base: 12, xs: 10, sm: 7, md: 7, lg: 7, xl: 7 }}>

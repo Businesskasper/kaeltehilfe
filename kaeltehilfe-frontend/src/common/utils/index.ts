@@ -10,6 +10,6 @@ export * from "./http";
 export * from "./splitBy";
 export * from "./types";
 export * from "./useBreakpoint";
-export * from './useBrowserStorage';
+export * from "./useBrowserStorage";
 export * from "./useGeolocation";
 export * from "./useIsTouchDevice";

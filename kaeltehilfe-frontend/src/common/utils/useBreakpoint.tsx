@@ -8,14 +8,14 @@ export const useBreakpoint = (): Breakpoint => {
   return width >= 1408
     ? "XL"
     : width >= 1200
-    ? "LG"
-    : width >= 992
-    ? "MD"
-    : width >= 768
-    ? "SM"
-    : width >= 576
-    ? "XS"
-    : "BASE";
+      ? "LG"
+      : width >= 992
+        ? "MD"
+        : width >= 768
+          ? "SM"
+          : width >= 576
+            ? "XS"
+            : "BASE";
 };
 
 // Breakpoint	Viewport width	Value in px

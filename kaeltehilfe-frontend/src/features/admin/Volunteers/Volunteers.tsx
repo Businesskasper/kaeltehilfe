@@ -25,7 +25,7 @@ export const Volunteers = () => {
         modalId: "VolunteersModal",
         children: <VolunteerModalContent existing={selectedVolunteers[0]} />,
       }),
-    [selectedVolunteers]
+    [selectedVolunteers],
   );
 
   const columns: Array<MRT_ColumnDef<Volunteer>> = [
@@ -92,7 +92,7 @@ export const Volunteers = () => {
     (volunteers: Array<Volunteer>) => {
       volunteers.forEach((volunteer) => deleteVolunteer(volunteer.id));
     },
-    [deleteVolunteer]
+    [deleteVolunteer],
   );
 
   const handleAdd = React.useCallback(() => {

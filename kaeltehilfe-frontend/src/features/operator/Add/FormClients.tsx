@@ -28,7 +28,7 @@ export const FormClients = () => {
     form.setFieldValue(
       `clients.${index}.approxAge`,
       clientData?.approxAge || "",
-      { forceUpdate: true }
+      { forceUpdate: true },
     );
   };
 
@@ -70,7 +70,7 @@ export const FormClients = () => {
               return;
             }
             const clientObj = clients?.filter(
-              (v) => v.name === currentClient.name
+              (v) => v.name === currentClient.name,
             );
             if (!clientObj || clientObj.length === 0) {
               setClientData(index, undefined);
@@ -106,11 +106,6 @@ export const FormClients = () => {
             data={GenderOptions}
             mb={form.errors[`clients.${index}.approxAge`] ? "17px" : "-2px"}
           />
-          {/* {form.errors[`clients.${index}.approxAge`] && (
-            <InputError pt="xs">
-              {form.errors[`clients.${index}.approxAge`]}
-            </InputError>
-          )} */}
         </div>
       </Group>
     </Fieldset>

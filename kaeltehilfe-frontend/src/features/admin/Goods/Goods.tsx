@@ -22,7 +22,7 @@ export const Goods = () => {
         modalId: "GoodsModal",
         children: <GoodModalContent existing={selectedGoods[0]} />,
       }),
-    [selectedGoods]
+    [selectedGoods],
   );
 
   const columns: Array<MRT_ColumnDef<Good>> = [
@@ -103,7 +103,7 @@ export const Goods = () => {
     (goods: Array<Good>) => {
       goods.forEach((good) => deleteGood(good.id));
     },
-    [deleteGood]
+    [deleteGood],
   );
 
   const handleAdd = React.useCallback(() => {

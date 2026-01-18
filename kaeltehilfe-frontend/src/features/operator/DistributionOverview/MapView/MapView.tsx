@@ -128,8 +128,6 @@ export const MapView = () => {
           initialMapCenter={!isTracking ? mapCenter : undefined}
           initialMapZoom={mapZoom}
         />
-        {/* <AddDistributionButton onClick={newDistribution} /> */}
-        {/* <NumbZone /> */}
       </MapContainer>
     </div>
   );

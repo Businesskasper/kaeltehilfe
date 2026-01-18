@@ -6,7 +6,7 @@ import {
   IconPlus,
   IconSoup,
 } from "@tabler/icons-react";
-import L, { LeafletMouseEvent } from "leaflet";
+import L from "leaflet";
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { Marker, Popup, useMap, useMapEvents } from "react-leaflet";
@@ -234,19 +234,22 @@ export const LocationTracker = ({
     if (hasInitializedRef.current) return;
     hasInitializedRef.current = true;
     isProgrammaticUpdateRef.current = true;
-    
+
     if (initialMapCenter && initialMapZoom) {
       map.setView(initialMapCenter, initialMapZoom, { animate: false });
     } else if (initialMapZoom) {
       map.setZoom(initialMapZoom, { animate: false });
     }
-    
+
     isProgrammaticUpdateRef.current = false;
   }, [map, initialMapCenter, initialMapZoom]);
 
   useMapEvents({
-    move: (event) => {
-      if (isProgrammaticUpdateRef.current || !(event as LeafletMouseEvent).originalEvent) {
+    move: () => {
+      if (
+        isProgrammaticUpdateRef.current
+        // || !(event as LeafletMouseEvent).originalEvent
+      ) {
         return;
       }
 
@@ -329,10 +332,6 @@ export const LocationTracker = ({
 export const AddDistributionButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <ButtonContainer bottom="20px" centerX right="50%">
-      {/* <ActionIcon onClick={onClick} variant="default" size="md">
-        <IconPlus />
-      </ActionIcon> */}
-
       <Button
         leftSection={<IconPlus />}
         onClick={onClick}
@@ -549,7 +548,7 @@ export const AddDistributionFlag_ = ({
           style={{ backgroundColor: "#339af0", color: "white" }}
         >
           <IconPlus size={18} />
-        </ActionIcon>
+        </ActionIcon>,
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

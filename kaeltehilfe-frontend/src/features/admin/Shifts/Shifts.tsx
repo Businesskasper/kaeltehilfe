@@ -33,7 +33,7 @@ export const Shifts = () => {
         modalId: "ShiftsModal",
         children: <ShiftModalContent existing={selectedShifts[0]} />,
       }),
-    [selectedShifts]
+    [selectedShifts],
   );
 
   const countVolunteers = shifts?.reduce((sum, shift) => {
@@ -42,7 +42,7 @@ export const Shifts = () => {
   }, 0);
 
   const volunteerColumns: Array<MRT_ColumnDef<Shift>> = Array.from(
-    Array(countVolunteers).keys()
+    Array(countVolunteers).keys(),
   ).map((index) => ({
     id: `volunteer_${index + 1}`,
     header: `Freiwilliger ${index + 1}`,
@@ -128,7 +128,7 @@ export const Shifts = () => {
     (shifts: Array<Shift>) => {
       shifts.forEach((shift) => deleteShift(shift.id));
     },
-    [deleteShift]
+    [deleteShift],
   );
 
   const handleAdd = React.useCallback(() => {

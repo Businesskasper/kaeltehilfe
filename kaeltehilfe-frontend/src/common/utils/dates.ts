@@ -11,7 +11,7 @@ export const toLocalDate = (value: unknown) => {
   if (!asDate) return undefined;
 
   return new Date(
-    asDate.setTime(asDate.getTime() + asDate.getTimezoneOffset() * 60 * 1000)
+    asDate.setTime(asDate.getTime() + asDate.getTimezoneOffset() * 60 * 1000),
   );
 };
 
@@ -50,7 +50,7 @@ export const toNormalizedDate = (date: unknown) => {
     0,
     0,
     0,
-    0
+    0,
   );
 };
 

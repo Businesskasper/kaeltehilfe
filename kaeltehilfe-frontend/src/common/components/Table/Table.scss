@@ -1,25 +1,22 @@
 .table-action-icon {
-    background-color: rgba(0, 0, 0, 0) !important;
+  background-color: rgba(0, 0, 0, 0) !important;
 
-    &:hover {
-        background-color: var(--mantine-color-gray-light-hover) !important;
-    }
+  &:hover {
+    background-color: var(--mantine-color-gray-light-hover) !important;
+  }
 }
 
 .table-fill-screen {
-    display: flex !important;
+  display: flex !important;
+  flex-grow: 1;
+  flex-direction: column;
+  height: 100%;
+
+  .container-fill-screen {
     flex-grow: 1;
-    flex-direction: column;
-    height: 100%;
-
-    .container-fill-screen {
-        flex-grow: 1;
-    }
-    
+  }
 }
-
 
 .mrt-table-head-cell-resize-handle {
-    width: 0.1rem !important;
+  width: 0.1rem !important;
 }
-

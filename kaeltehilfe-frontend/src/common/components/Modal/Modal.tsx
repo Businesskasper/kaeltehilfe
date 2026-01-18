@@ -79,9 +79,7 @@ export const AppModal = ({
       <Modal.Overlay />
       <Modal.Content>
         <Modal.Header>
-          {/* <Modal.Title> */}
           <Title order={3}>{title}</Title>
-          {/* </Modal.Title> */}
           <Modal.CloseButton />
         </Modal.Header>
         <Modal.Body>{children}</Modal.Body>

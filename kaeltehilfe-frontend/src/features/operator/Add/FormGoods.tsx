@@ -54,7 +54,7 @@ const GoodSelection = ({
 
   const adjustQuantity = (
     existingGood: DistributionFormGood,
-    action: "INCREASE" | "DECREASE"
+    action: "INCREASE" | "DECREASE",
   ) => {
     const index = form.values.goods.indexOf(existingGood);
     const clone = form.values.goods.map((g) => g);

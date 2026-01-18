@@ -10,7 +10,7 @@ import { arraysEqual } from "./arraysEqual";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getDiffs<T extends Record<string, any>>(
   item: T,
-  reference: T
+  reference: T,
 ): Partial<T> {
   const diffs: Partial<T> = {};
 
@@ -65,7 +65,7 @@ export function getDiffs<T extends Record<string, any>>(
 
 export function getHasDiffs<T extends Record<string, unknown>>(
   item: T,
-  reference: T
+  reference: T,
 ): boolean {
   const diffs = getDiffs(item, reference);
 

@@ -7,7 +7,7 @@
  */
 export const arraysEqual = <T>(
   arr1: Array<T>,
-  arr2: Array<T> | undefined
+  arr2: Array<T> | undefined,
 ): boolean => {
   if (!arr2) return false;
 

@@ -62,7 +62,7 @@ export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
         { id: undefined as unknown as number, fullname: "" },
       ],
     }),
-    [busses]
+    [busses],
   );
 
   const form = useForm<ShiftForm>({
@@ -80,11 +80,11 @@ export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
                   !(
                     s.date?.valueOf() === existing?.date?.valueOf() &&
                     s.busId === existing?.busId
-                  )
+                  ),
               )
               ?.map(({ date }) => date) || [],
-            "Eine Schicht zum angegebenem Datum existiert bereits"
-          )
+            "Eine Schicht zum angegebenem Datum existiert bereits",
+          ),
         ),
       registrationNumber: (value) => validators(value, requiredValidator()),
       volunteers: {
@@ -107,7 +107,7 @@ export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
           }
 
           const volunteerObjs = values.volunteers?.filter(
-            (v) => v.id === currentVolunteer.id
+            (v) => v.id === currentVolunteer.id,
           );
           if (!volunteerObjs || volunteerObjs.length === 0) {
             return "Frewilliger wurde nicht gefunden";
@@ -192,7 +192,7 @@ export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
             return;
           }
           const volunteerObj = volunteers?.filter(
-            (v) => v.fullname === currentVolunteer.fullname
+            (v) => v.fullname === currentVolunteer.fullname,
           );
           if (!volunteerObj || volunteerObj.length === 0) {
             return;
@@ -240,7 +240,7 @@ export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
           clearable
           getDayProps={(date) => {
             const entryExists = !!shifts?.find(
-              (s) => compareByDateOnly(s.date, date) === 0
+              (s) => compareByDateOnly(s.date, date) === 0,
             );
             return {
               disabled: entryExists,

@@ -85,7 +85,7 @@ const PasswordRequirement = ({ meets, label }: PasswordRequirementProps) => {
 
 const getStrength = (
   requirements: Array<PasswordRequirement>,
-  password: string
+  password: string,
 ) => {
   let multiplier = password.length > 5 ? 0 : 1;
 

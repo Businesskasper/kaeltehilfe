@@ -14,7 +14,7 @@ export const Clients = () => {
   } = useClients();
 
   const [selectedClients, setSelectedClients] = React.useState<Array<Client>>(
-    []
+    [],
   );
 
   const openModal = React.useCallback(
@@ -24,7 +24,7 @@ export const Clients = () => {
         modalId: "ClientsModal",
         children: <ClientModalContent existing={selectedClients[0]} />,
       }),
-    [selectedClients]
+    [selectedClients],
   );
 
   const columns: Array<MRT_ColumnDef<Client>> = [

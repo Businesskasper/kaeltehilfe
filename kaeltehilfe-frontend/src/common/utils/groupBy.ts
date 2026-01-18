@@ -7,7 +7,7 @@
  */
 export function groupBy<T, K extends keyof T>(
   items: T[],
-  key: K
+  key: K,
 ): Map<T[K], T[]>;
 /**
  * Groups an array of objects
@@ -19,7 +19,7 @@ export function groupBy<T, K extends keyof T>(
 export function groupBy<T, V>(items: T[], getKey: (item: T) => V): Map<V, T[]>;
 export function groupBy<T, V, K extends keyof T>(
   items: T[],
-  keyGetter: (item: T) => V | K
+  keyGetter: (item: T) => V | K,
 ): Map<V | K, T[]> {
   const map = new Map<V | K, T[]>();
 
