@@ -117,7 +117,7 @@ export const DistributionAdd = () => {
           if (!value) return "Bitte wählen oder neu eingeben";
 
           const allClientsByName = values.clients?.filter(
-            (c) => c.name?.trim() === value?.toString()?.trim()
+            (c) => c.name?.trim() === value?.toString()?.trim(),
           );
           if (allClientsByName.length > 1) {
             return "Klienten können nicht mehrfach gewählt werden";
@@ -128,7 +128,7 @@ export const DistributionAdd = () => {
       goods: (value) =>
         validators(
           value,
-          requiredValidator("Array", "Mindestens ein Gut muss gewählt werden")
+          requiredValidator("Array", "Mindestens ein Gut muss gewählt werden"),
         ),
     },
   });
@@ -165,7 +165,7 @@ export const DistributionAdd = () => {
   React.useEffect(() => {
     if (!hasBussesBeenLoaded || !profile) return;
     const availableRegistrationNumbers = busses.map(
-      (b) => b.registrationNumber
+      (b) => b.registrationNumber,
     );
     if (!profile?.registrationNumber) {
       if (availableRegistrationNumbers.length === 0) {
@@ -182,12 +182,12 @@ export const DistributionAdd = () => {
       } else {
         form.setFieldValue(
           "busRegistrationNumber",
-          availableRegistrationNumbers[0]
+          availableRegistrationNumbers[0],
         );
       }
     } else {
       const registrationNumberExists = !!availableRegistrationNumbers.find(
-        (ar) => ar == profile.registrationNumber
+        (ar) => ar == profile.registrationNumber,
       );
       if (registrationNumberExists) {
         form.setFieldValue("busRegistrationNumber", profile.registrationNumber);
@@ -220,7 +220,7 @@ export const DistributionAdd = () => {
   }
 
   const [activeStep, setActiveStep] = useState<FormStep>(
-    hasGeoLocation ? FormStep.CLIENTS : FormStep.LOCATION
+    hasGeoLocation ? FormStep.CLIENTS : FormStep.LOCATION,
   );
   const lastActiveStep = React.useRef(activeStep);
 
@@ -251,16 +251,18 @@ export const DistributionAdd = () => {
         lastActiveStep.current === FormStep.LOCATION
           ? ["locationName"]
           : lastActiveStep.current === FormStep.CLIENTS
-          ? [
-              // "clients",
-              ...form.values.clients.map((_, index) => `clients.${index}.name`),
-              ...form.values.clients.map(
-                (_, index) => `clients.${index}.approxAge`
-              ),
-            ]
-          : lastActiveStep.current === FormStep.GOODS
-          ? ["goods"]
-          : [];
+            ? [
+                // "clients",
+                ...form.values.clients.map(
+                  (_, index) => `clients.${index}.name`,
+                ),
+                ...form.values.clients.map(
+                  (_, index) => `clients.${index}.approxAge`,
+                ),
+              ]
+            : lastActiveStep.current === FormStep.GOODS
+              ? ["goods"]
+              : [];
 
       hasError = fieldsToValidate.reduce((hasError, field) => {
         return hasError || form.validateField(field).hasError;
@@ -292,7 +294,7 @@ export const DistributionAdd = () => {
     breakpoint === "XL";
 
   return (
-    <div className="DistributionAdd">
+    <div className="distribution-add">
       <DistributionFormProvider form={form}>
         <Grid
           gutter={20}
@@ -378,7 +380,7 @@ export const DistributionAdd = () => {
                   updateActiveStep(getFormStepFromIndex(index))
                 }
                 orientation={isDesktop ? "vertical" : "horizontal"}
-                classNames={{ root: "DistributionStepperRoot" }}
+                classNames={{ root: "distribution-stepper-root" }}
               >
                 {!hasGeoLocation && (
                   <Stepper.Step
@@ -439,7 +441,7 @@ export const DistributionAdd = () => {
                   <Button
                     onClick={() => {
                       updateActiveStep(
-                        activeStep > 0 ? activeStep - 1 : activeStep
+                        activeStep > 0 ? activeStep - 1 : activeStep,
                       );
                     }}
                     disabled={
@@ -470,16 +472,16 @@ export const DistributionAdd = () => {
                           ? FormStep.GOODS
                           : FormStep.GOODS;
                         updateActiveStep(
-                          activeStep < maxStep ? activeStep + 1 : activeStep
+                          activeStep < maxStep ? activeStep + 1 : activeStep,
                         );
                       }}
                       disabled={
                         !hasGeoLocation && activeStep === FormStep.LOCATION
                           ? !form.values.locationName
                           : activeStep === FormStep.CLIENTS
-                          ? !form.values.clients ||
-                            form.values.clients.length === 0
-                          : false
+                            ? !form.values.clients ||
+                              form.values.clients.length === 0
+                            : false
                       }
                     >
                       Weiter

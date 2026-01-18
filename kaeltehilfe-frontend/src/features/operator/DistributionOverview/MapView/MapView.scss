@@ -1,6 +1,5 @@
-.MapView {
-    // height: calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height, 0px) - 80px); // Idk why -80px are still necessary
-    height: calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height, 0px) - 32px );
+.map-view {
+    height: calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height, 0px) - 32px ); // Idk why -32px are still necessary
 }
 
 .add-button-group {

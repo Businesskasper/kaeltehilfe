@@ -54,7 +54,7 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
           : (item[valueGetter] as string | undefined)) || ""
       );
     },
-    [valueGetter]
+    [valueGetter],
   );
 
   const getItemDisabled = React.useCallback(
@@ -62,10 +62,10 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
       return !disabledGetter
         ? false
         : typeof disabledGetter === "function"
-        ? disabledGetter(item)
-        : (item[disabledGetter] as boolean); // TODO: find out why casting is necessary
+          ? disabledGetter(item)
+          : (item[disabledGetter] as boolean); // TODO: find out why casting is necessary
     },
-    [disabledGetter]
+    [disabledGetter],
   );
 
   const combobox = useCombobox({
@@ -105,7 +105,7 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
         : formProps.value;
     return currentValue
       ? options.filter((option) =>
-          option.value?.toLowerCase()?.includes(currentValue)
+          option.value?.toLowerCase()?.includes(currentValue),
         )
       : options;
   }, [formProps.value, options]);
@@ -124,7 +124,7 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
       <Combobox.Target withKeyboardNavigation>
         {searchable ? (
           <TextInput
-            classNames={{ root: `FormSelect ${classNames}` }}
+            classNames={{ root: `form-select ${classNames}` }}
             label={label}
             withAsterisk={withAsterisk}
             style={style}
@@ -170,7 +170,7 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
           />
         ) : (
           <InputBase
-            classNames={{ root: `FormSelect ${classNames}` }}
+            classNames={{ root: `form-select ${classNames}` }}
             label={label}
             withAsterisk={withAsterisk}
             style={style}

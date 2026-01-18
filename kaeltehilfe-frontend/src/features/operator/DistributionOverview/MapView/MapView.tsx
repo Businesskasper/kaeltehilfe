@@ -31,29 +31,41 @@ export const MapView = () => {
   const [storedState, setStoredState] = useBrowserStorage<MapState>(
     "SESSION",
     STORAGE_KEY_MAP_STATE,
-    defaultMapState
+    defaultMapState,
   );
 
-  const [isTracking, { toggle: toggleTracking }] = useDisclosure(storedState.isTracking);
-  const [mapCenter, setMapCenter] = React.useState(() => 
-    !storedState.isTracking && storedState.center ? storedState.center : defaultLocation
+  const [isTracking, { toggle: toggleTracking }] = useDisclosure(
+    storedState.isTracking,
+  );
+  const [mapCenter, setMapCenter] = React.useState(() =>
+    !storedState.isTracking && storedState.center
+      ? storedState.center
+      : defaultLocation,
   );
   const [mapZoom, setMapZoom] = React.useState(storedState.zoom);
   const [geoLocation, setGeoLocation] = React.useState(defaultLocation);
 
-  const updateGeoLocation = React.useCallback((location: { lat: number; lng: number }) => 
-    setGeoLocation(location), []);
-  const updateMapCenter = React.useCallback((center: { lat: number; lng: number }) => 
-    setMapCenter(center), []);
-  const updateMapZoom = React.useCallback((zoom: number) => setMapZoom(zoom), []);
+  const updateGeoLocation = React.useCallback(
+    (location: { lat: number; lng: number }) => setGeoLocation(location),
+    [],
+  );
+  const updateMapCenter = React.useCallback(
+    (center: { lat: number; lng: number }) => setMapCenter(center),
+    [],
+  );
+  const updateMapZoom = React.useCallback(
+    (zoom: number) => setMapZoom(zoom),
+    [],
+  );
 
   // Save map state: when tracking is enabled, preserve last manual center; always save zoom
   React.useEffect(() => {
     setStoredState((prev) => {
       const zoomChanged = prev.zoom !== mapZoom;
       const trackingChanged = prev.isTracking !== isTracking;
-      const centerChanged = !prev.center || 
-        prev.center.lat !== mapCenter.lat || 
+      const centerChanged =
+        !prev.center ||
+        prev.center.lat !== mapCenter.lat ||
         prev.center.lng !== mapCenter.lng;
 
       if (!zoomChanged && !trackingChanged && (!centerChanged || isTracking)) {
@@ -80,7 +92,7 @@ export const MapView = () => {
   };
 
   return (
-    <div className="MapView">
+    <div className="map-view">
       <MapContainer
         center={mapCenter}
         zoom={mapZoom}

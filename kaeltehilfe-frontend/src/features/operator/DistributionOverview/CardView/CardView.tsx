@@ -23,8 +23,6 @@ import {
 } from "../../../../common/utils";
 import { DistributionCard } from "./DistributionCard";
 
-import "../DistributionOverview.scss";
-
 export const CardView = () => {
   const {
     queryDistributionsPaginated: {
@@ -45,7 +43,7 @@ export const CardView = () => {
         fetchNextPage();
       }
     },
-    [fetchNextPage, hasNextPage, isFetchingNextPage]
+    [fetchNextPage, hasNextPage, isFetchingNextPage],
   );
 
   React.useEffect(() => {
@@ -77,7 +75,7 @@ export const CardView = () => {
 
   const byDate = React.useMemo(() => {
     const byDateMap = groupBy(distributions || [], (d) =>
-      toNormalizedDate(d.timestamp)?.valueOf()
+      toNormalizedDate(d.timestamp)?.valueOf(),
     );
     const today = toNormalizedDate(new Date());
     if (!byDateMap.has(today?.valueOf())) {
@@ -88,7 +86,7 @@ export const CardView = () => {
 
   const sortedByDate = React.useMemo(
     () => Array.from(byDate.keys()).sort((a, b) => compareByDateOnly(b, a)),
-    [byDate]
+    [byDate],
   );
 
   const plusHovered = useHover();
@@ -97,12 +95,12 @@ export const CardView = () => {
     compareByDateOnly(new Date(date.valueOf()), new Date()) === 0;
 
   return (
-    <div className="DistributionOverview">
+    <div>
       {isLoading && <LoadingOverlay visible />}
       {sortedByDate.map((distributionDate) => {
         const byClientId = groupBy(
           byDate.get(distributionDate) || [],
-          (d) => d.client.id
+          (d) => d.client.id,
         );
 
         const sortedClientIds = Array.from(byClientId.keys()).sort(
@@ -110,19 +108,19 @@ export const CardView = () => {
             const oldestDistribution1 = byClientId
               .get(clientId1)
               ?.sort((dist1, dist2) =>
-                compareByDateTime(dist1.timestamp, dist2.timestamp)
+                compareByDateTime(dist1.timestamp, dist2.timestamp),
               )[0];
             const oldestDistribution2 = byClientId
               .get(clientId2)
               ?.sort((dist1, dist2) =>
-                compareByDateTime(dist1.timestamp, dist2.timestamp)
+                compareByDateTime(dist1.timestamp, dist2.timestamp),
               )[0];
 
             return compareByDateTime(
               oldestDistribution2?.timestamp,
-              oldestDistribution1?.timestamp
+              oldestDistribution1?.timestamp,
             );
-          }
+          },
         );
 
         return (
@@ -144,8 +142,8 @@ export const CardView = () => {
                     !plusHovered.hovered
                       ? undefined
                       : colorScheme === "dark"
-                      ? "xl"
-                      : "sm"
+                        ? "xl"
+                        : "sm"
                   }
                   padding="md"
                   radius="md"

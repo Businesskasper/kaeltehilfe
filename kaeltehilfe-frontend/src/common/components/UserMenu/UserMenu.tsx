@@ -27,11 +27,11 @@ export const UserMenu = () => {
   const adminResolvedPath = useResolvedPath("/admin");
   const isOnAdminPage = !!matchPath(
     { path: adminResolvedPath.pathname, end: false },
-    location.pathname
+    location.pathname,
   );
 
   return (
-    <Group className="UserMenu">
+    <Group className="user-menu">
       <Menu withArrow>
         <Menu.Target>
           <Text>
@@ -88,7 +88,7 @@ export const UserMenu = () => {
   //         </ActionIcon>
   //       </Menu.Target>
   //       <Menu.Dropdown miw={150}>
-  //         <Group py={4} px={20} style={{ rowGap: "4px" }} className="UserMen">
+  //         <Group py={4} px={20} style={{ rowGap: "4px" }} className="user-menu">
   //           <div>{auth.user?.profile.name}</div>
   //           <Switch
   //             size="md"
