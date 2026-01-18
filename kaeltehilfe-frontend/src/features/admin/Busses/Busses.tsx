@@ -1,5 +1,4 @@
 import { Title } from "@mantine/core";
-// import { IconLogin } from "@tabler/icons-react";
 import { IconCertificate } from "@tabler/icons-react";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
@@ -33,10 +32,10 @@ export const Busses = () => {
             (l): l is OperatorLogin =>
               isOperatorLogin(l) &&
               l.registrationNumber.toUpperCase() ===
-                selectedBusses[0].registrationNumber.toUpperCase()
+                selectedBusses[0].registrationNumber.toUpperCase(),
           )
         : undefined,
-    [logins, selectedBusses]
+    [logins, selectedBusses],
   );
 
   const openCrudModal = React.useCallback(
@@ -46,7 +45,7 @@ export const Busses = () => {
         modalId: "BusModal",
         children: <BusModalContent existing={selectedBusses[0]} />,
       }),
-    [selectedBusses]
+    [selectedBusses],
   );
 
   const openCertModal = React.useCallback(
@@ -58,7 +57,7 @@ export const Busses = () => {
           <ManageLoginCertificatesModalContent login={selectedBusLogin} />
         ),
       }),
-    [selectedBusLogin, selectedBusses]
+    [selectedBusLogin, selectedBusses],
   );
 
   const columns: Array<MRT_ColumnDef<Bus>> = [
@@ -75,15 +74,11 @@ export const Busses = () => {
         .replace(".", "_")}.xlsx`,
   };
 
-  // const handleEdit = React.useCallback(() => {
-  //   openCrudModal();
-  // }, [openCrudModal]);
-
   const handleDelete = React.useCallback(
     (busses: Array<Bus>) => {
       busses.forEach((bus) => deleteBus(bus.id));
     },
-    [deleteBus]
+    [deleteBus],
   );
 
   const handleAdd = React.useCallback(() => {
@@ -104,7 +99,6 @@ export const Busses = () => {
         keyGetter="id"
         columns={columns}
         handleAdd={handleAdd}
-        // handleEdit={handleEdit}
         handleDelete={handleDelete}
         exportConfig={exportConfig}
         fillScreen

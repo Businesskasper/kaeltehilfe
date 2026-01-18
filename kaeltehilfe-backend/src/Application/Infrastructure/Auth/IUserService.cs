@@ -14,7 +14,6 @@ public interface IUserService
         string? password
     );
 
-    // public Task CreateLogin(string username, Role role, string? registrationNumber);
     public Task<List<Login>> GetLogins();
     public Task<Login?> GetLogin(string username);
     public Task SetPassword(string identityProviderId, string password);

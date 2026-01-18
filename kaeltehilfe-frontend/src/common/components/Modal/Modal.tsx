@@ -34,9 +34,6 @@ type OpenAppModalProps = {
 export const openAppModal = (props: OpenAppModalProps) => {
   modals.open({
     modalId: props.modalId,
-    // withinPortal: false,
-    // title: props.title,
-    // title: <Title order={3}>{props.title}</Title>,
     withCloseButton: false,
     size: props.size || "lg",
     children: (

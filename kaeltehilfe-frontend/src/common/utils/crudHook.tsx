@@ -24,7 +24,7 @@ export const useCrudHook = <
   TParams extends Record<string, unknown>,
   TWriteModel extends Record<string, unknown>,
   TUpdateModel = Partial<TWriteModel>,
-  TWriteResult = never
+  TWriteResult = never,
 >({
   key,
   additionalInvalidation,
@@ -47,7 +47,6 @@ export const useCrudHook = <
     enabled: enabled ?? true,
     placeholderData: (previousData) => previousData,
     queryFn: async ({ signal }): Promise<Array<T>> => {
-      // const response = await httpGet(signal, lastSetValues);
       const response = await httpGet(signal, params);
       if (!transformer) return response;
 
@@ -63,7 +62,7 @@ export const useCrudHook = <
               [transformedKey]: keyTransformer(receivedItem[transformedKey]),
             };
           },
-          receivedItem
+          receivedItem,
         );
 
         return transformedObject;
@@ -75,16 +74,14 @@ export const useCrudHook = <
 
   const invalidate = () => {
     queryClient.invalidateQueries({
-      // queryKey: [key, ...paramValues],
       queryKey: paramValues ? [key, ...paramValues] : [key],
       refetchType: "all",
-      // stale: false,
       stale: true,
       type: "all",
     });
     queryClient.refetchQueries(); // Test
     additionalInvalidation?.forEach((key) =>
-      queryClient.invalidateQueries({ queryKey: [key] })
+      queryClient.invalidateQueries({ queryKey: [key] }),
     );
   };
 

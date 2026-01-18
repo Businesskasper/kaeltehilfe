@@ -32,31 +32,6 @@ public static class ControllerExtensions
             Enum.TryParse<Role>(c.Value, out var parsedRole) && parsedRole == Role.OPERATOR
         );
 
-        // var resourceAccessClaim = claims.FirstOrDefault(c => c.Type == "resource_access")?.Value;
-        // var clientName = claims.FirstOrDefault(c => c.Type == "azp")?.Value;
-        // if (!string.IsNullOrEmpty(resourceAccessClaim) && !string.IsNullOrEmpty(clientName))
-        // {
-        //     using (JsonDocument document = JsonDocument.Parse(resourceAccessClaim))
-        //     {
-        //         if (
-        //             document.RootElement.TryGetProperty(clientName, out JsonElement clientElement)
-        //             && clientElement.TryGetProperty("roles", out JsonElement rolesElement)
-        //             && rolesElement.ValueKind == JsonValueKind.Array
-        //         )
-        //         {
-        //             foreach (var role in rolesElement.EnumerateArray())
-        //             {
-        //                 var roleValue = role.GetString();
-        //                 if (
-        //                     !string.IsNullOrWhiteSpace(roleValue)
-        //                     && Enum.TryParse<Role>(roleValue, out var parsedRole)
-        //                 )
-        //                     roles.Add(parsedRole);
-        //             }
-        //         }
-        //     }
-        // }
-
         return new TokenDetails(isAdmin, isOperator, registrationNumber);
     }
 }

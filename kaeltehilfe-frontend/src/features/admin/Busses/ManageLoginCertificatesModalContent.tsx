@@ -26,10 +26,6 @@ type ManageLoginCertificatesModalContentProps = {
 export const ManageLoginCertificatesModalContent = ({
   login,
 }: ManageLoginCertificatesModalContentProps) => {
-  // const closeModal = () => {
-  //   modals.close("LoginCertificatesModal");
-  // };
-
   const { mutate: revokeCertificate, isPending: isCertificateRevoking } =
     useRevokeLoginCertificate();
 
@@ -41,9 +37,9 @@ export const ManageLoginCertificatesModalContent = ({
     () =>
       loginCertificates?.filter(
         (lc) =>
-          lc.loginUsername?.toUpperCase() === login?.username?.toUpperCase()
+          lc.loginUsername?.toUpperCase() === login?.username?.toUpperCase(),
       ) || [],
-    [login?.username, loginCertificates]
+    [login?.username, loginCertificates],
   );
 
   const downloadCert = (selectedCerts: LoginCertificate[]) => {
@@ -85,11 +81,6 @@ export const ManageLoginCertificatesModalContent = ({
     },
   ];
 
-  // const [
-  //   // isCertCreateModalOpen,
-  //   { open: openCreateCertmodal },
-  // ] = useDisclosure(false);
-
   const openCreateModal = React.useCallback(
     () =>
       openAppModal({
@@ -98,7 +89,7 @@ export const ManageLoginCertificatesModalContent = ({
         size: "xl",
         children: <CreateLoginCertificateModalContent login={login} />,
       }),
-    [login]
+    [login],
   );
 
   return (
@@ -142,20 +133,7 @@ export const ManageLoginCertificatesModalContent = ({
             onClick: downloadCert,
           },
         ]}
-        // columns={columns}
-        // handleEdit={handleEdit}
-        // exportConfig={exportConfig}
-        // fillScreen
-        // tableKey="clients-overview"
-        // setSelected={setSelectedClients}
-        // enableGrouping
       />
     </ModalMain>
-    // <LoginCertificatesModalContent
-    //   close={closeCreateCertModal}
-    //   isOpen={isOpen && isCertCreateModalOpen && !!bus && !!login}
-    //   bus={bus}
-    //   login={login}
-    // />
   );
 };

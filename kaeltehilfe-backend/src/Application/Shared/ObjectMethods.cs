@@ -20,7 +20,6 @@ public static class ObjectMethods
             if (!json.ContainsKey(jsonKey))
                 continue;
 
-            // var value = ParseValue((JsonElement)json[jsonKey]);
             var value = json[jsonKey].ToString();
             result.Add(property.Name, value);
         }
@@ -33,16 +32,12 @@ public static class ObjectMethods
         TUpdateDto update
     )
     {
-        // var hasUpdates = false;
-
         var updated = Activator.CreateInstance<TCreateDto>();
         var properties = existing?.GetType().GetProperties();
         foreach (var property in properties ?? [])
         {
             var existingValue = property.GetValue(existing);
             var updatedValue = property.GetValue(updated);
-            // if (existingValue != updatedValue)
-            //     hasUpdates = true;
 
             property.SetValue(updated, updatedValue ?? existingValue);
         }

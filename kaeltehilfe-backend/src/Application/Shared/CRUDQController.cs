@@ -47,11 +47,9 @@ public abstract class CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>
     public async Task<IActionResult> Create([FromBody()] TCreateDto dto)
     {
         var obj = _mapper.Map<TEntity>(dto);
-        // var result = await _kbContext.Set<TEntity>().AddAsync(obj);
         var result = _kbContext.Set<TEntity>().Attach(obj);
         await _kbContext.SaveChangesAsync();
 
-        // // return CreatedAtAction(nameof(Get), new { id = result.Entity.Id });
         return CreatedAtAction(nameof(Get), routeValues: new { id = result.Entity.Id }, null);
     }
 
@@ -113,22 +111,9 @@ public abstract class CRUDQController<TEntity, TCreateDto, TUpdateDto, TListDto>
         if (obj == null)
             return NotFound();
 
-        // _kbContext.Set<TEntity>().Remove(obj);
         obj.IsDeleted = true;
         await _kbContext.SaveChangesAsync();
 
         return NoContent();
     }
-
-    // private TCreateDto getUpdated(TCreateDto existing, TUpdateDto update)
-    // {
-    //     var updated = Activator.CreateInstance<TCreateDto>();
-    //     var properties = existing?.GetType().GetProperties();
-    //     foreach (var property in properties ?? [])
-    //     {
-    //         property.SetValue(updated, property.GetValue(update) ?? property.GetValue(existing));
-    //     }
-
-    //     return updated;
-    // }
 }

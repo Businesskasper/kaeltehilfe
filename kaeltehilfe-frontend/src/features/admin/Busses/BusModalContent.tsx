@@ -41,8 +41,8 @@ export const BusModalContent = ({ existing }: BusModalContentProps) => {
           (value) =>
             matches(
               /^[A-ZÄÖÜ]{1,3}-[A-Z]{1,2}\d{1,4}$/,
-              "Kein valides Kennzeichen"
-            )(value)?.toString() || null
+              "Kein valides Kennzeichen",
+            )(value)?.toString() || null,
         ),
     },
   });
@@ -66,19 +66,12 @@ export const BusModalContent = ({ existing }: BusModalContentProps) => {
           id: existing.id,
           update: formModel,
         },
-        { onSuccess: closeModal }
+        { onSuccess: closeModal },
       );
     } else {
       post(formModel, { onSuccess: closeModal });
     }
   };
-
-  // React.useEffect(() => {
-  //   form.setFieldValue(
-  //     "registrationNumber",
-  //     form.values.registrationNumber?.toUpperCase() || ""
-  //   );
-  // }, [form, form.values.registrationNumber]);
 
   return (
     <form onSubmit={form.onSubmit(onSubmit)}>

@@ -13,27 +13,6 @@ export const useEffectOnce = (fn: () => void) => {
   }, [fn]);
 };
 
-// export const useMemoOnce = <T,>(fn: () => T) => {
-//   const [result, setResult] = React.useState<T>();
-//   useEffectOnce(() => {
-//     setResult(fn());
-//   });
-
-//   return result;
-// };
-
-// export const useMemoOnce = <T,>(fn: () => T) => {
-//   const result = React.useRef<T>();
-
-//   return React.useMemo(() => {
-//     if (result.current) return result.current;
-//     else {
-//       result.current = fn();
-//       return result.current;
-//     }
-//   }, []);
-// };
-
 export const useMemoOnce = <T,>(fn: () => T): T => {
   const result = React.useRef<T | null>(null);
 

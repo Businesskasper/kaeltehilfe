@@ -63,7 +63,6 @@ public class GoodsController : ControllerBase
         if (existing is null)
             return NotFound();
 
-        // var updatedEntity = _mapper.Map(dto, existing);
         var updatedEntity = _mapper.Map<Good>(dto);
         updatedEntity.Id = existing.Id;
         updatedEntity.AddOn = existing.AddOn;
