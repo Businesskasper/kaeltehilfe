@@ -14,9 +14,5 @@ export const AuthRoute = ({ children, roles }: PrivateRouteProps) => {
     roles?.length === 0 ||
     (profile?.role && roles.includes(profile.role));
 
-  // if (!isLoggedIn) {
-  //   auth.signinSilent({});
-  // }
-
   return isLoggedIn && isAuthorized ? children : null;
 };

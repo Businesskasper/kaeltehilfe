@@ -106,7 +106,7 @@ export const Distributions = () => {
     (goods: Array<Distribution>) => {
       goods.forEach((distribution) => deleteDistribution(distribution.id));
     },
-    [deleteDistribution]
+    [deleteDistribution],
   );
 
   const isLoading = !isFetched && isFetching;
@@ -136,18 +136,6 @@ export const Distributions = () => {
         tableKey="distributions-overview"
         defaultSorting={[{ id: "timestamp", desc: true }]}
         enableGrouping
-        // customHeaderChildren={
-        //   <Group ml="xl" w="100%" gap="xl">
-        //     <Divider
-        //       label="jo"
-        //       size="xl"
-        //       color="black"
-        //       h="100%"
-        //       orientation="vertical"
-        //     />
-        //     <DatePickerInput type="range" />
-        //   </Group>
-        // }
       />
     </>
   );

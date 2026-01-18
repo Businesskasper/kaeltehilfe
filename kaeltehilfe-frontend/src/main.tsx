@@ -126,9 +126,7 @@ const authProvProps: AuthProviderProps = {
 };
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  // <HelmetProvider
   <AuthProvider {...authProvProps}>
     <RouterProvider router={router} />
-  </AuthProvider>
-  // </HelmetProvider>
+  </AuthProvider>,
 );

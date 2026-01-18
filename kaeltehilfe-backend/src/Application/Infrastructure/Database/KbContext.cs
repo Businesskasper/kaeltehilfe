@@ -18,9 +18,6 @@ public class KbContext : DbContext
     public virtual DbSet<Login> Logins { get; set; }
     public virtual DbSet<LoginCertificate> LoginCertificates { get; set; }
 
-    // public virtual DbSet<AdminLogin> AdminLogins { get; set; }
-    // public virtual DbSet<OperatorLogin> OperatorLogins { get; set; }
-
     public KbContext(DbContextOptions<KbContext> options)
         : base(options) { }
 
@@ -156,18 +153,6 @@ public class KbContext : DbContext
 
         // Configure properties for OperatorLogin
         modelBuilder.Entity<OperatorLogin>().Property(o => o.RegistrationNumber).IsRequired();
-
-        // modelBuilder
-        //     .Entity<AdminLogin>()
-        //     .HasDiscriminator<string>("role")
-        //     .HasValue<AdminLogin>("ADMIN");
-        // modelBuilder.Entity<AdminLogin>().Property(a => a.Email).IsRequired();
-
-        // modelBuilder
-        //     .Entity<OperatorLogin>()
-        //     .HasDiscriminator<string>("role")
-        //     .HasValue<OperatorLogin>("OPERATOR");
-        // modelBuilder.Entity<OperatorLogin>().Property(o => o.RegistrationNumber).IsRequired();
 
         modelBuilder.Entity<LoginCertificate>().ConfigureBaseEntity();
         modelBuilder

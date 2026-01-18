@@ -33,15 +33,8 @@ public class LoginDtoToObjProfile : Profile
 {
     public LoginDtoToObjProfile()
     {
-        // CreateMap<LoginCreateDto, AdminLogin>();
-        // CreateMap<AdminLogin, LoginCreateDto>()
-        //     .ForMember(l => l.Role, m => m.MapFrom(dto => Role.ADMIN));
-        CreateMap<AdminLogin, LoginDto>()
-            .ForMember(l => l.Role, m => m.MapFrom(dto => Role.ADMIN));
+        CreateMap<AdminLogin, LoginDto>().ForMember(l => l.Role, m => m.MapFrom(dto => Role.ADMIN));
 
-        // CreateMap<LoginCreateDto, OperatorLogin>();
-        // CreateMap<OperatorLogin, LoginCreateDto>()
-        //     .ForMember(l => l.Role, m => m.MapFrom(dto => Role.OPERATOR));
         CreateMap<OperatorLogin, LoginDto>()
             .ForMember(l => l.Role, m => m.MapFrom(dto => Role.OPERATOR));
 

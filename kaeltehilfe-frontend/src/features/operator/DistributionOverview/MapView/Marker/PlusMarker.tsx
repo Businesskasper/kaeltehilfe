@@ -1,7 +1,7 @@
 import React from "react";
 
 type PlusMarkerProps = {
-  size?: number | string; // z.B. 24 | "2rem" | "100%"
+  size?: number | string;
   className?: string;
 };
 

@@ -86,18 +86,7 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
   }, [getItemDisabled, getItemValue, items, sort]);
 
   const isTouchDevice = useIsTouchDevice();
-  // const shouldFilterOptions = !options.some(
-  //   (option) => option.value === formProps.value
-  // );
-  // const filteredOptions = React.useMemo(() => {
-  //   return shouldFilterOptions
-  //     ? options.filter((option) =>
-  //         option.value
-  //           .toLowerCase()
-  //           .includes(formProps.value.toLowerCase().trim())
-  //       )
-  //     : options;
-  // }, [formProps.value, options, shouldFilterOptions]);
+
   const filteredOptions = React.useMemo(() => {
     const currentValue =
       typeof formProps.value === "string"
@@ -118,7 +107,6 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
         onItemSelected && onItemSelected(val as unknown as T | undefined);
         combobox.closeDropdown();
       }}
-      // withinPortal={false}
       withinPortal={true}
     >
       <Combobox.Target withKeyboardNavigation>
@@ -134,7 +122,6 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
               formProps.onChange(event);
               combobox.openDropdown();
               combobox.updateSelectedOptionIndex();
-              // combobox.clickSelectedOption();
             }}
             onClick={() => combobox.openDropdown()}
             onFocus={() => combobox.openDropdown()}

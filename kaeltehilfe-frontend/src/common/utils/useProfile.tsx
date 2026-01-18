@@ -6,8 +6,6 @@ import { UserRole } from "../data";
 export const useProfile = (): KbProfile | undefined => {
   const auth = useAuth();
 
-  // if (!auth || !auth.isAuthenticated) return undefined;
-
   const profile = React.useMemo<KbProfile | undefined>(() => {
     if (!auth?.isAuthenticated) return;
 
@@ -22,8 +20,8 @@ export const useProfile = (): KbProfile | undefined => {
       role: roles?.find((r) => r.toUpperCase() === "ADMIN")
         ? "ADMIN"
         : roles?.find((r) => r.toUpperCase() === "OPERATOR")
-        ? "OPERATOR"
-        : undefined,
+          ? "OPERATOR"
+          : undefined,
       registrationNumber: kbprofile.registrationNumber || "",
     };
 

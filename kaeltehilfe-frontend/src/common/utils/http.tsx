@@ -12,7 +12,6 @@ export const http = axios.create({
 const notificationProps: Partial<NotificationData> = {
   title: "Fehler bei der Übertragung",
   color: "red",
-  // className: "AppNotification AppNotificationDanger",
   icon: <IconX />,
   withBorder: false,
   withCloseButton: true,
@@ -20,7 +19,6 @@ const notificationProps: Partial<NotificationData> = {
 };
 http.interceptors.request.use(async (request) => {
   request.withCredentials = true;
-  // request.headers.set("Accept-Encoding", "gzip", true);
   const user = await userManager.getUser();
   const { access_token } = user || {};
   if (access_token) {

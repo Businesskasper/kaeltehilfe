@@ -107,7 +107,6 @@ public class BussesController : ControllerBase
         if (existing is null)
             return NotFound();
 
-        // var hdEntity = _mapper.Map(dto, existing);
         var updatedEntity = _mapper.Map<Bus>(dto);
         updatedEntity.Id = existing.Id;
         updatedEntity.AddOn = existing.AddOn;

@@ -29,7 +29,6 @@ builder.Logging.AddConsole();
 builder.Services.AddResponseCompression(options =>
 {
     options.EnableForHttps = true;
-    // options.Providers.Add<BrotliCompressionProvider>();
     options.Providers.Add<GzipCompressionProvider>();
 });
 
@@ -70,7 +69,6 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.WithOrigins(origins);
-            // policy.AllowAnyOrigin();
             policy.AllowAnyHeader();
             policy.AllowAnyMethod();
             policy.AllowCredentials();
@@ -136,10 +134,7 @@ builder
             {
                 ValidateAudience = true,
                 NameClaimType = "preferred_username",
-                // "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/preferred_username",
                 RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-                // NameClaimType = "preferred_username",
-                // RoleClaimType = "roles",
             };
             if (builder.Environment.IsDevelopment())
             {

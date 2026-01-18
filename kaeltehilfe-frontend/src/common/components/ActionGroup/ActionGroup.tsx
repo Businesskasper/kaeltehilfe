@@ -17,7 +17,6 @@ export type ActionGroupOption = {
 export type ActionGroupProps = {
   options: Array<ActionGroupOption>;
   onClick: (selectedId: string) => void;
-  // groupProps?: GroupProps;
   groupProps?: ButtonGroupProps;
 };
 
@@ -45,8 +44,8 @@ export const ActionGroup = ({
           index === 0
             ? getFirstActionRadius()
             : index === options.length - 1
-            ? getLastActionRadius()
-            : "0";
+              ? getLastActionRadius()
+              : "0";
         return (
           <ActionIcon
             title={option.hoverTitle}

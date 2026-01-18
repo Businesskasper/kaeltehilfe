@@ -76,10 +76,10 @@ export const AdminLoginModalContent = ({
           minLengthValidator(5),
           isDuplicate(
             (logins?.map((l) => l.username) || []).filter(
-              (username) => !existing || username !== existing.username
+              (username) => !existing || username !== existing.username,
             ),
-            "Der Benutzername existiert bereits"
-          )
+            "Der Benutzername existiert bereits",
+          ),
         ),
       email: (value) =>
         validators(
@@ -88,12 +88,12 @@ export const AdminLoginModalContent = ({
           minLengthValidator(5),
           isDuplicate(
             (logins?.map((l) => l.email) || []).filter(
-              (mailAddress) => !existing || mailAddress !== existing.email
+              (mailAddress) => !existing || mailAddress !== existing.email,
             ),
-            "Die Email Adresse existiert bereits"
+            "Die Email Adresse existiert bereits",
           ),
           (value) =>
-            isEmail("Keine valide Mailadresse")(value)?.toString() || null
+            isEmail("Keine valide Mailadresse")(value)?.toString() || null,
         ),
       firstname: (value) =>
         validators(value, requiredValidator(), minLengthValidator(3)),
@@ -105,7 +105,7 @@ export const AdminLoginModalContent = ({
               value,
               requiredValidator(),
               minLengthValidator(6),
-              regexValidator(passwordRequirements)
+              regexValidator(passwordRequirements),
             )
           : undefined,
       password_: !existing
@@ -130,7 +130,7 @@ export const AdminLoginModalContent = ({
     if (existing) return;
     form.setFieldValue(
       "username",
-      `${form.values.firstname}.${form.values.lastname}`
+      `${form.values.firstname}.${form.values.lastname}`,
     );
   }, [existing, form, form.values.firstname, form.values.lastname]);
 
@@ -150,11 +150,11 @@ export const AdminLoginModalContent = ({
           email: existing.email,
           firstname: existing.firstname,
           lastname: existing.lastname,
-        }
+        },
       );
       update(
         { id: existing.username as unknown as number, update: patchModel },
-        { onSuccess: closeModal }
+        { onSuccess: closeModal },
       );
     } else {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -270,17 +270,6 @@ export const AdminLoginModalContent = ({
               mb="md"
               placeholder="Initiales Passwort"
               minLength={6}
-              // rightSection={!isTouchDevice ? undefined : <ActionIcon
-              //     size="xs"
-              //     disabled={!form.values.password}
-              //     onClick={() => {
-              //       form.setFieldValue("password", "");
-              //     }}
-              //     variant="transparent"
-              //   >
-              //     <IconX />
-              //   </ActionIcon>
-              // }
             />
             <PasswordInput
               {...form.getInputProps("password_")}
@@ -295,17 +284,6 @@ export const AdminLoginModalContent = ({
               withAsterisk
               mb="md"
               placeholder="Passwort wiederholen"
-              // rightSection={!isTouchDevice ? undefined : <ActionIcon
-              //     size="xs"
-              //     disabled={!form.values.password_}
-              //     onClick={() => {
-              //       form.setFieldValue("password_", "");
-              //     }}
-              //     variant="transparent"
-              //   >
-              //     <IconX />
-              //   </ActionIcon>
-              // }
             />
           </>
         )}

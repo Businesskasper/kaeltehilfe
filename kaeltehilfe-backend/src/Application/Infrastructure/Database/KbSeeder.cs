@@ -228,15 +228,9 @@ public class KbSeeder : ISeeder<KbContext>
                 var quantity = random.Next(1, 3);
 
                 // Always assign geolocation to a random location within Ulm, Germany
-                // Ulm coordinates: ~48.4°N, 9.98°E
-                // Bounds: 48.35-48.45 latitude, 9.9-10.1 longitude
                 double latitude = 48.35 + random.NextDouble() * 0.1; // 48.35 to 48.45
                 double longitude = 9.9 + random.NextDouble() * 0.2; // 9.9 to 10.1
-                var geoLocation = new NetTopologySuite.Geometries.Point(
-                    // new NetTopologySuite.Geometries.CoordinateM(longitude, latitude)
-                    longitude,
-                    latitude
-                )
+                var geoLocation = new NetTopologySuite.Geometries.Point(longitude, latitude)
                 {
                     SRID = 4326,
                 };

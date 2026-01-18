@@ -50,9 +50,13 @@ public class BatchDistributionsController : ControllerBase
         var goods = await GetGoods(dto.Goods);
 
         // Convert GeoLocationDto to Point for storage
-        NetTopologySuite.Geometries.Point? geoPoint = dto.GeoLocation != null
-            ? new NetTopologySuite.Geometries.Point(dto.GeoLocation.Lng, dto.GeoLocation.Lat) { SRID = 4326 }
-            : null;
+        NetTopologySuite.Geometries.Point? geoPoint =
+            dto.GeoLocation != null
+                ? new NetTopologySuite.Geometries.Point(dto.GeoLocation.Lng, dto.GeoLocation.Lat)
+                {
+                    SRID = 4326,
+                }
+                : null;
 
         List<Distribution> receivedDistributions = dto
             .Clients.SelectMany(s =>

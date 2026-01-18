@@ -11,8 +11,6 @@ import {
 export type NavigationItemProps = {
   target: string;
   label: string;
-  //   icon: React.ForwardRefExoticComponent<IconProps & React.RefAttributes<Icon>>;
-  //   icon: ReactNode;
   Icon: ComponentType<IconProps>;
 };
 
@@ -25,7 +23,7 @@ export const NavigationItem = ({ target, label, Icon, onNavigate }: Props) => {
 
   const isActive = !!matchPath(
     { path: resolvedpath.pathname, end: true },
-    location.pathname
+    location.pathname,
   );
 
   return (

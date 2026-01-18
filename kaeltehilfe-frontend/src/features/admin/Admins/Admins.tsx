@@ -1,5 +1,4 @@
 import { Title } from "@mantine/core";
-// import { IconLogin } from "@tabler/icons-react";
 import { notifications } from "@mantine/notifications";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
@@ -19,11 +18,11 @@ export const Admins = () => {
   const adminLogins = React.useMemo<Array<AdminLogin>>(
     () =>
       logins?.filter((login): login is AdminLogin => isAdminLogin(login)) || [],
-    [logins]
+    [logins],
   );
 
   const [selectedLogins, setSelectedLogins] = React.useState<Array<AdminLogin>>(
-    []
+    [],
   );
 
   const openModal = React.useCallback(
@@ -33,7 +32,7 @@ export const Admins = () => {
         modalId: "AdminLoginModal",
         children: <AdminLoginModalContent existing={selectedLogins[0]} />,
       }),
-    [selectedLogins]
+    [selectedLogins],
   );
 
   const columns: Array<MRT_ColumnDef<AdminLogin>> = [
@@ -84,7 +83,7 @@ export const Admins = () => {
         }
       });
     },
-    [deleteLogin, profile?.username]
+    [deleteLogin, profile?.username],
   );
 
   // const handleDelete = React.useCallback(

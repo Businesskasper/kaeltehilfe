@@ -65,7 +65,6 @@ public class ClientsController : ControllerBase
         if (existing is null)
             return NotFound();
 
-        // var updatedEntity = _mapper.Map(dto, existing);
         var updatedEntity = _mapper.Map<Client>(dto);
         updatedEntity.Id = existing.Id;
         updatedEntity.AddOn = existing.AddOn;
