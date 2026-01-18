@@ -83,7 +83,7 @@ function App() {
 
     const metaTags = document.getElementsByTagName("meta");
     const viewportMetaTag = Array.from(metaTags).find(
-      (meta) => meta.name === "viewport"
+      (meta) => meta.name === "viewport",
     );
     if (viewportMetaTag) {
       viewportMetaTag.content =
@@ -120,11 +120,9 @@ function App() {
             country_gray: colorsTuple("#D9D9D9"),
           },
           primaryColor: "blue",
-          // Should prevent iphones from zooming in on select focus
-          // Does not work, the problem is solved with above meta tag
-          // fontSizes: {
-          //   xs: "16px",
-          // },
+          fontFamily: "Inter, sans-serif",
+          fontFamilyMonospace: "Monaco, Courier, monospace",
+          headings: { fontFamily: "Inter, sans-serif" },
         }}
       >
         <DatesProvider settings={{ locale: "de" }}>

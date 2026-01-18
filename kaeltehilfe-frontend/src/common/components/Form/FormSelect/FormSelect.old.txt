@@ -117,7 +117,7 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
       <Combobox.Target withKeyboardNavigation>
         {searchable ? (
           <TextInput
-            classNames={{ root: `FormSelect ${classNames}` }}
+            classNames={{ root: `form-select ${classNames}` }}
             style={style}
             placeholder="Bitte auswählen"
             value={searchValue}
@@ -144,7 +144,7 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
           />
         ) : (
           <InputBase
-            classNames={{ root: `FormSelect ${classNames}` }}
+            classNames={{ root: `form-select ${classNames}` }}
             style={style}
             component="button"
             type="button"

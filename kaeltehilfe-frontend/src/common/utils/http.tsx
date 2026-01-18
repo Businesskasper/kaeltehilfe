@@ -12,7 +12,7 @@ export const http = axios.create({
 const notificationProps: Partial<NotificationData> = {
   title: "Fehler bei der Übertragung",
   color: "red",
-  className: "AppNotification AppNotificationDanger",
+  // className: "AppNotification AppNotificationDanger",
   icon: <IconX />,
   withBorder: false,
   withCloseButton: true,
@@ -58,14 +58,14 @@ http.interceptors.response.use(
     }
 
     throw error;
-  }
+  },
 );
 
 const getBaseQuery =
   <T,>(path: string) =>
   async (
     abortSignal?: AbortSignal,
-    params?: Record<string, unknown>
+    params?: Record<string, unknown>,
   ): Promise<Array<T>> => {
     const response = await http.get<Array<T>>(path, {
       baseURL: VITE_API_BASE_URL,
@@ -79,7 +79,7 @@ const getBaseGet =
   <T,>(path: string) =>
   async (
     abortSignal?: AbortSignal,
-    params?: Record<string, unknown>
+    params?: Record<string, unknown>,
   ): Promise<T> => {
     const response = await http.get<T>(path, {
       baseURL: VITE_API_BASE_URL,
@@ -93,7 +93,7 @@ const getBasePost =
   <T extends Record<string, unknown>, TResult = never>(path: string) =>
   async (
     item: T,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ): Promise<AxiosResponse<TResult, unknown>> => {
     const itemKeys = Object.keys(item);
     const cleanedItem = itemKeys.reduce((obj, key) => {
@@ -115,7 +115,7 @@ const getBaseUpdate =
   async (
     id: number,
     update: Partial<T>,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ): Promise<void> => {
     await http.patch<Partial<T>>(`${path}/${id}`, update, {
       baseURL: VITE_API_BASE_URL,
@@ -128,7 +128,7 @@ const getBasePut =
   async (
     id: number,
     update: Partial<T>,
-    abortSignal?: AbortSignal
+    abortSignal?: AbortSignal,
   ): Promise<void> => {
     const itemKeys = Object.keys(update);
     const cleanedUpdate = itemKeys.reduce((obj, key) => {
@@ -157,13 +157,13 @@ const getBaseDelete =
 const downloadBase64 = async (
   filename: string,
   content: string,
-  type: string
+  type: string,
 ) => {
   try {
     // Convert the Base64 content to a Blob
     const byteCharacters = atob(content);
     const byteNumbers = Array.from(byteCharacters, (char) =>
-      char.charCodeAt(0)
+      char.charCodeAt(0),
     );
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type });

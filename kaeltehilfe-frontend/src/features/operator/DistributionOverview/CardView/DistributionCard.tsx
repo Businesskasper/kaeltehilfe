@@ -78,7 +78,7 @@ export const DistributionCard = ({
               return copy;
             });
           },
-        }
+        },
       );
     } else {
       // Delete distribution
@@ -111,7 +111,7 @@ export const DistributionCard = ({
             return copy;
           });
         },
-      }
+      },
     );
   };
 
@@ -133,14 +133,14 @@ export const DistributionCard = ({
         </Group>
       </Card.Section>
       <ScrollArea>
-        <Stack py="xs" className="DistributionCardItemsContainer">
+        <Stack py="xs">
           {sortedGoodIds?.map((goodId) => {
             const goodDistributions =
               distributions?.filter((d) => d.good?.id === goodId) || [];
             const goodName = goodDistributions[0]?.good?.name || "";
             const quanitity = goodDistributions.reduce(
               (sum, dist) => sum + dist.quantity || 0,
-              0
+              0,
             );
             const good = goods?.find((g) => g.id === goodId);
             const Icon = good?.goodType
@@ -148,7 +148,7 @@ export const DistributionCard = ({
               : undefined;
 
             const latestDistribution = goodDistributions.sort((a, b) =>
-              compareByDateTime(a.timestamp, b.timestamp)
+              compareByDateTime(a.timestamp, b.timestamp),
             )[0];
 
             return (

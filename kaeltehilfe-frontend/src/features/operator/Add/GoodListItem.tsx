@@ -18,7 +18,7 @@ export const GoodListItem = ({
     : undefined;
 
   return (
-    <div className="GoodListItem">
+    <div className="good-list-item">
       <Group w="100%" justify="space-between">
         <Group>
           <Group gap="xs" align="center">

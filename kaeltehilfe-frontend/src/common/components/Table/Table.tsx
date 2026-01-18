@@ -54,7 +54,7 @@ export type Transformator<T extends Record<string, any>> = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type TransformFn<T extends Record<string, any>> = (
-  obj: T
+  obj: T,
 ) => string | number | Date | boolean;
 
 export type AdditionalCustomAction<T> = {
@@ -115,7 +115,7 @@ export const Table = <T extends Record<string, any>>({
   const getRowId = React.useCallback(
     (item: T) =>
       typeof keyGetter === "function" ? keyGetter(item) : item[keyGetter],
-    [keyGetter]
+    [keyGetter],
   );
 
   // Update row selection state after data changed
@@ -124,7 +124,7 @@ export const Table = <T extends Record<string, any>>({
     const existingIds = data.map(getRowId);
     setRowSelection((currentRowSelection: MRT_RowSelectionState) => {
       const selectedIds = Object.keys(currentRowSelection).filter(
-        (key) => currentRowSelection[key] === true
+        (key) => currentRowSelection[key] === true,
       );
 
       return selectedIds.reduce((newState, selectedId) => {
@@ -378,7 +378,7 @@ const InternalActions = <T extends Record<string, any>>({
 
           return { ...transformedObj, [header]: value };
         },
-        {} as { [key: string]: string | number | boolean | Date }
+        {} as { [key: string]: string | number | boolean | Date },
       );
       for (const manualColumn of exportConfig?.manualColumns || []) {
         transformedObject[manualColumn.key] =
@@ -414,7 +414,7 @@ const InternalActions = <T extends Record<string, any>>({
         >
           <ActionIcon
             onClick={onPrintExcelClick}
-            className="TableActionIcon"
+            className="table-action-icon"
             variant="default"
             display="inline-flex"
             h="var(--ai-size-lg)"

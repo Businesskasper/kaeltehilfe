@@ -65,17 +65,17 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
           (good) =>
             good.name?.toUpperCase()?.includes(searchValue?.toUpperCase()) ||
             good.tags?.find((tag) =>
-              tag?.toUpperCase()?.includes(searchValue?.toUpperCase())
+              tag?.toUpperCase()?.includes(searchValue?.toUpperCase()),
             ) ||
             good.description
               ?.toUpperCase()
-              ?.includes(searchValue?.toUpperCase())
+              ?.includes(searchValue?.toUpperCase()),
         ) || []
       : goods || [];
   }, [goods, searchValue]);
 
   const filteredGoodTypes = Array.from(
-    new Set(filteredGoods?.map((good) => good.goodType?.toString() || ""))
+    new Set(filteredGoods?.map((good) => good.goodType?.toString() || "")),
   );
 
   const addGood = (good: Good) => {
@@ -108,8 +108,8 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
   return (
     <Drawer
       className={classes({
-        FormGoodDrawer: true,
-        IsLoading: isLoading,
+        "form-good-drawer": true,
+        "is-loading": isLoading,
       })}
       size={breakpoint === "BASE" || breakpoint === "XS" ? "100%" : "50%"}
       position="right"
@@ -154,7 +154,7 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
               GoodTypeTranslation[goodType as keyof typeof GoodTypeTranslation];
 
             const goodList = filteredGoods?.filter(
-              (g) => g.goodType === goodType
+              (g) => g.goodType === goodType,
             );
 
             return (
@@ -167,7 +167,7 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
                     <Stack my="md" gap="lg">
                       {goodList?.map((good) => {
                         const exists = !!form.values.goods?.find(
-                          (g) => g.id === good.id
+                          (g) => g.id === good.id,
                         );
 
                         const clients = form.values.clients;
@@ -180,18 +180,18 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
                           !isNaN(good.twoWeekThreshold || NaN)
                         ) {
                           const goodDistributions = distributions.filter(
-                            (d) => d.good.id === good.id
+                            (d) => d.good.id === good.id,
                           );
                           for (const client of clients) {
                             const distributionsForClient =
                               goodDistributions.filter(
-                                (d) => d.client.id === client.id
+                                (d) => d.client.id === client.id,
                               );
 
                             const totalDistsForClient =
                               distributionsForClient.reduce(
                                 (sum, acc) => sum + acc.quantity,
-                                0
+                                0,
                               );
 
                             if (totalDistsForClient >= good.twoWeekThreshold) {
@@ -200,7 +200,7 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
                                   In den letzten zwei Wochen{" "}
                                   <strong>{totalDistsForClient}</strong> mal an{" "}
                                   <strong>{client.name}</strong> ausgegeben
-                                </Text>
+                                </Text>,
                               );
                             }
                           }

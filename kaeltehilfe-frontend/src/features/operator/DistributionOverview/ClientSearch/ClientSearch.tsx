@@ -1,3 +1,3 @@
 export const ClientSearch = () => {
-  return <div className="ClientSearch"></div>;
+  return <div></div>;
 };
