@@ -5,7 +5,7 @@
         grant_type='password'
         username=$username
         password=$password
-        client_id='kaeltebus'
+        client_id='kaeltehilfe'
         scope='openid profile roles'
     }
     $tokenResult = Invoke-WebRequest -Method POST -Uri $authUrl -ContentType "application/x-www-form-urlencoded" -Body $authBody | ConvertFrom-Json

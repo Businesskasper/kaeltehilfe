@@ -2,7 +2,7 @@
 
 Below diagram shows the applications target architecture when deployed to a docker host.
 
-![Diagram](diagram/kaeltebus.drawio.png)
+![Diagram](diagram/kaeltehilfe.drawio.png)
 
 The application consists of a Frontend and Backend, "Keycloak" as an Identity Provider and an "NGINX Proxy Manager" which serves as a reverse proxy.
 

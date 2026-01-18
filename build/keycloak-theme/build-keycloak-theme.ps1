@@ -12,7 +12,7 @@ Write-Host "Build keycloak theme" -ForegroundColor Cyan
 
 . ([System.IO.Path]::Combine($global:root, "..", "functions.ps1"))
 
-$themeDir = [System.IO.Path]::Combine($global:root, "..", "..", "kaeltebus-keycloak-theme")
+$themeDir = [System.IO.Path]::Combine($global:root, "..", "..", "kaeltehilfe-keycloak-theme")
 $distDir = [System.IO.Path]::Combine($themeDir, "dist_keycloak")
 $publishDir = [System.IO.Path]::Combine($global:root, "..", "result", "keycloak", "themes")
 $packageJsonPath = [System.IO.Path]::Combine($themeDir, "package.json")

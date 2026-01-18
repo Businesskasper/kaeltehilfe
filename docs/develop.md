@@ -9,7 +9,7 @@ Configure your local hosts file (or the equivalent in your OS) to resolve follow
 | ----------------- | ---------------------- |
 | proxy.mydomain.de | NGINX Proxy Manager    |
 | auth.mydomain.de  | Keycloak               |
-| app.mydomain.de   | Kaeltebus App Instance |
+| app.mydomain.de   | kaeltehilfe App Instance |
 
 ##### Docker
 Install Docker Desktop (or a docker compose compatible service).

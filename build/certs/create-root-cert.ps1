@@ -1,5 +1,5 @@
 param (
-    [string]$caName = "Kaeltebus",
+    [string]$caName = "kaeltehilfe",
     [SecureString]$pfxPassword = (ConvertTo-SecureString -AsPlainText -String "Passw0rd" -Force)
 )
 
@@ -15,7 +15,7 @@ else {
 
 . ([System.IO.Path]::Combine($global:root, "..", "functions.ps1"))
 
-$pfxPath = [System.IO.Path]::Combine($global:root, "..", "result", "kaeltebus-api", "cert", "root", "root.pfx")
+$pfxPath = [System.IO.Path]::Combine($global:root, "..", "result", "kaeltehilfe-api", "cert", "root", "root.pfx")
 Remove-Item -Path $pfxPath -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
 $caPath = [System.IO.Path]::Combine($global:root, "..", "result", "keycloak", "x509", "rootCA.crt")
 Remove-Item -Path $caPath -Recurse -Force -ErrorAction SilentlyContinue | Out-Null

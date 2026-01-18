@@ -1,6 +1,6 @@
-# Kaeltebus
+# kaeltehilfe
 
-Kaeltebus allows planning, recording and analytics of goods distribution to people in need.
+kaeltehilfe allows planning, recording and analytics of goods distribution to people in need.
 
 [Architecture](./docs/architecture.md)
 

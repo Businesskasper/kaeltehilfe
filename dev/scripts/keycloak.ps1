@@ -1,4 +1,4 @@
-﻿function GetAdminToken([string]$clientName = "kaeltebus-machine", [string]$clientSecret = $env:KC_CLIENT_SECRET, [string]$realm = "drk", [string]$keycloakBaseUrl = "http://localhost:8050") {
+﻿function GetAdminToken([string]$clientName = "kaeltehilfe-machine", [string]$clientSecret = $env:KC_CLIENT_SECRET, [string]$realm = "drk", [string]$keycloakBaseUrl = "http://localhost:8050") {
     $authUrl = "$($keycloakBaseUrl)/realms/$($realm)/protocol/openid-connect/token"
 
     $authBody = @{
@@ -45,7 +45,7 @@ function updateUser([string]$userId, [PSCustomObject]$update) {
 
 $keycloakBaseUrl = "http://localhost:8050"
 $realm = "drk"
-$clientName = "kaeltebus"
+$clientName = "kaeltehilfe"
 $clientId = "23db6e13-d87d-4377-9dea-7d80ff13272c"
 
 $token = GetAdminToken

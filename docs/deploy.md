@@ -20,7 +20,7 @@ This guide uses following domain entries as an example:
 | ---------------------- | ---------------------- |
 | proxy.mydomain.de      | NGINX Proxy Manager    |
 | auth.mydomain.de       | Keycloak               |
-| myinstance.mydomain.de | Kaeltebus App Instance |
+| myinstance.mydomain.de | kaeltehilfe App Instance |
 
 ##### Docker
 The app is shipped with all depending services via a [docker-compose.yml](../build/docker-compose.yml) file and docker images. The host must have docker (or a compose compatible container service) up and running.
@@ -30,14 +30,14 @@ All projects must have been built according to the [documentation](./build.md).
 The build result directory `build/result` must be copied to the docker host (.gitignore files can left out). This walkthrough assumes following file structure on the host:
 ```
 ├── home
-    └───kaeltebus
+    └───kaeltehilfe
         ├───docker
         │   │   .env
         │   │   docker-compose.yml
         │   └───images
-        │           kaeltebus-api.tar
-        │           kaeltebus-ui.tar
-        ├───kaeltebus-api
+        │           kaeltehilfe-api.tar
+        │           kaeltehilfe-ui.tar
+        ├───kaeltehilfe-api
         │   ├───cert
         │   │   ├───client
         │   │   └───root
@@ -46,7 +46,7 @@ The build result directory `build/result` must be copied to the docker host (.gi
         ├───keycloak
         │   ├───data
         │   ├───themes
-        │   │       kaeltebus-keycloak-theme.jar
+        │   │       kaeltehilfe-keycloak-theme.jar
         │   └───x509
         │           root.ca
         └───nginx
@@ -55,7 +55,7 @@ The build result directory `build/result` must be copied to the docker host (.gi
 ```
 
 > [!IMPORTANT] Important
-> Containers need to be able to access all files and folders in the directory tree. Grant access by running `sudo chmod -R 777 /home/kaeltebus` on the target host (TODO: User 1000 should be sufficient -> test).
+> Containers need to be able to access all files and folders in the directory tree. Grant access by running `sudo chmod -R 777 /home/kaeltehilfe` on the target host (TODO: User 1000 should be sufficient -> test).
 
 
 > [!WARNING] Warning
@@ -65,16 +65,16 @@ The build result directory `build/result` must be copied to the docker host (.gi
 
 
 ## Frontend
-Import the previously built docker image using `docker load -i /home/kaeltebus/docker/images/kaeltebus-ui.tar`
+Import the previously built docker image using `docker load -i /home/kaeltehilfe/docker/images/kaeltehilfe-ui.tar`
 
 ## Backend
-Import the previously built docker image using `docker load -i /home/kaeltebus/docker/images/kaeltebus-api.tar`
+Import the previously built docker image using `docker load -i /home/kaeltehilfe/docker/images/kaeltehilfe-api.tar`
 
 ## Launch services
-After all files and directories were copied and both docker images were imported, launch all services using `docker compose up` from inside the `/home/kaeltebus/docker` directory.
+After all files and directories were copied and both docker images were imported, launch all services using `docker compose up` from inside the `/home/kaeltehilfe/docker` directory.
 
 > [!CAUTION]
-> Comment out "kaelteus-api" and "kaeltebus-ui" in docker-compose.yml if Keycloak and NGINX were not yet configured. Comment them back in after successful configuration and "docker compose up" again.
+> Comment out "kaelteus-api" and "kaeltehilfe-ui" in docker-compose.yml if Keycloak and NGINX were not yet configured. Comment them back in after successful configuration and "docker compose up" again.
 
 ## Setup NGINX Proxy Manager
 Connect to NGINX Proxy manager via the browser (http://{your-ip}:81) and log in using the default credentials:
@@ -155,12 +155,12 @@ Add "registrationNumber" as shown below:
 ![Add registrationNumber to tokens](./img/kc_add_registrationNumber_to_tokens.png)
 
 #### Set Theme
-Configure the realm to use the Kaeltebus Theme by selecting "kaeltebus" in `admin/master/console/#/my-realm/realm-settings/themes` as the "Login theme".
+Configure the realm to use the kaeltehilfe Theme by selecting "kaeltehilfe" in `admin/master/console/#/my-realm/realm-settings/themes` as the "Login theme".
 
 ![X509Flow](./img/kc_set_theme.png)
 
 #### Create a new client for user authentication
-In the new realm, create a new client for your kaeltebus instance. Make sure to check "Standard flow" and "Direct access grants".
+In the new realm, create a new client for your kaeltehilfe instance. Make sure to check "Standard flow" and "Direct access grants".
 
 ![X509Flow](./img/kc_add_client_capability.png)
 
