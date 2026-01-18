@@ -12,16 +12,16 @@ Write-Host "Build backend container image" -ForegroundColor Cyan
 
 . ([System.IO.Path]::Combine($global:root, "..", "functions.ps1"))
 
-$backendDir = [System.IO.Path]::Combine($global:root, "..", "..", "kaeltebus-backend", "src")
+$backendDir = [System.IO.Path]::Combine($global:root, "..", "..", "kaeltehilfe-backend", "src")
 $publishDir = [System.IO.Path]::Combine($global:root, "publish-backend")
 
-$dockerImageName = "kaeltebus-api:latest"
+$dockerImageName = "kaeltehilfe-api:latest"
 if (Test-Path -Path $publishDir) {
     Write-Host "Clean up previous publish directory"
     Remove-Item -Recurse -Force $publishDir -ErrorAction SilentlyContinue | Out-Null
 }
     
-$dockerImageExportPath = [System.IO.Path]::Combine($global:root, "..", "result", "docker", "images", "kaeltebus-api.tar")
+$dockerImageExportPath = [System.IO.Path]::Combine($global:root, "..", "result", "docker", "images", "kaeltehilfe-api.tar")
 if (Test-Path -Path $dockerImageExportPath) {
     Write-Host "Clean up previous exported image"
     Remove-Item -Force $dockerImageExportPath -ErrorAction SilentlyContinue | Out-Null

@@ -8,40 +8,40 @@ build/result/
 # dev/keycloak-themes
 
 # Theme
-kaeltebus-keycloak-theme/dist_keycloak
+kaeltehilfe-keycloak-theme/dist_keycloak
 
 # Backend
-kaeltebus-backend/**/bin
-kaeltebus-backend/**/obj/Debug
-kaeltebus-backend/**/obj/Release
-kaeltebus-backend/**/*.db
-kaeltebus-backend/**/*.db-shm
-kaeltebus-backend/**/*.db-wal
+kaeltehilfe-backend/**/bin
+kaeltehilfe-backend/**/obj/Debug
+kaeltehilfe-backend/**/obj/Release
+kaeltehilfe-backend/**/*.db
+kaeltehilfe-backend/**/*.db-shm
+kaeltehilfe-backend/**/*.db-wal
 
 
 # Frontend
-kaeltebus-frontend/logs
-kaeltebus-frontend/*.log
-kaeltebus-frontend/npm-debug.log*
-kaeltebus-frontend/yarn-debug.log*
-kaeltebus-frontend/yarn-error.log*
-kaeltebus-frontend/pnpm-debug.log*
-kaeltebus-frontend/lerna-debug.log*
+kaeltehilfe-frontend/logs
+kaeltehilfe-frontend/*.log
+kaeltehilfe-frontend/npm-debug.log*
+kaeltehilfe-frontend/yarn-debug.log*
+kaeltehilfe-frontend/yarn-error.log*
+kaeltehilfe-frontend/pnpm-debug.log*
+kaeltehilfe-frontend/lerna-debug.log*
 
-kaeltebus-frontend/node_modules
-kaeltebus-frontend/dist
-kaeltebus-frontend/dist-ssr
-kaeltebus-frontend/*.local
+kaeltehilfe-frontend/node_modules
+kaeltehilfe-frontend/dist
+kaeltehilfe-frontend/dist-ssr
+kaeltehilfe-frontend/*.local
 
 # # Editor directories and files
-# kaeltebus-*/.vscode/*
-# kaeltebus-*/!.vscode/extensions.json
-# kaeltebus-*/.idea
-# kaeltebus-*/.DS_Store
-# kaeltebus-*/*.suo
-# kaeltebus-*/*.ntvs*
-# kaeltebus-*/*.njsproj
-# kaeltebus-*/*.sln
-# kaeltebus-*/*.sw?
+# kaeltehilfe-*/.vscode/*
+# kaeltehilfe-*/!.vscode/extensions.json
+# kaeltehilfe-*/.idea
+# kaeltehilfe-*/.DS_Store
+# kaeltehilfe-*/*.suo
+# kaeltehilfe-*/*.ntvs*
+# kaeltehilfe-*/*.njsproj
+# kaeltehilfe-*/*.sln
+# kaeltehilfe-*/*.sw?
 
 

@@ -17,7 +17,7 @@ Main entry point is overview of distributions with easy correction of quantity, 
 - Generates reports
 
 ## UI Designs
-https://www.figma.com/design/LWGow8Pth9Oqw62XdO51Lk/Kaeltebus-Erfasser
+https://www.figma.com/design/LWGow8Pth9Oqw62XdO51Lk/kaeltehilfe-Erfasser
 
 ## Styleguides
 https://styleguide.drk.de/deutsches-rotes-kreuz/basiselemente/farben

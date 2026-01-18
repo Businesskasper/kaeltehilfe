@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "kaeltehilfe-backend", "kaeltehilfe-backend", "{A4357055-B966-45AF-940B-64AEC25D2D38}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kaeltehilfe-backend", "src\kaeltehilfe-backend.csproj", "{38A501D9-F0DB-459C-9BF6-A02305105D0E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "kaeltehilfe-test", "test\kaeltehilfe-test.csproj", "{02BA268C-F178-4FDD-AA6A-38FBB5652E68}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{38A501D9-F0DB-459C-9BF6-A02305105D0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38A501D9-F0DB-459C-9BF6-A02305105D0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38A501D9-F0DB-459C-9BF6-A02305105D0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38A501D9-F0DB-459C-9BF6-A02305105D0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02BA268C-F178-4FDD-AA6A-38FBB5652E68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02BA268C-F178-4FDD-AA6A-38FBB5652E68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02BA268C-F178-4FDD-AA6A-38FBB5652E68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02BA268C-F178-4FDD-AA6A-38FBB5652E68}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{38A501D9-F0DB-459C-9BF6-A02305105D0E} = {A4357055-B966-45AF-940B-64AEC25D2D38}
+		{02BA268C-F178-4FDD-AA6A-38FBB5652E68} = {A4357055-B966-45AF-940B-64AEC25D2D38}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0C2D859-E015-48D8-A18B-2EA1CF52A5BC}
+	EndGlobalSection
+EndGlobal

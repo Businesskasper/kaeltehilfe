@@ -5,7 +5,7 @@
 >
 
 > [!NOTE]
-> For the initial deployment of services "proxy" and "keycloak" (from [docker-compose.yml](../build/result/docker/docker-compose.yml)), the build and deployment steps for "kaeltebus-api" and "ui" must be skipped, since both require configuration details from Keycloak and the NGINX Proxy Manager.
+> For the initial deployment of services "proxy" and "keycloak" (from [docker-compose.yml](../build/result/docker/docker-compose.yml)), the build and deployment steps for "kaeltehilfe-api" and "ui" must be skipped, since both require configuration details from Keycloak and the NGINX Proxy Manager.
 >
 > Comment out both services in `build/result/docker/docker-compose.yml` and skip the steps "Backend" and "Frontend" in this document and in [the deployment documentation](./deploy.md)).
 >
@@ -26,7 +26,7 @@ The project includes a theme for Keycloak which allows seamless integration into
 > [!IMPORTANT]  
 > Execute this only AFTER Keycloak and NGINX have been configured.
 
-Adjust values following values in `kaeltebus-backend/src/appsettings.json` according to your configured Keycloak service:
+Adjust values following values in `kaeltehilfe-backend/src/appsettings.json` according to your configured Keycloak service:
 | Key                     | Value                                                                                       |
 | ----------------------- | ------------------------------------------------------------------------------------------- |
 | Authorization.Authority | Link to your created realm                                                                  |
@@ -39,7 +39,7 @@ Build the project and create a docker image by running `build/backend/build-back
 > [!IMPORTANT]  
 > Execute this only AFTER Keycloak and NGINX have been configured.
 
-Adjust values following values in `kaeltebus-frontend/.env.production` according to your configured Keycloak and NGINX services:
+Adjust values following values in `kaeltehilfe-frontend/.env.production` according to your configured Keycloak and NGINX services:
 | Key                | Value                                                   |
 | ------------------ | ------------------------------------------------------- |
 | VITE_API_BASE_URL  | Route to your backend base URL (should end with "/api") |

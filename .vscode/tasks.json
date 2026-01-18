@@ -7,7 +7,7 @@
 			"type": "process",
 			"args": [
 				"build",
-				"${workspaceFolder}/kaeltebus-backend/src/kaeltebus-backend.csproj",
+				"${workspaceFolder}/kaeltehilfe-backend/src/kaeltehilfe-backend.csproj",
 				"/property:GenerateFullPaths=true",
 				"/consoleloggerparameters:NoSummary"
 			],
@@ -19,7 +19,7 @@
 			"type": "process",
 			"args": [
 				"build",
-				"${workspaceFolder}/kaeltebus-backend/test/kaeltebus-test.csproj",
+				"${workspaceFolder}/kaeltehilfe-backend/test/kaeltehilfe-test.csproj",
 				"/property:GenerateFullPaths=true",
 				"/consoleloggerparameters:NoSummary"
 			],

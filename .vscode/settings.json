@@ -7,7 +7,7 @@
 	"[markdown]": {
 		"editor.defaultFormatter": "yzhang.markdown-all-in-one"
 	},
-	"dotnet-test-explorer.testProjectPath": "kaeltebus-backend/test/kaeltebus-test.csproj",
+	"dotnet-test-explorer.testProjectPath": "kaeltehilfe-backend/test/kaeltehilfe-test.csproj",
 	"[scss]": {
 		"editor.defaultFormatter": "vscode.css-language-features"
 	}

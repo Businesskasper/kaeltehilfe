@@ -4,16 +4,16 @@
 		{
 			"name": "Launch Backend",
 			"preLaunchTask": "build backend",
-			"program": "${workspaceFolder}/kaeltebus-backend/src/bin/Debug/net8.0/kaeltebus-backend.dll",
+			"program": "${workspaceFolder}/kaeltehilfe-backend/src/bin/Debug/net8.0/kaeltehilfe-backend.dll",
 			"args": [],
-			"cwd": "${workspaceFolder}/kaeltebus-backend/src"
+			"cwd": "${workspaceFolder}/kaeltehilfe-backend/src"
 		},
 		{
 			"name": "Launch Backend Tests",
 			"preLaunchTask": "build backend test",
-			"program": "${workspaceFolder}/kaeltebus-backend/test/bin/Debug/net8.0/kaeltebus-test.dll",
+			"program": "${workspaceFolder}/kaeltehilfe-backend/test/bin/Debug/net8.0/kaeltehilfe-test.dll",
 			"args": [],
-			"cwd": "${workspaceFolder}/kaeltebus-backend/test"
+			"cwd": "${workspaceFolder}/kaeltehilfe-backend/test"
 		}
 	]
 }

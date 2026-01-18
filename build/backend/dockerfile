@@ -2,7 +2,7 @@
 # WORKDIR /App
 
 # # Copy everything
-# COPY ../kaeltebus-backend/src ./
+# COPY ../kaeltehilfe-backend/src ./
 # # Restore as distinct layers
 # RUN dotnet restore
 # # Build and publish a release
@@ -17,4 +17,4 @@ RUN apt-get update -yq && apt-get install -yq libsqlite3-mod-spatialite
 WORKDIR /App
 # COPY --from=build-env /App/out .
 COPY ./publish-backend .
-ENTRYPOINT ["dotnet", "kaeltebus-backend.dll"]
+ENTRYPOINT ["dotnet", "kaeltehilfe-backend.dll"]
