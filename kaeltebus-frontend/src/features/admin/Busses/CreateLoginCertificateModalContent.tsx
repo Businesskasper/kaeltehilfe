@@ -9,16 +9,16 @@ import { useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { IconX } from "@tabler/icons-react";
 import React from "react";
-import { Login } from "../../../common/app";
-import {
-  LoginCertificatePost,
-  useLoginCertificates,
-} from "../../../common/app/loginCertificate";
 import {
   ModalActions,
   ModalMain,
   NewPassword,
 } from "../../../common/components";
+import { Login } from "../../../common/data";
+import {
+  LoginCertificatePost,
+  useLoginCertificates,
+} from "../../../common/data/loginCertificate";
 import { downloadBase64, useIsTouchDevice } from "../../../common/utils";
 import {
   RegexValdiatorRequirements,

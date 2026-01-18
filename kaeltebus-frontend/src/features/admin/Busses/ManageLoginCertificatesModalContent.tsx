@@ -8,14 +8,14 @@ import {
 } from "@tabler/icons-react";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
-import { OperatorLogin } from "../../../common/app";
+import { ModalMain, Table, openAppModal } from "../../../common/components";
+import { OperatorLogin } from "../../../common/data";
 import {
   LoginCertificate,
   fetchCertificateContent,
   useLoginCertificates,
   useRevokeLoginCertificate,
-} from "../../../common/app/loginCertificate";
-import { ModalMain, Table, openAppModal } from "../../../common/components";
+} from "../../../common/data/loginCertificate";
 import { formatDateTime } from "../../../common/utils";
 import { CreateLoginCertificateModalContent } from "./CreateLoginCertificateModalContent";
 

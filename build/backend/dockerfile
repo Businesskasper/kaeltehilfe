@@ -12,6 +12,8 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 EXPOSE 8080
 
+RUN apt-get update -yq && apt-get install -yq libsqlite3-mod-spatialite
+
 WORKDIR /App
 # COPY --from=build-env /App/out .
 COPY ./publish-backend .

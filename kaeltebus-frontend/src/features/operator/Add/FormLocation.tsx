@@ -1,6 +1,6 @@
 import { InputLabel } from "@mantine/core";
-import { useLocations } from "../../../common/app";
 import { FormSelect } from "../../../common/components";
+import { useLocations } from "../../../common/data";
 import { useDistributionFormContext } from "./DistributionFormContext";
 
 export const FormLocation = () => {

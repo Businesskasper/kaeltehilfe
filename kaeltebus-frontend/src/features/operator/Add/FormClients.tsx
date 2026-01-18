@@ -9,8 +9,8 @@ import {
 } from "@mantine/core";
 import {} from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
-import { Client, GenderOptions, useClients } from "../../../common/app";
 import { FormSelect } from "../../../common/components";
+import { Client, GenderOptions, useClients } from "../../../common/data";
 import { useDistributionFormContext } from "./DistributionFormContext";
 
 export const FormClients = () => {

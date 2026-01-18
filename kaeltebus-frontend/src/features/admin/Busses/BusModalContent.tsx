@@ -3,8 +3,8 @@ import { matches, useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { IconX } from "@tabler/icons-react";
 import React from "react";
-import { Bus, useBusses } from "../../../common/app";
 import { ModalActions, ModalMain } from "../../../common/components";
+import { Bus, useBusses } from "../../../common/data";
 import { useIsTouchDevice } from "../../../common/utils";
 import {
   minLengthValidator,

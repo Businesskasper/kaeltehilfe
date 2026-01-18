@@ -5,17 +5,17 @@ import { modals } from "@mantine/modals";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import React from "react";
 import {
+  FormSelect,
+  ModalActions,
+  ModalMain,
+} from "../../../common/components";
+import {
   Shift,
   ShiftPost,
   useBusses,
   useShifts,
   useVolunteers,
-} from "../../../common/app";
-import {
-  FormSelect,
-  ModalActions,
-  ModalMain,
-} from "../../../common/components";
+} from "../../../common/data";
 import { compareByDateOnly } from "../../../common/utils";
 import {
   isDuplicate,
@@ -145,7 +145,6 @@ export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
   };
 
   const onSubmit = (formModel: ShiftForm) => {
-    console.log("submit - existing", existing);
     const submitModel: ShiftPost = {
       date: formModel.date.toLocaleString("en-CA", {
         year: "numeric",
@@ -212,7 +211,6 @@ export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
         onClick={() => {
           form.removeListItem("volunteers", index);
           form.setTouched((prev) => {
-            console.log("prev", prev);
             return {
               ...prev,
               volunteers: true,

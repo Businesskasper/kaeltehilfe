@@ -1,10 +1,10 @@
 import { Title } from "@mantine/core";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
-import { Client, useClients } from "../../../common/app/client";
-import { GenderTranslation } from "../../../common/app/gender";
 import { openAppModal } from "../../../common/components";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
+import { Client, useClients } from "../../../common/data/client";
+import { GenderTranslation } from "../../../common/data/gender";
 import { ClientModalContent } from "./ClientsModalContent";
 
 export const Clients = () => {

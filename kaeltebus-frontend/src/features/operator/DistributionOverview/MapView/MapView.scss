@@ -1,0 +1,11 @@
+.MapView {
+    // height: calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height, 0px) - 80px); // Idk why -80px are still necessary
+    height: calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height, 0px) - 32px );
+}
+
+.add-button-group {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: .5rem;
+}

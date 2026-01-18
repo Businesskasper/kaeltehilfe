@@ -57,42 +57,6 @@ public class DistributionsController : ControllerBase
         return obj != null ? _mapper.Map<DistributionDto>(obj) : NotFound();
     }
 
-    [HttpPost()]
-    [Authorize(Roles = "ADMIN,OPERATOR")]
-    public async Task<IActionResult> Create([FromBody()] DistributionCreateDto dto)
-    {
-        var bus =
-            await _kbContext.Busses.FirstOrDefaultAsync(b =>
-                b.RegistrationNumber == dto.BusRegistrationNumber && !b.IsDeleted
-            ) ?? throw this.GetModelStateError("BusId", "No matching shift was found");
-
-        var client =
-            (
-                dto.Client?.Id != null
-                    ? await _kbContext.Clients.FirstOrDefaultAsync(c =>
-                        c.Id == dto.Client.Id && !c.IsDeleted
-                    )
-                    : new Client { Name = dto.Client?.Name ?? "" }
-            ) ?? throw this.GetModelStateError("client", $"Client {dto.Client?.Id} was not found");
-
-        var good =
-            await _kbContext.Goods.FirstOrDefaultAsync(g => g.Id == dto.GoodId && !g.IsDeleted)
-            ?? throw this.GetModelStateError("goodId", $"Good {dto.GoodId} was not found");
-
-        var distribution = new Distribution
-        {
-            Client = client,
-            Bus = bus,
-            Good = good,
-            Quantity = dto.Quantity,
-        };
-
-        var result = await _kbContext.Distributions.AddAsync(distribution);
-        await _kbContext.SaveChangesAsync();
-
-        return CreatedAtAction(nameof(Get), routeValues: new { id = result.Entity.Id }, null);
-    }
-
     [HttpPatch("{id}")]
     [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<IActionResult> Update(

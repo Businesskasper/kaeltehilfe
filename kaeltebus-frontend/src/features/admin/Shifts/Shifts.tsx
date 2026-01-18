@@ -7,13 +7,13 @@ import {
 } from "@tabler/icons-react";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
-import { Shift, useShifts } from "../../../common/app";
 import {
   ExportConfig,
   Table,
   TransformFn,
   openAppModal,
 } from "../../../common/components";
+import { Shift, useShifts } from "../../../common/data";
 import { compareByDateOnly, formatDate } from "../../../common/utils";
 import { ShiftModalContent } from "./ShiftModalContent";
 

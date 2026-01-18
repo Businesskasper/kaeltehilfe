@@ -4,16 +4,16 @@ import { modals } from "@mantine/modals";
 import { IconX } from "@tabler/icons-react";
 import React from "react";
 import {
-  AdminLogin,
-  AdminLoginPost,
-  LoginPatch,
-  useLogins,
-} from "../../../common/app";
-import {
   ModalActions,
   ModalMain,
   NewPassword,
 } from "../../../common/components";
+import {
+  AdminLogin,
+  AdminLoginPost,
+  LoginPatch,
+  useLogins,
+} from "../../../common/data";
 import { getDiffs, useIsTouchDevice } from "../../../common/utils";
 import {
   RegexValdiatorRequirements,
@@ -259,7 +259,6 @@ export const AdminLoginModalContent = ({
               {...form.getInputProps("password")}
               onKeyDown={(e) => {
                 if (e.key === " ") {
-                  console.log("prevent");
                   e.preventDefault();
                   e.bubbles = false;
                 }
@@ -287,7 +286,6 @@ export const AdminLoginModalContent = ({
               {...form.getInputProps("password_")}
               onKeyDown={(e) => {
                 if (e.key === " ") {
-                  console.log("prevent");
                   e.preventDefault();
                   e.bubbles = false;
                 }

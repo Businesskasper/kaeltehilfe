@@ -1,5 +1,5 @@
 import { Chip, Group, Text } from "@mantine/core";
-import { Good, GoodTypeTranslation } from "../../../common/app";
+import { Good, GoodTypeTranslation } from "../../../common/data";
 
 import "./DistributionAdd.scss";
 

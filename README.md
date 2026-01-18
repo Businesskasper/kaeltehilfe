@@ -1,6 +1,6 @@
 # Kaeltebus
 
-Kaeltebus allows planning, recording and analytics of good distributions to people in need.
+Kaeltebus allows planning, recording and analytics of goods distribution to people in need.
 
 [Architecture](./docs/architecture.md)
 

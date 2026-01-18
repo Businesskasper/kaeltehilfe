@@ -11,13 +11,13 @@ import { useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
 import { IconX } from "@tabler/icons-react";
 import React from "react";
+import { ModalActions, ModalMain } from "../../../common/components";
 import {
   Good,
   GoodType,
   GoodTypeTranslation,
   useGoods,
-} from "../../../common/app/good";
-import { ModalActions, ModalMain } from "../../../common/components";
+} from "../../../common/data/good";
 import { useIsTouchDevice } from "../../../common/utils";
 import {
   minLengthValidator,

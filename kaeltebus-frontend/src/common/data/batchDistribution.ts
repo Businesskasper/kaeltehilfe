@@ -3,7 +3,8 @@ import { getBasePost } from "../utils";
 import { Gender } from "./gender";
 
 export type BatchDistribution = {
-  locationName: string;
+  locationName?: string;
+  geoLocation?: { lat: number; lng: number };
   busRegistrationNumber: string;
   clients: Array<{
     id?: number;

@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "react-oidc-context";
 import { userManager } from "../../UserManager";
-import { UserRole } from "../app";
+import { UserRole } from "../data";
 
 export const useProfile = (): KbProfile | undefined => {
   const auth = useAuth();

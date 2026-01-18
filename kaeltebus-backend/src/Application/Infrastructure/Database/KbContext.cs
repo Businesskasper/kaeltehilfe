@@ -90,7 +90,8 @@ public class KbContext : DbContext
             .Entity<Location>()
             .HasMany(l => l.Distributions)
             .WithOne(d => d.Location)
-            .HasForeignKey(d => d.LocationId);
+            .HasForeignKey(d => d.LocationId)
+            .IsRequired(false);
 
         modelBuilder.Entity<Distribution>().ConfigureBaseEntity();
         modelBuilder.Entity<Distribution>().HasIndex(x => x.BusId);
@@ -102,6 +103,7 @@ public class KbContext : DbContext
             .HasOne(d => d.Good)
             .WithMany(g => g.Distributions)
             .HasForeignKey(d => d.GoodId);
+        modelBuilder.Entity<Distribution>().Property(d => d.GeoLocation).HasSrid(4326);
         modelBuilder.Entity<Distribution>().Navigation(d => d.Good).AutoInclude();
         modelBuilder
             .Entity<Distribution>()
@@ -119,7 +121,8 @@ public class KbContext : DbContext
             .Entity<Distribution>()
             .HasOne(d => d.Location)
             .WithMany(l => l.Distributions)
-            .HasForeignKey(d => d.LocationId);
+            .HasForeignKey(d => d.LocationId)
+            .IsRequired(false);
         modelBuilder.Entity<Distribution>().Navigation(d => d.Location).AutoInclude();
 
         modelBuilder.Entity<ShiftVolunteer>().HasKey(sv => new { sv.ShiftId, sv.VolunteerId });

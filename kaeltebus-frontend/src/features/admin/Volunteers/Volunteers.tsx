@@ -1,10 +1,10 @@
 import { Checkbox, Title } from "@mantine/core";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
-import { GenderTranslation } from "../../../common/app/gender";
-import { Volunteer, useVolunteers } from "../../../common/app/volunteer";
 import { openAppModal } from "../../../common/components";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
+import { GenderTranslation } from "../../../common/data/gender";
+import { Volunteer, useVolunteers } from "../../../common/data/volunteer";
 import { VolunteerModalContent } from "./VolunteersModalContent";
 
 export const Volunteers = () => {

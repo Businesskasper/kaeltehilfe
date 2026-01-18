@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using NetTopologySuite.Geometries;
 
 #nullable disable
 
@@ -11,6 +12,9 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Sqlite:InitSpatialMetaData", true);
+
             migrationBuilder.CreateTable(
                 name: "Busses",
                 columns: table => new
@@ -153,8 +157,10 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     BusId = table.Column<int>(type: "INTEGER", nullable: false),
                     ClientId = table.Column<int>(type: "INTEGER", nullable: false),
                     GoodId = table.Column<int>(type: "INTEGER", nullable: false),
-                    LocationId = table.Column<int>(type: "INTEGER", nullable: false),
+                    LocationId = table.Column<int>(type: "INTEGER", nullable: true),
                     Quantity = table.Column<int>(type: "INTEGER", nullable: false),
+                    GeoLocation = table.Column<Point>(type: "POINT", nullable: true)
+                        .Annotation("Sqlite:Srid", 4326),
                     AddOn = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "unixepoch('now')"),
                     ChangeOn = table.Column<long>(type: "INTEGER", nullable: true, defaultValueSql: "unixepoch('now')"),
                     IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false)
@@ -184,8 +190,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         name: "FK_Distributions_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(

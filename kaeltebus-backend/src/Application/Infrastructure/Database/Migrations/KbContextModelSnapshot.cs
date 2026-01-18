@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 using kaeltebus_backend.Infrastructure.Database;
 
 #nullable disable
@@ -121,6 +122,10 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<Point>("GeoLocation")
+                        .HasColumnType("POINT")
+                        .HasAnnotation("Sqlite:Srid", 4326);
+
                     b.Property<int>("GoodId")
                         .HasColumnType("INTEGER");
 
@@ -129,7 +134,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(false);
 
-                    b.Property<int>("LocationId")
+                    b.Property<int?>("LocationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("Quantity")
@@ -483,9 +488,7 @@ namespace kaeltebus_backend.Application.Infrastructure.Database.Migrations
 
                     b.HasOne("kaeltebus_backend.Models.Location", "Location")
                         .WithMany("Distributions")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
 
                     b.Navigation("Bus");
 
