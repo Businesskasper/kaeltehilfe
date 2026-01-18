@@ -219,6 +219,9 @@ export const LocationTracker = ({
   const map = useMap();
   const isProgrammaticUpdateRef = React.useRef(false);
   const hasInitializedRef = React.useRef(false);
+  const isZoomingRef = React.useRef(false);
+  const isDraggingRef = React.useRef(false);
+  const lastDragEndRef = React.useRef<number | null>(null);
 
   const [geoLocation, setGeoLocation] = React.useState<{
     lat: number;
@@ -246,14 +249,11 @@ export const LocationTracker = ({
 
   useMapEvents({
     move: () => {
-      if (
-        isProgrammaticUpdateRef.current
-        // || !(event as LeafletMouseEvent).originalEvent
-      ) {
+      if (isProgrammaticUpdateRef.current || isZoomingRef.current) {
         return;
       }
 
-      if (isTracking) toggleTracking();
+      // if (isTracking && isDraggingRef.current) toggleTracking();
 
       const center = map.getCenter();
       const zoom = map.getZoom();
@@ -264,10 +264,24 @@ export const LocationTracker = ({
     locationfound: (event) => {
       setGeoLocation({ lat: event.latlng.lat, lng: event.latlng.lng });
     },
+    zoomstart: () => {
+      isZoomingRef.current = true;
+    },
     zoomend: () => {
+      isZoomingRef.current = false;
       if (!isProgrammaticUpdateRef.current) {
         bubbleMapZoom?.(map.getZoom());
       }
+    },
+    dragstart() {
+      isDraggingRef.current = true;
+      lastDragEndRef.current = null;
+      if (isTracking) toggleTracking();
+    },
+
+    dragend() {
+      isDraggingRef.current = false;
+      lastDragEndRef.current = performance.now();
     },
   });
 
