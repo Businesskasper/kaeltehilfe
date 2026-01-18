@@ -17,6 +17,8 @@ kaeltehilfe-backend/**/obj/Release
 kaeltehilfe-backend/**/*.db
 kaeltehilfe-backend/**/*.db-shm
 kaeltehilfe-backend/**/*.db-wal
+kaeltehilfe-backend/**/project.nuget.cache
+kaeltehilfe-backend/**/*.dgspec.json
 
 
 # Frontend
