@@ -4,11 +4,12 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import { useBrowserStorage } from "../../../../common/utils";
 import {
-  AddDistributionFlag,
   LocationTracker,
+  StaticAddDistributionFlag,
   ZoomButtons,
 } from "./MapControls";
 
+import { DistributionsLayer } from "./DistributionsLayer";
 import "./MapView.scss";
 
 const defaultLocation = { lat: 48.40628334508064, lng: 9.993206261642712 };
@@ -42,8 +43,9 @@ export const MapView = () => {
       ? storedState.center
       : defaultLocation,
   );
+
   const [mapZoom, setMapZoom] = React.useState(storedState.zoom);
-  const [geoLocation, setGeoLocation] = React.useState(defaultLocation);
+  const [, setGeoLocation] = React.useState(defaultLocation);
 
   const updateGeoLocation = React.useCallback(
     (location: { lat: number; lng: number }) => setGeoLocation(location),
@@ -85,8 +87,8 @@ export const MapView = () => {
     navigate("/add", {
       state: {
         hideLocationForm: true,
-        lat: geoLocation.lat,
-        lng: geoLocation.lng,
+        lat: mapCenter.lat,
+        lng: mapCenter.lng,
       },
     });
   };
@@ -102,7 +104,7 @@ export const MapView = () => {
         attributionControl={true}
         scrollWheelZoom={false}
         doubleClickZoom={false}
-        style={{ minHeight: "100%", position: "relative", zIndex: 1 }}
+        className="map-container"
       >
         <TileLayer
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -111,11 +113,14 @@ export const MapView = () => {
           minZoom={12}
         />
         {mapCenter?.lat && (
-          <AddDistributionFlag
-            lat={mapCenter.lat}
-            lng={mapCenter.lng}
-            onClick={newDistribution}
-          />
+          <>
+            <StaticAddDistributionFlag onClick={newDistribution} />
+            {/* <AddDistributionFlag
+              lat={mapCenter.lat}
+              lng={mapCenter.lng}
+              onClick={newDistribution}
+            /> */}
+          </>
         )}
 
         <ZoomButtons />
@@ -128,6 +133,7 @@ export const MapView = () => {
           initialMapCenter={!isTracking ? mapCenter : undefined}
           initialMapZoom={mapZoom}
         />
+        <DistributionsLayer />
       </MapContainer>
     </div>
   );
