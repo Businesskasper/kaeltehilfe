@@ -32,7 +32,7 @@ export const UserMenu = () => {
 
   return (
     <Group className="user-menu">
-      <Menu withArrow>
+      <Menu withArrow zIndex={400}>
         <Menu.Target>
           <Text>
             {auth.isAuthenticated && <span>{auth?.user?.profile.name}</span>}
