@@ -35,9 +35,9 @@ import {
 import { MRT_Localization_DE } from "mantine-react-table/locales/de/index.cjs";
 import React, { ComponentType } from "react";
 import * as XLSX from "xlsx";
+import { rem, useBreakpoint } from "../../utils";
 import { ValueTypeProps } from "../../utils/types";
 
-import { useBreakpoint } from "../../utils";
 import "./Table.scss";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -258,7 +258,7 @@ const CustomActions = <T extends Record<string, any>>({
 
   return (
     <Box
-      style={{ display: "flex", alignItems: "center", gap: "1rem", p: "4px" }}
+      style={{ display: "flex", alignItems: "center", gap: rem(16), p: rem(4) }}
     >
       {handleDelete && !isMobile && (
         <Button
@@ -399,7 +399,7 @@ const InternalActions = <T extends Record<string, any>>({
     XLSX.writeFile(workbook, fileName || "Export.xlsx", { compression: true });
   };
   return (
-    <Box style={{ display: "flex", gap: "0.3rem" }}>
+    <Box style={{ display: "flex", gap: rem(4.8) }}>
       <MRT_ToggleGlobalFilterButton table={table} />
       <MRT_ToggleFiltersButton table={table} />
       <MRT_ShowHideColumnsButton table={table} />

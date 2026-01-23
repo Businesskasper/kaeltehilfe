@@ -17,6 +17,7 @@ import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import { ActionGroup } from "../../../../common/components";
+import { rem } from "../../../../common/utils";
 import { DistributionMarker, PlusMarker } from "./Marker";
 
 import { useDisclosure } from "@mantine/hooks";
@@ -79,8 +80,8 @@ export const NumbZone = () => {
         const zone = L.DomUtil.create("div");
         zone.style.border = "1px solid red";
         zone.style.zIndex = "1";
-        zone.style.height = "100px";
-        zone.style.width = "50px";
+        zone.style.height = rem(100);
+        zone.style.width = rem(50);
         zone.style.pointerEvents = "auto";
 
         // Disable event propagation
@@ -102,7 +103,7 @@ export const NumbZone = () => {
   return null;
 };
 
-export const ZoomButtons = () => {
+export const ZoomButtons = ({ lat, lng }: { lat: number; lng: number }) => {
   const map = useMap();
 
   const [currentZoom, setCurrentZoom] = React.useState<{
@@ -140,14 +141,16 @@ export const ZoomButtons = () => {
 
   const onZoom = (zoomMode: string) => {
     if (zoomMode === "IN" && canZoomIn) {
-      map.zoomIn(1, { animate: true });
+      map.setView({ lat, lng }, map.getZoom() + 1);
+      // map.zoomIn(1, { animate: true });
     } else if (zoomMode === "OUT" && canZoomOut) {
-      map.zoomOut(1, { animate: true });
+      map.setView({ lat, lng }, map.getZoom() - 1);
+      // map.zoomOut(1, { animate: true });
     }
   };
 
   return (
-    <ButtonContainer top="20px" left="13px">
+    <ButtonContainer top={rem(20)} left={rem(13)}>
       <ActionGroup
         groupProps={{
           orientation: "vertical",
@@ -303,7 +306,7 @@ export const LocationTracker = ({
   };
 
   return (
-    <ButtonContainer left="13px" top="90px">
+    <ButtonContainer left={rem(13)} top={rem(90)}>
       <ActionIcon
         onClick={onClick}
         variant="default"
@@ -402,7 +405,7 @@ export const StaticAddDistributionFlag = ({
       <Popover opened={opened} zIndex={400} position="top" withArrow>
         <PopoverTarget>
           <div className="marker">
-            <PlusMarker onClick={toggle} size={60} />
+            <PlusMarker onClick={toggle} height={60} />
           </div>
         </PopoverTarget>
         <PopoverDropdown>
@@ -478,7 +481,7 @@ export const AddDistributionFlag = ({
     <Flag
       lat={lat}
       lng={lng}
-      marker={<PlusMarker size={60} />}
+      marker={<PlusMarker height={60} />}
       popup={
         <Popup
           closeButton
@@ -525,7 +528,7 @@ export const ExistingDistributionFlag = ({
     <Flag
       lat={lat}
       lng={lng}
-      marker={<DistributionMarker colorSet={colorSet} size={60} />}
+      marker={<DistributionMarker colorSet={colorSet} height={60} />}
     />
   );
 };

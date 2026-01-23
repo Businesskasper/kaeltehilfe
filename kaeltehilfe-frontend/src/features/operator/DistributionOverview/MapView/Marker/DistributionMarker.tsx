@@ -1,18 +1,17 @@
 type DistributionMarkerProps = {
-  size?: number | string;
+  height?: number | string;
   colorSet: [string, string];
   className?: string;
 };
 
 export const DistributionMarker = ({
-  size = 24,
+  height = 24,
   colorSet,
   className,
 }: DistributionMarkerProps) => {
   return (
     <svg
-      width={size}
-      height={size}
+      height={height}
       viewBox="0 0 60 60"
       fill="none"
       className={className}

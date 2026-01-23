@@ -16,7 +16,7 @@ import {
   useShifts,
   useVolunteers,
 } from "../../../common/data";
-import { compareByDateOnly } from "../../../common/utils";
+import { compareByDateOnly, rem } from "../../../common/utils";
 import {
   isDuplicate,
   requiredValidator,
@@ -174,7 +174,7 @@ export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
         items={volunteers || []}
         valueGetter="fullname"
         sort
-        style={{ width: "calc(100% - 35px)" }}
+        style={{ width: `calc(100% - ${rem(35)})` }}
         formProps={form.getInputProps(`volunteers.${index}.fullname`)}
         onItemSelected={(selectedVolunteer) => {
           form.setFieldValue(`volunteers.${index}.id`, selectedVolunteer?.id);
@@ -205,8 +205,8 @@ export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
       />
       <ActionIcon
         pos="absolute"
-        top="3px"
-        right="0px"
+        top={rem(3)}
+        right="0"
         color="red"
         onClick={() => {
           form.removeListItem("volunteers", index);

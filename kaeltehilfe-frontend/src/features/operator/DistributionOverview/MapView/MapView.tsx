@@ -123,7 +123,7 @@ export const MapView = () => {
           </>
         )}
 
-        <ZoomButtons />
+        <ZoomButtons lat={mapCenter.lat} lng={mapCenter.lng} />
         <LocationTracker
           isTracking={isTracking}
           toggleTracking={toggleTracking}

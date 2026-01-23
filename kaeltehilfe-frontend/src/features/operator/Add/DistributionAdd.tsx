@@ -19,7 +19,7 @@ import {
   useGoods,
   usePostBatchDistribution,
 } from "../../../common/data";
-import { useBreakpoint } from "../../../common/utils";
+import { rem, useBreakpoint } from "../../../common/utils";
 import { useProfile } from "../../../common/utils/useProfile";
 import {
   requiredValidator,
@@ -299,7 +299,7 @@ export const DistributionAdd = () => {
         <Grid
           gutter={20}
           columns={12}
-          mb="64px"
+          mb={rem(64)}
           justify={isDesktop ? "flex-start" : "center"}
         >
           {isLoading && <LoadingOverlay visible />}
@@ -375,7 +375,7 @@ export const DistributionAdd = () => {
                     description={
                       <div
                         style={{
-                          marginBottom: "12px",
+                          marginBottom: rem(12),
                           wordBreak: "break-word",
                         }}
                       >
@@ -391,7 +391,7 @@ export const DistributionAdd = () => {
                   label="Klienten"
                   description={
                     <div
-                      style={{ marginBottom: "12px", wordBreak: "break-word" }}
+                      style={{ marginBottom: rem(12), wordBreak: "break-word" }}
                     >
                       {activeStep !== FormStep.CLIENTS
                         ? form.values.clients.map((c, index) => (
