@@ -1,4 +1,10 @@
-import { ActionIcon, Button } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Popover,
+  PopoverDropdown,
+  PopoverTarget,
+} from "@mantine/core";
 import {
   IconLocation,
   IconMinus,
@@ -11,8 +17,9 @@ import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import { ActionGroup } from "../../../../common/components";
-import { PlusMarker } from "./Marker";
+import { DistributionMarker, PlusMarker } from "./Marker";
 
+import { useDisclosure } from "@mantine/hooks";
 import "./MapView.scss";
 
 type ButtonContainerProps = {
@@ -62,6 +69,7 @@ export const ButtonContainer = ({
     </div>
   );
 };
+
 export const NumbZone = () => {
   const map = useMap();
 
@@ -93,41 +101,6 @@ export const NumbZone = () => {
 
   return null;
 };
-
-// export const NumbZone = () => {
-//   const map = useMap();
-
-//   React.useEffect(() => {
-//     const CustomControl = L.Control.extend({
-//       onAdd: function () {
-//         const zone = L.DomUtil.create("div");
-//         zone.style.border = "1px solid red";
-//         zone.style.zIndex = "1";
-//         zone.style.height = "100px";
-//         zone.style.width = "50px";
-//         zone.style.pointerEvents = "auto";
-//         zone.ondblclick = (e) => {
-//           e.preventDefault();
-//           e.stopPropagation();
-//         };
-//         zone.onclick = (e) => {
-//           e.preventDefault();
-//           e.stopPropagation();
-//         };
-//         return zone;
-//       },
-//     });
-
-//     const controlInstance = new CustomControl({ position: "topleft" });
-//     controlInstance.addTo(map);
-
-//     return () => {
-//       map.removeControl(controlInstance);
-//     };
-//   }, [map]);
-
-//   return null;
-// };
 
 export const ZoomButtons = () => {
   const map = useMap();
@@ -289,7 +262,7 @@ export const LocationTracker = ({
     map.stopLocate();
     map.locate({
       // setView: true,
-      setView: false,
+      setView: false, // TODO: Maybe more accurate and less lags when setting the view here instead of setting the view in effects
       enableHighAccuracy: true,
       maximumAge: 2500,
       watch: true,
@@ -343,30 +316,28 @@ export const LocationTracker = ({
   );
 };
 
-export const AddDistributionButton = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <ButtonContainer bottom="20px" centerX right="50%">
-      <Button
-        leftSection={<IconPlus />}
-        onClick={onClick}
-        variant="filled"
-        size="sm"
-      >
-        Ausgabe
-      </Button>
-    </ButtonContainer>
-  );
-};
+// export const AddDistributionButton = ({ onClick }: { onClick: () => void }) => {
+//   return (
+//     <ButtonContainer bottom="20px" centerX right="50%">
+//       <Button
+//         leftSection={<IconPlus />}
+//         onClick={onClick}
+//         variant="filled"
+//         size="sm"
+//       >
+//         Ausgabe
+//       </Button>
+//     </ButtonContainer>
+//   );
+// };
 
-export const AddDistributionFlag = ({
-  lat,
-  lng,
-  onClick,
-}: {
+type FlagProps = {
   lat: number;
   lng: number;
-  onClick: () => void;
-}) => {
+  marker: JSX.Element;
+  popup?: JSX.Element;
+};
+export const Flag = ({ lat, lng, marker, popup }: FlagProps) => {
   const rootRef = React.useRef<Root | null>(null);
 
   const [icon, setIcon] = React.useState<L.DivIcon | null>(null);
@@ -375,9 +346,8 @@ export const AddDistributionFlag = ({
     // Create div element
     const divElement = document.createElement("div");
 
-    // Create root and render contents
+    // Create root
     rootRef.current = createRoot(divElement);
-    rootRef.current.render(<PlusMarker size={60} />);
 
     // Create Leaflet icon
     const leafletIcon = L.divIcon({
@@ -406,190 +376,156 @@ export const AddDistributionFlag = ({
     };
   }, []);
 
+  React.useEffect(() => {
+    // Render marker into the div icon
+    rootRef.current && rootRef.current.render(marker);
+  }, [marker]);
+
   return icon ? (
     <Marker icon={icon} position={{ lat, lng }}>
-      <Popup
-        closeButton
-        autoPanPaddingBottomRight={[100, 100]}
-        offset={[0, -55]}
-      >
-        <div className="add-button-group">
-          <Button
-            leftSection={<IconSoup />}
-            onClick={onClick}
-            variant="filled"
-            size="sm"
-            fullWidth
-          >
-            Ausgabe
-          </Button>
-          <Button
-            leftSection={<IconPencil />}
-            onClick={onClick}
-            variant="outline"
-            size="sm"
-            fullWidth
-          >
-            Kommentar
-          </Button>
-        </div>
-      </Popup>
+      {popup}
     </Marker>
   ) : (
     <></>
   );
 };
 
-// export const AddDistributionFlag = ({
-//   lat,
-//   lng,
+export const StaticAddDistributionFlag = ({
+  onClick,
+}: {
+  onClick: () => void;
+}) => {
+  const [opened, { toggle }] = useDisclosure(false);
+
+  return (
+    <div className="static-add-distribution-flag">
+      <Popover opened={opened} zIndex={400} position="top" withArrow>
+        <PopoverTarget>
+          <div className="marker">
+            <PlusMarker onClick={toggle} size={60} />
+          </div>
+        </PopoverTarget>
+        <PopoverDropdown>
+          <div className="add-button-group">
+            <Button
+              leftSection={<IconSoup />}
+              onClick={onClick}
+              variant="filled"
+              size="sm"
+              fullWidth
+            >
+              Ausgabe
+            </Button>
+            <Button
+              leftSection={<IconPencil />}
+              onClick={onClick}
+              variant="outline"
+              size="sm"
+              fullWidth
+            >
+              Kommentar
+            </Button>
+          </div>
+        </PopoverDropdown>
+      </Popover>
+    </div>
+  );
+};
+
+// export const StaticAddDistributionFlag = ({
 //   onClick,
 // }: {
-//   lat: number;
-//   lng: number;
 //   onClick: () => void;
 // }) => {
-//   /*
-//   const rootRef = React.useRef<Root | null>(null);
-
-//   React.useEffect(() => {
-//     const root = createRoot(document.createElement("div"));
-//     root.render(<IconPlus />);
-//     rootRef.current = root;
-//   }, []);
-// */
-
-//   const div = React.useMemo<HTMLDivElement>(
-//     () => document.createElement("div"),
-//     []
-//   );
-
-//   const icon = React.useMemo(() => {
-//     return L.divIcon({
-//       html: div,
-//       className: "",
-//       iconSize: [60, 60],
-//       iconAnchor: [30, 60],
-//     });
-//   }, [div]);
-
-//   const root = createRoot(div);
-
-//   React.useEffect(() => {
-//     root.render(
-//       // <div
-//       //   style={{
-//       //     position: "absolute",
-//       //     left: 0,
-//       //     top: -20,
-//       //   }}
-//       // >
-//       <PlusMarker size={60} />
-//       // </div>
-
-//       // <MantineProvider>
-//       //   <ActionIcon
-//       //     onClick={(e) => {
-//       //       e.stopPropagation();
-//       //       onClick();
-//       //     }}
-//       //     variant="filled"
-//       //     size="md"
-//       //     style={{ backgroundColor: "#339af0", color: "white" }}
-//       //   >
-//       //     <IconPlus size={18} />
-//       //   </ActionIcon>
-//       // </MantineProvider>
-//     );
-//   }, [onClick, root]);
-
 //   return (
-//     <Marker icon={icon} position={{ lat, lng }}>
-//       <Popup>Aktuelle Position</Popup>
-//     </Marker>
+//     <ButtonContainer bottom="50%" right="50%" centerX>
+//       <PlusMarker
+//         className="static-add-distribution"
+//         onClick={onClick}
+//         size={60}
+//       />
+//     </ButtonContainer>
 //   );
 // };
 
-export const AddDistributionFlag_ = ({
-  lat,
-  lng,
-  onClick,
-}: {
+// export const StaticAddDistributionFlag = ({
+//   onClick,
+// }: {
+//   onClick: () => void;
+// }) => {
+//   return (
+//     <ButtonContainer bottom="50%" right="50%" centerX>
+//       <PlusMarker
+//         className="static-add-distribution"
+//         onClick={onClick}
+//         size={60}
+//       />
+//     </ButtonContainer>
+//   );
+// };
+
+type AddDistributionFlagProps = {
   lat: number;
   lng: number;
   onClick: () => void;
-}) => {
-  const rootRef = React.useRef<Root | null>(null);
-
-  const icon = React.useMemo(() => {
-    // Create a div element for the icon
-    const iconDiv = document.createElement("div");
-    iconDiv.style.background = "white";
-    iconDiv.style.border = "2px solid #339af0";
-    iconDiv.style.borderRadius = "4px";
-    iconDiv.style.width = "36px";
-    iconDiv.style.height = "36px";
-    iconDiv.style.display = "flex";
-    iconDiv.style.alignItems = "center";
-    iconDiv.style.justifyContent = "center";
-    iconDiv.style.cursor = "pointer";
-    iconDiv.style.zIndex = "1000";
-
-    // Create and store the root for rendering React component
-    rootRef.current = createRoot(iconDiv);
-
-    // Create Leaflet divIcon
-    return L.divIcon({
-      html: iconDiv,
-      className: "", // Remove default Leaflet marker styling
-      iconSize: [36, 36],
-      iconAnchor: [18, 18],
-    });
-  }, []);
-
-  // Render and update the ActionIcon when onClick changes
-  React.useEffect(() => {
-    // Ensure root is created before rendering
-    if (rootRef.current) {
-      rootRef.current.render(
-        <ActionIcon
-          onClick={(e) => {
-            e.stopPropagation();
-            onClick();
-          }}
-          variant="filled"
-          size="md"
-          style={{ backgroundColor: "#339af0", color: "white" }}
-        >
-          <IconPlus size={18} />
-        </ActionIcon>,
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onClick]);
-
-  // Cleanup on unmount
-  React.useEffect(() => {
-    return () => {
-      if (rootRef.current) {
-        rootRef.current.unmount();
-        rootRef.current = null;
-      }
-    };
-  }, []);
-
+};
+export const AddDistributionFlag = ({
+  lat,
+  lng,
+  onClick,
+}: AddDistributionFlagProps) => {
   return (
-    <Marker
-      position={[lat, lng]}
-      icon={icon}
-      eventHandlers={{
-        click: (e) => {
-          e.originalEvent.stopPropagation();
-          onClick();
-        },
-      }}
-    >
-      <Popup>Aktuelle Position</Popup>
-    </Marker>
+    <Flag
+      lat={lat}
+      lng={lng}
+      marker={<PlusMarker size={60} />}
+      popup={
+        <Popup
+          closeButton
+          autoPanPaddingBottomRight={[100, 100]}
+          offset={[0, -55]}
+        >
+          <div className="add-button-group">
+            <Button
+              leftSection={<IconSoup />}
+              onClick={onClick}
+              variant="filled"
+              size="sm"
+              fullWidth
+            >
+              Ausgabe
+            </Button>
+            <Button
+              leftSection={<IconPencil />}
+              onClick={onClick}
+              variant="outline"
+              size="sm"
+              fullWidth
+            >
+              Kommentar
+            </Button>
+          </div>
+        </Popup>
+      }
+    />
+  );
+};
+
+type ExistingDistributionFlagProps = {
+  lat: number;
+  lng: number;
+  colorSet: [string, string];
+};
+export const ExistingDistributionFlag = ({
+  lat,
+  lng,
+  colorSet,
+}: ExistingDistributionFlagProps) => {
+  return (
+    <Flag
+      lat={lat}
+      lng={lng}
+      marker={<DistributionMarker colorSet={colorSet} size={60} />}
+    />
   );
 };

@@ -1,14 +1,14 @@
-import React from "react";
-
 type PlusMarkerProps = {
   size?: number | string;
   className?: string;
+  onClick?: () => void;
 };
 
-export const PlusMarker: React.FC<PlusMarkerProps> = ({
+export const PlusMarker = ({
   size = 24,
   className,
-}) => {
+  onClick,
+}: PlusMarkerProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -17,6 +17,7 @@ export const PlusMarker: React.FC<PlusMarkerProps> = ({
       width={size}
       height={size}
       preserveAspectRatio="xMidYMid meet"
+      onClick={onClick}
       className={className}
     >
       <path

@@ -1,11 +1,47 @@
 .map-view {
-  height: calc(
-    100vh - var(--app-shell-header-height, 0px) - var(
-        --app-shell-footer-height,
-        0px
-      ) -
-      32px
-  ); // Idk why -32px are still necessary
+  height: calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height,
+        0px) - 32px); // Idk why -32px are still necessary
+
+  .map-container {
+    height: 100%;
+    min-height: 100%;
+    position: relative;
+
+    .static-add-distribution-flag {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .marker {
+        z-index: 400;
+        cursor: pointer;
+      }
+    }
+
+    .static-add-distribution {
+      cursor: pointer
+    }
+
+    //  .static-add-distribution-flag {
+    //   height: 100%;
+    //   width: 100%;
+    //   display: flex;
+    //   justify-content: center;
+    //   align-items: center;
+
+    //   .marker {
+    //     z-index: 400;
+    //     cursor: pointer;
+    //   }
+    // }
+
+    .static-add-distribution {
+      cursor: pointer
+    }
+
+  }
 }
 
 .add-button-group {
