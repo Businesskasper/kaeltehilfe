@@ -11,6 +11,7 @@ import {} from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { FormSelect } from "../../../common/components";
 import { Client, GenderOptions, useClients } from "../../../common/data";
+import { rem } from "../../../common/utils";
 import { useDistributionFormContext } from "./DistributionFormContext";
 
 export const FormClients = () => {
@@ -48,7 +49,7 @@ export const FormClients = () => {
           withAsterisk
           sort
           label="Name"
-          style={{ width: "calc(100% - 45px)" }}
+          style={{ width: `calc(100% - ${rem(45)})` }}
           formProps={form.getInputProps(`clients.${index}.name`)}
           onItemSelected={(selectedClient) => {
             setClientData(index, selectedClient);
@@ -85,7 +86,7 @@ export const FormClients = () => {
         <ActionIcon
           disabled={form.values.clients?.length === 1}
           pos="absolute"
-          top="28px"
+          top={rem(28)}
           right="0"
           color="red"
           onClick={() => form.removeListItem("clients", index)}
@@ -93,7 +94,7 @@ export const FormClients = () => {
           <IconTrash size="1rem" />
         </ActionIcon>
       </Group>
-      <Group w="calc(100% - 45px)" mt="xs" align="flex-end">
+      <Group w={`calc(100% - ${rem(45)})`} mt="xs" align="flex-end">
         <NumberInput
           {...form.getInputProps(`clients.${index}.approxAge`)}
           withAsterisk
@@ -104,7 +105,7 @@ export const FormClients = () => {
           <SegmentedControl
             {...form.getInputProps(`clients.${index}.gender`)}
             data={GenderOptions}
-            mb={form.errors[`clients.${index}.approxAge`] ? "17px" : "-2px"}
+            mb={form.errors[`clients.${index}.approxAge`] ? rem(17) : rem(-2)}
           />
         </div>
       </Group>

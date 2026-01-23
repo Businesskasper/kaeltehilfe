@@ -1,11 +1,12 @@
 type PlusMarkerProps = {
-  size?: number | string;
+  height?: number | string;
+  width?: number | string;
   className?: string;
   onClick?: () => void;
 };
 
 export const PlusMarker = ({
-  size = 24,
+  height = 24,
   className,
   onClick,
 }: PlusMarkerProps) => {
@@ -14,8 +15,7 @@ export const PlusMarker = ({
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 -4 243 424.7"
       fill="none"
-      width={size}
-      height={size}
+      height={height}
       preserveAspectRatio="xMidYMid meet"
       onClick={onClick}
       className={className}

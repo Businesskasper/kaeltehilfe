@@ -6,6 +6,7 @@ import {
 } from "@mantine/core";
 import { IconProps } from "@tabler/icons-react";
 import { ComponentType } from "react";
+import { rem } from "../../utils";
 
 export type ActionGroupOption = {
   icon: ComponentType<IconProps>;
@@ -27,13 +28,13 @@ export const ActionGroup = ({
 }: ActionGroupProps) => {
   const getFirstActionRadius = () => {
     return groupProps?.orientation === "vertical"
-      ? "4px 4px 0 0"
-      : "4px 0 0 4px";
+      ? `${rem(4)} ${rem(4)} 0 0`
+      : `${rem(4)} 0 0 ${rem(4)}`;
   };
   const getLastActionRadius = () => {
     return groupProps?.orientation === "vertical"
-      ? "0 0 4px 4px"
-      : "0 4px 4px 0";
+      ? `0 0 ${rem(4)} ${rem(4)}`
+      : `0 ${rem(4)} ${rem(4)} 0`;
   };
   return (
     <ButtonGroup p={0} {...groupProps}>
@@ -56,7 +57,7 @@ export const ActionGroup = ({
               e.preventDefault();
               e.stopPropagation();
             }}
-            w="40px"
+            w={rem(40)}
             variant="default"
             radius={radius}
             key={option.id}

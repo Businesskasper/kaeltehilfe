@@ -1,4 +1,5 @@
 @import "@fontsource-variable/inter";
+@import "functions";
 
 :root {
   margin: 0;
@@ -12,14 +13,14 @@
 
   ::-webkit-scrollbar {
     right: 0;
-    width: 12px;
-    height: 12px;
+    width: rem(12);
+    height: rem(12);
   }
 
   ::-webkit-scrollbar-thumb {
     background-color: #999;
-    border-radius: 8px;
-    width: 12px;
-    height: 12px;
+    border-radius: rem(8);
+    width: rem(12);
+    height: rem(12);
   }
 }

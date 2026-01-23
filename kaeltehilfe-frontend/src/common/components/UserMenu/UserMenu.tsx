@@ -14,6 +14,7 @@ import {
 } from "@tabler/icons-react";
 import { useAuth } from "react-oidc-context";
 import { matchPath, useNavigate, useResolvedPath } from "react-router-dom";
+import { rem } from "../../utils";
 import { useProfile } from "../../utils/useProfile";
 
 export const UserMenu = () => {
@@ -75,8 +76,8 @@ export const UserMenu = () => {
         size="md"
         checked={colorScheme === "dark"}
         onChange={() => toggleColorScheme()}
-        onLabel={<IconMoon style={{ padding: "2px" }} />}
-        offLabel={<IconSun style={{ padding: "2px" }} />}
+        onLabel={<IconMoon style={{ padding: rem(2) }} />}
+        offLabel={<IconSun style={{ padding: rem(2) }} />}
       />
     </Group>
   );

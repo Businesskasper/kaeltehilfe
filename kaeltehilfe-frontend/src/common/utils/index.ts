@@ -7,6 +7,7 @@ export * from "./getDiffs";
 export * from "./getDistinct";
 export * from "./groupBy";
 export * from "./http";
+export * from "./rem";
 export * from "./splitBy";
 export * from "./types";
 export * from "./useBreakpoint";

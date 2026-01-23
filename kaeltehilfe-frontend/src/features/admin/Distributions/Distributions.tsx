@@ -10,6 +10,7 @@ import {
   compareByDateTime,
   formatDate,
   formatDateTime,
+  rem,
   toNormalizedDate,
 } from "../../../common/utils";
 
@@ -120,7 +121,7 @@ export const Distributions = () => {
       <DatePickerInput
         {...rangeFilterField.getInputProps()}
         label="Zeitraum"
-        w="300px"
+        w={rem(300)}
         mb="sm"
         type="range"
         valueFormat="DD MMMM YYYY"
