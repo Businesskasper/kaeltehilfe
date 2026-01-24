@@ -10,7 +10,10 @@ export default defineConfig({
       scss: {
         silenceDeprecations: ["legacy-js-api"],
         api: "modern-compiler",
-        additionalData: `@use "${path.join(process.cwd(), "src/_mantine").replace(/\\/g, "/")}" as mantine;`,
+        additionalData: (source: string, filepath: string) => {
+          if (filepath.endsWith("_mantine.scss")) return source;
+          return `@use "${path.resolve("src/_mantine").replace(/\\/g, "/")}" as mantine;${source}`;
+        },
       },
     },
   },
