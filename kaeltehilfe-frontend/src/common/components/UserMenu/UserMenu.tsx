@@ -1,6 +1,7 @@
 import {
   Group,
   Menu,
+  rem,
   Switch,
   Text,
   useMantineColorScheme,
@@ -14,7 +15,6 @@ import {
 } from "@tabler/icons-react";
 import { useAuth } from "react-oidc-context";
 import { matchPath, useNavigate, useResolvedPath } from "react-router-dom";
-import { rem } from "../../utils";
 import { useProfile } from "../../utils/useProfile";
 
 export const UserMenu = () => {

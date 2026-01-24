@@ -4,25 +4,25 @@
 }
 
 .brand {
-  height: rem(70);
+  height: mantine.rem(70px);
   display: flex;
   align-items: anchor-center;
-  gap: rem(12);
-  margin-left: rem(24);
+  gap: mantine.rem(12px);
+  margin-left: mantine.rem(24px);
 
   svg {
-    margin-bottom: rem(4);
+    margin-bottom: mantine.rem(4px);
   }
 
   .company {
     font-family: "Inter Variable";
-    font-size: rem(32);
+    font-size: mantine.rem(32px);
     font-weight: 100;
   }
 }
 
 .user-menu {
-  row-gap: rem(4) !important;
+  row-gap: mantine.rem(4px) !important;
 }
 
 .burger-menu {

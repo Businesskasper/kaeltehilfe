@@ -1,4 +1,5 @@
 import react from "@vitejs/plugin-react-swc";
+import path from "node:path";
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
@@ -7,7 +8,9 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "src/_functions.scss";`,
+        silenceDeprecations: ["legacy-js-api"],
+        api: "modern-compiler",
+        additionalData: `@use "${path.join(process.cwd(), "src/_mantine").replace(/\\/g, "/")}" as mantine;`,
       },
     },
   },

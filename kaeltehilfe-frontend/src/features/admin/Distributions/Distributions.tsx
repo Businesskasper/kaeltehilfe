@@ -1,4 +1,4 @@
-import { Title } from "@mantine/core";
+import { rem, Title } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useField } from "@mantine/form";
 import { MRT_ColumnDef } from "mantine-react-table";
@@ -10,7 +10,6 @@ import {
   compareByDateTime,
   formatDate,
   formatDateTime,
-  rem,
   toNormalizedDate,
 } from "../../../common/utils";
 

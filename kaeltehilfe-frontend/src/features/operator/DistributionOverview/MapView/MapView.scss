@@ -1,6 +1,6 @@
 .map-view {
   height: calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height,
-        0px) - rem(32)); // Idk why -rem(32) are still necessary
+        0px) - mantine.rem(32px)); // Idk why -mantine.rem(32px) are still necessary
 
   .map-container {
     height: 100%;
@@ -17,8 +17,8 @@
       .marker {
         z-index: 400;
         cursor: pointer;
-        transform: translateY(-(rem(30)));
-        height: rem(60);
+        transform: translateY(-(mantine.rem(30px)));
+        height: mantine.rem(60px);
       }
     }
 
@@ -47,8 +47,8 @@
 }
 
 .add-button-group {
-  padding: rem(16);
+  padding: mantine.rem(16px);
   display: flex;
   flex-direction: column;
-  row-gap: rem(8);
+  row-gap: mantine.rem(8px);
 }

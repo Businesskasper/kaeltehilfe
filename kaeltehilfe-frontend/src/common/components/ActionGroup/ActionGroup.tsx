@@ -3,10 +3,10 @@ import {
   ActionIconProps,
   ButtonGroup,
   ButtonGroupProps,
+  rem,
 } from "@mantine/core";
 import { IconProps } from "@tabler/icons-react";
 import { ComponentType } from "react";
-import { rem } from "../../utils";
 
 export type ActionGroupOption = {
   icon: ComponentType<IconProps>;
