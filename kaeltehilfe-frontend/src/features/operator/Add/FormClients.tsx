@@ -5,13 +5,13 @@ import {
   InputError,
   InputLabel,
   NumberInput,
+  rem,
   SegmentedControl,
 } from "@mantine/core";
 import {} from "@mantine/form";
 import { IconPlus, IconTrash } from "@tabler/icons-react";
 import { FormSelect } from "../../../common/components";
 import { Client, GenderOptions, useClients } from "../../../common/data";
-import { rem } from "../../../common/utils";
 import { useDistributionFormContext } from "./DistributionFormContext";
 
 export const FormClients = () => {

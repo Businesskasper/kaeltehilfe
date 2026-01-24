@@ -2,7 +2,6 @@ import { Collapse, Group, NavLink, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconArrowDown, IconArrowUp } from "@tabler/icons-react";
 import React from "react";
-import { rem } from "../../utils";
 
 export type NavigationSectionProps = {
   label: string;
@@ -21,11 +20,7 @@ export const NavigationSection = ({
         label={
           <Group justify="space-between">
             <Title order={6}>{label}</Title>
-            {isOpen ? (
-              <IconArrowUp size={rem(15)} />
-            ) : (
-              <IconArrowDown size={rem(15)} />
-            )}
+            {isOpen ? <IconArrowUp size={15} /> : <IconArrowDown size={15} />}
           </Group>
         }
       ></NavLink>

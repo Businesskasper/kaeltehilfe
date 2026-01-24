@@ -5,6 +5,7 @@ import {
   Button,
   DefaultMantineColor,
   Tooltip,
+  rem,
 } from "@mantine/core";
 import { useLocalStorage } from "@mantine/hooks";
 import {
@@ -35,7 +36,7 @@ import {
 import { MRT_Localization_DE } from "mantine-react-table/locales/de/index.cjs";
 import React, { ComponentType } from "react";
 import * as XLSX from "xlsx";
-import { rem, useBreakpoint } from "../../utils";
+import { useBreakpoint } from "../../utils";
 import { ValueTypeProps } from "../../utils/types";
 
 import "./Table.scss";

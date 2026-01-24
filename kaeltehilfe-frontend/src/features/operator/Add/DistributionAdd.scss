@@ -12,10 +12,10 @@
 
 .good-list-item {
   width: 100%;
-  height: rem(55);
+  height: mantine.rem(55px);
   border: 1px solid var(--mantine-color-country_gray-light-color);
-  border-radius: rem(8);
-  padding: rem(16);
+  border-radius: mantine.rem(8px);
+  padding: mantine.rem(16px);
   display: flex;
   align-items: center;
 }

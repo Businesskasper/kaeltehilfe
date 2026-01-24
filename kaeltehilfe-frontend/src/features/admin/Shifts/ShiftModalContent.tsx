@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Group, InputLabel } from "@mantine/core";
+import { ActionIcon, Button, Group, InputLabel, rem } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
@@ -16,7 +16,7 @@ import {
   useShifts,
   useVolunteers,
 } from "../../../common/data";
-import { compareByDateOnly, rem } from "../../../common/utils";
+import { compareByDateOnly } from "../../../common/utils";
 import {
   isDuplicate,
   requiredValidator,

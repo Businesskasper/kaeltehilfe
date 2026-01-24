@@ -4,6 +4,7 @@ import {
   Popover,
   PopoverDropdown,
   PopoverTarget,
+  rem,
 } from "@mantine/core";
 import {
   IconLocation,
@@ -17,7 +18,6 @@ import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import { ActionGroup } from "../../../../common/components";
-import { rem } from "../../../../common/utils";
 import { DistributionMarker, PlusMarker } from "./Marker";
 
 import { useDisclosure } from "@mantine/hooks";
@@ -434,22 +434,6 @@ export const StaticAddDistributionFlag = ({
     </div>
   );
 };
-
-// export const StaticAddDistributionFlag = ({
-//   onClick,
-// }: {
-//   onClick: () => void;
-// }) => {
-//   return (
-//     <ButtonContainer bottom="50%" right="50%" centerX>
-//       <PlusMarker
-//         className="static-add-distribution"
-//         onClick={onClick}
-//         size={60}
-//       />
-//     </ButtonContainer>
-//   );
-// };
 
 // export const StaticAddDistributionFlag = ({
 //   onClick,

@@ -7,7 +7,6 @@ import {
   useNavigate,
   useResolvedPath,
 } from "react-router-dom";
-import { rem } from "../../utils";
 
 export type NavigationItemProps = {
   target: string;
@@ -38,7 +37,7 @@ export const NavigationItem = ({ target, label, Icon, onNavigate }: Props) => {
         active={isActive}
         fz="h3"
         label={label}
-        leftSection={<Icon size={rem(24)} stroke={1.5} />}
+        leftSection={<Icon size={24} stroke={1.5} />}
       />
     </>
   );
