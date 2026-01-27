@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getBasePost } from "../utils";
 import { Gender } from "./gender";
+import { GeoLocation } from "./geoLocation";
 
 export type BatchDistribution = {
   locationName?: string;
-  geoLocation?: { lat: number; lng: number };
+  geoLocation?: GeoLocation;
   busRegistrationNumber: string;
   clients: Array<{
     id?: number;

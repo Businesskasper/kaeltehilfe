@@ -1,28 +1,28 @@
-import { useDisclosure } from "@mantine/hooks";
 import React from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
+import { GeoLocation } from "../../../../common/data";
 import { useBrowserStorage } from "../../../../common/utils";
+import { DistributionsLayer } from "./DistributionsLayer";
 import {
   LocationTracker,
   StaticAddDistributionFlag,
   ZoomButtons,
 } from "./MapControls";
 
-import { DistributionsLayer } from "./DistributionsLayer";
 import "./MapView.scss";
 
 const defaultLocation = { lat: 48.40628334508064, lng: 9.993206261642712 };
 const STORAGE_KEY_MAP_STATE = "mapView_state";
 
 type MapState = {
-  center: { lat: number; lng: number } | null;
+  center: GeoLocation;
   zoom: number;
   isTracking: boolean;
 };
 
 const defaultMapState: MapState = {
-  center: null,
+  center: defaultLocation,
   zoom: 18,
   isTracking: true,
 };
@@ -35,60 +35,41 @@ export const MapView = () => {
     defaultMapState,
   );
 
-  const [isTracking, { toggle: toggleTracking }] = useDisclosure(
-    storedState.isTracking,
-  );
-  const [mapCenter, setMapCenter] = React.useState(() =>
-    !storedState.isTracking && storedState.center
-      ? storedState.center
-      : defaultLocation,
-  );
+  storedState.center?.lat;
 
-  const [mapZoom, setMapZoom] = React.useState(storedState.zoom);
-  const [, setGeoLocation] = React.useState(defaultLocation);
+  const setIsTracking = (isTracking: boolean) => {
+    setStoredState((prev) => ({
+      ...prev,
+      isTracking,
+    }));
+  };
 
-  const updateGeoLocation = React.useCallback(
-    (location: { lat: number; lng: number }) => setGeoLocation(location),
-    [],
-  );
   const updateMapCenter = React.useCallback(
-    (center: { lat: number; lng: number }) => setMapCenter(center),
-    [],
+    (pos: GeoLocation) => {
+      setStoredState((prev) => ({
+        ...prev,
+        center: pos,
+      }));
+    },
+    [setStoredState],
   );
   const updateMapZoom = React.useCallback(
-    (zoom: number) => setMapZoom(zoom),
-    [],
+    (zoom: number) => {
+      setStoredState((prev) => ({
+        ...prev,
+        zoom,
+      }));
+    },
+    [setStoredState],
   );
-
-  // Save map state: when tracking is enabled, preserve last manual center; always save zoom
-  React.useEffect(() => {
-    setStoredState((prev) => {
-      const zoomChanged = prev.zoom !== mapZoom;
-      const trackingChanged = prev.isTracking !== isTracking;
-      const centerChanged =
-        !prev.center ||
-        prev.center.lat !== mapCenter.lat ||
-        prev.center.lng !== mapCenter.lng;
-
-      if (!zoomChanged && !trackingChanged && (!centerChanged || isTracking)) {
-        return prev;
-      }
-
-      return {
-        center: isTracking ? prev.center : mapCenter,
-        zoom: mapZoom,
-        isTracking,
-      };
-    });
-  }, [mapCenter, mapZoom, isTracking, setStoredState]);
 
   const navigate = useNavigate();
   const newDistribution = () => {
     navigate("/add", {
       state: {
-        hideLocationForm: true,
-        lat: mapCenter.lat,
-        lng: mapCenter.lng,
+        hideLocationForm: !!storedState.center,
+        lat: storedState.center?.lat,
+        lng: storedState.center?.lng,
       },
     });
   };
@@ -96,8 +77,8 @@ export const MapView = () => {
   return (
     <div className="map-view">
       <MapContainer
-        center={mapCenter}
-        zoom={mapZoom}
+        center={storedState.center}
+        zoom={storedState.zoom}
         maxZoom={20}
         minZoom={12}
         zoomControl={false}
@@ -112,32 +93,24 @@ export const MapView = () => {
           maxZoom={20}
           minZoom={12}
           maxNativeZoom={19}
-          // detectRetina
-          // keepBuffer={10}
-          // tileSize={512}
         />
-        {mapCenter?.lat && (
-          <>
-            <StaticAddDistributionFlag onClick={newDistribution} />
-            {/* <AddDistributionFlag
-              lat={mapCenter.lat}
-              lng={mapCenter.lng}
-              onClick={newDistribution}
-            /> */}
-          </>
+        {storedState.center?.lat && (
+          <StaticAddDistributionFlag onClick={newDistribution} />
         )}
 
-        <ZoomButtons lat={mapCenter.lat} lng={mapCenter.lng} />
+        <ZoomButtons
+          lat={storedState.center.lat}
+          lng={storedState.center.lng}
+        />
         <LocationTracker
-          isTracking={isTracking}
-          toggleTracking={toggleTracking}
-          bubbleGeoLocation={updateGeoLocation}
+          isTracking={storedState.isTracking}
+          setIsTracking={setIsTracking}
           bubbleMapCenter={updateMapCenter}
           bubbleMapZoom={updateMapZoom}
-          initialMapCenter={!isTracking ? mapCenter : undefined}
-          initialMapZoom={mapZoom}
+          initialMapCenter={storedState.center}
+          initialMapZoom={storedState.zoom}
         />
-        <DistributionsLayer />
+        <DistributionsLayer onClusterClick={() => setIsTracking(false)} />
       </MapContainer>
     </div>
   );
