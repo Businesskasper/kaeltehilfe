@@ -254,7 +254,6 @@ export const LocationTracker = ({
       lastDragEndRef.current = null;
       if (isTracking) toggleTracking();
     },
-
     dragend() {
       isDraggingRef.current = false;
       lastDragEndRef.current = performance.now();
@@ -384,8 +383,10 @@ export const Flag = ({ lat, lng, marker, popup }: FlagProps) => {
     rootRef.current && rootRef.current.render(marker);
   }, [marker]);
 
+  const position = React.useMemo(() => ({ lat, lng }), [lat, lng]);
+
   return icon ? (
-    <Marker icon={icon} position={{ lat, lng }}>
+    <Marker icon={icon} position={position}>
       {popup}
     </Marker>
   ) : (

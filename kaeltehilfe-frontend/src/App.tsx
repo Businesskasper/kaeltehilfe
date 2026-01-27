@@ -10,6 +10,8 @@ import React from "react";
 import { hasAuthParams, useAuth } from "react-oidc-context";
 
 import "leaflet/dist/leaflet.css";
+import "./leaflet-markercluster.scss";
+// import "react-leaflet-markercluster/dist/styles.min.css";
 import "./App.scss";
 
 import { DatesProvider } from "@mantine/dates";

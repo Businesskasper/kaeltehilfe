@@ -111,6 +111,10 @@ export const MapView = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           maxZoom={20}
           minZoom={12}
+          maxNativeZoom={19}
+          // detectRetina
+          // keepBuffer={10}
+          // tileSize={512}
         />
         {mapCenter?.lat && (
           <>

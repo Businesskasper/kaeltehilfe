@@ -52,3 +52,16 @@
   flex-direction: column;
   row-gap: mantine.rem(8px);
 }
+
+.marker-cluster {
+  color: var(--mantine-color-dark-text);
+}
+
+// .marker-cluster {
+//   color: black;
+
+// }
+
+// [data-mantine-color-scheme="light"] > .marker-cluster {
+//   color: white;
+// }
