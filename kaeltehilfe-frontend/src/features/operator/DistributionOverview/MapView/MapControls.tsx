@@ -21,6 +21,7 @@ import { ActionGroup } from "../../../../common/components";
 import { DistributionMarker, PlusMarker } from "./Marker";
 
 import { useDisclosure } from "@mantine/hooks";
+import { GeoLocation } from "../../../../common/data";
 import "./MapView.scss";
 
 type ButtonContainerProps = {
@@ -103,7 +104,7 @@ export const NumbZone = () => {
   return null;
 };
 
-export const ZoomButtons = ({ lat, lng }: { lat: number; lng: number }) => {
+export const ZoomButtons = ({ lat, lng }: GeoLocation) => {
   const map = useMap();
 
   const [currentZoom, setCurrentZoom] = React.useState<{
@@ -176,7 +177,7 @@ export const ZoomButtons = ({ lat, lng }: { lat: number; lng: number }) => {
 };
 
 export const LocationTracker = ({
-  toggleTracking,
+  setIsTracking,
   isTracking,
   bubbleGeoLocation,
   bubbleMapCenter,
@@ -184,125 +185,121 @@ export const LocationTracker = ({
   initialMapCenter,
   initialMapZoom,
 }: {
-  toggleTracking: () => void;
+  setIsTracking: (isTracking: boolean) => void;
   isTracking: boolean;
-  bubbleGeoLocation: (data: { lat: number; lng: number }) => void;
-  bubbleMapCenter: (data: { lat: number; lng: number }) => void;
+  bubbleGeoLocation?: (data: GeoLocation) => void;
+  bubbleMapCenter: (data: GeoLocation) => void;
   bubbleMapZoom?: (zoom: number) => void;
-  initialMapCenter?: { lat: number; lng: number };
+  initialMapCenter?: GeoLocation;
   initialMapZoom?: number;
 }) => {
   const map = useMap();
-  const isProgrammaticUpdateRef = React.useRef(false);
-  const hasInitializedRef = React.useRef(false);
-  const isZoomingRef = React.useRef(false);
-  const isDraggingRef = React.useRef(false);
-  const lastDragEndRef = React.useRef<number | null>(null);
 
-  const [geoLocation, setGeoLocation] = React.useState<{
-    lat: number;
-    lng: number;
-  }>();
-  const [mapCenter, setMapCenter] = React.useState<{
-    lat: number;
-    lng: number;
-  }>(initialMapCenter || { lat: 0, lng: 0 });
+  const isManualMoveRef = React.useRef<boolean>(false);
+  const isTrackingRef = React.useRef<boolean>(false);
 
-  // Initialize map position on mount
-  React.useEffect(() => {
-    if (hasInitializedRef.current) return;
-    hasInitializedRef.current = true;
-    isProgrammaticUpdateRef.current = true;
+  const [geoLocation, setGeoLocation] = React.useState<GeoLocation>();
 
-    if (initialMapCenter && initialMapZoom) {
-      map.setView(initialMapCenter, initialMapZoom, { animate: false });
-    } else if (initialMapZoom) {
-      map.setZoom(initialMapZoom, { animate: false });
-    }
+  const [mapCenter, setMapCenter] = React.useState<GeoLocation>(
+    initialMapCenter || { lat: 0, lng: 0 },
+  );
 
-    isProgrammaticUpdateRef.current = false;
-  }, [map, initialMapCenter, initialMapZoom]);
+  const [mapZoom, setMapZoom] = React.useState<number>(
+    initialMapZoom !== undefined ? initialMapZoom : map.getZoom(),
+  );
 
   useMapEvents({
     move: () => {
-      if (isProgrammaticUpdateRef.current || isZoomingRef.current) {
-        return;
-      }
-
-      // if (isTracking && isDraggingRef.current) toggleTracking();
-
       const center = map.getCenter();
-      const zoom = map.getZoom();
+      // console.log("move", center);
       setMapCenter(center);
-      bubbleMapCenter(center);
-      bubbleMapZoom?.(zoom);
+      isManualMoveRef.current && !isTrackingRef.current && setIsTracking(false);
     },
     locationfound: (event) => {
-      setGeoLocation({ lat: event.latlng.lat, lng: event.latlng.lng });
+      const location = { lat: event.latlng.lat, lng: event.latlng.lng };
+      console.log("locationfound", location);
+      setGeoLocation(location);
     },
-    zoomstart: () => {
-      isZoomingRef.current = true;
+    locationerror: () => {
+      // console.error("locationerror", event);
+    },
+    dragstart: () => {
+      // console.log("dragstart");
+      isManualMoveRef.current = true;
+      setIsTracking(false);
+    },
+    dragend: () => {
+      // console.log("dragend");
+      isManualMoveRef.current = false;
     },
     zoomend: () => {
-      isZoomingRef.current = false;
-      if (!isProgrammaticUpdateRef.current) {
-        bubbleMapZoom?.(map.getZoom());
-      }
-    },
-    dragstart() {
-      isDraggingRef.current = true;
-      lastDragEndRef.current = null;
-      if (isTracking) toggleTracking();
-    },
-    dragend() {
-      isDraggingRef.current = false;
-      lastDragEndRef.current = performance.now();
+      // console.log("zoomend");
+      const zoom = map.getZoom();
+      setMapZoom(zoom);
     },
   });
 
+  const onClick: React.MouseEventHandler<HTMLButtonElement> = () => {
+    setIsTracking(true);
+  };
+
+  const mapCenterLat = mapCenter?.lat;
+  const mapCenterLng = mapCenter?.lng;
+  const geoLocationLat = geoLocation?.lat;
+  const geoLocationLng = geoLocation?.lng;
+
+  // Always locate in background - stop on unmount
   React.useEffect(() => {
     map.stopLocate();
+
     map.locate({
-      // setView: true,
-      setView: false, // TODO: Maybe more accurate and less lags when setting the view here instead of setting the view in effects
+      setView: false,
       enableHighAccuracy: true,
-      maximumAge: 2500,
+      maximumAge: 900,
       watch: true,
-      maxZoom: 18,
+      maxZoom: 20,
     });
+
+    return () => {
+      map.stopLocate();
+    };
   }, [map]);
 
+  // Sync location to map center when tracking is enabled
   React.useEffect(() => {
-    if (geoLocation) bubbleGeoLocation(geoLocation);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [geoLocation]);
+    if (
+      !isTracking ||
+      geoLocationLat === undefined ||
+      geoLocationLng === undefined
+    )
+      return;
 
+    isTrackingRef.current = true;
+    // map.setView(geoLocation, mapZoom, { animate: true, easeLinearity: 0.5 });
+    map.panTo(
+      { lat: geoLocationLat, lng: geoLocationLng },
+      { animate: true, easeLinearity: 0.5, noMoveStart: true },
+    );
+    isTrackingRef.current = true;
+  }, [isTracking, geoLocationLat, geoLocationLng, map]);
+
+  // Sync up zoom
   React.useEffect(() => {
-    if (mapCenter?.lat && !isProgrammaticUpdateRef.current) {
-      bubbleMapCenter(mapCenter);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mapCenter]);
+    bubbleMapZoom && bubbleMapZoom(mapZoom);
+  }, [bubbleMapZoom, mapZoom]);
 
-  // Auto-center to geo location when tracking is enabled
+  // Sync up map center
   React.useEffect(() => {
-    if (!isTracking || !geoLocation) return;
+    bubbleMapCenter({ lat: mapCenterLat, lng: mapCenterLng });
+  }, [mapCenterLat, mapCenterLng, bubbleMapCenter, mapCenter]);
 
-    isProgrammaticUpdateRef.current = true;
-    map.setView(geoLocation, map.getZoom(), { animate: true });
-    setMapCenter(geoLocation);
-    bubbleMapCenter(geoLocation);
-    setTimeout(() => {
-      isProgrammaticUpdateRef.current = false;
-    }, 100);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [geoLocation, isTracking, map]);
-
-  const onClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    toggleTracking();
-  };
+  // Sync up geo location
+  React.useEffect(() => {
+    geoLocationLat !== undefined &&
+      geoLocationLng !== undefined &&
+      bubbleGeoLocation &&
+      bubbleGeoLocation({ lat: geoLocationLat, lng: geoLocationLng });
+  }, [geoLocationLat, geoLocationLng, bubbleGeoLocation]);
 
   return (
     <ButtonContainer left={rem(13)} top={rem(90)}>
@@ -367,9 +364,7 @@ export const Flag = ({ lat, lng, marker, popup }: FlagProps) => {
       const root = rootRef.current;
       rootRef.current = null;
 
-      // Use requestAnimationFrame to defer unmount until after React finishes rendering
-      // This ensures we're outside of React's render phase and prevents the warning:
-      // "Attempted to synchronously unmount a root while React was already rendering"
+      // Defer unmount until rendered -> prevent "Attempted to synchronously unmount a root while React was already rendering"
       requestAnimationFrame(() => {
         if (root) {
           root.unmount();

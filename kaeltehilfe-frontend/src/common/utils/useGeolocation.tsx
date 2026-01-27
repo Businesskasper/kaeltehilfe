@@ -1,11 +1,12 @@
 import React from "react";
+import { GeoLocation } from "../data";
 
 type UseGeolocationResult =
   | { state: "PENDING" }
   | { state: "READY" }
   | { state: "NOT_SUPPORTED" }
   | { state: "PERMISSION_DENIED" }
-  | { state: "CAPTURING"; position: { lat: number; lng: number } };
+  | { state: "CAPTURING"; position: GeoLocation };
 
 export const useGeolocation = () => {
   const [result, setResult] = React.useState<UseGeolocationResult>({

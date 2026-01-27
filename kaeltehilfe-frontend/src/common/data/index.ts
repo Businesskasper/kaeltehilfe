@@ -3,6 +3,7 @@ export * from "./bus";
 export * from "./client";
 export * from "./distribution";
 export * from "./gender";
+export * from "./geoLocation";
 export * from "./good";
 export * from "./location";
 export * from "./login";

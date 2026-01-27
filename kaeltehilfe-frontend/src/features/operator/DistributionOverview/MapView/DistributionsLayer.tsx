@@ -3,7 +3,11 @@ import React from "react";
 import MarkerClusterGroup, {
   MarkerClusterGroupProps,
 } from "react-leaflet-markercluster";
-import { Distribution, useDistribtions } from "../../../../common/data";
+import {
+  Distribution,
+  GeoLocation,
+  useDistribtions,
+} from "../../../../common/data";
 import { ExistingDistributionFlag } from "./MapControls";
 
 const colorSets = {
@@ -14,7 +18,11 @@ const colorSets = {
   ORANGE: ["#F59E0B", "#D97706"],
 } satisfies { [key: string]: [string, string] };
 
-export const DistributionsLayer = () => {
+export const DistributionsLayer = ({
+  onClusterClick,
+}: {
+  onClusterClick?: () => void;
+}) => {
   const now = new Date();
   const queryTo = new Date(now.setHours(23, 59, 59, 999));
   const yesterday = new Date(now.setDate(now.getDate() - 1));
@@ -30,7 +38,7 @@ export const DistributionsLayer = () => {
         (
           dist,
         ): dist is Distribution & {
-          geoLocation: { lat: number; lng: number };
+          geoLocation: GeoLocation;
         } => !!dist?.geoLocation,
       ) || [],
     [distributions],
@@ -71,8 +79,11 @@ export const DistributionsLayer = () => {
           iconSize: new L.Point(40, 40),
         });
       },
+      eventHandlers: {
+        clusterclick: onClusterClick,
+      },
     }),
-    [],
+    [onClusterClick],
   );
 
   return (

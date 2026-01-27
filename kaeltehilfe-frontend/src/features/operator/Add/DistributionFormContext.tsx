@@ -1,5 +1,5 @@
 import { createFormContext } from "@mantine/form";
-import { Gender } from "../../../common/data";
+import { Gender, GeoLocation } from "../../../common/data";
 
 export type DistributionFormClient = {
   id?: number;
@@ -15,7 +15,7 @@ export type DistributionFormGood = {
 
 export type DistributionForm = {
   locationName?: string;
-  geoLocation?: { lat: number; lng: number };
+  geoLocation?: GeoLocation;
   busRegistrationNumber: string;
   clients: Array<DistributionFormClient>;
   goods: Array<DistributionFormGood>;
