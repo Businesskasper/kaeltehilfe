@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
 
 type SetValue<T> = Dispatch<SetStateAction<T>>;
 
@@ -44,25 +38,26 @@ export const useBrowserStorage = <T,>(
     [key, type],
   );
 
-  const [storedValue, setStoredValue] = useState<T>(readValue);
+  const [storedValue, setStoredValue] = useState<T>(() => readValue());
 
   const setValue: SetValue<T> = React.useCallback(
     (value) => {
-      // Allow value to be a function so we have the same API as useState
-      const newValue = value instanceof Function ? value(storedValue) : value;
+      setStoredValue((prev) => {
+        // Allow value to be a function so we have the same API as useState
+        const newValue = value instanceof Function ? value(prev) : value;
 
-      // Save to storage
-      writeValue(newValue);
+        // Save to storage
+        writeValue(newValue);
 
-      // Save state
-      setStoredValue(newValue);
+        return newValue;
+      });
     },
-    [storedValue, writeValue],
+    [writeValue],
   );
 
-  useEffect(() => {
-    setStoredValue(readValue());
-  }, [readValue]);
+  // useEffect(() => {
+  //   setStoredValue(readValue());
+  // }, [readValue]);
 
   return [storedValue, setValue];
 };
