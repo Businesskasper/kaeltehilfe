@@ -12,7 +12,6 @@ import {
 
 import "./MapView.scss";
 
-const defaultLocation = { lat: 48.40628334508064, lng: 9.993206261642712 };
 const STORAGE_KEY_MAP_STATE = "mapView_state";
 
 type MapState = {
@@ -20,6 +19,8 @@ type MapState = {
   zoom: number;
   isTracking: boolean;
 };
+
+const defaultLocation = { lat: 48.40628334508064, lng: 9.993206261642712 };
 
 const defaultMapState: MapState = {
   center: defaultLocation,
@@ -37,12 +38,15 @@ export const MapView = () => {
 
   storedState.center?.lat;
 
-  const setIsTracking = (isTracking: boolean) => {
-    setStoredState((prev) => ({
-      ...prev,
-      isTracking,
-    }));
-  };
+  const setIsTracking = React.useCallback(
+    (isTracking: boolean) => {
+      setStoredState((prev) => ({
+        ...prev,
+        isTracking,
+      }));
+    },
+    [setStoredState],
+  );
 
   const updateMapCenter = React.useCallback(
     (pos: GeoLocation) => {
@@ -53,6 +57,7 @@ export const MapView = () => {
     },
     [setStoredState],
   );
+
   const updateMapZoom = React.useCallback(
     (zoom: number) => {
       setStoredState((prev) => ({

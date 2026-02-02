@@ -6,6 +6,7 @@ import {
   PopoverTarget,
   rem,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import {
   IconLocation,
   IconMinus,
@@ -18,10 +19,9 @@ import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import { ActionGroup } from "../../../../common/components";
+import { GeoLocation } from "../../../../common/data";
 import { DistributionMarker, PlusMarker } from "./Marker";
 
-import { useDisclosure } from "@mantine/hooks";
-import { GeoLocation } from "../../../../common/data";
 import "./MapView.scss";
 
 type ButtonContainerProps = {
@@ -291,7 +291,7 @@ export const LocationTracker = ({
   // Sync up map center
   React.useEffect(() => {
     bubbleMapCenter({ lat: mapCenterLat, lng: mapCenterLng });
-  }, [mapCenterLat, mapCenterLng, bubbleMapCenter, mapCenter]);
+  }, [bubbleMapCenter, mapCenterLat, mapCenterLng]);
 
   // Sync up geo location
   React.useEffect(() => {
