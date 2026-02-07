@@ -1,43 +1,24 @@
 version: '3.8'
 services:
-  # keycloak:
-  #   ports:
-  #     - '8050:8080'
-  #     - '8051:9000'
-  #   image: quay.io/keycloak/keycloak:26.0.4
-  #   command: start-dev
-  #   environment:
-  #     KC_HOSTNAME: 'localhost'
-  #     KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
-  #     KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-  #     QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
-  #   volumes:
-  #       - ./keycloak:/opt/keycloak/data
-  #       - ./keycloak-themes:/opt/keycloak/providers
-  #   logging:
-  #     driver: "json-file"
-  #     options:
-  #       max-size: "50m"
-
-  # pgosm:
-  #   image: rustprooflabs/pgosm-flex
-  #   container_name: pgosm-flex
-  #   restart: "no"
-  #   # depends_on:
-  #   #   postgis:
-  #   #     condition: service_healthy
-  #   volumes:
-  #     - ./pgosm-flex/postgresql:/var/lib/postgresql
-  #     - ./pgosm-flex/output:/app/output
-  #     - ./pgosm-flex/init-scripts:/docker-entrypoint-initdb.d
-  #   environment:
-  #     POSTGRES_USER: ${POSTGIS_ADMIN}
-  #     POSTGRES_PASSWORD: ${POSTGIS_PASSWORD}
-  #     PGOSM_RAM: 8
-  #     PGOSM_REGION: europe/germany
-  #     PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
-  #     PGOSM_INPUT_FILE: /app/output/baden-wuerttemberg/tuebingen-regbez-latest.osm.pbf
-
+  keycloak:
+    ports:
+      - '8050:8080'
+      - '8051:9000'
+    image: quay.io/keycloak/keycloak:26.0.4
+    command: start-dev
+    environment:
+      KC_HOSTNAME: 'localhost'
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
+    volumes:
+        - ./keycloak:/opt/keycloak/data
+        - ./keycloak-themes:/opt/keycloak/providers
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        
   postgis:
     image: postgis/postgis
     restart: always
