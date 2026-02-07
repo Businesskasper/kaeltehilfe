@@ -1,0 +1,15 @@
+FROM rustprooflabs/pgosm-flex
+
+# no postgres initialization required
+RUN rm -rf /docker-entrypoint-initdb.d/*.*
+
+COPY ./init-entrypoint.sh /usr/local/bin/init-entrypoint.sh
+RUN chmod +x /usr/local/bin/init-entrypoint.sh
+
+COPY ./init-import.sh /usr/local/bin/init-import.sh
+RUN chmod +x /usr/local/bin/init-import.sh
+
+COPY ./db-prep/*.sql /usr/local/bin/db-prep/
+RUN chmod +x /usr/local/bin/db-prep/*.*
+
+ENTRYPOINT [ "init-entrypoint.sh" ]
