@@ -1,6 +1,6 @@
 # kaeltehilfe
 
-kaeltehilfe allows planning, recording and analytics of goods distribution to people in need.
+kaeltehilfe allows planning, recording and analytics of goods distribution.
 
 [Architecture](./docs/architecture.md)
 
