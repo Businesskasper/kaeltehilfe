@@ -6,8 +6,35 @@ set -e
 #   sleep 1
 # done
 
-# TODO: check sql table instead
-if [ ! -f "$STATUS_FILE" ]; then
+psql_cmd=(
+  psql
+  -h "$POSTGRES_HOST"
+  -p "$POSTGRES_PORT"
+  -U "$POSTGRES_USER"
+  -d "$POSTGRES_DB"
+  -v ON_ERROR_STOP=1
+)
+
+status=""
+
+if PGPASSWORD="$POSTGRES_PASSWORD" "${psql_cmd[@]}" -tAc "
+  SELECT 1
+  FROM information_schema.tables
+  WHERE table_schema = 'osm'
+    AND table_name   = 'pgosm_flex'
+  LIMIT 1;
+" | grep -q 1; then
+
+  # 2) Nur dann Status abfragen
+  status=$(
+    PGPASSWORD="$POSTGRES_PASSWORD" "${psql_cmd[@]}" -tAc "
+      SELECT import_status
+      FROM osm.pgosm_flex;
+    "
+  )
+fi
+
+if [[ -z "$status" || "$status" == "Initializing" ]]; then
   echo "Import not yet completed - run init-import.sh"
   /usr/local/bin/init-import.sh
   echo "Write status for future runs to \"$STATUS_FILE\""
