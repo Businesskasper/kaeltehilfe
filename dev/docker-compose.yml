@@ -1,20 +1,85 @@
 version: '3.8'
 services:
-  keycloak:
+  # keycloak:
+  #   ports:
+  #     - '8050:8080'
+  #     - '8051:9000'
+  #   image: quay.io/keycloak/keycloak:26.0.4
+  #   command: start-dev
+  #   environment:
+  #     KC_HOSTNAME: 'localhost'
+  #     KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
+  #     KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+  #     QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
+  #   volumes:
+  #       - ./keycloak:/opt/keycloak/data
+  #       - ./keycloak-themes:/opt/keycloak/providers
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "50m"
+
+  # pgosm:
+  #   image: rustprooflabs/pgosm-flex
+  #   container_name: pgosm-flex
+  #   restart: "no"
+  #   # depends_on:
+  #   #   postgis:
+  #   #     condition: service_healthy
+  #   volumes:
+  #     - ./pgosm-flex/postgresql:/var/lib/postgresql
+  #     - ./pgosm-flex/output:/app/output
+  #     - ./pgosm-flex/init-scripts:/docker-entrypoint-initdb.d
+  #   environment:
+  #     POSTGRES_USER: ${POSTGIS_ADMIN}
+  #     POSTGRES_PASSWORD: ${POSTGIS_PASSWORD}
+  #     PGOSM_RAM: 8
+  #     PGOSM_REGION: europe/germany
+  #     PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
+  #     PGOSM_INPUT_FILE: /app/output/baden-wuerttemberg/tuebingen-regbez-latest.osm.pbf
+
+  postgis:
+    image: postgis/postgis
+    restart: always
     ports:
-      - '8050:8080'
-      - '8051:9000'
-    image: quay.io/keycloak/keycloak:26.0.4
-    command: start-dev
+      - "5432:5432"
     environment:
-      KC_HOSTNAME: 'localhost'
-      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
+      POSTGRES_USER: ${POSTGIS_ADMIN}
+      POSTGRES_PASSWORD: ${POSTGIS_PASSWORD}
+      POSTGRES_DB: ${POSTGIS_DB}
     volumes:
-        - ./keycloak:/opt/keycloak/data
-        - ./keycloak-themes:/opt/keycloak/providers
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50m"
+      - ./postgis/postgresql:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432 -U ${POSTGIS_ADMIN}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgosm-init:
+    build: 
+      context: ./pgosm-init/image
+      dockerfile: Dockerfile
+    container_name: pgosm-init
+    volumes:
+      - ./pgosm-init/input:/app/input
+      - ./pgosm-init/status:/usr/local/bin/status
+    depends_on:
+      postgis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "test -f $STATUS_FILE"]
+      interval: 10s
+      timeout: 5s
+      retries: 200
+    environment:
+      POSTGRES_HOST: postgis
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGIS_DB}
+      POSTGRES_USER: ${POSTGIS_ADMIN}
+      PGUSER: ${POSTGIS_ADMIN}
+      POSTGRES_PASSWORD: ${POSTGIS_PASSWORD}
+      PGOSM_RAM: 8
+      PGOSM_REGION: europe/germany
+      PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
+      PGOSM_INPUT_FILE: /app/input/baden-wuerttemberg/tuebingen-regbez-latest.osm.pbf
+      STATUS_FILE: /usr/local/bin/status/success.txt

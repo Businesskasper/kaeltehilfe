@@ -1,7 +1,7 @@
 import React from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
-import { GeoLocation } from "../../../../common/data";
+import { GeoLocation, useAddressLookup } from "../../../../common/data";
 import { useBrowserStorage } from "../../../../common/utils";
 import { DistributionsLayer } from "./DistributionsLayer";
 import {
@@ -10,6 +10,7 @@ import {
   ZoomButtons,
 } from "./MapControls";
 
+import { useDebouncedValue } from "@mantine/hooks";
 import "./MapView.scss";
 
 const STORAGE_KEY_MAP_STATE = "mapView_state";
@@ -67,6 +68,18 @@ export const MapView = () => {
     },
     [setStoredState],
   );
+
+  const [debouncedGeoLocation] = useDebouncedValue(storedState.center, 1000);
+
+  const {
+    query: { data: resolvedAddress },
+  } = useAddressLookup({
+    latitude: debouncedGeoLocation.lat,
+    longitude: debouncedGeoLocation.lng,
+  });
+  React.useEffect(() => {
+    console.log("resolvedAddress", resolvedAddress);
+  }, [resolvedAddress]);
 
   const navigate = useNavigate();
   const newDistribution = () => {

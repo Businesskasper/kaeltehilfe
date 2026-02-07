@@ -10,5 +10,8 @@
 	"dotnet-test-explorer.testProjectPath": "kaeltehilfe-backend/test/kaeltehilfe-test.csproj",
 	"[scss]": {
 		"editor.defaultFormatter": "vscode.css-language-features"
+	},
+	"[go]": {
+		"editor.defaultFormatter": "golang.go"
 	}
 }
