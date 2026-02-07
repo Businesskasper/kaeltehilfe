@@ -1,0 +1,3 @@
+docker/pgosm-init/data/
+docker/pgosm/data/
+docker/postgis/data/
