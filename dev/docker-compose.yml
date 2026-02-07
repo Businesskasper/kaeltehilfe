@@ -18,9 +18,9 @@ services:
       driver: "json-file"
       options:
         max-size: "50m"
-        
-  postgis:
-    image: postgis/postgis
+
+  pgosm-db:
+    image: postgis/postgis:18-3.6
     restart: always
     ports:
       - "5432:5432"
@@ -29,12 +29,12 @@ services:
       POSTGRES_PASSWORD: ${POSTGIS_PASSWORD}
       POSTGRES_DB: ${POSTGIS_DB}
     volumes:
-      - ./postgis/postgresql:/var/lib/postgresql
+      - ./pgosm-db/postgresql:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432 -U ${POSTGIS_ADMIN}"]
+      test: ["CMD", "sh", "-c", "pg_isready -h localhost -p 5432 -d $POSTGRES_DB -U $POSTGRES_USER"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 20
 
   pgosm-init:
     build: 
@@ -43,17 +43,11 @@ services:
     container_name: pgosm-init
     volumes:
       - ./pgosm-init/input:/app/input
-      - ./pgosm-init/status:/usr/local/bin/status
     depends_on:
-      postgis:
+      pgosm-db:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "test -f $STATUS_FILE"]
-      interval: 10s
-      timeout: 5s
-      retries: 200
     environment:
-      POSTGRES_HOST: postgis
+      POSTGRES_HOST: pgosm-db
       POSTGRES_PORT: "5432"
       POSTGRES_DB: ${POSTGIS_DB}
       POSTGRES_USER: ${POSTGIS_ADMIN}
@@ -63,4 +57,3 @@ services:
       PGOSM_REGION: europe/germany
       PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
       PGOSM_INPUT_FILE: /app/input/baden-wuerttemberg/tuebingen-regbez-latest.osm.pbf
-      STATUS_FILE: /usr/local/bin/status/success.txt
