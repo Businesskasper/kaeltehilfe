@@ -8,6 +8,15 @@
       align-items: flex-start;
     }
   }
+
+  .map-container {
+    min-height: mantine.rem(400);
+    position: relative;
+  }
+
+  .pointer-normal {
+    cursor: unset;
+  }
 }
 
 .good-list-item {

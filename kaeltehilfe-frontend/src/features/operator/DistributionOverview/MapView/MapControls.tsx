@@ -333,10 +333,21 @@ export const LocationTracker = ({
 type FlagProps = {
   lat: number;
   lng: number;
+  height: number;
+  width: number;
   marker: JSX.Element;
   popup?: JSX.Element;
+  className?: string;
 };
-export const Flag = ({ lat, lng, marker, popup }: FlagProps) => {
+export const Flag = ({
+  lat,
+  lng,
+  height,
+  width,
+  marker,
+  popup,
+  className,
+}: FlagProps) => {
   const rootRef = React.useRef<Root | null>(null);
 
   const [icon, setIcon] = React.useState<L.DivIcon | null>(null);
@@ -351,9 +362,9 @@ export const Flag = ({ lat, lng, marker, popup }: FlagProps) => {
     // Create Leaflet icon
     const leafletIcon = L.divIcon({
       html: divElement,
-      className: "",
-      iconSize: [60, 60],
-      iconAnchor: [30, 60],
+      className,
+      iconSize: [width, height],
+      iconAnchor: [width / 2, height],
     });
 
     setIcon(leafletIcon);
@@ -371,7 +382,7 @@ export const Flag = ({ lat, lng, marker, popup }: FlagProps) => {
         }
       });
     };
-  }, []);
+  }, [className, height, width]);
 
   React.useEffect(() => {
     // Render marker into the div icon
@@ -461,6 +472,8 @@ export const AddDistributionFlag = ({
     <Flag
       lat={lat}
       lng={lng}
+      height={60}
+      width={35}
       marker={<PlusMarker height={60} />}
       popup={
         <Popup
@@ -508,6 +521,8 @@ export const ExistingDistributionFlag = ({
     <Flag
       lat={lat}
       lng={lng}
+      height={60}
+      width={35}
       marker={<DistributionMarker colorSet={colorSet} height={60} />}
     />
   );

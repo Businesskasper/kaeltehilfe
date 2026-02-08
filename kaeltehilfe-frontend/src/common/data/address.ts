@@ -11,12 +11,13 @@ export type Address = {
 
 const { VITE_API_GEO_URL } = import.meta.env;
 
-type AddressQueryParams = { latitude: number; longitude: number };
+type AddressQueryParams = { latitude?: number; longitude?: number };
 export const useAddressLookup = ({
   latitude,
   longitude,
 }: AddressQueryParams) => {
   const getAddress = async (abortSignal?: AbortSignal) => {
+    if (latitude === undefined || longitude === undefined) return undefined;
     const response = await http.get<Address>(`address`, {
       baseURL: VITE_API_GEO_URL,
       signal: abortSignal,
@@ -27,7 +28,12 @@ export const useAddressLookup = ({
 
   const queryClient = useQueryClient();
 
-  const query = useQuery<Address, Error, Address, ["address", number, number]>(
+  const query = useQuery<
+    Address | undefined,
+    Error,
+    Address,
+    ["address", number | undefined, number | undefined]
+  >(
     {
       queryKey: ["address", latitude, longitude],
       queryFn: async ({ signal }) => await getAddress(signal),
