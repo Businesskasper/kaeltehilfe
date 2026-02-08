@@ -25,8 +25,8 @@ export const DistributionsLayer = ({
 }) => {
   const now = new Date();
   const queryTo = new Date(now.setHours(23, 59, 59, 999));
-  const yesterday = new Date(now.setDate(now.getDate() - 1));
-  const queryFrom = new Date(yesterday.setHours(0, 0, 0, 0));
+  const lastWeek = new Date(now.setDate(now.getDate() - 7));
+  const queryFrom = new Date(lastWeek.setHours(0, 0, 0, 0));
   const {
     query: { data: distributions },
   } = useDistribtions({ from: queryFrom, to: queryTo });
