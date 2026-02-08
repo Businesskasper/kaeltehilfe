@@ -72,6 +72,7 @@ func (oidcAuth *OidcAuth) verifiyToken(parentCtx context.Context, token string) 
 		// SkipExpiryCheck:   true,
 	}
 
+	// TODO: setup once and reuse(?)
 	verifier := provider.Verifier(oidcConfig)
 	return verifier.Verify(ctx, token)
 }
