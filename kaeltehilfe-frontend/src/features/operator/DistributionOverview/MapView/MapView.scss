@@ -1,6 +1,11 @@
 .map-view {
   height: calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height,
-        0px) - mantine.rem(32px)); // Idk why -mantine.rem(32px) are still necessary
+        0px) - mantine.rem(32px) - 70px); // Idk why -mantine.rem(32px) are still necessary; 70px for date input -> fix this shit
+
+  .view-controls-container {
+    display: flex;
+    gap: mantine.rem(32);
+  }
 
   .map-container {
     height: 100%;
@@ -26,24 +31,26 @@
       cursor: pointer
     }
 
-    //  .static-add-distribution-flag {
-    //   height: 100%;
-    //   width: 100%;
-    //   display: flex;
-    //   justify-content: center;
-    //   align-items: center;
-
-    //   .marker {
-    //     z-index: 400;
-    //     cursor: pointer;
-    //   }
-    // }
-
-    .static-add-distribution {
-      cursor: pointer
-    }
 
   }
+
+  //  .static-add-distribution-flag {
+  //   height: 100%;
+  //   width: 100%;
+  //   display: flex;
+  //   justify-content: center;
+  //   align-items: center;
+
+  //   .marker {
+  //     z-index: 400;
+  //     cursor: pointer;
+  //   }
+  // }
+
+  .static-add-distribution {
+    cursor: pointer
+  }
+
 }
 
 .add-button-group {
@@ -57,11 +64,23 @@
   color: var(--mantine-color-dark-text);
 }
 
-// .marker-cluster {
-//   color: black;
+.numbered-distribution-marker {
+  div {
 
-// }
+    position: relative;
 
-// [data-mantine-color-scheme="light"] > .marker-cluster {
-//   color: white;
-// }
+    .count {
+      display: block;
+      color: var(--mantine-color-bright);
+      position: absolute;
+      top: 50%;
+      right: 50%;
+      transform: translate(50%, -80%);
+      // line-height: 30px;
+      font-size: mantine.rem(18);
+      font-family: var(--mantine-font-family);
+      text-align: center;
+      font-weight: 200;
+    }
+  }
+}
