@@ -1,14 +1,17 @@
+import { notifications } from "@mantine/notifications";
+import { IconExclamationMark } from "@tabler/icons-react";
 import React from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import { GeoLocation } from "../../../../common/data";
-import { useBrowserStorage } from "../../../../common/utils";
+import { compareByDateOnly, useBrowserStorage } from "../../../../common/utils";
 import { DistributionsLayer } from "./DistributionsLayer";
 import {
   LocationTracker,
   StaticAddDistributionFlag,
   ZoomButtons,
 } from "./MapControls";
+import { ViewControls } from "./ViewControls";
 
 import "./MapView.scss";
 
@@ -35,8 +38,6 @@ export const MapView = () => {
     STORAGE_KEY_MAP_STATE,
     defaultMapState,
   );
-
-  storedState.center?.lat;
 
   const setIsTracking = React.useCallback(
     (isTracking: boolean) => {
@@ -68,19 +69,50 @@ export const MapView = () => {
     [setStoredState],
   );
 
+  const now = new Date();
+  const queryTo = new Date(now.setHours(23, 59, 59, 999));
+  const lastWeek = new Date(now.setDate(now.getDate() - 7));
+  const queryFrom = new Date(lastWeek.setHours(0, 0, 0, 0));
+
+  const [selectedDate, setSelectedDate] = React.useState<Date>(queryTo);
+
   const navigate = useNavigate();
-  const newDistribution = () => {
+
+  const lat = storedState?.center?.lat;
+  const lng = storedState?.center.lng;
+
+  const onNewDistributionClick = React.useCallback(() => {
+    const canAdd = compareByDateOnly(selectedDate, queryTo) === 0;
+    console.log(selectedDate, queryTo);
+    if (!canAdd) {
+      notifications.show({
+        color: "yellow",
+        icon: <IconExclamationMark />,
+        withBorder: false,
+        withCloseButton: true,
+        mb: "xs",
+        message: "Zum Hinzufügen bitte zum aktuellen Tag wechseln",
+      });
+      return;
+    }
+
     navigate("/add", {
       state: {
-        hideLocationForm: !!storedState.center,
-        lat: storedState.center?.lat,
-        lng: storedState.center?.lng,
+        lat,
+        lng,
       },
     });
-  };
+  }, [selectedDate, queryTo, navigate, lat, lng]);
 
   return (
     <div className="map-view">
+      <ViewControls
+        setSelectedDate={setSelectedDate}
+        selectedDate={selectedDate}
+        minDay={queryFrom}
+        maxDay={queryTo}
+      />
+
       <MapContainer
         center={storedState.center}
         zoom={storedState.zoom}
@@ -100,7 +132,7 @@ export const MapView = () => {
           maxNativeZoom={19}
         />
         {storedState.center?.lat && (
-          <StaticAddDistributionFlag onClick={newDistribution} />
+          <StaticAddDistributionFlag onClick={onNewDistributionClick} />
         )}
         <ZoomButtons
           lat={storedState.center.lat}
@@ -114,7 +146,12 @@ export const MapView = () => {
           initialMapCenter={storedState.center}
           initialMapZoom={storedState.zoom}
         />
-        <DistributionsLayer onClusterClick={() => setIsTracking(false)} />
+        <DistributionsLayer
+          from={queryFrom}
+          to={queryTo}
+          selectedDate={selectedDate}
+          onClusterClick={() => setIsTracking(false)}
+        />
       </MapContainer>
     </div>
   );

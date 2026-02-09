@@ -33,3 +33,40 @@ export const DistributionMarker = ({
     </svg>
   );
 };
+
+type NumberedDistributionMarkerProps = {
+  height?: number | string;
+  width?: number | string;
+  colorSet: [string, string];
+  className?: string;
+  count: number;
+};
+
+export const NumberedDistributionMarker = ({
+  height = 60,
+  width = 35,
+  colorSet,
+  className,
+  count,
+}: NumberedDistributionMarkerProps) => {
+  return (
+    <>
+      <svg
+        height={height}
+        width={width}
+        preserveAspectRatio="xMidYMid meet"
+        className={className}
+        viewBox="0 0 35 60"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M17.5 0.5C26.8901 0.5 34.4997 8.08181 34.5 17.4365C34.5 19.7436 33.4399 23.5301 31.7969 27.9785C30.1629 32.4023 27.9808 37.4074 25.7959 42.1201C23.6116 46.8316 21.427 51.2441 19.7881 54.4785C18.9689 56.0951 18.2863 57.4172 17.8086 58.335C17.694 58.5551 17.5901 58.7518 17.5 58.9238C17.4099 58.7518 17.306 58.5551 17.1914 58.335C16.7137 57.4172 16.0311 56.0951 15.2119 54.4785C13.573 51.2441 11.3884 46.8316 9.2041 42.1201C7.01921 37.4074 4.83709 32.4023 3.20312 27.9785C1.56008 23.5301 0.5 19.7436 0.5 17.4365C0.500262 8.08181 8.10994 0.5 17.5 0.5Z"
+          fill={colorSet[0]}
+          stroke={colorSet[1]}
+        />
+      </svg>
+      <div className="count">{count}</div>
+    </>
+  );
+};
