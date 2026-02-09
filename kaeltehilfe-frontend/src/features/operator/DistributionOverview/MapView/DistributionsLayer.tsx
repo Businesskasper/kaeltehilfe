@@ -8,6 +8,7 @@ import {
   GeoLocation,
   useDistribtions,
 } from "../../../../common/data";
+import { compareByDateOnly, groupBy } from "../../../../common/utils";
 import { ExistingDistributionFlag } from "./MapControls";
 
 const colorSets = {
@@ -18,30 +19,50 @@ const colorSets = {
   ORANGE: ["#F59E0B", "#D97706"],
 } satisfies { [key: string]: [string, string] };
 
+type DistributionsLayerProps = {
+  from: Date;
+  to: Date;
+  selectedDate: Date;
+  onClusterClick?: () => void;
+};
+
 export const DistributionsLayer = ({
   onClusterClick,
-}: {
-  onClusterClick?: () => void;
-}) => {
-  const now = new Date();
-  const queryTo = new Date(now.setHours(23, 59, 59, 999));
-  const lastWeek = new Date(now.setDate(now.getDate() - 7));
-  const queryFrom = new Date(lastWeek.setHours(0, 0, 0, 0));
+  from,
+  to,
+  selectedDate,
+}: DistributionsLayerProps) => {
   const {
     query: { data: distributions },
-  } = useDistribtions({ from: queryFrom, to: queryTo });
+  } = useDistribtions({ from, to });
 
   // Filter distributions with valid geoLocation
-  const validDistributions = React.useMemo(
+  const distributionsToDisplay = React.useMemo(
     () =>
       distributions?.filter(
         (
           dist,
         ): dist is Distribution & {
           geoLocation: GeoLocation;
-        } => !!dist?.geoLocation,
+        } =>
+          !!dist?.geoLocation &&
+          compareByDateOnly(dist.timestamp, selectedDate) === 0,
       ) || [],
-    [distributions],
+    [distributions, selectedDate],
+  );
+
+  const byGeoLocation = React.useMemo(
+    () =>
+      groupBy(distributionsToDisplay, (d) =>
+        // JSON.stringify({ ...d.geoLocation, clientId: d.client.id }),
+        JSON.stringify({ ...d.geoLocation }),
+      ),
+    [distributionsToDisplay],
+  );
+
+  const keys = React.useMemo(
+    () => Array.from(byGeoLocation.keys()),
+    [byGeoLocation],
   );
 
   const clusterOptions = React.useMemo<MarkerClusterGroupProps>(
@@ -62,21 +83,34 @@ export const DistributionsLayer = ({
       zoomToBoundsOnClick: true,
       spiderfyDistanceMultiplier: 1.5,
       iconCreateFunction: (cluster) => {
-        const childCount = cluster.getChildCount();
+        // const childCount = cluster.getChildCount();
+
+        let totalChildCount = 0;
+        const childMarkers = cluster.getAllChildMarkers();
+        for (const childMarker of childMarkers) {
+          const childCount =
+            childMarker?.options?.icon?.options?.html?.attributes?.getNamedItem(
+              "x-child-count",
+            )?.value;
+          if (childCount) {
+            totalChildCount += Number.parseInt(childCount);
+          }
+        }
+
         let className = "marker-cluster-";
 
-        if (childCount < 3) {
+        if (totalChildCount < 3) {
           className += "small";
-        } else if (childCount < 10) {
+        } else if (totalChildCount < 10) {
           className += "medium";
         } else {
           className += "large";
         }
 
         return L.divIcon({
-          html: "<div><span>" + childCount + "</span></div>",
+          html: "<div><span>" + totalChildCount + "</span></div>",
           className: "marker-cluster " + className,
-          iconSize: new L.Point(40, 40),
+          iconSize: new L.Point(30, 30),
         });
       },
       eventHandlers: {
@@ -88,14 +122,25 @@ export const DistributionsLayer = ({
 
   return (
     <MarkerClusterGroup {...clusterOptions}>
-      {validDistributions.map((dist) => (
-        <ExistingDistributionFlag
-          colorSet={colorSets.RED}
-          lat={dist.geoLocation.lat}
-          lng={dist.geoLocation.lng}
-          key={dist.id}
-        />
-      ))}
+      {keys.map((geoLocation) => {
+        const distributions = byGeoLocation.get(geoLocation);
+        if (!distributions || distributions.length === 0) return null;
+
+        const clientCount = Array.from(
+          groupBy(distributions, (d) => d.client.id).keys(),
+        ).length;
+
+        return (
+          <ExistingDistributionFlag
+            colorSet={colorSets.RED}
+            lat={distributions[0].geoLocation.lat}
+            lng={distributions[0].geoLocation.lng}
+            // count={distributions.length}
+            count={clientCount}
+            key={geoLocation}
+          />
+        );
+      })}
     </MarkerClusterGroup>
   );
 };

@@ -197,8 +197,8 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
                             if (totalDistsForClient >= good.twoWeekThreshold) {
                               clientWarnings.push(
                                 <Text>
-                                  In den letzten zwei Wochen{" "}
-                                  <strong>{totalDistsForClient}</strong> mal an{" "}
+                                  In den letzten zwei Wochen
+                                  <strong>{totalDistsForClient}</strong> mal an
                                   <strong>{client.name}</strong> ausgegeben
                                 </Text>,
                               );

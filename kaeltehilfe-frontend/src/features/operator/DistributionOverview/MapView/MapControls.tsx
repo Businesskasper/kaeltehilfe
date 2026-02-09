@@ -6,7 +6,6 @@ import {
   PopoverTarget,
   rem,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
 import {
   IconLocation,
   IconMinus,
@@ -20,8 +19,9 @@ import { createRoot, Root } from "react-dom/client";
 import { Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import { ActionGroup } from "../../../../common/components";
 import { GeoLocation } from "../../../../common/data";
-import { DistributionMarker, PlusMarker } from "./Marker";
+import { NumberedDistributionMarker, PlusMarker } from "./Marker";
 
+import { useDisclosure } from "@mantine/hooks";
 import "./MapView.scss";
 
 type ButtonContainerProps = {
@@ -338,6 +338,7 @@ type FlagProps = {
   marker: JSX.Element;
   popup?: JSX.Element;
   className?: string;
+  childCount?: number;
 };
 export const Flag = ({
   lat,
@@ -347,6 +348,7 @@ export const Flag = ({
   marker,
   popup,
   className,
+  childCount,
 }: FlagProps) => {
   const rootRef = React.useRef<Root | null>(null);
 
@@ -355,6 +357,8 @@ export const Flag = ({
   React.useEffect(() => {
     // Create div element
     const divElement = document.createElement("div");
+
+    divElement.setAttribute("x-child-count", childCount?.toString() || "0");
 
     // Create root
     rootRef.current = createRoot(divElement);
@@ -382,7 +386,7 @@ export const Flag = ({
         }
       });
     };
-  }, [className, height, width]);
+  }, [childCount, className, height, width]);
 
   React.useEffect(() => {
     // Render marker into the div icon
@@ -400,19 +404,22 @@ export const Flag = ({
   );
 };
 
+type StaticAddDistributionFlagProps = {
+  onClick: () => void;
+};
 export const StaticAddDistributionFlag = ({
   onClick,
-}: {
-  onClick: () => void;
-}) => {
-  const [opened, { toggle }] = useDisclosure(false);
+}: StaticAddDistributionFlagProps) => {
+  // const [opened, { toggle }] = useDisclosure(false);
+  const [opened] = useDisclosure(false);
 
   return (
     <div className="static-add-distribution-flag">
       <Popover opened={opened} zIndex={400} position="top" withArrow>
         <PopoverTarget>
           <div className="marker">
-            <PlusMarker onClick={toggle} height={60} />
+            {/* <PlusMarker onClick={toggle} height={60} /> */}
+            <PlusMarker onClick={onClick} height={60} />
           </div>
         </PopoverTarget>
         <PopoverDropdown>
@@ -511,11 +518,13 @@ type ExistingDistributionFlagProps = {
   lat: number;
   lng: number;
   colorSet: [string, string];
+  count: number;
 };
 export const ExistingDistributionFlag = ({
   lat,
   lng,
   colorSet,
+  count,
 }: ExistingDistributionFlagProps) => {
   return (
     <Flag
@@ -523,7 +532,15 @@ export const ExistingDistributionFlag = ({
       lng={lng}
       height={60}
       width={35}
-      marker={<DistributionMarker colorSet={colorSet} height={60} />}
+      className="numbered-distribution-marker"
+      childCount={count}
+      marker={
+        <NumberedDistributionMarker
+          count={count}
+          colorSet={colorSet}
+          height={60}
+        />
+      }
     />
   );
 };
