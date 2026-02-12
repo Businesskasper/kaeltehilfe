@@ -1,3 +1,4 @@
+export * from "./allStringsMatch";
 export * from "./chunkArray";
 export * from "./classes";
 export * from "./crudHook";
@@ -13,3 +14,4 @@ export * from "./useBreakpoint";
 export * from "./useBrowserStorage";
 export * from "./useGeolocation";
 export * from "./useIsTouchDevice";
+export * from "./useLayoutCache";

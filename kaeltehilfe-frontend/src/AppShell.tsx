@@ -76,6 +76,7 @@ export const AppShell = ({ navigation }: { navigation?: React.ReactNode }) => {
         collapsed: { mobile: !opened, desktop: !opened },
       }}
       padding="md"
+      // padding={0}
     >
       <Mantine_AppShell.Header h="0" pos="relative" withBorder={false}>
         <Group
