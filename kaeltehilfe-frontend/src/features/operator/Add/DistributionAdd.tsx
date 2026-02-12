@@ -52,8 +52,8 @@ export const DistributionAdd = () => {
   const {
     query: { data: resolvedAddress },
   } = useAddressLookup({
-    latitude: lat,
-    longitude: lng,
+    lat: lat,
+    lng: lng,
   });
 
   const {

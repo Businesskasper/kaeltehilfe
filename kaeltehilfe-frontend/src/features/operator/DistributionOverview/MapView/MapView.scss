@@ -1,86 +1,186 @@
-.map-view {
+.operator-view {
+
   height: calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height,
-        0px) - mantine.rem(32px) - 70px); // Idk why -mantine.rem(32px) are still necessary; 70px for date input -> fix this shit
+        0px) - mantine.rem(32px)); // Idk why -mantine.rem(32px) are still necessary;
+
+  display: flex;
+  flex-direction: column;
 
   .view-controls-container {
     display: flex;
     gap: mantine.rem(32);
-  }
+    margin-bottom: mantine.rem(16);
 
-  .map-container {
-    height: 100%;
-    min-height: 100%;
-    position: relative;
-
-    .static-add-distribution-flag {
-      height: 100%;
-      width: 100%;
+    .buttons-container {
+      margin-top: mantine.rem(22);
       display: flex;
-      justify-content: center;
-      align-items: center;
+      gap: mantine.rem(8)
+    }
+  }
 
-      .marker {
-        z-index: 400;
-        cursor: pointer;
-        transform: translateY(-(mantine.rem(30px)));
-        height: mantine.rem(60px);
+  .container {
+
+    flex-grow: 1;
+    display: flex;
+
+    .panel-divider {
+      &.horizontal {
+        height: 100%;
+        width: 1px;
+        margin: 0 10px;
       }
+
+      &.vertical {
+        height: 1px;
+        width: 100%;
+        margin: 10px 0;
+      }
+
+      background-color: var(--mantine-color-blue-light);
+      // transition: 200ms;
+      position: relative;
     }
 
-    .static-add-distribution {
-      cursor: pointer
+
+
+    .panel-divider:active,
+    .panel-divider:hover {
+        outline-width: 0;
+        background-color: var(--mantine-color-blue-3);
+        transition: 200ms;
     }
 
+    // @media(hover: hover) and (pointer: fine) {
+    //   .panel-divider {
+    //     outline-width: 0;
+    //     background-color: var(--mantine-color-blue-3);
+    //     transition: 200ms;
+    //   }
+    // }
 
-  }
+    // .panel-divider:hover {
+    //   background-color: var(--mantine-color-blue-3);
+    //   transition: 200ms;
+    // }
 
-  //  .static-add-distribution-flag {
-  //   height: 100%;
-  //   width: 100%;
-  //   display: flex;
-  //   justify-content: center;
-  //   align-items: center;
+    // .panel-divider.vertical:hover {
+    //   // height: 2px;
+    //   transition: 200ms;
+    // }
 
-  //   .marker {
-  //     z-index: 400;
-  //     cursor: pointer;
-  //   }
-  // }
+    // .panel-divider.horizontal:hover {
+    //   // width: 2px;
+    //   transition: 200ms;
+    // }
 
-  .static-add-distribution {
-    cursor: pointer
-  }
 
-}
 
-.add-button-group {
-  padding: mantine.rem(16px);
-  display: flex;
-  flex-direction: column;
-  row-gap: mantine.rem(8px);
-}
-
-.marker-cluster {
-  color: var(--mantine-color-dark-text);
-}
-
-.numbered-distribution-marker {
-  div {
-
-    position: relative;
-
-    .count {
-      display: block;
-      color: var(--mantine-color-bright);
+    .panel-divider::after {
+      content: "";
       position: absolute;
-      top: 50%;
-      right: 50%;
-      transform: translate(50%, -80%);
-      // line-height: 30px;
-      font-size: mantine.rem(18);
-      font-family: var(--mantine-font-family);
-      text-align: center;
-      font-weight: 200;
+      background-repeat: no-repeat;
+    }
+
+    .panel-divider.horizontal::after {
+      left: -8px;
+      width: 18px;
+      height: 100%;
+      background-position: 12px 50%;
+    }
+
+    .panel-divider.vertical::after {
+      top: -8px;
+      height: 18px;
+      width: 100%;
+      background-repeat: no-repeat;
+      background-position: 50% 12px;
+    }
+
+    .panel-divider.horizontal.light::after {
+      background-image: url("data:image/svg+xml,%3Csvg width='2' height='14' viewBox='0 0 2 14' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-rule='evenodd'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3Ccircle cx='1' cy='5' r='1'/%3E%3Ccircle cx='1' cy='9' r='1'/%3E%3Ccircle cx='1' cy='13' r='1'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .panel-divider.horizontal.dark::after {
+      background-image: url("data:image/svg+xml,%3Csvg width='2' height='14' viewBox='0 0 2 14' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-rule='evenodd'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3Ccircle cx='1' cy='5' r='1'/%3E%3Ccircle cx='1' cy='9' r='1'/%3E%3Ccircle cx='1' cy='13' r='1'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .panel-divider.vertical.light::after {
+      background-image: url("data:image/svg+xml,%3Csvg width='14' height='2' viewBox='0 0 14 2' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23000000' fill-rule='evenodd'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3Ccircle cx='5' cy='1' r='1'/%3E%3Ccircle cx='9' cy='1' r='1'/%3E%3Ccircle cx='13' cy='1' r='1'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .panel-divider.vertical.dark::after {
+      background-image: url("data:image/svg+xml,%3Csvg width='14' height='2' viewBox='0 0 14 2' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-rule='evenodd'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3Ccircle cx='5' cy='1' r='1'/%3E%3Ccircle cx='9' cy='1' r='1'/%3E%3Ccircle cx='13' cy='1' r='1'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .details-view {
+      overflow: auto;
+    }
+
+    .map-view {
+      flex-grow: 1;
+
+      .map-container {
+        height: 100%;
+        min-height: 100%;
+        position: relative;
+        border-radius: 5px;
+
+        .static-add-distribution-flag {
+          height: 100%;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          .marker {
+            z-index: 400;
+            cursor: pointer;
+            transform: translateY(-(mantine.rem(30px)));
+            height: mantine.rem(60px);
+          }
+        }
+
+        .static-add-distribution {
+          cursor: pointer
+        }
+
+
+      }
+
+      .static-add-distribution {
+        cursor: pointer
+      }
+
+      .add-button-group {
+        padding: mantine.rem(16px);
+        display: flex;
+        flex-direction: column;
+        row-gap: mantine.rem(8px);
+      }
+
+      .marker-cluster {
+        color: var(--mantine-color-dark-text);
+      }
+
+      .numbered-distribution-marker {
+        div {
+
+          position: relative;
+
+          .count {
+            display: block;
+            color: var(--mantine-color-bright);
+            position: absolute;
+            top: 50%;
+            right: 50%;
+            transform: translate(50%, -80%);
+            font-size: mantine.rem(18);
+            font-family: var(--mantine-font-family);
+            text-align: center;
+            font-weight: 200;
+          }
+        }
+      }
     }
   }
 }

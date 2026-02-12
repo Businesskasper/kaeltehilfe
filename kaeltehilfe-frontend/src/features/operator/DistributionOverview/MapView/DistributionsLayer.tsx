@@ -3,11 +3,7 @@ import React from "react";
 import MarkerClusterGroup, {
   MarkerClusterGroupProps,
 } from "react-leaflet-markercluster";
-import {
-  Distribution,
-  GeoLocation,
-  useDistribtions,
-} from "../../../../common/data";
+import { Distribution, GeoLocation } from "../../../../common/data";
 import { compareByDateOnly, groupBy } from "../../../../common/utils";
 import { ExistingDistributionFlag } from "./MapControls";
 
@@ -20,22 +16,16 @@ const colorSets = {
 } satisfies { [key: string]: [string, string] };
 
 type DistributionsLayerProps = {
-  from: Date;
-  to: Date;
   selectedDate: Date;
+  distributions?: Array<Distribution>;
   onClusterClick?: () => void;
 };
 
 export const DistributionsLayer = ({
   onClusterClick,
-  from,
-  to,
+  distributions,
   selectedDate,
 }: DistributionsLayerProps) => {
-  const {
-    query: { data: distributions },
-  } = useDistribtions({ from, to });
-
   // Filter distributions with valid geoLocation
   const distributionsToDisplay = React.useMemo(
     () =>

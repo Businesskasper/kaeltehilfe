@@ -1,24 +1,23 @@
-import { ActionIcon, rem } from "@mantine/core";
+import { ActionIcon, Button, Group, rem } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useField } from "@mantine/form";
 import { IconArrowForwardUpDouble, IconListDetails } from "@tabler/icons-react";
 import React from "react";
-
-// const now = new Date();
-// const queryTo = new Date(now.setHours(23, 59, 59, 999));
-// const queryFrom = new Date(now.setHours(0, 0, 0, 0));
+import { compareByDateOnly } from "../../../../common/utils";
 
 type ViewControlsProps = {
   minDay: Date;
   maxDay: Date;
   setSelectedDate: React.Dispatch<React.SetStateAction<Date>>;
   selectedDate: Date;
+  toggleDetailsOpen: () => void;
 };
 export const ViewControls = ({
   minDay,
   maxDay,
   setSelectedDate,
   selectedDate,
+  toggleDetailsOpen,
 }: ViewControlsProps) => {
   const [defaultDate] = React.useState(selectedDate);
 
@@ -33,53 +32,49 @@ export const ViewControls = ({
   }, [dateField, selectedDate]);
 
   return (
-    <div className="view-controls-container">
-      <DatePickerInput
-        {...dateField.getInputProps()}
-        label="Datum"
-        mb="sm"
-        w="100%"
-        type="default"
-        valueFormat="DD MMMM YYYY"
-        minDate={minDay}
-        maxDate={maxDay}
-        modalProps={{ zIndex: 900 }}
-        popoverProps={{ zIndex: 900 }}
-        dropdownType="modal"
-        highlightToday
-        rightSection={
-          <JumpToTodayButton onClick={() => setSelectedDate(defaultDate)} />
-        }
-        onChange={(value) => {
-          if (!value) return;
-          setSelectedDate(value);
-        }}
-      />
+    <Group justify="space-between" mb="md" align="flex-end">
+      <Group align="flex-end">
+        <DatePickerInput
+          w={rem(350)}
+          {...dateField.getInputProps()}
+          label="Datum"
+          type="default"
+          valueFormat="DD MMMM YYYY"
+          minDate={minDay}
+          maxDate={maxDay}
+          modalProps={{ zIndex: 900 }}
+          popoverProps={{ zIndex: 900 }}
+          // dropdownType="modal"
+          highlightToday
+          rightSection={
+            <JumpToTodayButton onClick={() => setSelectedDate(defaultDate)} />
+          }
+          onChange={(value) => {
+            if (!value) return;
+            setSelectedDate(value);
+          }}
+        />
 
-      {/* <DateInput
-        {...form.getInputProps("from")}
-        label="Datum"
-        key={form.key("from")}
-        placeholder="Datum"
-        withAsterisk
-        mb="md"
-        locale="de"
-        valueFormat="DD.MM.YYYY"
-        preserveTime={true}
-        clearable={false}
-        getDayProps={(date) => {
-          const exceedsMax = compareByDateOnly(maxDay, date) > 0;
-          const exceedsMin = compareByDateOnly(minDay, date) < 0;
+        <Button
+          size="sm"
+          variant="default"
+          onClick={() => setSelectedDate(defaultDate)}
+          disabled={compareByDateOnly(defaultDate, selectedDate) === 0}
+          rightSection={<IconArrowForwardUpDouble />}
+        >
+          Heute
+        </Button>
+      </Group>
 
-          return {
-            disabled: exceedsMax || exceedsMin,
-          };
-        }}
-      /> */}
-      <ActionIcon h="100%" mt={rem(28)} size="sm" variant="transparent">
-        <IconListDetails />
-      </ActionIcon>
-    </div>
+      <Button
+        size="sm"
+        variant="default"
+        onClick={toggleDetailsOpen}
+        rightSection={<IconListDetails />}
+      >
+        Kacheln
+      </Button>
+    </Group>
   );
 };
 
