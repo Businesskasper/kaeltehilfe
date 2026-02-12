@@ -7,7 +7,8 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { IconMinus, IconPlus } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { IconExclamationMark, IconMinus, IconPlus } from "@tabler/icons-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,12 +16,12 @@ import {
   GoodTypeTranslation,
   useGoods,
   useWriteDistributions,
-} from "../../../../common/data";
+} from "../../../common/data";
 import {
   compareByDateOnly,
   compareByDateTime,
   groupBy,
-} from "../../../../common/utils";
+} from "../../../common/utils";
 
 export type DistributionCardProps = {
   clientId: number;
@@ -116,20 +117,51 @@ export const DistributionCard = ({
   };
 
   const newDistribution = () => {
-    navigate("/add", { state: { clientId } });
+    if (!isToday) {
+      notifications.show({
+        color: "yellow",
+        icon: <IconExclamationMark />,
+        withBorder: false,
+        withCloseButton: true,
+        mb: "xs",
+        message: "Zum Hinzufügen bitte zum aktuellen Tag wechseln",
+      });
+      return;
+    }
+    const distWithGeoLocation = distributions.find((d) => !!d.geoLocation);
+
+    navigate("/add", {
+      state: {
+        clientId,
+        lat: distWithGeoLocation?.geoLocation?.lat,
+        lng: distWithGeoLocation?.geoLocation?.lng,
+      },
+    });
   };
 
   return (
     <Card padding="md" radius="md" withBorder h={300}>
       <Card.Section
-        onClick={() => newDistribution()}
+        // onClick={() => newDistribution()}
         withBorder
         inheritPadding
         py="xs"
-        style={{ cursor: "pointer" }}
+        // style={{ cursor: "pointer" }}
       >
-        <Group justify="space-between">
-          <Title order={4}>{clientName}</Title>
+        <Group wrap="nowrap" justify="space-between">
+          <Title
+            style={{ textOverflow: "ellipsis", overflow: "hidden" }}
+            order={4}
+          >
+            {clientName}
+          </Title>
+          <ActionIcon
+            disabled={!isToday}
+            onClick={() => newDistribution()}
+            variant="transparent"
+          >
+            <IconPlus />
+          </ActionIcon>
         </Group>
       </Card.Section>
       <ScrollArea>

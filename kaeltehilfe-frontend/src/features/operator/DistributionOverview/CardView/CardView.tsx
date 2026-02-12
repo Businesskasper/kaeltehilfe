@@ -21,7 +21,7 @@ import {
   groupBy,
   toNormalizedDate,
 } from "../../../../common/utils";
-import { DistributionCard } from "./DistributionCard";
+import { DistributionCard } from "../DistributionCard";
 
 export const CardView = () => {
   const {

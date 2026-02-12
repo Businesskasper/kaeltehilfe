@@ -13,6 +13,7 @@ import {
   toNormalizedDate,
   useCrudHook,
 } from "../utils";
+import { GeoLocation } from "./geoLocation";
 
 export type Distribution = {
   id: number;
@@ -34,7 +35,7 @@ export type Distribution = {
     id: number;
     name: string;
   };
-  geoLocation?: { latitude: number; longitude: number };
+  geoLocation?: GeoLocation;
 };
 
 type DistributionUpdate = {

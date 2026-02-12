@@ -6,6 +6,7 @@ import {
   PopoverTarget,
   rem,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import {
   IconLocation,
   IconMinus,
@@ -21,7 +22,6 @@ import { ActionGroup } from "../../../../common/components";
 import { GeoLocation } from "../../../../common/data";
 import { NumberedDistributionMarker, PlusMarker } from "./Marker";
 
-import { useDisclosure } from "@mantine/hooks";
 import "./MapView.scss";
 
 type ButtonContainerProps = {
