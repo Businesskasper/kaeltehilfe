@@ -28,6 +28,7 @@ export type DistributionCardProps = {
   clientName: string;
   distributions: Array<Distribution>;
   isToday: boolean;
+  onClick?: () => void;
 };
 
 export const DistributionCard = ({
@@ -35,6 +36,7 @@ export const DistributionCard = ({
   clientName,
   distributions,
   isToday,
+  onClick,
 }: DistributionCardProps) => {
   const navigate = useNavigate();
 
@@ -150,6 +152,7 @@ export const DistributionCard = ({
       >
         <Group wrap="nowrap" justify="space-between">
           <Title
+            onClick={onClick}
             style={{ textOverflow: "ellipsis", overflow: "hidden" }}
             order={4}
           >

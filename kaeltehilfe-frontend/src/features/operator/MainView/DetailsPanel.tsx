@@ -1,23 +1,27 @@
 import { Divider, Grid, Group, Title } from "@mantine/core";
 import { IconMap2 } from "@tabler/icons-react";
 import React from "react";
-import { Distribution } from "../../../../common/data";
+import { Distribution } from "../../../common/data";
 import {
   compareByDateOnly,
   compareByDateTime,
   groupBy,
-} from "../../../../common/utils";
-import { DistributionCard } from "../DistributionCard";
+} from "../../../common/utils";
+import { DistributionCard } from "../shared/DistributionCard";
 
-type ListViewProps = {
+type DetailsPanelProps = {
   distributions?: Array<Distribution>;
   selectedDate: Date;
+  today: Date;
+  onCardClick?: (name: string, distributions: Array<Distribution>) => void;
 };
 
-export const ListView = ({ distributions, selectedDate }: ListViewProps) => {
-  const isToday = (date: Date | number) =>
-    compareByDateOnly(new Date(date.valueOf()), new Date()) === 0;
-
+export const DetailsPanel = ({
+  distributions,
+  selectedDate,
+  today,
+  onCardClick,
+}: DetailsPanelProps) => {
   const distributionsToDisplay = (distributions || []).filter(
     (d) => compareByDateOnly(d.timestamp, selectedDate) === 0,
   );
@@ -52,47 +56,6 @@ export const ListView = ({ distributions, selectedDate }: ListViewProps) => {
       }}
       type="container"
     >
-      {/* {isToday(selectedDate) && (
-        <Grid.Col mb="md" span={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 2 }}>
-          <Card
-            ref={plusHovered.ref}
-            style={{ cursor: "pointer" }}
-            bg={colorScheme === "light" ? "light_blue" : "gray"}
-            shadow={
-              !plusHovered.hovered
-                ? undefined
-                : colorScheme === "dark"
-                  ? "xl"
-                  : "sm"
-            }
-            padding="md"
-            radius="md"
-            withBorder
-            h={300}
-            onClick={() => {
-              if (!isToday) {
-                notifications.show({
-                  color: "yellow",
-                  icon: <IconExclamationMark />,
-                  withBorder: false,
-                  withCloseButton: true,
-                  mb: "xs",
-                  message: "Zum Hinzufügen bitte zum aktuellen Tag wechseln",
-                });
-                return;
-              }
-
-              navigate("/add", {
-                state: { lat: mapCenter?.lat, lng: mapCenter?.lng },
-              });
-            }}
-          >
-            <Group h="100%" justify="center" align="center">
-              <IconPlus />
-            </Group>
-          </Card>
-        </Grid.Col>
-      )} */}
       {sortedLocationIds?.map((locationId) => {
         const locationDistributions = byLocationId.get(locationId) || [];
         const byClientId = groupBy(locationDistributions, (d) => d.client.id);
@@ -139,7 +102,13 @@ export const ListView = ({ distributions, selectedDate }: ListViewProps) => {
                     clientId={distributions?.[0]?.client?.id}
                     clientName={distributions?.[0]?.client?.name}
                     distributions={distributions || []}
-                    isToday={!!selectedDate && isToday(selectedDate)}
+                    onClick={() => {
+                      onCardClick?.(locationName, distributions);
+                    }}
+                    isToday={
+                      !!selectedDate &&
+                      compareByDateOnly(selectedDate, today) === 0
+                    }
                   />
                 </Grid.Col>
               );

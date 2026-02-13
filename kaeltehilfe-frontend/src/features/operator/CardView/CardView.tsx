@@ -10,18 +10,20 @@ import {
   useMantineColorScheme,
 } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
-import { IconPlus } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { IconExclamationMark, IconPlus } from "@tabler/icons-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useDistributionsPaginated } from "../../../../common/data";
+import { useDistributionsPaginated } from "../../../common/data";
 import {
   compareByDateOnly,
   compareByDateTime,
   formatDate,
   groupBy,
   toNormalizedDate,
-} from "../../../../common/utils";
-import { DistributionCard } from "../DistributionCard";
+  useGeolocation,
+} from "../../../common/utils";
+import { DistributionCard } from "../shared/DistributionCard";
 
 export const CardView = () => {
   const {
@@ -91,6 +93,8 @@ export const CardView = () => {
 
   const plusHovered = useHover();
 
+  const geoLoc = useGeolocation();
+
   const isToday = (date: Date | number) =>
     compareByDateOnly(new Date(date.valueOf()), new Date()) === 0;
 
@@ -123,6 +127,9 @@ export const CardView = () => {
           },
         );
 
+        const { lat, lng } =
+          geoLoc.state === "CAPTURING" ? geoLoc.position : {};
+
         return (
           <div key={String(distributionDate)}>
             <Title mb="xs" order={4}>
@@ -149,7 +156,26 @@ export const CardView = () => {
                   radius="md"
                   withBorder
                   h={300}
-                  onClick={() => navigate("/add")}
+                  onClick={() => {
+                    if (geoLoc.state !== "CAPTURING") {
+                      notifications.show({
+                        color: "yellow",
+                        icon: <IconExclamationMark />,
+                        withBorder: false,
+                        withCloseButton: true,
+                        mb: "xs",
+                        message:
+                          "Standort wird ermittelt. Bitte kurz warten und erneut versuchen.",
+                      });
+                      return;
+                    }
+                    navigate("/add", {
+                      state: {
+                        lat,
+                        lng,
+                      },
+                    });
+                  }}
                 >
                   <Group h="100%" justify="center" align="center">
                     <IconPlus />

@@ -172,10 +172,10 @@ export const useDistribtions = ({ from, to }: DistributionQueryParams) => {
     Array<Distribution>,
     Error,
     Array<Distribution>,
-    ["distributions", Date, Date]
+    ["distributions", string, string]
   >(
     {
-      queryKey: ["distributions", from, to],
+      queryKey: ["distributions", from.toISOString(), to.toISOString()],
       queryFn: async ({ signal }) => await httpGet(signal, { from, to }),
       refetchOnWindowFocus: "always",
       refetchOnReconnect: "always",
@@ -185,7 +185,7 @@ export const useDistribtions = ({ from, to }: DistributionQueryParams) => {
 
   const invalidate = () => {
     queryClient.invalidateQueries({
-      queryKey: ["distributions", from, to],
+      queryKey: ["distributions", from.toISOString(), to.toISOString()],
       refetchType: "all",
       stale: true,
       type: "all",

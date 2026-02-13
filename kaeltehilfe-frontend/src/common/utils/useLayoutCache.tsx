@@ -8,6 +8,7 @@ type CachedLayout<TPanel extends string> = {
 };
 
 type UseCachedLayoutProps<TPanels extends string> = {
+  key: string;
   currentPanels: Array<TPanels>;
   initialLayout: CachedLayout<TPanels>;
   onBeforeLayoutUpdate?: (layout: Layout) => void;
@@ -15,6 +16,7 @@ type UseCachedLayoutProps<TPanels extends string> = {
 };
 
 export const useCachedLayout = <TPanels extends string>({
+  key,
   currentPanels,
   initialLayout,
   onBeforeLayoutUpdate,
@@ -22,7 +24,7 @@ export const useCachedLayout = <TPanels extends string>({
 }: UseCachedLayoutProps<TPanels>) => {
   const [storedDefaultLayout, setDefaultLayout] = useBrowserStorage<
     Array<CachedLayout<TPanels>>
-  >("LOCAL", "asdfasdf", [initialLayout]);
+  >("LOCAL", key, [initialLayout]);
 
   const onLayoutChanged = React.useCallback(
     (receivedLayout: Layout) => {

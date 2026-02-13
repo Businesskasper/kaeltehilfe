@@ -1,4 +1,4 @@
-.operator-view {
+.main-view {
 
   height: calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height,
         0px) - mantine.rem(32px)); // Idk why -mantine.rem(32px) are still necessary;
@@ -112,11 +112,11 @@
       background-image: url("data:image/svg+xml,%3Csvg width='14' height='2' viewBox='0 0 14 2' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-rule='evenodd'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3Ccircle cx='5' cy='1' r='1'/%3E%3Ccircle cx='9' cy='1' r='1'/%3E%3Ccircle cx='13' cy='1' r='1'/%3E%3C/g%3E%3C/svg%3E");
     }
 
-    .details-view {
+    .details-panel {
       overflow: auto;
     }
 
-    .map-view {
+    .map-panel {
       flex-grow: 1;
 
       .map-container {

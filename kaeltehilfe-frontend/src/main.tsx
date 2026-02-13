@@ -23,7 +23,6 @@ import {
   CardView,
   ClientSearch,
   DistributionAdd,
-  DistributionOverview,
   MapView,
   OperatorNavigation,
 } from "./features/operator";
@@ -87,24 +86,18 @@ export const router = createBrowserRouter([
           </AuthRoute>
         ),
         children: [
-          { path: "", element: <Navigate relative="path" to="overview/map" /> },
+          { path: "", element: <Navigate relative="path" to="map" /> },
           {
-            path: "overview",
-            element: <DistributionOverview />,
-            children: [
-              {
-                path: "tiles",
-                element: <CardView />,
-              },
-              {
-                path: "map",
-                element: <MapView />,
-              },
-              {
-                path: "search",
-                element: <ClientSearch />,
-              },
-            ],
+            path: "tiles",
+            element: <CardView />,
+          },
+          {
+            path: "map",
+            element: <MapView />,
+          },
+          {
+            path: "search",
+            element: <ClientSearch />,
           },
           {
             path: "add",
