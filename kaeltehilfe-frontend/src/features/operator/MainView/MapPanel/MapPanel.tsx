@@ -110,6 +110,16 @@ export const MapPanel = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDate, navigate, lat, lng]);
 
+  React.useEffect(() => {
+    if (focusedDistributionId) {
+      setStoredState((old) => {
+        const copy = { ...old };
+        copy.isTracking = false;
+        return copy;
+      });
+    }
+  }, [focusedDistributionId, setStoredState]);
+
   return (
     <MapContainer
       center={storedState.center}
