@@ -1,4 +1,4 @@
-import { IconChartCohort, IconMap, IconUserSearch } from "@tabler/icons-react";
+import { IconChartCohort, IconMap } from "@tabler/icons-react";
 import { NavigationItem } from "../../common/components";
 
 export const OperatorNavigation = () => (
@@ -6,17 +6,13 @@ export const OperatorNavigation = () => (
     <NavigationItem
       label="Kachelansicht"
       Icon={IconChartCohort}
-      target="/overview/tiles"
+      target="/tiles"
     />
-    <NavigationItem
-      label="Kartenansicht"
-      Icon={IconMap}
-      target="/overview/map"
-    />
-    <NavigationItem
+    <NavigationItem label="Kartenansicht" Icon={IconMap} target="/map" />
+    {/* <NavigationItem
       label="Klientensuche"
       Icon={IconUserSearch}
-      target="/overview/search"
-    />
+      target="/search"
+    /> */}
   </>
 );

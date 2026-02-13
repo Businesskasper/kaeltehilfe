@@ -3,22 +3,22 @@ import { DatePickerInput } from "@mantine/dates";
 import { useField } from "@mantine/form";
 import { IconArrowForwardUpDouble, IconListDetails } from "@tabler/icons-react";
 import React from "react";
-import { compareByDateOnly } from "../../../../common/utils";
+import { compareByDateOnly } from "../../../common/utils";
 
-type ViewControlsProps = {
-  minDay: Date;
-  maxDay: Date;
+type MainControlsProps = {
+  queryFrom: Date;
+  today: Date;
   setSelectedDate: React.Dispatch<React.SetStateAction<Date>>;
   selectedDate: Date;
   toggleDetailsOpen: () => void;
 };
-export const ViewControls = ({
-  minDay,
-  maxDay,
+export const MainControls = ({
+  queryFrom,
+  today,
   setSelectedDate,
   selectedDate,
   toggleDetailsOpen,
-}: ViewControlsProps) => {
+}: MainControlsProps) => {
   const [defaultDate] = React.useState(selectedDate);
 
   const dateField = useField<Date>({
@@ -40,8 +40,8 @@ export const ViewControls = ({
           label="Datum"
           type="default"
           valueFormat="DD MMMM YYYY"
-          minDate={minDay}
-          maxDate={maxDay}
+          minDate={queryFrom}
+          maxDate={today}
           modalProps={{ zIndex: 900 }}
           popoverProps={{ zIndex: 900 }}
           // dropdownType="modal"

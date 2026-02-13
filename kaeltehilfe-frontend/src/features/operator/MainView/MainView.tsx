@@ -1,0 +1,150 @@
+import { useComputedColorScheme } from "@mantine/core";
+import {
+  useDebouncedValue,
+  useOrientation,
+  useResizeObserver,
+} from "@mantine/hooks";
+import { Map } from "leaflet";
+import React from "react";
+import { Group, Panel, Separator } from "react-resizable-panels";
+import { Distribution, useDistribtions } from "../../../common/data";
+import {
+  formatDate,
+  useBrowserStorage,
+  useCachedLayout,
+} from "../../../common/utils";
+import { DetailsPanel } from "./DetailsPanel";
+import { MainControls } from "./MainControls";
+import { MapPanel } from "./MapPanel/MapPanel";
+
+import "./MainView.scss";
+
+export const MapView = () => {
+  const { type: orientationType } = useOrientation({
+    getInitialValueInEffect: false,
+  });
+  const groupOrientation =
+    orientationType === "landscape-primary" ||
+    orientationType === "landscape-secondary"
+      ? "horizontal"
+      : "vertical";
+  const colorScheme = useComputedColorScheme();
+
+  const [isDetailsOpen, setIsDetailsOpen] = useBrowserStorage(
+    "SESSION",
+    "OPERATOR_DETAILS_OPEN",
+    false,
+  );
+
+  const toggleDetailsOpen = React.useCallback(() => {
+    setIsDetailsOpen((open) => !open);
+  }, [setIsDetailsOpen]);
+
+  const mapRef = React.useRef<Map>(null);
+  const [ref, rect] = useResizeObserver();
+  const watchablePos = `${rect.top}:${rect.bottom}:${rect.left}:${rect.right}`;
+  const [debouncedRect] = useDebouncedValue(watchablePos, 200);
+  React.useEffect(() => {
+    mapRef?.current?.invalidateSize();
+  }, [debouncedRect]);
+
+  const { defaultLayout, onLayoutChanged } = useCachedLayout({
+    key: "operator-layout",
+    currentPanels: isDetailsOpen
+      ? ["details-panel", "map-panel"]
+      : ["map-panel"],
+    initialLayout: {
+      panels: ["details-panel", "map-panel"],
+      panelConfigs: { "details-panel": 30, "map-panel": 70 },
+    },
+  });
+
+  const now = new Date();
+  const nowStr = formatDate(now);
+  const today = React.useMemo(
+    () => new Date(now.setHours(23, 59, 59, 999)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [nowStr],
+  );
+  const queryFrom = React.useMemo(() => {
+    const lastWeek = new Date(now.setDate(now.getDate() - 7));
+    return new Date(lastWeek.setHours(0, 0, 0, 0));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nowStr]);
+
+  const [selectedDate, setSelectedDate] = React.useState<Date>(today);
+
+  const {
+    query: { data: distributions },
+  } = useDistribtions({ from: queryFrom, to: today });
+
+  const [focusedDistributionId, setFocusedDistributionId] =
+    React.useState<number>();
+
+  const resetFocusedDistributionId = React.useCallback(() => {
+    setFocusedDistributionId(undefined);
+  }, []);
+
+  const onCardClick = React.useCallback(
+    (_: string, distributions: Array<Distribution>) => {
+      const firstDistribution = distributions[0];
+      setFocusedDistributionId(firstDistribution.id);
+    },
+    [],
+  );
+
+  return (
+    <div className="main-view">
+      <MainControls
+        toggleDetailsOpen={toggleDetailsOpen}
+        setSelectedDate={setSelectedDate}
+        selectedDate={selectedDate}
+        queryFrom={queryFrom}
+        today={today}
+      />
+
+      <Group
+        onLayoutChanged={onLayoutChanged}
+        defaultLayout={defaultLayout}
+        className="container"
+        orientation={groupOrientation}
+      >
+        <Panel
+          id="map-panel"
+          className="map-panel"
+          defaultSize={isDetailsOpen ? 70 : 100}
+          elementRef={ref}
+        >
+          <MapPanel
+            mapRef={mapRef}
+            selectedDate={selectedDate}
+            distributions={distributions}
+            focusedDistributionId={focusedDistributionId}
+            resetFocusedDistributionId={resetFocusedDistributionId}
+          />
+        </Panel>
+        {isDetailsOpen && (
+          <>
+            <Separator
+              className={`panel-divider ${groupOrientation} ${colorScheme}`}
+            />
+            <Panel
+              collapsible
+              defaultSize={30}
+              minSize={0}
+              id="details-panel"
+              className="details-panel"
+            >
+              <DetailsPanel
+                selectedDate={selectedDate}
+                distributions={distributions}
+                today={today}
+                onCardClick={onCardClick}
+              />
+            </Panel>
+          </>
+        )}
+      </Group>
+    </div>
+  );
+};
