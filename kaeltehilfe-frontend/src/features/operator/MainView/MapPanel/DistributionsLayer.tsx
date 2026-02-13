@@ -1,5 +1,6 @@
-import L from "leaflet";
+import L, { Marker } from "leaflet";
 import React from "react";
+import { useMap, useMapEvent } from "react-leaflet";
 import MarkerClusterGroup, {
   MarkerClusterGroupProps,
 } from "react-leaflet-markercluster";
@@ -19,12 +20,16 @@ type DistributionsLayerProps = {
   selectedDate: Date;
   distributions?: Array<Distribution>;
   onClusterClick?: () => void;
+  focusedDistributionId?: number;
+  resetFocusedDistributionId?: () => void;
 };
 
 export const DistributionsLayer = ({
   onClusterClick,
   distributions,
   selectedDate,
+  focusedDistributionId,
+  resetFocusedDistributionId,
 }: DistributionsLayerProps) => {
   // Filter distributions with valid geoLocation
   const distributionsToDisplay = React.useMemo(
@@ -55,6 +60,45 @@ export const DistributionsLayer = ({
     [byGeoLocation],
   );
 
+  useMapEvent("moveend", () => {
+    resetFocusedDistributionId?.();
+  });
+  type ClusterAndMarker = {
+    distributionIds: Array<number>;
+    geoLocation: GeoLocation;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    cluster?: any;
+    marker: Marker | null;
+  };
+  const clusterRef = React.useRef<Array<ClusterAndMarker>>([]);
+  const getMarkerAndCluster = (distributionId: number) =>
+    clusterRef.current.find((c) => c.distributionIds.includes(distributionId));
+
+  const map = useMap();
+
+  React.useEffect(() => {
+    if (!focusedDistributionId) return;
+    const clusterAndMarker = getMarkerAndCluster(focusedDistributionId);
+    if (clusterAndMarker?.marker) {
+      map.setView(
+        map.containerPointToLatLng(
+          map
+            .latLngToContainerPoint(clusterAndMarker.marker.getLatLng())
+            .subtract(new L.Point(20, 20)),
+        ),
+        map.getMaxZoom(),
+      );
+      clusterAndMarker.marker.openPopup();
+    }
+    if (clusterAndMarker?.cluster) {
+      clusterAndMarker.cluster.zoomToBounds();
+      setTimeout(() => {
+        const clusterAndMarker = getMarkerAndCluster(focusedDistributionId);
+        clusterAndMarker?.cluster?.spiderfy();
+      }, 400);
+    }
+  }, [focusedDistributionId, map]);
+
   const clusterOptions = React.useMemo<MarkerClusterGroupProps>(
     () => ({
       chunkedLoading: true,
@@ -73,10 +117,27 @@ export const DistributionsLayer = ({
       zoomToBoundsOnClick: true,
       spiderfyDistanceMultiplier: 1.5,
       iconCreateFunction: (cluster) => {
-        // const childCount = cluster.getChildCount();
+        const childMarkers = cluster.getAllChildMarkers();
+        for (const marker of childMarkers) {
+          const { lat, lng } = marker.getLatLng();
+          const markerAndCluster = {
+            geoLocation: { lat, lng },
+            cluster,
+            marker,
+            distributionIds: [],
+          };
+          const existing = clusterRef.current.find(
+            (c) => c.geoLocation.lat === lat && c.geoLocation.lng === lng,
+          );
+          if (!existing) {
+            clusterRef.current.push(markerAndCluster);
+          } else {
+            existing.cluster = cluster;
+            existing.marker = marker;
+          }
+        }
 
         let totalChildCount = 0;
-        const childMarkers = cluster.getAllChildMarkers();
         for (const childMarker of childMarkers) {
           const childCount =
             childMarker?.options?.icon?.options?.html?.attributes?.getNamedItem(
@@ -120,14 +181,45 @@ export const DistributionsLayer = ({
           groupBy(distributions, (d) => d.client.id).keys(),
         ).length;
 
+        const clms = new Array<ClusterAndMarker>();
+
+        for (const dist of distributions) {
+          let clusterAndMarker = clusterRef.current.find(
+            (c) =>
+              c.geoLocation.lat === dist.geoLocation.lat &&
+              c.geoLocation.lng === dist.geoLocation.lng,
+          );
+          if (!clusterAndMarker) {
+            clusterAndMarker = {
+              geoLocation: dist.geoLocation,
+              cluster: null,
+              marker: null,
+              distributionIds: [],
+            };
+            clusterRef.current.push(clusterAndMarker);
+          }
+
+          const existingDist = clusterAndMarker.distributionIds.indexOf(
+            dist.id,
+          );
+          if (existingDist === -1) {
+            clusterAndMarker.distributionIds.push(dist.id);
+          }
+          clms.push(clusterAndMarker);
+        }
+
         return (
           <ExistingDistributionFlag
             colorSet={colorSets.RED}
             lat={distributions[0].geoLocation.lat}
             lng={distributions[0].geoLocation.lng}
-            // count={distributions.length}
             count={clientCount}
             key={geoLocation}
+            ref={(m) => {
+              for (const clm of clms) {
+                clm.marker = m;
+              }
+            }}
           />
         );
       })}
