@@ -1,10 +1,14 @@
 import {
   ActionIcon,
   Button,
+  Group,
+  List,
+  ListItem,
   Popover,
   PopoverDropdown,
   PopoverTarget,
   rem,
+  Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
@@ -18,7 +22,7 @@ import L from "leaflet";
 import React from "react";
 import { Popup, useMap, useMapEvents } from "react-leaflet";
 import { ActionGroup } from "../../../../common/components";
-import { GeoLocation } from "../../../../common/data";
+import { Distribution, GeoLocation } from "../../../../common/data";
 import { Flag } from "../../shared/Flag";
 import { NumberedDistributionMarker, PlusMarker } from "../../shared/Marker";
 
@@ -439,24 +443,28 @@ export const AddDistributionFlag = ({
 };
 
 type ExistingDistributionFlagProps = {
-  lat: number;
-  lng: number;
   colorSet: [string, string];
+  distributions: Array<Distribution>;
   count: number;
 };
 export const ExistingDistributionFlag = React.forwardRef<
   L.Marker,
   ExistingDistributionFlagProps
->(({ lat, lng, colorSet, count }, ref) => {
-  return (
+>(({ distributions, colorSet, count }, ref) => {
+  const { geoLocation } = distributions.find((d) => !!d.geoLocation) || {};
+
+  return !geoLocation ? (
+    <></>
+  ) : (
     <Flag
-      lat={lat}
-      lng={lng}
+      lat={geoLocation.lat}
+      lng={geoLocation.lng}
       height={60}
       width={35}
       className="numbered-distribution-marker"
       childCount={count}
       ref={ref}
+      popup={<DistributionFlagPopup distributions={distributions} />}
       marker={
         <NumberedDistributionMarker
           count={count}
@@ -467,3 +475,37 @@ export const ExistingDistributionFlag = React.forwardRef<
     />
   );
 });
+
+const DistributionFlagPopup = ({
+  distributions,
+}: {
+  distributions: Array<Distribution>;
+}) => {
+  const locationName = distributions?.find((d) => !!d.location?.name)?.location
+    ?.name;
+
+  const clientNames = Array.from(
+    new Set(distributions.map((d) => d.client.name)),
+  );
+
+  return (
+    <Popup
+      autoPan={false}
+      keepInView={false}
+      closeButton
+      autoPanPaddingBottomRight={[100, 100]}
+      offset={[0, -55]}
+      maxWidth={400}
+    >
+      <Group mb="md" wrap="nowrap" w="100%">
+        <IconLocation />
+        <Title order={6}>{locationName}</Title>
+      </Group>
+      <List listStyleType="disclosure-closed">
+        {clientNames.map((clientName) => (
+          <ListItem key={clientName}>{clientName}</ListItem>
+        ))}
+      </List>
+    </Popup>
+  );
+};
