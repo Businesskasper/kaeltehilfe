@@ -78,25 +78,40 @@ export const DistributionsLayer = ({
 
   React.useEffect(() => {
     if (!focusedDistributionId) return;
-    const clusterAndMarker = getMarkerAndCluster(focusedDistributionId);
-    if (clusterAndMarker?.marker) {
-      map.setView(
-        map.containerPointToLatLng(
-          map
-            .latLngToContainerPoint(clusterAndMarker.marker.getLatLng())
-            .subtract(new L.Point(20, 20)),
-        ),
-        map.getMaxZoom(),
-      );
-      clusterAndMarker.marker.openPopup();
-    }
-    if (clusterAndMarker?.cluster) {
-      clusterAndMarker.cluster.zoomToBounds();
-      setTimeout(() => {
-        const clusterAndMarker = getMarkerAndCluster(focusedDistributionId);
+    // const clusterAndMarker = getMarkerAndCluster(focusedDistributionId);
+    // if (clusterAndMarker?.cluster) {
+    //   clusterAndMarker.cluster.zoomToBounds({ animate: false });
+    // }
+    setTimeout(() => {
+      const clusterAndMarker = getMarkerAndCluster(focusedDistributionId);
+      if (clusterAndMarker?.marker) {
+        const { lat, lng } = clusterAndMarker.marker.getLatLng();
+        map.setView(
+          // map.containerPointToLatLng(
+          //   map
+          //     .latLngToContainerPoint(clusterAndMarker.marker.getLatLng())
+          //     .subtract(new L.Point(50, -50)),
+          // ),
+          { lat: lat - 0.00005, lng: lng - 0.00005 },
+          map.getMaxZoom(),
+          { animate: false },
+        );
         clusterAndMarker?.cluster?.spiderfy();
-      }, 400);
-    }
+        clusterAndMarker?.marker?.openPopup();
+      }
+    }, 200);
+
+    setTimeout(() => {
+      const clusterAndMarker = getMarkerAndCluster(focusedDistributionId);
+      clusterAndMarker?.cluster?.spiderfy();
+      clusterAndMarker?.marker?.openPopup();
+    }, 400);
+
+    setTimeout(() => {
+      const clusterAndMarker = getMarkerAndCluster(focusedDistributionId);
+      clusterAndMarker?.cluster?.spiderfy();
+      clusterAndMarker?.marker?.openPopup();
+    }, 600);
   }, [focusedDistributionId, map]);
 
   const clusterOptions = React.useMemo<MarkerClusterGroupProps>(
@@ -211,9 +226,8 @@ export const DistributionsLayer = ({
         return (
           <ExistingDistributionFlag
             colorSet={colorSets.RED}
-            lat={distributions[0].geoLocation.lat}
-            lng={distributions[0].geoLocation.lng}
             count={clientCount}
+            distributions={distributions}
             key={geoLocation}
             ref={(m) => {
               for (const clm of clms) {

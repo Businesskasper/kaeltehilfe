@@ -45,9 +45,9 @@
 
     .panel-divider:active,
     .panel-divider:hover {
-        outline-width: 0;
-        background-color: var(--mantine-color-blue-3);
-        transition: 200ms;
+      outline-width: 0;
+      background-color: var(--mantine-color-blue-3);
+      transition: 200ms;
     }
 
     // @media(hover: hover) and (pointer: fine) {
@@ -183,4 +183,16 @@
       }
     }
   }
+}
+
+
+.leaflet-popup-content-wrapper {
+  background-color: var(--mantine-color-body);
+  opacity: 1;
+  color: var(--mantine-color-text);
+  border-radius: 5px;
+}
+
+.leaflet-popup-tip {
+  background-color: var(--mantine-color-body);
 }
