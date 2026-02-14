@@ -131,7 +131,7 @@ export const MapView = () => {
             <Panel
               collapsible
               defaultSize={30}
-              minSize={0}
+              minSize={30}
               id="details-panel"
               className="details-panel"
             >

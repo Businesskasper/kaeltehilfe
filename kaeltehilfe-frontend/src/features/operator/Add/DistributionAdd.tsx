@@ -47,7 +47,6 @@ export const DistributionAdd = () => {
 
   const lat = locationState?.lat as number | undefined;
   const lng = locationState?.lng as number | undefined;
-  const hasGeoLocation = lat !== undefined && lng !== undefined;
 
   const {
     query: { data: resolvedAddress },
@@ -82,9 +81,7 @@ export const DistributionAdd = () => {
     mode: "controlled",
     initialValues: {
       locationName: "",
-      geoLocation: hasGeoLocation
-        ? { lat: Number(lat), lng: Number(lng) }
-        : undefined,
+      geoLocation: { lat: lat ? Number(lat) : 0, lng: lng ? Number(lng) : 0 },
       busRegistrationNumber: profile?.registrationNumber || "",
       clients: [
         {
@@ -97,9 +94,7 @@ export const DistributionAdd = () => {
       goods: [],
     },
     validate: {
-      ...(hasGeoLocation
-        ? {}
-        : { locationName: (value) => validators(value, requiredValidator()) }),
+      locationName: (value) => validators(value, requiredValidator()),
       clients: {
         name: (value, values) => {
           if (!value) return "Bitte wählen oder neu eingeben";
@@ -439,7 +434,7 @@ export const DistributionAdd = () => {
                         );
                       }}
                       disabled={
-                        !hasGeoLocation && activeStep === FormStep.LOCATION
+                        activeStep === FormStep.LOCATION
                           ? !form.values.locationName
                           : activeStep === FormStep.CLIENTS
                             ? !form.values.clients ||

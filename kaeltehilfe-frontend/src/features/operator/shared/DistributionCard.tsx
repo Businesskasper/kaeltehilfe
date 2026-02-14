@@ -8,7 +8,12 @@ import {
   Title,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { IconExclamationMark, IconMinus, IconPlus } from "@tabler/icons-react";
+import {
+  IconExclamationMark,
+  IconMinus,
+  IconPlaceholder,
+  IconPlus,
+} from "@tabler/icons-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -189,8 +194,8 @@ export const DistributionCard = ({
             return (
               <Group key={String(goodId)} justify="space-between">
                 <Group>
+                  {Icon ? <Icon /> : <IconPlaceholder visibility="hidden" />}
                   <Text>{goodName}</Text>
-                  {Icon && <Icon />}
                 </Group>
                 <Group>
                   {isToday && (
