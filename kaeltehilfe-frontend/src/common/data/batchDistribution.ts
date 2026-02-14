@@ -4,8 +4,8 @@ import { Gender } from "./gender";
 import { GeoLocation } from "./geoLocation";
 
 export type BatchDistribution = {
-  locationName?: string;
-  geoLocation?: GeoLocation;
+  locationName: string;
+  geoLocation: GeoLocation;
   busRegistrationNumber: string;
   clients: Array<{
     id?: number;

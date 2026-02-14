@@ -32,9 +32,11 @@ public class BatchDistributionCreateDtoValidator : AbstractValidator<BatchDistri
 {
     public BatchDistributionCreateDtoValidator()
     {
-        RuleFor(b => b)
-            .Must(b => !(String.IsNullOrWhiteSpace(b.LocationName) && b.GeoLocation == null))
-            .WithMessage("Either Location.LocationName or GeoLocation must be provided");
+        // RuleFor(b => b)
+        //     .Must(b => !(String.IsNullOrWhiteSpace(b.LocationName) && b.GeoLocation == null))
+        //     .WithMessage("Either Location.LocationName or GeoLocation must be provided");
+        RuleFor(d => d.LocationName).NotNull().NotEmpty();
+        RuleFor(d => d.GeoLocation).NotNull();
         RuleFor(d => d.Clients).NotNull().NotEmpty();
         RuleForEach(d => d.Clients).SetValidator(new BatchDistributionClientDtoValidator());
         RuleFor(d => d.Goods).NotNull().NotEmpty();

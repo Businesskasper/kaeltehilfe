@@ -481,8 +481,9 @@ const DistributionFlagPopup = ({
 }: {
   distributions: Array<Distribution>;
 }) => {
-  const locationName = distributions?.find((d) => !!d.location?.name)?.location
-    ?.name;
+  const locationName =
+    distributions?.find((d) => !!d.locationName)?.locationName ||
+    "Unbekannter Ort";
 
   const clientNames = Array.from(
     new Set(distributions.map((d) => d.client.name)),

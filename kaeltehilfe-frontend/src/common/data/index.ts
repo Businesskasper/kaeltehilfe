@@ -6,7 +6,6 @@ export * from "./distribution";
 export * from "./gender";
 export * from "./geoLocation";
 export * from "./good";
-export * from "./location";
 export * from "./login";
 export * from "./shift";
 export * from "./volunteer";

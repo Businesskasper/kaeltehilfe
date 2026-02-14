@@ -26,17 +26,17 @@ export const DetailsPanel = ({
     (d) => compareByDateOnly(d.timestamp, selectedDate) === 0,
   );
 
-  const byLocationId = groupBy(
+  const byLocationName = groupBy(
     distributionsToDisplay,
-    (d) => d.location?.id || 0,
+    (d) => d.locationName || 0,
   );
 
-  const sortedLocationIds = Array.from(byLocationId.keys()).sort(
+  const sortedLocationIds = Array.from(byLocationName.keys()).sort(
     (location1, location2) => {
-      const firstDistL1 = byLocationId
+      const firstDistL1 = byLocationName
         .get(location1)
         ?.sort((d1, d2) => compareByDateTime(d1.timestamp, d2.timestamp))?.[0];
-      const firstDistL2 = byLocationId
+      const firstDistL2 = byLocationName
         .get(location2)
         ?.sort((d1, d2) => compareByDateTime(d1.timestamp, d2.timestamp))?.[0];
       return compareByDateTime(firstDistL2?.timestamp, firstDistL1?.timestamp);
@@ -57,7 +57,7 @@ export const DetailsPanel = ({
       type="container"
     >
       {sortedLocationIds?.map((locationId) => {
-        const locationDistributions = byLocationId.get(locationId) || [];
+        const locationDistributions = byLocationName.get(locationId) || [];
         const byClientId = groupBy(locationDistributions, (d) => d.client.id);
         const clientIds = Array.from(byClientId.keys()).sort(
           (clientId1, clientId2) => {
@@ -78,7 +78,7 @@ export const DetailsPanel = ({
           },
         );
         const locationName =
-          locationDistributions?.[0]?.location?.name || "Unbekannter Ort";
+          locationDistributions?.[0]?.locationName || "Unbekannter Ort";
 
         return (
           <React.Fragment key={locationId}>

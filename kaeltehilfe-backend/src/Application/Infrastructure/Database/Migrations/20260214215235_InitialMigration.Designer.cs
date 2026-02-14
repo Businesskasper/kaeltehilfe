@@ -12,7 +12,7 @@ using kaeltehilfe_backend.Infrastructure.Database;
 namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(KbContext))]
-    [Migration("20251225175819_InitialMigration")]
+    [Migration("20260214215235_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -126,6 +126,7 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<Point>("GeoLocation")
+                        .IsRequired()
                         .HasColumnType("POINT")
                         .HasAnnotation("Sqlite:Srid", 4326);
 
@@ -137,8 +138,9 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValue(false);
 
-                    b.Property<int?>("LocationId")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("LocationName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
@@ -154,8 +156,6 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                     b.HasIndex("GoodId");
 
                     b.HasIndex("IsDeleted");
-
-                    b.HasIndex("LocationId");
 
                     b.ToTable("Distributions");
                 });
@@ -208,42 +208,6 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                         .HasFilter("IsDeleted = 0");
 
                     b.ToTable("Goods");
-                });
-
-            modelBuilder.Entity("kaeltehilfe_backend.Models.Location", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<long>("AddOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValueSql("unixepoch('now')");
-
-                    b.Property<long?>("ChangeOn")
-                        .ValueGeneratedOnUpdate()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValueSql("unixepoch('now')");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IsDeleted");
-
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasFilter("IsDeleted = 0");
-
-                    b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("kaeltehilfe_backend.Models.Login", b =>
@@ -489,17 +453,11 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("kaeltehilfe_backend.Models.Location", "Location")
-                        .WithMany("Distributions")
-                        .HasForeignKey("LocationId");
-
                     b.Navigation("Bus");
 
                     b.Navigation("Client");
 
                     b.Navigation("Good");
-
-                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("kaeltehilfe_backend.Models.LoginCertificate", b =>
@@ -556,11 +514,6 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                 });
 
             modelBuilder.Entity("kaeltehilfe_backend.Models.Good", b =>
-                {
-                    b.Navigation("Distributions");
-                });
-
-            modelBuilder.Entity("kaeltehilfe_backend.Models.Location", b =>
                 {
                     b.Navigation("Distributions");
                 });

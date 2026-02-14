@@ -31,11 +31,8 @@ export type Distribution = {
     name: string;
   };
   quantity: number;
-  location?: {
-    id: number;
-    name: string;
-  };
-  geoLocation?: GeoLocation;
+  locationName: string;
+  geoLocation: GeoLocation;
 };
 
 type DistributionUpdate = {

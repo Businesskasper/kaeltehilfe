@@ -32,32 +32,17 @@ public class BatchDistributionsController : ControllerBase
                 b.RegistrationNumber == dto.BusRegistrationNumber && !b.IsDeleted
             ) ?? throw this.GetModelStateError("BusId", "No matching shift was found");
 
-        Location? location = null;
-        if (!string.IsNullOrEmpty(dto.LocationName))
-        {
-            location = await _kbContext.Locations.FirstOrDefaultAsync(l =>
-                l.Name == dto.LocationName && !l.IsDeleted
-            );
-            if (location == null)
-            {
-                location = new Location { Name = dto.LocationName, IsDeleted = false };
-                await _kbContext.Locations.AddAsync(location);
-                await _kbContext.SaveChangesAsync();
-            }
-        }
-
         var clients = await GetClients(dto.Clients);
         var goods = await GetGoods(dto.Goods);
 
         // Convert GeoLocationDto to Point for storage
-        NetTopologySuite.Geometries.Point? geoPoint =
-            dto.GeoLocation != null
-                ? new NetTopologySuite.Geometries.Point(dto.GeoLocation.Lng, dto.GeoLocation.Lat)
-                {
-                    SRID = 4326,
-                }
-                : null;
-
+        var geoPoint = new NetTopologySuite.Geometries.Point(
+            dto.GeoLocation?.Lng ?? 0,
+            dto.GeoLocation?.Lat ?? 0
+        )
+        {
+            SRID = 4326,
+        };
         List<Distribution> receivedDistributions = dto
             .Clients.SelectMany(s =>
                 dto.Goods.Select(g =>
@@ -68,8 +53,7 @@ public class BatchDistributionsController : ControllerBase
                     {
                         Client = client,
                         Good = good,
-                        Location = location,
-                        LocationId = location?.Id,
+                        LocationName = dto.LocationName,
                         GeoLocation = geoPoint,
                         Bus = bus,
                         Quantity = g.Quantity,

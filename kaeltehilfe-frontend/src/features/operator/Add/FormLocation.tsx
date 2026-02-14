@@ -1,16 +1,11 @@
-import { InputLabel } from "@mantine/core";
+import { TextInput } from "@mantine/core";
 import { MapContainer, TileLayer } from "react-leaflet";
-import { FormSelect } from "../../../common/components";
-import { GeoLocation, useLocations } from "../../../common/data";
+import { GeoLocation } from "../../../common/data";
 import { Flag } from "../shared/Flag";
 import { PlusMarker } from "../shared/Marker";
 import { useDistributionFormContext } from "./DistributionFormContext";
 
 export const FormLocation = () => {
-  const {
-    objs: { data: locations },
-  } = useLocations();
-
   const form = useDistributionFormContext();
 
   const { geoLocation } = form.values;
@@ -42,16 +37,17 @@ export const FormLocation = () => {
           <CurrentLocationFlag lat={geoLocation.lat} lng={geoLocation.lng} />
         </MapContainer>
       )}
-      <InputLabel required={!geoLocation} w="100%" mt="lg" mb="xs">
+      {/* <InputLabel required={!geoLocation} w="100%" mt="lg" mb="xs">
         Ort
-      </InputLabel>
-      <FormSelect
-        withAsterisk={!geoLocation}
-        searchable
-        items={locations || []}
-        valueGetter="name"
-        sort
-        formProps={form.getInputProps("locationName")}
+      </InputLabel> */}
+      <TextInput
+        {...form.getInputProps("locationName")}
+        data-autofocus
+        label="Ort"
+        withAsterisk
+        placeholder="Ort"
+        mt="md"
+        required
       />
     </>
   );
