@@ -8,7 +8,6 @@ namespace kaeltehilfe_backend.Infrastructure.Database;
 public class KbContext : DbContext
 {
     public virtual DbSet<Good> Goods { get; set; }
-    public virtual DbSet<Location> Locations { get; set; }
     public virtual DbSet<Volunteer> Volunteers { get; set; }
     public virtual DbSet<Shift> Shifts { get; set; }
     public virtual DbSet<ShiftVolunteer> ShiftVolunteers { get; set; }
@@ -81,15 +80,6 @@ public class KbContext : DbContext
             .WithOne(d => d.Client)
             .HasForeignKey(d => d.ClientId);
 
-        modelBuilder.Entity<Location>().ConfigureBaseEntity();
-        modelBuilder.Entity<Location>().HasIndex(l => l.Name).IsUnique().HasFilter("IsDeleted = 0");
-        modelBuilder
-            .Entity<Location>()
-            .HasMany(l => l.Distributions)
-            .WithOne(d => d.Location)
-            .HasForeignKey(d => d.LocationId)
-            .IsRequired(false);
-
         modelBuilder.Entity<Distribution>().ConfigureBaseEntity();
         modelBuilder.Entity<Distribution>().HasIndex(x => x.BusId);
         modelBuilder.Entity<Distribution>().HasIndex(x => x.ClientId);
@@ -114,13 +104,6 @@ public class KbContext : DbContext
             .WithMany(d => d.Distributions)
             .HasForeignKey(d => d.BusId);
         modelBuilder.Entity<Distribution>().Navigation(d => d.Bus).AutoInclude();
-        modelBuilder
-            .Entity<Distribution>()
-            .HasOne(d => d.Location)
-            .WithMany(l => l.Distributions)
-            .HasForeignKey(d => d.LocationId)
-            .IsRequired(false);
-        modelBuilder.Entity<Distribution>().Navigation(d => d.Location).AutoInclude();
 
         modelBuilder.Entity<ShiftVolunteer>().HasKey(sv => new { sv.ShiftId, sv.VolunteerId });
         modelBuilder

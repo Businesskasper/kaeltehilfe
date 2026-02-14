@@ -179,26 +179,8 @@ public class KbSeeder : ISeeder<KbContext>
         _kbContext.Clients.AddRange(clients);
         _kbContext.SaveChanges();
 
-        var locations = new List<Location>
-        {
-            new Location { Name = "Alter Friedhof", IsDeleted = false },
-            new Location { Name = "Bahnhof", IsDeleted = false },
-            new Location { Name = "Neue Mitte", IsDeleted = false },
-            new Location { Name = "Hirschstraße", IsDeleted = false },
-            new Location { Name = "Schillerstraße", IsDeleted = false },
-        };
-        _kbContext.Locations.AddRange(locations);
-        _kbContext.SaveChanges();
-
         var now = DateTime.Now;
-        var distributions = GetRandomDistributions(
-            now.AddDays(-10),
-            now,
-            clients,
-            goods,
-            locations,
-            bus.Id
-        );
+        var distributions = GetRandomDistributions(now.AddDays(-10), now, clients, goods, bus.Id);
         _kbContext.Distributions.AddRange(distributions);
         _kbContext.SaveChanges();
     }
@@ -208,7 +190,6 @@ public class KbSeeder : ISeeder<KbContext>
         DateTime end,
         List<Client> clients,
         List<Good> goods,
-        List<Location> locations,
         int busId
     )
     {
@@ -223,7 +204,6 @@ public class KbSeeder : ISeeder<KbContext>
             for (int i = 0; i <= countDistributions; i++)
             {
                 var clientIndex = random.Next(0, clients.Count);
-                var locationIndex = random.Next(0, locations.Count);
                 var goodIndex = random.Next(0, goods.Count);
                 var quantity = random.Next(1, 3);
 
@@ -241,7 +221,7 @@ public class KbSeeder : ISeeder<KbContext>
                     BusId = busId,
                     ClientId = clients[clientIndex].Id,
                     GoodId = goods[goodIndex].Id,
-                    LocationId = locations[locationIndex].Id,
+                    LocationName = "", // TODO: Connect to geo service
                     GeoLocation = geoLocation,
                     Quantity = quantity,
                     IsDeleted = false,

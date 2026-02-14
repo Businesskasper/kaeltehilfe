@@ -71,22 +71,6 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Locations",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(type: "TEXT", nullable: false),
-                    AddOn = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "unixepoch('now')"),
-                    ChangeOn = table.Column<long>(type: "INTEGER", nullable: true, defaultValueSql: "unixepoch('now')"),
-                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Locations", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Logins",
                 columns: table => new
                 {
@@ -157,9 +141,9 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                     BusId = table.Column<int>(type: "INTEGER", nullable: false),
                     ClientId = table.Column<int>(type: "INTEGER", nullable: false),
                     GoodId = table.Column<int>(type: "INTEGER", nullable: false),
-                    LocationId = table.Column<int>(type: "INTEGER", nullable: true),
+                    LocationName = table.Column<string>(type: "TEXT", nullable: false),
                     Quantity = table.Column<int>(type: "INTEGER", nullable: false),
-                    GeoLocation = table.Column<Point>(type: "POINT", nullable: true)
+                    GeoLocation = table.Column<Point>(type: "POINT", nullable: false)
                         .Annotation("Sqlite:Srid", 4326),
                     AddOn = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "unixepoch('now')"),
                     ChangeOn = table.Column<long>(type: "INTEGER", nullable: true, defaultValueSql: "unixepoch('now')"),
@@ -186,11 +170,6 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                         principalTable: "Goods",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Distributions_Locations_LocationId",
-                        column: x => x.LocationId,
-                        principalTable: "Locations",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -297,11 +276,6 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                 column: "IsDeleted");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Distributions_LocationId",
-                table: "Distributions",
-                column: "LocationId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Goods_IsDeleted",
                 table: "Goods",
                 column: "IsDeleted");
@@ -309,18 +283,6 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Goods_Name",
                 table: "Goods",
-                column: "Name",
-                unique: true,
-                filter: "IsDeleted = 0");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Locations_IsDeleted",
-                table: "Locations",
-                column: "IsDeleted");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Locations_Name",
-                table: "Locations",
                 column: "Name",
                 unique: true,
                 filter: "IsDeleted = 0");
@@ -387,9 +349,6 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "Goods");
-
-            migrationBuilder.DropTable(
-                name: "Locations");
 
             migrationBuilder.DropTable(
                 name: "Logins");
