@@ -32,15 +32,15 @@ type MapPanelProps = {
   mapRef: React.RefObject<L.Map>;
   selectedDate: Date;
   distributions?: Array<Distribution>;
-  focusedDistributionId?: number;
-  resetFocusedDistributionId?: () => void;
+  focusedGeoLocation?: string;
+  resetFocusedGeoLocation: () => void;
 };
 export const MapPanel = ({
   mapRef,
   selectedDate,
   distributions,
-  focusedDistributionId,
-  resetFocusedDistributionId,
+  focusedGeoLocation,
+  resetFocusedGeoLocation,
 }: MapPanelProps) => {
   // Use browser storage for map state persistence
   const [storedState, setStoredState] = useBrowserStorage<MapState>(
@@ -111,14 +111,13 @@ export const MapPanel = ({
   }, [selectedDate, navigate, lat, lng]);
 
   React.useEffect(() => {
-    if (focusedDistributionId) {
-      setStoredState((old) => {
-        const copy = { ...old };
-        copy.isTracking = false;
-        return copy;
-      });
+    if (focusedGeoLocation) {
+      setStoredState((prev) => ({
+        ...prev,
+        isTracking: false,
+      }));
     }
-  }, [focusedDistributionId, setStoredState]);
+  }, [focusedGeoLocation, setStoredState]);
 
   return (
     <MapContainer
@@ -164,8 +163,8 @@ export const MapPanel = ({
         distributions={distributions}
         selectedDate={selectedDate}
         onClusterClick={() => setIsTracking(false)}
-        focusedDistributionId={focusedDistributionId}
-        resetFocusedDistributionId={resetFocusedDistributionId}
+        focusedGeoLocation={focusedGeoLocation}
+        resetFocusedGeoLocation={resetFocusedGeoLocation}
       />
     </MapContainer>
   );

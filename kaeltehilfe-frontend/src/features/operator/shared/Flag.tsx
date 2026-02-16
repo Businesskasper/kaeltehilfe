@@ -11,10 +11,9 @@ type FlagProps = {
   marker: JSX.Element;
   popup?: JSX.Element;
   className?: string;
-  childCount?: number;
 };
 export const Flag = React.forwardRef<L.Marker, FlagProps>(
-  ({ lat, lng, height, width, marker, popup, className, childCount }, ref) => {
+  ({ lat, lng, height, width, marker, popup, className }, ref) => {
     const rootRef = React.useRef<Root | null>(null);
 
     const [icon, setIcon] = React.useState<L.DivIcon | null>(null);
@@ -23,7 +22,7 @@ export const Flag = React.forwardRef<L.Marker, FlagProps>(
       // Create div element
       const divElement = document.createElement("div");
 
-      divElement.setAttribute("x-child-count", childCount?.toString() || "0");
+      // divElement.setAttribute("x-child-count", childCount?.toString() || "0");
 
       // Create root
       rootRef.current = createRoot(divElement);
@@ -51,7 +50,7 @@ export const Flag = React.forwardRef<L.Marker, FlagProps>(
           }
         });
       };
-    }, [childCount, className, height, width]);
+    }, [className, height, width]);
 
     React.useEffect(() => {
       // Render marker into the div icon
