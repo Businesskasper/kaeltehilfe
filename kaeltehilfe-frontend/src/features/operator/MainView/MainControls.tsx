@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Group, rem } from "@mantine/core";
+import { Button, Group, rem } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { useField } from "@mantine/form";
 import { IconArrowForwardUpDouble, IconListDetails } from "@tabler/icons-react";
@@ -44,11 +44,7 @@ export const MainControls = ({
           maxDate={today}
           modalProps={{ zIndex: 900 }}
           popoverProps={{ zIndex: 900 }}
-          // dropdownType="modal"
           highlightToday
-          rightSection={
-            <JumpToTodayButton onClick={() => setSelectedDate(defaultDate)} />
-          }
           onChange={(value) => {
             if (!value) return;
             setSelectedDate(value);
@@ -75,14 +71,5 @@ export const MainControls = ({
         Kacheln
       </Button>
     </Group>
-  );
-};
-
-const JumpToTodayButton = ({ onClick }: { onClick: () => void }) => {
-  return (
-    <ActionIcon size="s" onClick={onClick} variant="transparent">
-      {/* <IconPlayerSkipForward /> */}
-      <IconArrowForwardUpDouble />
-    </ActionIcon>
   );
 };
