@@ -78,17 +78,20 @@ export const MapView = () => {
     query: { data: distributions },
   } = useDistribtions({ from: queryFrom, to: today });
 
-  const [focusedDistributionId, setFocusedDistributionId] =
-    React.useState<number>();
+  const [focusedGeoLocation, setFocusedDistributionId] =
+    React.useState<string>();
 
-  const resetFocusedDistributionId = React.useCallback(() => {
+  const resetFocusedGeoLocation = React.useCallback(() => {
     setFocusedDistributionId(undefined);
   }, []);
 
   const onCardClick = React.useCallback(
     (_: string, distributions: Array<Distribution>) => {
-      const firstDistribution = distributions[0];
-      setFocusedDistributionId(firstDistribution.id);
+      const geoLocation = distributions?.find(
+        (d) => !!d.geoLocation.lat && !!d.geoLocation.lng,
+      )?.geoLocation;
+      if (!geoLocation) return;
+      setFocusedDistributionId(JSON.stringify(geoLocation));
     },
     [],
   );
@@ -119,8 +122,8 @@ export const MapView = () => {
             mapRef={mapRef}
             selectedDate={selectedDate}
             distributions={distributions}
-            focusedDistributionId={focusedDistributionId}
-            resetFocusedDistributionId={resetFocusedDistributionId}
+            focusedGeoLocation={focusedGeoLocation}
+            resetFocusedGeoLocation={resetFocusedGeoLocation}
           />
         </Panel>
         {isDetailsOpen && (

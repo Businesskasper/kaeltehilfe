@@ -462,7 +462,6 @@ export const ExistingDistributionFlag = React.forwardRef<
       height={60}
       width={35}
       className="numbered-distribution-marker"
-      childCount={count}
       ref={ref}
       popup={<DistributionFlagPopup distributions={distributions} />}
       marker={
