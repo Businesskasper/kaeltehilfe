@@ -7,7 +7,7 @@ import {
 import { Map } from "leaflet";
 import React from "react";
 import { Group, Panel, Separator } from "react-resizable-panels";
-import { Distribution, useDistribtions } from "../../../common/data";
+import { Distribution, GeoLocation, useDistribtions } from "../../../common/data";
 import {
   formatDate,
   useBrowserStorage,
@@ -79,7 +79,7 @@ export const MapView = () => {
   } = useDistribtions({ from: queryFrom, to: today });
 
   const [focusedGeoLocation, setFocusedDistributionId] =
-    React.useState<string>();
+    React.useState<GeoLocation>();
 
   const resetFocusedGeoLocation = React.useCallback(() => {
     setFocusedDistributionId(undefined);
@@ -91,7 +91,7 @@ export const MapView = () => {
         (d) => !!d.geoLocation.lat && !!d.geoLocation.lng,
       )?.geoLocation;
       if (!geoLocation) return;
-      setFocusedDistributionId(JSON.stringify(geoLocation));
+      setFocusedDistributionId(geoLocation);
     },
     [],
   );

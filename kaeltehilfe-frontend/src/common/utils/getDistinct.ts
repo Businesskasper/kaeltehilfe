@@ -22,12 +22,9 @@ export function getDistinct<T, V, K extends keyof T>(
 ): T[] {
   const grouped = groupBy(items, keyGetter);
 
-  const keys = Array.from(grouped.keys());
-
-  const firstItems = keys.reduce((acc, key) => {
-    const items = grouped.get(key);
-    return items && items?.length > 0 ? [...acc, items[0]] : acc;
-  }, new Array<T>());
+  const firstItems = Array.from(grouped.values())
+    .filter((group) => group.length > 0)
+    .map((group) => group[0]);
 
   return firstItems;
 }
