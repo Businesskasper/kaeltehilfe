@@ -1,28 +1,16 @@
-import L, { Marker } from "leaflet";
+import L from "leaflet";
 import React from "react";
-import { useMap, useMapEvent } from "react-leaflet";
+import { useMapEvent } from "react-leaflet";
 import MarkerClusterGroup, {
   MarkerClusterGroupProps,
 } from "react-leaflet-markercluster";
 import { Distribution, GeoLocation } from "../../../../common/data";
-import { compareByDateOnly, groupBy } from "../../../../common/utils";
+import {
+  compareByDateOnly,
+  groupBy,
+  useMarkerRegistry,
+} from "../../../../common/utils";
 import { ExistingDistributionFlag } from "./MapControls";
-
-type Cluster = object & { spiderfy: () => void };
-type ClusterAndMarker = {
-  distributionIds: Array<number>;
-  geoLocation: GeoLocation;
-  cluster: Cluster | null;
-  marker: Marker | null;
-};
-
-const hasParent = (obj: unknown): obj is object & { __parent: object } => {
-  return !!obj && typeof obj === "object" && "__parent" in obj;
-};
-
-const isCluster = (obj: unknown): obj is Cluster => {
-  return !!obj && typeof obj === "object" && "spiderfy" in obj;
-};
 
 const colorSets = {
   RED: ["#E46450", "#A51E0F"],
@@ -36,9 +24,11 @@ type DistributionsLayerProps = {
   selectedDate: Date;
   distributions?: Array<Distribution>;
   onClusterClick?: () => void;
-  focusedGeoLocation?: string;
+  focusedGeoLocation?: GeoLocation;
   resetFocusedGeoLocation: () => void;
 };
+
+const getGeoLocation = (d: Distribution) => d.geoLocation;
 
 export const DistributionsLayer = ({
   onClusterClick,
@@ -47,38 +37,27 @@ export const DistributionsLayer = ({
   focusedGeoLocation,
   resetFocusedGeoLocation,
 }: DistributionsLayerProps) => {
-  const selectedDateByGeoLocation = React.useMemo(() => {
-    const selectedDateDistributions =
+  const selectedDateDists = React.useMemo(
+    () =>
       distributions?.filter(
         (dist) => compareByDateOnly(dist.timestamp, selectedDate) === 0,
-      ) || [];
-    return groupBy(selectedDateDistributions, (d) =>
-      JSON.stringify(d.geoLocation),
-    );
-  }, [distributions, selectedDate]);
+      ) || [],
+    [distributions, selectedDate],
+  );
+  const dateDistsByGeoLocation = React.useMemo(
+    () => groupBy(selectedDateDists, getGeoLocation),
+    [selectedDateDists],
+  );
 
-  const keys = Array.from(selectedDateByGeoLocation.keys());
-
-  const clusterRef = React.useRef<{ [key: string]: ClusterAndMarker }>({});
-  const getClusterAndMarker = (focusedGeoLocation: string) =>
-    clusterRef.current[focusedGeoLocation];
-  const map = useMap();
+  const geoLocations = Array.from(dateDistsByGeoLocation.keys());
 
   // Reset cluster ref when date changed to avoid overlaps with same geo locations
-  React.useEffect(() => {
-    clusterRef.current = {};
-    const keys = Array.from(selectedDateByGeoLocation.keys());
-    for (const geoLocationKey of keys) {
-      const distributions = selectedDateByGeoLocation.get(geoLocationKey);
-      if (!distributions || distributions.length === 0) continue;
-      clusterRef.current[geoLocationKey] = {
-        geoLocation: distributions[0].geoLocation,
-        cluster: null,
-        distributionIds: distributions.map((d) => d.id),
-        marker: null,
-      };
-    }
-  }, [selectedDateByGeoLocation]);
+  const { getMapEntry, tryFocus, onIconCreate, getFlagRef } = useMarkerRegistry(
+    {
+      data: selectedDateDists,
+      getGeoLocation,
+    },
+  );
 
   // TODO: not sure if necessary
   // Could avoid problems when the layer is rerendered(?)
@@ -88,54 +67,8 @@ export const DistributionsLayer = ({
 
   // Go to marker after distribution has been selected
   React.useEffect(() => {
-    if (!focusedGeoLocation) return;
-
-    const clusterAndMarker = getClusterAndMarker(focusedGeoLocation);
-    if (clusterAndMarker?.marker) {
-      const { lat, lng } = clusterAndMarker.marker.getLatLng();
-      map.setView(
-        // Slight offset to avoid overlap with the current location marker
-        { lat: lat - 0.00005, lng: lng - 0.00005 },
-        map.getMaxZoom(),
-        { animate: false },
-      );
-    }
-    setTimeout(() => {
-      const isRendered = map.hasLayer(clusterAndMarker.marker as L.Layer);
-      if (!isRendered) {
-        clusterAndMarker?.cluster?.spiderfy();
-      }
-      clusterAndMarker?.marker?.openPopup();
-    }, 400);
-
-    // const spiderfyAndOpen = () => {
-    //   const clusterAndMarker = getMarkerAndCluster(focusedGeoLocation);
-    //   const isRendered = map.hasLayer(clusterAndMarker.marker as L.Layer);
-    //   if (!isRendered) {
-    //     clusterAndMarker?.cluster?.spiderfy();
-    //   }
-    //   clusterAndMarker?.marker?.openPopup();
-    // };
-
-    // const clusterAndMarker = getMarkerAndCluster(focusedGeoLocation);
-    // if (clusterAndMarker?.marker) {
-    //   const { lat, lng } = clusterAndMarker.marker.getLatLng();
-    //   map.setView(
-    //     // Slight offset to avoid overlap with the current location marker
-    //     { lat: lat - 0.00005, lng: lng - 0.00005 },
-    //     map.getMaxZoom(),
-    //     { animate: false },
-    //   );
-    // }
-
-    // setTimeout(() => {
-    //   spiderfyAndOpen();
-    // }, 400);
-
-    // setTimeout(() => {
-    //   spiderfyAndOpen();
-    // }, 600);
-  }, [focusedGeoLocation, map]);
+    focusedGeoLocation && tryFocus(focusedGeoLocation);
+  }, [focusedGeoLocation, tryFocus]);
 
   const clusterOptions = React.useMemo<MarkerClusterGroupProps>(
     () => ({
@@ -156,8 +89,11 @@ export const DistributionsLayer = ({
       zoomToBoundsOnClick: true,
       spiderfyDistanceMultiplier: 1.5,
       iconCreateFunction: (cluster) => {
-        const childMarkers = cluster.getAllChildMarkers();
+        // Let the marker registry handle cluster and marker registrations
+        onIconCreate(cluster);
 
+        // Collect total supplied client count to display in the cluster icon
+        const childMarkers = cluster.getAllChildMarkers();
         const div = document.createElement("div");
         const span = document.createElement("span");
         div.appendChild(span);
@@ -167,21 +103,10 @@ export const DistributionsLayer = ({
 
         for (const childMarker of childMarkers) {
           const childLatLng = childMarker.getLatLng();
-
-          const childGeoLocationKey = JSON.stringify(childLatLng);
-          const clusterAndMarker = clusterRef.current[childGeoLocationKey];
+          const clusterAndMarker = getMapEntry(childLatLng);
           if (!clusterAndMarker) continue;
-
-          // Update cluster and marker as safe guard in case anything changed
-          clusterAndMarker.cluster = cluster;
-          clusterAndMarker.marker = childMarker;
-
-          // Collect total supplied client count to display in the cluster icon
-          const dists = clusterAndMarker.distributionIds.map((id) =>
-            distributions?.find((d) => d.id === id),
-          );
           const clientCount = Array.from(
-            groupBy(dists, (d) => d?.client.id).keys(),
+            groupBy(clusterAndMarker.data, (d) => d?.client.id).keys(),
           ).length;
           totalChildCount += clientCount;
         }
@@ -206,13 +131,13 @@ export const DistributionsLayer = ({
         clusterclick: onClusterClick,
       },
     }),
-    [distributions, onClusterClick],
+    [getMapEntry, onClusterClick, onIconCreate],
   );
 
   return (
     <MarkerClusterGroup {...clusterOptions}>
-      {keys.map((geoLocationKey) => {
-        const distributions = selectedDateByGeoLocation.get(geoLocationKey);
+      {geoLocations.map((geoLocation) => {
+        const distributions = dateDistsByGeoLocation.get(geoLocation);
         if (!distributions || distributions.length === 0) return null;
 
         const clientCount = Array.from(
@@ -224,15 +149,9 @@ export const DistributionsLayer = ({
             colorSet={colorSets.RED}
             count={clientCount}
             distributions={distributions}
-            key={geoLocationKey}
-            ref={(m) => {
-              const clm = clusterRef.current[geoLocationKey];
-              if (!clm) return;
-              clm.marker = m;
-              if (hasParent(m) && isCluster(m.__parent)) {
-                clm.cluster = m.__parent;
-              }
-            }}
+            key={JSON.stringify(geoLocation)}
+            // Set marker and cluster in registry to be able to open popup and spiderfy later
+            ref={getFlagRef(geoLocation)}
           />
         );
       })}
