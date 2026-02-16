@@ -32,7 +32,7 @@ type MapPanelProps = {
   mapRef: React.RefObject<L.Map>;
   selectedDate: Date;
   distributions?: Array<Distribution>;
-  focusedGeoLocation?: string;
+  focusedGeoLocation?: GeoLocation;
   resetFocusedGeoLocation: () => void;
 };
 export const MapPanel = ({
