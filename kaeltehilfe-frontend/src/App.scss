@@ -4,21 +4,11 @@
 }
 
 .brand {
-  height: mantine.rem(70px);
+  height: mantine.rem(80px);
   display: flex;
   align-items: anchor-center;
   gap: mantine.rem(12px);
   margin-left: mantine.rem(24px);
-
-  svg {
-    margin-bottom: mantine.rem(4px);
-  }
-
-  .company {
-    font-family: "Inter Variable";
-    font-size: mantine.rem(32px);
-    font-weight: 100;
-  }
 }
 
 .user-menu {
