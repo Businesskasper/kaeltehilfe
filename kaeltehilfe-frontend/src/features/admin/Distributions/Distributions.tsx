@@ -65,6 +65,10 @@ export const Distributions = () => {
       AggregatedCell: ({ cell }) => cell.getValue() as number,
     },
     {
+      accessorKey: "locationName",
+      header: "Ort",
+    },
+    {
       id: "timestamp",
       header: "Zeitstempel",
       accessorFn: ({ timestamp }) => formatDateTime(timestamp),
