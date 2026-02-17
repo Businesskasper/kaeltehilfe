@@ -53,7 +53,7 @@ export const Clients = () => {
 
   const exportConfig: ExportConfig<Client> = {
     fileName: () =>
-      `KB-Klienten-${new Date().toLocaleDateString().replace(".", "_")}.xlsx`,
+      `KH-Klienten-${new Date().toLocaleDateString().replace(".", "_")}.xlsx`,
     transformators: {
       gender: {
         columnName: "Geschlecht",
@@ -71,7 +71,7 @@ export const Clients = () => {
 
   return (
     <>
-      <Title size="h1" mb="lg">
+      <Title size="h2" mb="lg">
         Klienten
       </Title>
 

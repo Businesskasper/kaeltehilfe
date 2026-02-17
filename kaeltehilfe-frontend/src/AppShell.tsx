@@ -1,4 +1,9 @@
-import { Burger, Group, AppShell as Mantine_AppShell } from "@mantine/core";
+import {
+  Burger,
+  Group,
+  AppShell as Mantine_AppShell,
+  rem,
+} from "@mantine/core";
 import { useDisclosure, useViewportSize } from "@mantine/hooks";
 import React from "react";
 import { Outlet } from "react-router-dom";
@@ -13,21 +18,22 @@ export const AppShell = ({ navigation }: { navigation?: React.ReactNode }) => {
 
   return (
     <Mantine_AppShell
-      header={{ height: 80 }}
+      header={{ height: rem(80) }}
       navbar={{
         width: 300,
         breakpoint: "md",
         collapsed: { mobile: !opened, desktop: !opened },
       }}
       padding="md"
-      // padding={0}
     >
       <Mantine_AppShell.Header h="0" pos="relative" withBorder={false}>
         <Group
           gap={isSmall ? 0 : undefined}
           wrap="nowrap"
           px="md"
+          pt="md"
           justify="space-between"
+          h={rem(80)}
         >
           <Group className="burger-menu">
             <Burger opened={opened} onClick={toggle} size="sm" />

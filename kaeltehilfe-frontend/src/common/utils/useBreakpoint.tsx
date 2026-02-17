@@ -24,3 +24,10 @@ export const useBreakpoint = (): Breakpoint => {
 // md	62em	992px
 // lg	75em	1200px
 // xl	88em	1408px
+
+export const useIsMobile = () => {
+  const breakpoint = useBreakpoint();
+  const isMobile = breakpoint === "BASE" || breakpoint === "XS";
+
+  return isMobile;
+};

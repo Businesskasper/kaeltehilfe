@@ -1,0 +1,34 @@
+.numbered-distribution-marker {
+    div {
+
+        position: relative;
+
+        .count {
+            display: block;
+            color: var(--mantine-color-bright);
+            position: absolute;
+            top: 50%;
+            right: 50%;
+            transform: translate(50%, -80%);
+            font-size: mantine.rem(18);
+            font-family: var(--mantine-font-family);
+            text-align: center;
+            font-weight: 200;
+        }
+    }
+}
+
+.marker-cluster {
+    color: var(--mantine-color-dark-text);
+}
+
+.leaflet-popup-content-wrapper {
+    background-color: var(--mantine-color-body);
+    opacity: 1;
+    color: var(--mantine-color-text);
+    border-radius: 5px;
+}
+
+.leaflet-popup-tip {
+    background-color: var(--mantine-color-body);
+}

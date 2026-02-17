@@ -69,7 +69,7 @@ export const Busses = () => {
 
   const exportConfig: ExportConfig<Bus> = {
     fileName: () =>
-      `KB-Schichtträger-${new Date()
+      `KH-Schichtträger-${new Date()
         .toLocaleDateString()
         .replace(".", "_")}.xlsx`,
   };
@@ -89,7 +89,7 @@ export const Busses = () => {
 
   return (
     <>
-      <Title size="h1" mb="lg">
+      <Title size="h2" mb="lg">
         Schichtträger
       </Title>
 
