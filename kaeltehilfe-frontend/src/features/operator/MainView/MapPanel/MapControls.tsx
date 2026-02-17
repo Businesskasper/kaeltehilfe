@@ -140,7 +140,7 @@ export const LocationTracker = ({
   }, [geoLocationLat, geoLocationLng, bubbleGeoLocation]);
 
   return (
-    <ButtonContainer left={rem(13)} top={rem(90)}>
+    <ButtonContainer left={rem(13)} top={rem(130)}>
       <ActionIcon
         onClick={onClick}
         variant="default"

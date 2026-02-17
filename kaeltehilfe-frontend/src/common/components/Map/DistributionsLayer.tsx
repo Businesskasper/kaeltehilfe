@@ -24,6 +24,7 @@ type DistributionsLayerProps = {
   onClusterClick?: () => void;
   focusedGeoLocation?: GeoLocation;
   resetFocusedGeoLocation: () => void;
+  onFitBounds?: () => void;
 };
 
 const getGeoLocation = (d: Distribution) => d.geoLocation;
@@ -33,6 +34,7 @@ export const DistributionsLayer = ({
   distributions,
   focusedGeoLocation,
   resetFocusedGeoLocation,
+  onFitBounds,
 }: DistributionsLayerProps) => {
   const dateDistsByGeoLocation = React.useMemo(
     () => groupBy(distributions, getGeoLocation),
@@ -125,7 +127,10 @@ export const DistributionsLayer = ({
 
   return (
     <>
-      <FitBoundsButton registry={registryRef.current} />
+      <FitBoundsButton
+        registry={registryRef.current}
+        onFitBounds={onFitBounds}
+      />
       <MarkerClusterGroup {...clusterOptions}>
         {geoLocations.map((geoLocation) => {
           const distributions = dateDistsByGeoLocation.get(geoLocation);

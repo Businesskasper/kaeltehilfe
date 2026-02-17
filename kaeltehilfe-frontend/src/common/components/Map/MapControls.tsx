@@ -168,8 +168,12 @@ export const ZoomButtons = ({ lat, lng }: Partial<GeoLocation>) => {
 
 type FitBoundsButtonProps = {
   registry: KeyedMarkerRegistry<Distribution>;
+  onFitBounds?: () => void;
 };
-export const FitBoundsButton = ({ registry }: FitBoundsButtonProps) => {
+export const FitBoundsButton = ({
+  registry,
+  onFitBounds,
+}: FitBoundsButtonProps) => {
   const map = useMap();
 
   const onClick = React.useCallback(() => {
@@ -187,13 +191,15 @@ export const FitBoundsButton = ({ registry }: FitBoundsButtonProps) => {
     );
 
     map.fitBounds(bounds, {
-      padding: [50, 50],
+      padding: [60, 60],
+      paddingTopLeft: new L.Point(110, 110),
       //   maxZoom: 16,
     });
-  }, [registry, map]);
+    onFitBounds && onFitBounds();
+  }, [registry, map, onFitBounds]);
 
   return (
-    <ButtonContainer top={rem(80)} left={rem(13)}>
+    <ButtonContainer top={rem(90)} left={rem(13)}>
       <ActionIcon
         title="Karte an Ausgaben ausrichten"
         onClick={onClick}

@@ -45,7 +45,7 @@ export const AppShell = ({ navigation }: { navigation?: React.ReactNode }) => {
         </Group>
       </Mantine_AppShell.Header>
       <Mantine_AppShell.Navbar p="md">{navigation}</Mantine_AppShell.Navbar>
-      <Mantine_AppShell.Main id="main">
+      <Mantine_AppShell.Main mah="100vh" id="main">
         <Outlet />
       </Mantine_AppShell.Main>
     </Mantine_AppShell>

@@ -126,6 +126,10 @@ export const MapPanel = ({
     }
   }, [focusedGeoLocation, setStoredState]);
 
+  const onFitBounds = React.useCallback(() => {
+    setIsTracking(false);
+  }, [setIsTracking]);
+
   return (
     <MapContainer
       center={storedState.center}
@@ -171,6 +175,7 @@ export const MapPanel = ({
         onClusterClick={() => setIsTracking(false)}
         focusedGeoLocation={focusedGeoLocation}
         resetFocusedGeoLocation={resetFocusedGeoLocation}
+        onFitBounds={onFitBounds}
       />
     </MapContainer>
   );
