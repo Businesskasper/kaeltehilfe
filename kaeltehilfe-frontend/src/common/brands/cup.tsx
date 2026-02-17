@@ -1,4 +1,4 @@
-import { useMantineColorScheme } from "@mantine/core";
+import { useComputedColorScheme } from "@mantine/core";
 
 import "./cup.scss";
 
@@ -46,7 +46,7 @@ const cupLight = () => {
 };
 
 export const Cup = ({ className }: { className?: string }) => {
-  const { colorScheme } = useMantineColorScheme();
+  const colorScheme = useComputedColorScheme();
   return (
     <div className={className}>
       {colorScheme === "dark" ? cupLight() : cupDark()}

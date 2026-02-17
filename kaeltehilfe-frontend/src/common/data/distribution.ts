@@ -2,7 +2,6 @@ import {
   InfiniteData,
   useInfiniteQuery,
   useMutation,
-  useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
 import React from "react";
@@ -159,42 +158,42 @@ export const useDistributionsPaginated = () => {
   return { queryDistributionsPaginated, invalidate };
 };
 
-type DistributionQueryParams = { from: Date; to: Date };
-export const useDistribtions = ({ from, to }: DistributionQueryParams) => {
-  const httpGet = getBaseQuery<Distribution>(`/distributions`);
+// type DistributionQueryParams = { from: Date; to: Date };
+// export const useDistribtions = ({ from, to }: DistributionQueryParams) => {
+//   const httpGet = getBaseQuery<Distribution>(`/distributions`);
 
-  const queryClient = useQueryClient();
+//   const queryClient = useQueryClient();
 
-  const query = useQuery<
-    Array<Distribution>,
-    Error,
-    Array<Distribution>,
-    ["distributions", string, string]
-  >(
-    {
-      queryKey: ["distributions", from.toISOString(), to.toISOString()],
-      queryFn: async ({ signal }) => await httpGet(signal, { from, to }),
-      refetchOnWindowFocus: "always",
-      refetchOnReconnect: "always",
-    },
-    queryClient,
-  );
+//   const query = useQuery<
+//     Array<Distribution>,
+//     Error,
+//     Array<Distribution>,
+//     ["distributions", string, string]
+//   >(
+//     {
+//       queryKey: ["distributions", from.toISOString(), to.toISOString()],
+//       queryFn: async ({ signal }) => await httpGet(signal, { from, to }),
+//       refetchOnWindowFocus: "always",
+//       refetchOnReconnect: "always",
+//     },
+//     queryClient,
+//   );
 
-  const invalidate = () => {
-    queryClient.invalidateQueries({
-      queryKey: ["distributions", from.toISOString(), to.toISOString()],
-      refetchType: "all",
-      stale: true,
-      type: "all",
-    });
-    queryClient.refetchQueries();
-  };
+//   const invalidate = () => {
+//     queryClient.invalidateQueries({
+//       queryKey: ["distributions", from.toISOString(), to.toISOString()],
+//       refetchType: "all",
+//       stale: true,
+//       type: "all",
+//     });
+//     queryClient.refetchQueries();
+//   };
 
-  return {
-    query,
-    invalidate,
-  };
-};
+//   return {
+//     query,
+//     invalidate,
+//   };
+// };
 
 // // TODO: not tested
 // export const useDistributionsByClients = (clientIds: number[]) => {

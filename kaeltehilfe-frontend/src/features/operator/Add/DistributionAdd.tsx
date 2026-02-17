@@ -125,11 +125,13 @@ export const DistributionAdd = () => {
   // Initialize locationName field
   React.useEffect(() => {
     if (!resolvedAddress) return;
-    const locationName = `${resolvedAddress.street}${
-      resolvedAddress.housenumber ? ` ${resolvedAddress.housenumber}` : ""
-    }, ${resolvedAddress.postcode ? ` ${resolvedAddress.postcode}` : ""} ${
-      resolvedAddress.city ? ` ${resolvedAddress.city}` : ""
-    }`;
+    let locationName = `${resolvedAddress.street}${resolvedAddress.housenumber ? ` ${resolvedAddress.housenumber}` : ""}`;
+    if (resolvedAddress.postcode || resolvedAddress.city) {
+      locationName += `, ${resolvedAddress.postcode ? ` ${resolvedAddress.postcode}` : ""}${
+        resolvedAddress.city ? ` ${resolvedAddress.city}` : ""
+      }`;
+    }
+
     form.setFieldValue("locationName", locationName);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resolvedAddress]);

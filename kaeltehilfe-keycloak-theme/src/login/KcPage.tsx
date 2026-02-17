@@ -104,7 +104,7 @@ function KcPageContextualized(props: { kcContext: KcContext }) {
 
 const loginClasses = {
     kcHtmlClass: "",
-    kcBodyClass: "kb-template-body",
+    kcBodyClass: "kh-template-body",
     kcInfoAreaWrapperClass: "login-info-wrapper",
     kcInfoAreaClass: "",
     kcSignUpClass: "signup"
@@ -115,7 +115,7 @@ const loginClasses = {
 
 const x509Classes = {
     kcHtmlClass: "",
-    kcBodyClass: "kb-template-body"
+    kcBodyClass: "kh-template-body"
     // kcInfoAreaWrapperClass: "login-info-wrapper",
     // kcInfoAreaClass: "",
     // kcSignUpClass: "signup"
@@ -126,7 +126,7 @@ const x509Classes = {
 
 const resetPasswordClasses = {
     kcHtmlClass: "",
-    kcBodyClass: "kb-template-body"
+    kcBodyClass: "kh-template-body"
 } satisfies {
     [key in ClassKey]?: string;
 };

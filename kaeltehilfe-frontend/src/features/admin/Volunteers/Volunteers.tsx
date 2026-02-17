@@ -72,7 +72,7 @@ export const Volunteers = () => {
 
   const exportConfig: ExportConfig<Volunteer> = {
     fileName: () =>
-      `KB-Freiwillige-${new Date()
+      `KH-Freiwillige-${new Date()
         .toLocaleDateString()
         .replace(".", "_")}.xlsx`,
     transformators: {
@@ -103,7 +103,7 @@ export const Volunteers = () => {
 
   return (
     <>
-      <Title size="h1" mb="lg">
+      <Title size="h2" mb="lg">
         Freiwillige
       </Title>
 
