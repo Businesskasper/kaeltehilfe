@@ -1,3 +1,5 @@
+import "./Map.scss";
+
 type DistributionMarkerProps = {
   height?: number | string;
   width?: number | string;

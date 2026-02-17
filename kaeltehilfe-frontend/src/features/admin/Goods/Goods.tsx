@@ -85,7 +85,7 @@ export const Goods = () => {
 
   const exportConfig: ExportConfig<Good> = {
     fileName: () =>
-      `KB-Gueter-${new Date().toLocaleDateString().replace(".", "_")}.xlsx`,
+      `KH-Gueter-${new Date().toLocaleDateString().replace(".", "_")}.xlsx`,
     transformators: {
       goodType: {
         columnName: "Typ",
@@ -114,7 +114,7 @@ export const Goods = () => {
 
   return (
     <>
-      <Title size="h1" mb="lg">
+      <Title size="h2" mb="lg">
         Güter
       </Title>
 

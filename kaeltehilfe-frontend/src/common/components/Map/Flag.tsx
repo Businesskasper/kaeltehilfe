@@ -3,6 +3,8 @@ import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { Marker } from "react-leaflet";
 
+import "./Map.scss";
+
 type FlagProps = {
   lat: number;
   lng: number;

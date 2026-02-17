@@ -1,8 +1,8 @@
 import { TextInput } from "@mantine/core";
 import { MapContainer, TileLayer } from "react-leaflet";
+import { PlusMarker } from "../../../common/components/Map";
+import { Flag } from "../../../common/components/Map/Flag";
 import { GeoLocation } from "../../../common/data";
-import { Flag } from "../shared/Flag";
-import { PlusMarker } from "../shared/Marker";
 import { useDistributionFormContext } from "./DistributionFormContext";
 
 export const FormLocation = () => {

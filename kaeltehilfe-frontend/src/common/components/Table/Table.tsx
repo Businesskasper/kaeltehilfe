@@ -89,6 +89,7 @@ type Props<T extends Record<string, any>> = {
   enableGrouping?: boolean;
   hideTopToolbarActions?: boolean;
   disablePagination?: boolean;
+  renderRowActionMenuItems?: MRT_TableOptions<T>["renderRowActionMenuItems"];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,6 +112,7 @@ export const Table = <T extends Record<string, any>>({
   enableGrouping,
   hideTopToolbarActions,
   disablePagination,
+  renderRowActionMenuItems,
 }: Props<T>) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const getRowId = React.useCallback(
@@ -218,6 +220,8 @@ export const Table = <T extends Record<string, any>>({
     onGroupingChange: setGrouping,
     enablePagination: !disablePagination,
     enableBottomToolbar: !disablePagination,
+    enableRowActions: !!renderRowActionMenuItems,
+    renderRowActionMenuItems,
   });
 
   React.useEffect(() => {

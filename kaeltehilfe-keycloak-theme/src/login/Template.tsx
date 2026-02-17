@@ -137,7 +137,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
     );
 
     return (
-        <Card className={clsx({ "kb-template-card": true, "full-width": isMobile })} padding="md" radius="md" withBorder={!isMobile}>
+        <Card className={clsx({ "kh-template-card": true, "full-width": isMobile })} padding="md" radius="md" withBorder={!isMobile}>
             <Card.Section withBorder inheritPadding py="md">
                 {displayRequiredFields ? (
                     <div className={kcClsx("kcContentWrapperClass")}>

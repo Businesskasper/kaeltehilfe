@@ -56,7 +56,7 @@ export const Admins = () => {
 
   const exportConfig: ExportConfig<AdminLogin> = {
     fileName: () =>
-      `KB-Anmeldungen-${new Date()
+      `KH-Anmeldungen-${new Date()
         .toLocaleDateString()
         .replace(".", "_")}.xlsx`,
   };
@@ -125,7 +125,7 @@ export const Admins = () => {
 
   return (
     <>
-      <Title size="h1" mb="lg">
+      <Title size="h2" mb="lg">
         Admin-Logins
       </Title>
 

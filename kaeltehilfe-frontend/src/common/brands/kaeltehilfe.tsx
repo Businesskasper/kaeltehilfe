@@ -122,8 +122,8 @@ export const KaeltehilfeIcon = ({
 export const Kaeltehilfe = ({ className }: { className?: string }) => {
   return (
     <div className={className}>
-      {/* <KaeltehilfeIcon height="50" /> */}
-      <KaeltehilfeIconWide height="50" />
+      <KaeltehilfeIcon height="50" />
+      {/* <KaeltehilfeIconWide height="50" /> */}
     </div>
   );
 };

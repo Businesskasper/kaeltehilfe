@@ -4,13 +4,12 @@ import { useMapEvent } from "react-leaflet";
 import MarkerClusterGroup, {
   MarkerClusterGroupProps,
 } from "react-leaflet-markercluster";
-import { Distribution, GeoLocation } from "../../../../common/data";
-import {
-  compareByDateOnly,
-  groupBy,
-  useMarkerRegistry,
-} from "../../../../common/utils";
-import { ExistingDistributionFlag } from "./MapControls";
+import { DistributionFlag, FitBoundsButton } from ".";
+import { Distribution, GeoLocation } from "../../data";
+import { groupBy } from "../../utils";
+import { useMarkerRegistry } from "./mapUtils";
+
+import "./Map.scss";
 
 const colorSets = {
   RED: ["#E46450", "#A51E0F"],
@@ -21,8 +20,7 @@ const colorSets = {
 } satisfies { [key: string]: [string, string] };
 
 type DistributionsLayerProps = {
-  selectedDate: Date;
-  distributions?: Array<Distribution>;
+  distributions: Array<Distribution>;
   onClusterClick?: () => void;
   focusedGeoLocation?: GeoLocation;
   resetFocusedGeoLocation: () => void;
@@ -33,31 +31,22 @@ const getGeoLocation = (d: Distribution) => d.geoLocation;
 export const DistributionsLayer = ({
   onClusterClick,
   distributions,
-  selectedDate,
   focusedGeoLocation,
   resetFocusedGeoLocation,
 }: DistributionsLayerProps) => {
-  const selectedDateDists = React.useMemo(
-    () =>
-      distributions?.filter(
-        (dist) => compareByDateOnly(dist.timestamp, selectedDate) === 0,
-      ) || [],
-    [distributions, selectedDate],
-  );
   const dateDistsByGeoLocation = React.useMemo(
-    () => groupBy(selectedDateDists, getGeoLocation),
-    [selectedDateDists],
+    () => groupBy(distributions, getGeoLocation),
+    [distributions],
   );
 
   const geoLocations = Array.from(dateDistsByGeoLocation.keys());
 
   // Reset cluster ref when date changed to avoid overlaps with same geo locations
-  const { getMapEntry, tryFocus, onIconCreate, getFlagRef } = useMarkerRegistry(
-    {
-      data: selectedDateDists,
+  const { getMapEntry, tryFocus, onIconCreate, getFlagRef, registryRef } =
+    useMarkerRegistry({
+      data: distributions,
       getGeoLocation,
-    },
-  );
+    });
 
   // TODO: not sure if necessary
   // Could avoid problems when the layer is rerendered(?)
@@ -98,19 +87,19 @@ export const DistributionsLayer = ({
         const span = document.createElement("span");
         div.appendChild(span);
 
-        let totalChildCount = 0;
-        let className = "marker-cluster marker-cluster-";
-
+        const totalSuppliedClientIds = new Array<number>();
         for (const childMarker of childMarkers) {
           const childLatLng = childMarker.getLatLng();
           const clusterAndMarker = getMapEntry(childLatLng);
-          if (!clusterAndMarker) continue;
-          const clientCount = Array.from(
-            groupBy(clusterAndMarker.data, (d) => d?.client.id).keys(),
-          ).length;
-          totalChildCount += clientCount;
+          totalSuppliedClientIds.push(
+            ...(clusterAndMarker?.data || []).map((d) => d.client.id),
+          );
         }
+        const totalChildCount = Array.from(
+          new Set(totalSuppliedClientIds),
+        ).length;
 
+        let className = "marker-cluster marker-cluster-";
         if (totalChildCount < 3) {
           className += "small";
         } else if (totalChildCount < 10) {
@@ -135,26 +124,29 @@ export const DistributionsLayer = ({
   );
 
   return (
-    <MarkerClusterGroup {...clusterOptions}>
-      {geoLocations.map((geoLocation) => {
-        const distributions = dateDistsByGeoLocation.get(geoLocation);
-        if (!distributions || distributions.length === 0) return null;
+    <>
+      <FitBoundsButton registry={registryRef.current} />
+      <MarkerClusterGroup {...clusterOptions}>
+        {geoLocations.map((geoLocation) => {
+          const distributions = dateDistsByGeoLocation.get(geoLocation);
+          if (!distributions || distributions.length === 0) return null;
 
-        const clientCount = Array.from(
-          groupBy(distributions, (d) => d.client.id).keys(),
-        ).length;
+          const clientCount = Array.from(
+            groupBy(distributions, (d) => d.client.id).keys(),
+          ).length;
 
-        return (
-          <ExistingDistributionFlag
-            colorSet={colorSets.RED}
-            count={clientCount}
-            distributions={distributions}
-            key={JSON.stringify(geoLocation)}
-            // Set marker and cluster in registry to be able to open popup and spiderfy later
-            ref={getFlagRef(geoLocation)}
-          />
-        );
-      })}
-    </MarkerClusterGroup>
+          return (
+            <DistributionFlag
+              colorSet={colorSets.RED}
+              count={clientCount}
+              distributions={distributions}
+              key={JSON.stringify(geoLocation)}
+              // Set marker and cluster in registry to be able to open popup and spiderfy later
+              ref={getFlagRef(geoLocation)}
+            />
+          );
+        })}
+      </MarkerClusterGroup>
+    </>
   );
 };

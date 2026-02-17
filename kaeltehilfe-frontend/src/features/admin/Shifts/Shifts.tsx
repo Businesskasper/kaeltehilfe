@@ -116,7 +116,7 @@ export const Shifts = () => {
 
   const exportConfig: ExportConfig<Shift> = {
     fileName: () =>
-      `KB-Schichten-${new Date().toLocaleDateString().replace(".", "_")}.xlsx`,
+      `KH-Schichten-${new Date().toLocaleDateString().replace(".", "_")}.xlsx`,
     manualColumns: volunteerExportColumns,
   };
 
@@ -139,7 +139,7 @@ export const Shifts = () => {
 
   return (
     <>
-      <Title size="h1" mb="lg">
+      <Title size="h2" mb="lg">
         Schichten
       </Title>
 

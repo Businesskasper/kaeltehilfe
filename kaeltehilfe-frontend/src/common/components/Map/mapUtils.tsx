@@ -2,8 +2,8 @@ import { Marker } from "leaflet";
 import React from "react";
 import { useMap } from "react-leaflet";
 import { MarkerClusterGroupProps } from "react-leaflet-markercluster";
-import { GeoLocation } from "../data";
-import { groupBy } from "./groupBy";
+import { GeoLocation } from "../../data";
+import { groupBy } from "../../utils";
 
 type MarkerClusterGroupIconCreateFunctionCluster = Parameters<
   Exclude<MarkerClusterGroupProps["iconCreateFunction"], undefined>
@@ -26,7 +26,8 @@ type MarkerRegistryEntry<TData> = {
   marker: Marker | null;
   cluster: Cluster | null;
 };
-type KeyedMarkerRegistry<TData> = {
+
+export type KeyedMarkerRegistry<TData> = {
   [key: string]: MarkerRegistryEntry<TData>;
 };
 
@@ -128,14 +129,12 @@ export const useMarkerRegistry = <TData,>({
 
       for (const childMarker of childMarkers) {
         const childLatLng = childMarker.getLatLng();
-        console.log("set for", childLatLng);
         // Update cluster and marker as safe guard in case anything changed
         trySetCluster(childLatLng, cluster);
         trySetMarker(childLatLng, childMarker);
-        console.log(getMapEntry(childLatLng));
       }
     },
-    [getMapEntry, trySetCluster, trySetMarker],
+    [trySetCluster, trySetMarker],
   );
 
   const getFlagRef = React.useCallback(

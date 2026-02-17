@@ -1,3 +1,5 @@
+import "./Map.scss";
+
 type PlusMarkerProps = {
   height?: number | string;
   width?: number | string;

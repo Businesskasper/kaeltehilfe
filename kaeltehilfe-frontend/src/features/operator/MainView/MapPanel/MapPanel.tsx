@@ -3,14 +3,13 @@ import { IconExclamationMark } from "@tabler/icons-react";
 import React from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
+import {
+  DistributionsLayer,
+  ZoomButtons,
+} from "../../../../common/components/Map";
 import { Distribution, GeoLocation } from "../../../../common/data";
 import { compareByDateOnly, useBrowserStorage } from "../../../../common/utils";
-import { DistributionsLayer } from "./DistributionsLayer";
-import {
-  LocationTracker,
-  StaticAddDistributionFlag,
-  ZoomButtons,
-} from "./MapControls";
+import { LocationTracker, StaticAddDistributionFlag } from "./MapControls";
 
 const STORAGE_KEY_MAP_STATE = "mapView_state";
 
@@ -42,6 +41,14 @@ export const MapPanel = ({
   focusedGeoLocation,
   resetFocusedGeoLocation,
 }: MapPanelProps) => {
+  const distributionsToDisplay = React.useMemo(
+    () =>
+      (distributions || []).filter(
+        (dist) => compareByDateOnly(dist.timestamp, selectedDate) === 0,
+      ),
+    [distributions, selectedDate],
+  );
+
   // Use browser storage for map state persistence
   const [storedState, setStoredState] = useBrowserStorage<MapState>(
     "SESSION",
@@ -160,8 +167,7 @@ export const MapPanel = ({
         initialMapZoom={storedState.zoom}
       />
       <DistributionsLayer
-        distributions={distributions}
-        selectedDate={selectedDate}
+        distributions={distributionsToDisplay}
         onClusterClick={() => setIsTracking(false)}
         focusedGeoLocation={focusedGeoLocation}
         resetFocusedGeoLocation={resetFocusedGeoLocation}

@@ -5,7 +5,7 @@ type SetValue<T> = Dispatch<SetStateAction<T>>;
 export const useBrowserStorage = <T,>(
   type: "SESSION" | "LOCAL",
   key: string,
-  initialValue: T,
+  initialValueGetter: T | (() => T),
   readTransform?: (obj: T) => T,
 ): [T, Dispatch<SetStateAction<T>>] => {
   const readValue = useCallback(() => {
@@ -14,7 +14,10 @@ export const useBrowserStorage = <T,>(
 
     let parsedValue: T;
     if (storedValue === null) {
-      parsedValue = initialValue;
+      parsedValue =
+        typeof initialValueGetter === "function"
+          ? (initialValueGetter as () => T)()
+          : initialValueGetter;
     } else {
       try {
         parsedValue = JSON.parse(storedValue) as T;
@@ -24,7 +27,7 @@ export const useBrowserStorage = <T,>(
     }
 
     return readTransform ? readTransform(parsedValue) : parsedValue;
-  }, [key, initialValue, type, readTransform]);
+  }, [key, initialValueGetter, type, readTransform]);
 
   const writeValue = useCallback(
     (value: T) => {

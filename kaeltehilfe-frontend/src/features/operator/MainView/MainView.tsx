@@ -1,4 +1,3 @@
-import { useComputedColorScheme } from "@mantine/core";
 import {
   useDebouncedValue,
   useOrientation,
@@ -6,17 +5,21 @@ import {
 } from "@mantine/hooks";
 import { Map } from "leaflet";
 import React from "react";
-import { Group, Panel, Separator } from "react-resizable-panels";
-import { Distribution, GeoLocation, useDistribtions } from "../../../common/data";
+import { Group, Panel } from "react-resizable-panels";
 import {
-  formatDate,
-  useBrowserStorage,
-  useCachedLayout,
-} from "../../../common/utils";
+  Distribution,
+  GeoLocation,
+  useDistributions,
+} from "../../../common/data";
+import { formatDate, useBrowserStorage } from "../../../common/utils";
 import { DetailsPanel } from "./DetailsPanel";
 import { MainControls } from "./MainControls";
 import { MapPanel } from "./MapPanel/MapPanel";
 
+import {
+  GroupSeparator,
+  useCachedLayout,
+} from "../../../common/components/Group";
 import "./MainView.scss";
 
 export const MapView = () => {
@@ -28,7 +31,6 @@ export const MapView = () => {
     orientationType === "landscape-secondary"
       ? "horizontal"
       : "vertical";
-  const colorScheme = useComputedColorScheme();
 
   const [isDetailsOpen, setIsDetailsOpen] = useBrowserStorage(
     "SESSION",
@@ -75,8 +77,8 @@ export const MapView = () => {
   const [selectedDate, setSelectedDate] = React.useState<Date>(today);
 
   const {
-    query: { data: distributions },
-  } = useDistribtions({ from: queryFrom, to: today });
+    objs: { data: distributions },
+  } = useDistributions({ from: queryFrom, to: today });
 
   const [focusedGeoLocation, setFocusedDistributionId] =
     React.useState<GeoLocation>();
@@ -128,9 +130,7 @@ export const MapView = () => {
         </Panel>
         {isDetailsOpen && (
           <>
-            <Separator
-              className={`panel-divider ${groupOrientation} ${colorScheme}`}
-            />
+            <GroupSeparator orientation={groupOrientation} />
             <Panel
               collapsible
               defaultSize={30}

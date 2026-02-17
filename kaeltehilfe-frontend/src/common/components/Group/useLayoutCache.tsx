@@ -1,6 +1,6 @@
 import React from "react";
 import { Layout } from "react-resizable-panels";
-import { allStringsMatch, useBrowserStorage } from ".";
+import { allStringsMatch, useBrowserStorage } from "../../utils";
 
 type CachedLayout<TPanel extends string> = {
   panels: TPanel[];

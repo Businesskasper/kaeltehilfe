@@ -19,7 +19,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/de";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { Outlet } from "react-router-dom";
-import { classes, useBreakpoint } from "./common/utils";
+import { classes, useIsMobile } from "./common/utils";
 dayjs.extend(customParseFormat);
 
 function App() {
@@ -58,19 +58,25 @@ function App() {
   React.useEffect(() => {
     if (!auth || !isDev) return;
 
-    auth.events.addAccessTokenExpiring((a) => {
-      console.log("DEBUG: Access token is about to expire...", a);
+    auth.events.addAccessTokenExpiring(() => {
+      console.log("DEBUG: Access token is about to expire...");
     });
 
     auth.events.addAccessTokenExpired(() => {
       console.log("DEBUG: Access token has expired...");
       auth.signinSilent().catch((error) => {
         console.error("Silent sign-in failed", error);
+        // Redirect to login if silent login fails
+        // Prevents retry loop
+        auth.signinRedirect();
       });
     });
 
     auth.events.addSilentRenewError((error) => {
       console.error("Silent renew error:", error);
+      // Redirect to login if silent login fails
+      // Prevents retry loop
+      auth.signinRedirect();
     });
 
     auth.events.addUserLoaded((user) => {
@@ -99,8 +105,7 @@ function App() {
     }
   }, [isIphone]);
 
-  const breakpoint = useBreakpoint();
-  const isMobile = breakpoint === "BASE" || breakpoint === "XS";
+  const isMobile = useIsMobile();
 
   return (
     <React.StrictMode>

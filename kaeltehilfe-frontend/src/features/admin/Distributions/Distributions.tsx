@@ -1,146 +1,147 @@
-import { rem, Title } from "@mantine/core";
-import { DatePickerInput } from "@mantine/dates";
-import { useField } from "@mantine/form";
-import { MRT_ColumnDef } from "mantine-react-table";
-import React from "react";
-import { ExportConfig, Table } from "../../../common/components/Table/Table";
-import { Distribution, useDistributions } from "../../../common/data";
+import { Title } from "@mantine/core";
 import {
-  compareByDateOnly,
-  compareByDateTime,
-  formatDate,
-  formatDateTime,
-  toNormalizedDate,
-} from "../../../common/utils";
+  useDebouncedValue,
+  useOrientation,
+  useResizeObserver,
+} from "@mantine/hooks";
+import L from "leaflet";
+import React from "react";
+import { Group, Panel } from "react-resizable-panels";
+import {
+  GroupSeparator,
+  useCachedLayout,
+} from "../../../common/components/Group";
+import { GeoLocation, useDistributions } from "../../../common/data";
+import { toNormalizedDate, useBrowserStorage } from "../../../common/utils";
+import { DistributionsControls } from "./DistributionsControls";
+import { MapPanel } from "./MapPanel";
+import { TablePanel } from "./TablePanel";
+
+import "./Distributions.scss";
 
 export const Distributions = () => {
-  const today = toNormalizedDate(new Date()) || new Date();
-  const oneMonthBefore =
-    toNormalizedDate(new Date(today).setMonth(today.getMonth() - 1)) ||
-    new Date();
-  const rangeFilterField = useField<[Date | null, Date | null]>({
-    mode: "controlled",
-    initialValue: [oneMonthBefore, today],
+  const [rangeFilter, setRangeFilter] = React.useState<{
+    from: Date | null;
+    to: Date | null;
+  }>(() => {
+    const today = toNormalizedDate(new Date()) || new Date();
+    const oneMonthBefore =
+      toNormalizedDate(new Date(today).setMonth(today.getMonth() - 1)) ||
+      new Date();
+    return { from: oneMonthBefore, to: today };
   });
 
-  const rangeFilter = rangeFilterField.getValue();
-  const [from, to] = rangeFilter;
+  const { from, to } = rangeFilter;
   const fromStart = from ? toNormalizedDate(from) : undefined;
   const toEnd = to
     ? toNormalizedDate(new Date(to).setDate(to?.getDate() + 1))
     : undefined;
 
-  const {
-    objs: { data: distributions, isFetching, isFetched },
-    remove: { mutate: deleteDistribution, isPending: isDeleting },
-    put: { isPending: isPutting },
-  } = useDistributions({ from: fromStart || null, to: toEnd || null });
+  const distHook = useDistributions({
+    from: fromStart || null,
+    to: toEnd || null,
+  });
 
-  const columns: Array<MRT_ColumnDef<Distribution>> = [
-    {
-      id: "date",
-      header: "Datum",
-      accessorFn: ({ timestamp }) => formatDate(timestamp),
-      sortingFn: (a, b) => {
-        return compareByDateOnly(a.original.timestamp, b.original.timestamp);
-      },
-    },
-    {
-      accessorKey: "bus.registrationNumber",
-      header: "Schichtträger",
-    },
-    {
-      accessorKey: "client.name",
-      header: "Klient",
-    },
+  // const { type: orientationType } = useOrientation({
+  //   getInitialValueInEffect: false,
+  // });
+  // const groupOrientation =
+  //   orientationType === "landscape-primary" ||
+  //   orientationType === "landscape-secondary"
+  //     ? "horizontal"
+  //     : "vertical";
 
-    {
-      accessorKey: "good.name",
-      header: "Gut",
-    },
-    {
-      accessorKey: "quantity",
-      header: "Anzahl",
-      aggregationFn: "sum",
-      AggregatedCell: ({ cell }) => cell.getValue() as number,
-    },
-    {
-      accessorKey: "locationName",
-      header: "Ort",
-    },
-    {
-      id: "timestamp",
-      header: "Zeitstempel",
-      accessorFn: ({ timestamp }) => formatDateTime(timestamp),
-      sortingFn: (a, b) => {
-        return compareByDateTime(a.original.timestamp, b.original.timestamp);
-      },
-    },
-  ];
+  const { type: orientationType } = useOrientation({
+    getInitialValueInEffect: false,
+  });
 
-  const exportConfig: ExportConfig<Distribution> = {
-    fileName: () =>
-      `KB-Ausgaben-${new Date().toLocaleDateString().replace(".", "_")}.xlsx`,
-    transformators: {
-      bus: {
-        columnName: "Schichtträger",
-        transformFn: ({ bus }) => bus.registrationNumber || "",
-      },
-      client: {
-        columnName: "Klient",
-        transformFn: ({ client }) => client.name || "",
-      },
-      quantity: {
-        columnName: "Anzahl",
-        transformFn: ({ quantity }) => quantity?.toString() || "",
-      },
-
-      good: {
-        columnName: "Gut",
-        transformFn: ({ good }) => good.name || "",
-      },
-      timestamp: {
-        columnName: "Zeitstempel",
-        transformFn: ({ timestamp }) => formatDateTime(timestamp),
-      },
-    },
-  };
-
-  const handleDelete = React.useCallback(
-    (goods: Array<Distribution>) => {
-      goods.forEach((distribution) => deleteDistribution(distribution.id));
-    },
-    [deleteDistribution],
+  const [orientation, setOrientation] = useBrowserStorage<
+    "horizontal" | "vertical"
+  >("SESSION", "ADMIN_MAP_ORIENTATION", () =>
+    orientationType === "landscape-primary" ||
+    orientationType === "landscape-secondary"
+      ? "horizontal"
+      : "vertical",
   );
 
-  const isLoading = !isFetched && isFetching;
-  const isTableLoading = isLoading || isPutting || isDeleting;
+  const [isMapOpen, setIsMapOpen] = useBrowserStorage(
+    "SESSION",
+    "ADMIN_MAP_OPEN",
+    false,
+  );
 
+  const toggleMapOpen = React.useCallback(() => {
+    setIsMapOpen((open) => !open);
+  }, [setIsMapOpen]);
+
+  const mapRef = React.useRef<L.Map>(null);
+  const [ref, rect] = useResizeObserver();
+  const watchablePos = `${rect.top}:${rect.bottom}:${rect.left}:${rect.right}`;
+  const [debouncedRect] = useDebouncedValue(watchablePos, 200);
+  React.useEffect(() => {
+    mapRef?.current?.invalidateSize();
+  }, [debouncedRect]);
+
+  const { defaultLayout, onLayoutChanged } = useCachedLayout({
+    key: "admin-layout",
+    currentPanels: isMapOpen ? ["map-panel", "table-panel"] : ["table-panel"],
+    initialLayout: {
+      panels: ["map-panel", "table-panel"],
+      panelConfigs: { "map-panel": 50, "table-panel": 50 },
+    },
+  });
+
+  const [focusedGeoLocation, setFocusedGeoLocation] =
+    React.useState<GeoLocation>();
+  const resetFocusedGeoLocation = React.useCallback(() => {
+    setFocusedGeoLocation(undefined);
+  }, []);
+
+  console.log("orientation", orientation);
   return (
     <>
-      <Title size="h1" mb="lg">
+      <Title size="h2" mb="lg">
         Ausgaben
       </Title>
-      <DatePickerInput
-        {...rangeFilterField.getInputProps()}
-        label="Zeitraum"
-        w={rem(300)}
-        mb="sm"
-        type="range"
-        valueFormat="DD MMMM YYYY"
+      <DistributionsControls
+        rangeFilter={rangeFilter}
+        setRangeFilter={setRangeFilter}
+        toggleMapOpen={toggleMapOpen}
+        orientation={orientation}
+        setOrientation={setOrientation}
+        isMapOpen={isMapOpen}
       />
-      <Table
-        data={distributions || []}
-        isLoading={isTableLoading}
-        keyGetter="id"
-        columns={columns}
-        handleDelete={handleDelete}
-        exportConfig={exportConfig}
-        fillScreen
-        tableKey="distributions-overview"
-        defaultSorting={[{ id: "timestamp", desc: true }]}
-        enableGrouping
-      />
+      <Group
+        onLayoutChanged={onLayoutChanged}
+        defaultLayout={defaultLayout}
+        className="distributions-container"
+        orientation={orientation}
+      >
+        {isMapOpen && (
+          <>
+            <Panel
+              id="map-panel"
+              className="map-panel"
+              defaultSize={50}
+              elementRef={ref}
+            >
+              <MapPanel
+                distHook={distHook}
+                mapRef={mapRef}
+                focusedGeoLocation={focusedGeoLocation}
+                resetFocusedGeoLocation={resetFocusedGeoLocation}
+              />
+            </Panel>
+            <GroupSeparator orientation={orientation} />
+          </>
+        )}
+        <Panel id="table-panel" className="table-panel" defaultSize={50}>
+          <TablePanel
+            distHook={distHook}
+            setFocusedGeoLocation={setFocusedGeoLocation}
+          />
+        </Panel>
+      </Group>
     </>
   );
 };
