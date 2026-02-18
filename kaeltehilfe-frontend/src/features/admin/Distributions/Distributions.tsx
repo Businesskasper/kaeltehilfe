@@ -97,7 +97,6 @@ export const Distributions = () => {
     setFocusedGeoLocation(undefined);
   }, []);
 
-  console.log("orientation", orientation);
   return (
     <>
       <Title size="h2" mb="lg">

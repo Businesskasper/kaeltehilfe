@@ -1,4 +1,5 @@
-import { Menu } from "@mantine/core";
+import { Group, Menu, Text } from "@mantine/core";
+import { IconMap } from "@tabler/icons-react";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
 import { ExportConfig, Table } from "../../../common/components";
@@ -146,7 +147,10 @@ export const TablePanel = ({
               }
             }}
           >
-            Auf Karte zeigen
+            <Group>
+              <IconMap />
+              <Text>Auf der Karte zeigen</Text>
+            </Group>
           </Menu.Item>
         </>
       )}

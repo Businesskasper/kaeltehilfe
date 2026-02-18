@@ -213,6 +213,7 @@ export const Table = <T extends Record<string, any>>({
       className: fillScreen ? "container-fill-screen" : undefined,
     },
     enableColumnResizing: true,
+    // columnResizeMode: "onEnd",
     onColumnSizingChange: setColumnSizing,
     onColumnFiltersChange: setColumnFilters,
     onPaginationChange: setPagination,
