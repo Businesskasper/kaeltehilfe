@@ -52,6 +52,7 @@ export const MapPanel = ({
           distributions={distributions}
           focusedGeoLocation={focusedGeoLocation}
           resetFocusedGeoLocation={resetFocusedGeoLocation}
+          groupByDate
         />
       )}
     </MapContainer>

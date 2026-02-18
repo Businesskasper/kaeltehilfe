@@ -25,6 +25,7 @@ type DistributionsLayerProps = {
   focusedGeoLocation?: GeoLocation;
   resetFocusedGeoLocation: () => void;
   onFitBounds?: () => void;
+  groupByDate?: boolean;
 };
 
 const getGeoLocation = (d: Distribution) => d.geoLocation;
@@ -35,6 +36,7 @@ export const DistributionsLayer = ({
   focusedGeoLocation,
   resetFocusedGeoLocation,
   onFitBounds,
+  groupByDate,
 }: DistributionsLayerProps) => {
   const dateDistsByGeoLocation = React.useMemo(
     () => groupBy(distributions, getGeoLocation),
@@ -145,6 +147,7 @@ export const DistributionsLayer = ({
               colorSet={colorSets.RED}
               count={clientCount}
               distributions={distributions}
+              groupByDate={groupByDate}
               key={JSON.stringify(geoLocation)}
               // Set marker and cluster in registry to be able to open popup and spiderfy later
               ref={getFlagRef(geoLocation)}

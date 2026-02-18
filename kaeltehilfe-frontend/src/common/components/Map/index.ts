@@ -1,5 +1,4 @@
 export * from "./DistributionFlag";
-export * from "./DistributionMarker";
 export * from "./DistributionsLayer";
 export * from "./Flag";
 export * from "./MapControls";
