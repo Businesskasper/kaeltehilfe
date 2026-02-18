@@ -1,21 +1,30 @@
 import { Group, List, ListItem, Title } from "@mantine/core";
-import { IconLocation } from "@tabler/icons-react";
+import { IconCalendar, IconLocation } from "@tabler/icons-react";
 import React from "react";
 import { Popup } from "react-leaflet";
-import { Flag, NumberedDistributionMarker } from ".";
+import { Flag } from ".";
 import { Distribution } from "../../data";
 
+import {
+  compareByDateOnly,
+  formatDate,
+  getDistinct,
+  groupBy,
+  toNormalizedDate,
+} from "../../utils";
+import { ListItemIcon } from "../List/ListItemIcon";
 import "./Map.scss";
 
 type DistributionFlagProps = {
   colorSet: [string, string];
   distributions: Array<Distribution>;
   count: number;
+  groupByDate?: boolean;
 };
 export const DistributionFlag = React.forwardRef<
   L.Marker,
   DistributionFlagProps
->(({ distributions, colorSet, count }, ref) => {
+>(({ distributions, colorSet, count, groupByDate }, ref) => {
   const { geoLocation } = distributions.find((d) => !!d.geoLocation) || {};
 
   return !geoLocation ? (
@@ -28,7 +37,12 @@ export const DistributionFlag = React.forwardRef<
       width={35}
       className="numbered-distribution-marker"
       ref={ref}
-      popup={<DistributionFlagPopup distributions={distributions} />}
+      popup={
+        <DistributionFlagPopup
+          distributions={distributions}
+          groupByDate={groupByDate}
+        />
+      }
       marker={
         <NumberedDistributionMarker
           count={count}
@@ -42,16 +56,31 @@ export const DistributionFlag = React.forwardRef<
 
 const DistributionFlagPopup = ({
   distributions,
+  groupByDate,
 }: {
   distributions: Array<Distribution>;
+  groupByDate?: boolean;
 }) => {
   const locationName =
     distributions?.find((d) => !!d.locationName)?.locationName ||
     "Unbekannter Ort";
 
-  const clientNames = Array.from(
-    new Set(distributions.map((d) => d.client.name)),
-  );
+  const byDate = groupBy(distributions, (d) => toNormalizedDate(d.timestamp));
+
+  const allDates = Array.from(byDate.keys()).filter(Boolean);
+
+  const getDistinctClientNames = (date?: Date) => {
+    const dist = date
+      ? distributions.filter((d) => compareByDateOnly(d.timestamp, date) === 0)
+      : distributions;
+    const clients = dist.map((d) => d.client);
+    const distinctClients = getDistinct(clients, (c) => c);
+    return distinctClients.map((c) =>
+      distinctClients?.find((dc) => dc.name === c.name && dc.id !== c.id)
+        ? `${c.name} (${c.id})`
+        : c.name,
+    );
+  };
 
   return (
     <Popup
@@ -64,13 +93,116 @@ const DistributionFlagPopup = ({
     >
       <Group mb="md" wrap="nowrap" w="100%">
         <IconLocation />
-        <Title order={6}>{locationName}</Title>
+        <Title order={4}>{locationName}</Title>
       </Group>
-      <List listStyleType="disclosure-closed">
-        {clientNames.map((clientName) => (
-          <ListItem key={clientName}>{clientName}</ListItem>
-        ))}
-      </List>
+      {groupByDate ? (
+        allDates.map((date) => {
+          return (
+            <>
+              <Group mb="md" wrap="nowrap" w="100%">
+                <IconCalendar />
+                <Title td="underline" order={6}>
+                  {formatDate(date) || "Unbekanntes Datum"}
+                </Title>
+              </Group>
+              <List
+                spacing="xs"
+                center
+                size="lg"
+                icon={<ListItemIcon height="14" width="14" />}
+              >
+                {getDistinctClientNames(date).map((clientName) => (
+                  <ListItem key={clientName}>{clientName}</ListItem>
+                ))}
+              </List>
+            </>
+          );
+        })
+      ) : (
+        <List
+          spacing="xs"
+          center
+          size="lg"
+          icon={<ListItemIcon height="14" width="14" />}
+        >
+          {getDistinctClientNames().map((clientName) => (
+            <ListItem key={clientName}>{clientName}</ListItem>
+          ))}
+        </List>
+      )}
     </Popup>
+  );
+};
+
+type DistributionMarkerProps = {
+  height?: number | string;
+  width?: number | string;
+  colorSet: [string, string];
+  className?: string;
+};
+
+export const DistributionMarker = ({
+  height = 60,
+  width = 35,
+  colorSet,
+  className,
+}: DistributionMarkerProps) => {
+  return (
+    <svg
+      height={height}
+      width={width}
+      preserveAspectRatio="xMidYMid meet"
+      className={className}
+      viewBox="0 0 35 60"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M17.5 0.5C26.8901 0.5 34.4997 8.08181 34.5 17.4365C34.5 19.7436 33.4399 23.5301 31.7969 27.9785C30.1629 32.4023 27.9808 37.4074 25.7959 42.1201C23.6116 46.8316 21.427 51.2441 19.7881 54.4785C18.9689 56.0951 18.2863 57.4172 17.8086 58.335C17.694 58.5551 17.5901 58.7518 17.5 58.9238C17.4099 58.7518 17.306 58.5551 17.1914 58.335C16.7137 57.4172 16.0311 56.0951 15.2119 54.4785C13.573 51.2441 11.3884 46.8316 9.2041 42.1201C7.01921 37.4074 4.83709 32.4023 3.20312 27.9785C1.56008 23.5301 0.5 19.7436 0.5 17.4365C0.500262 8.08181 8.10994 0.5 17.5 0.5Z"
+        fill={colorSet[0]}
+        stroke={colorSet[1]}
+      />
+      <path
+        d="M17.7582 20.6987C18.0063 20.9556 18.4104 20.9556 18.662 20.6987L22.5221 16.7334C23.6421 15.5806 23.5783 13.6709 22.3236 12.6084C21.2318 11.6813 19.6049 11.848 18.6053 12.8757L18.2083 13.282L17.8149 12.8792C16.8153 11.848 15.1884 11.6813 14.0966 12.6084C12.8454 13.6709 12.7781 15.5806 13.8981 16.7334L17.7582 20.6987ZM28.0374 23.3931C27.6191 23.0216 26.9669 23.0459 26.5274 23.3931L23.2522 25.9591C22.8517 26.2751 22.3519 26.4452 21.8344 26.4452H17.6412C17.3293 26.4452 17.0741 26.1952 17.0741 25.8896C17.0741 25.5841 17.3293 25.3341 17.6412 25.3341H20.4166C20.9802 25.3341 21.5048 24.9556 21.5969 24.4105C21.7139 23.716 21.168 23.1119 20.4769 23.1119H14.8056C13.8485 23.1119 12.9234 23.4348 12.179 24.0251L10.5308 25.3341H8.56713C8.25521 25.3341 8 25.5841 8 25.8896V29.223C8 29.5285 8.25521 29.7785 8.56713 29.7785H21.2141C21.7281 29.7785 22.2279 29.6084 22.6319 29.2924L27.9913 25.091C28.5301 24.6709 28.5726 23.8653 28.0374 23.3931Z"
+        fill="white"
+      />
+    </svg>
+  );
+};
+
+type NumberedDistributionMarkerProps = {
+  height?: number | string;
+  width?: number | string;
+  colorSet: [string, string];
+  className?: string;
+  count: number;
+};
+
+export const NumberedDistributionMarker = ({
+  height = 60,
+  width = 35,
+  colorSet,
+  className,
+  count,
+}: NumberedDistributionMarkerProps) => {
+  return (
+    <>
+      <svg
+        height={height}
+        width={width}
+        preserveAspectRatio="xMidYMid meet"
+        className={className}
+        viewBox="0 0 35 60"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M17.5 0.5C26.8901 0.5 34.4997 8.08181 34.5 17.4365C34.5 19.7436 33.4399 23.5301 31.7969 27.9785C30.1629 32.4023 27.9808 37.4074 25.7959 42.1201C23.6116 46.8316 21.427 51.2441 19.7881 54.4785C18.9689 56.0951 18.2863 57.4172 17.8086 58.335C17.694 58.5551 17.5901 58.7518 17.5 58.9238C17.4099 58.7518 17.306 58.5551 17.1914 58.335C16.7137 57.4172 16.0311 56.0951 15.2119 54.4785C13.573 51.2441 11.3884 46.8316 9.2041 42.1201C7.01921 37.4074 4.83709 32.4023 3.20312 27.9785C1.56008 23.5301 0.5 19.7436 0.5 17.4365C0.500262 8.08181 8.10994 0.5 17.5 0.5Z"
+          fill={colorSet[0]}
+          stroke={colorSet[1]}
+        />
+      </svg>
+      <div className="count">{count}</div>
+    </>
   );
 };

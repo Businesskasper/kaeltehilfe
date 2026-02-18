@@ -43,7 +43,7 @@ export const UserMenu = () => {
           {!isOnAdminPage && profile?.role === "ADMIN" ? (
             <Menu.Item>
               <Group justify="space-between">
-                <Text onClick={() => navigate("/admin")}>Admin Panel</Text>
+                <Text onClick={() => navigate("/admin")}>Admin Seite</Text>
                 <IconUserShield />
               </Group>
             </Menu.Item>

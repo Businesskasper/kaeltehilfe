@@ -1,6 +1,7 @@
 export * from "./ActionGroup/ActionGroup";
 export * from "./AuthRoute/AuthRoute";
 export * from "./Form";
+export * from "./List/ListItemIcon";
 export * from "./Modal/Modal";
 export * from "./NavigationItem/NavigationItem";
 export * from "./NavigationItem/NavigationSection";
