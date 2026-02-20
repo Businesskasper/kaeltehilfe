@@ -12,7 +12,8 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
     volumes:
-        - ./keycloak:/opt/keycloak/data
+        - ./keycloak/data:/opt/keycloak/data
+        - ./keycloak/x509:/etc/x509/https
         - ./keycloak-themes:/opt/keycloak/providers
     logging:
       driver: "json-file"

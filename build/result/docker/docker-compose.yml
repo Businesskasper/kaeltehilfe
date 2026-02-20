@@ -7,20 +7,33 @@ services:
       - '80:80'
       - '81:81'
       - '443:443'
-    volumes:
-      - ../nginx/data:/data
-      - ../nginx/letsencrypt:/etc/letsencrypt
     network_mode: 'host'
     logging:
       driver: "json-file"
       options:
         max-size: "50m"
+    volumes:
+      - ../nginx/data:/data
+      - ../nginx/letsencrypt:/etc/letsencrypt
   keycloak:
     ports:
       - '8080:8080'
       - '9000:9000'
     image: quay.io/keycloak/keycloak:26.0.4
     command: start
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+    depends_on:
+      proxy:
+        condition: service_completed_successfully
+        restart: true
+    volumes:
+        - ../keycloak/themes:/opt/keycloak/providers
+        - ../keycloak/data:/opt/keycloak/data
+        - ../keycloak/x509:/etc/x509/https
     environment:
         KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
         KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
@@ -33,43 +46,6 @@ services:
         KC_SPI_X509CERT_LOOKUP_PROVIDER: 'nginx'
         KC_SPI_X509CERT_LOOKUP_NGINX_SSL_CLIENT_CERT: 'X-Client-Cert'
         X509_CA_BUNDLE: '/etc/x509/https/rootCA.crt'
-    volumes:
-        - ../keycloak/themes:/opt/keycloak/providers
-        - ../keycloak/data:/opt/keycloak/data
-        - ../keycloak/x509:/etc/x509/https
-    restart: unless-stopped
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50m"
-    depends_on:
-      proxy:
-        condition: service_completed_successfully
-        restart: true
-  api:
-    ports:
-      - '8081:8080'
-    image: kaeltebus-api:latest
-    environment:
-        ASPNETCORE_ENVIRONMENT: 'Production'
-        CORS_ORIGINS: 'https://ulm.kaelte-bus.de'
-        ROOT_CERT_PASSWORD: ${ROOT_CERT_PASSWORD}
-        KC_CLIENT_SECRET: ${KC_CLIENT_SECRET}
-    volumes:
-        - ../kaeltebus-api/db:/opt/kaeltebus-api/db
-        - ../kaeltebus-api/cert:/opt/kaeltebus-api/cert
-    restart: unless-stopped
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50m"
-    depends_on:
-      keycloak:
-        condition: service_completed_successfully
-        restart: true
-      proxy:
-        condition: service_completed_successfully
-        restart: true
   ui:
     ports:
       - '8082:80'
@@ -86,3 +62,93 @@ services:
       proxy:
         condition: service_completed_successfully
         restart: true
+  api:
+    ports:
+      - '8081:8080'
+    image: kaeltebus-api:latest
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+    depends_on:
+      keycloak:
+        condition: service_completed_successfully
+        restart: true
+      proxy:
+        condition: service_completed_successfully
+        restart: true
+    volumes:
+        - ../kaeltebus-api/db:/opt/kaeltebus-api/db
+        - ../kaeltebus-api/cert:/opt/kaeltebus-api/cert
+    environment:
+        ASPNETCORE_ENVIRONMENT: 'Production'
+        CORS_ORIGINS: ${ALLOWED_ORIGINS}
+        ROOT_CERT_PASSWORD: ${ROOT_CERT_PASSWORD}
+        KC_CLIENT_SECRET: ${KC_CLIENT_SECRET}
+  pgosm-db:
+    image: postgis/postgis:18-3.6
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5432 -d $$POSTGRES_DB -U $$POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - ../pgosm-db/postgresql:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: ${POSTGIS_ADMIN}
+      POSTGRES_PASSWORD: ${POSTGIS_PASSWORD}
+      POSTGRES_DB: ${POSTGIS_DB}
+  pgosm-init:
+    image: pgosm-init:latest
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+    depends_on:
+      pgosm-db:
+        condition: service_healthy
+    volumes:
+      - ./pgosm-init/input:/app/input
+    environment:
+      POSTGRES_HOST: pgosm-db
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGIS_DB}
+      POSTGRES_USER: ${POSTGIS_ADMIN}
+      PGUSER: ${POSTGIS_ADMIN}
+      POSTGRES_PASSWORD: ${POSTGIS_PASSWORD}
+      PGOSM_RAM: 8
+      PGOSM_REGION: europe/germany
+      PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
+      PGOSM_INPUT_FILE: /app/input/baden-wuerttemberg/tuebingen-regbez-latest.osm.pbf
+  geo:
+    image: kaeltehilfe-geo:latest
+    restart: unless-stopped
+    ports:
+      - "8083:8083"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+    depends_on:
+      keycloak:
+        condition: service_completed_successfully
+        restart: true
+      proxy:
+        condition: service_completed_successfully
+        restart: true
+      pgosm-db:
+        condition: service_healthy
+    environment:
+      PORT: "8083"
+      DB_CONN_STR: ${POSTGIS_CONN_STR}
+      ISSUER_URL: ${KEYCLOAK_ISSUER_URL}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
