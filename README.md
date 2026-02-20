@@ -2,12 +2,15 @@
 
 kaeltehilfe allows planning, recording and analytics of goods distribution.
 
+### Documentation
 [Architecture](./docs/architecture.md)
 
-[Concept and notes](./docs/concept_notes.md)
+<!-- [Concept and notes](./docs/concept_notes.md) -->
 
-[How to develop](./docs/develop.md)
+### Guides
 
-[How to build](./docs/build.md)
+[Develop](./docs/develop.md)
 
-[How to deploy](./docs/deploy.md)
+[Build](./docs/build.md)
+
+[Deploy](./docs/deploy.md)

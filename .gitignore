@@ -1,6 +1,7 @@
 # Build
 build/backend/publish-backend/*
 build/frontend/publish-frontend/*
+build/geo/publish-geo/*
 build/result/
 
 # Dev env

@@ -47,7 +47,7 @@ type params struct {
 }
 
 func getParams() *params {
-	defaultPort := 8086
+	defaultPort := 8083
 	if envPort := os.Getenv("PORT"); envPort != "" {
 		fmt.Sscanf(envPort, "%d", &defaultPort)
 	}
@@ -70,7 +70,7 @@ func getParams() *params {
 	port := flag.Int("port", defaultPort, "The port under which the api is served")
 	connStr := flag.String("connection_string", defaultConnStr, "The database connection string")
 	issuerUrl := flag.String("issuer_url", defaultIssuerUrl, "The oidc issuer url")
-	allowedOrigins := flag.String("allowedOrigins", defaultAllowedOrigins, "The CORS allowed origins for the api")
+	allowedOrigins := flag.String("allowed_origins", defaultAllowedOrigins, "The CORS allowed origins for the api")
 	flag.Parse()
 
 	return &params{

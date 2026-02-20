@@ -3,15 +3,6 @@
 dotnet ef migrations add InitialMigration -o Application/Infrastructure/Database/Migrations
 dotnet ef database update
 ```
-## Requirements
-#### Admin 
-   -> Manages Goods<br>
-   -> Generates and analyzes Reports<br>
-#### Einsatzkraft
-   --> Manages Goods<br>
-   -> Distributes Goods<br>
-   -> Manages Clients<br>
-
 ## Thoughts on DB models
 Possible strategies to seperate domain models from database models:
 1. Directly map into DB model from Infrastructure and use ef repository

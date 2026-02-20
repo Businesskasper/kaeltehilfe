@@ -6,7 +6,7 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-  args_bin = ["port", "8086"]
+  args_bin = ["port", "8083"]
   bin = "tmp\\main.exe"
   cmd = "go build -o ./tmp/main.exe ./cmd/api"
   delay = 1000

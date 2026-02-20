@@ -23,7 +23,7 @@ if (Test-Path -Path $publishDir) {
     
 $dockerImageExportPath = [System.IO.Path]::Combine($global:root, "..", "result", "docker", "images", "kaeltehilfe-ui.tar")
 if (Test-Path -Path $dockerImageExportPath) {
-    Write-Host "Clean up previous exported image"
+    Write-Host "Clean up previously exported image"
     Remove-Item -Force $dockerImageExportPath -ErrorAction SilentlyContinue | Out-Null
 }
 

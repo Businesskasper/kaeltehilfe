@@ -12,8 +12,14 @@ function invokeDotnetCommand([string]$projectPath, [string]$command) {
     }
 }
 
-function buildDockerImage([string]$dockerFileDir, [string]$dockerImageName) {
-    $result = Start-Process -FilePath "C:\Program Files\Docker\Docker\resources\bin\docker" -ArgumentList @("build", ".", "-t", $dockerImageName) -Wait -PassThru -WorkingDirectory $dockerFileDir
+function buildDockerImage([string]$dockerFileDir, [string]$dockerImageName, [string[]]$buildArgs) {
+    $argumentList = @("build", ".", "-t", $dockerImageName)
+    if ($null -ne $buildArgs) {
+        foreach ($buildArg in $buildArgs) {
+            $argumentList += "--build-arg $($buildArg)"
+        }
+    }
+    $result = Start-Process -FilePath "C:\Program Files\Docker\Docker\resources\bin\docker" -ArgumentList $argumentList -Wait -PassThru -WorkingDirectory $dockerFileDir
     if ($result.ExitCode -ne 0) {
         throw [Exception]::new("Docker build failed with exit code $($result.ExitCode)")
     }
