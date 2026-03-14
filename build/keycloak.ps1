@@ -1,4 +1,5 @@
-﻿function TryReadExceptionBody([System.Net.WebException]$ex) {
+﻿# Extracts response body from WebException for error details
+function TryReadExceptionBody([System.Net.WebException]$ex) {
     $response = $ex.Response
     if ($null -eq $response) {
         return $null
@@ -9,6 +10,7 @@
     return $responseBody
 }
 
+# Creates a detailed Keycloak exception with response body if available
 function CreateKcException([string]$message, [Exception]$innerException) {
     $details = $innerException.Message
     if ($innerException -is [System.Net.WebException]) {
@@ -20,6 +22,7 @@ function CreateKcException([string]$message, [Exception]$innerException) {
     return [Exception]::new("$($message): $($details)", $innerException)
 }
 
+# Retrieves access token using password grant flow
 function GetToken([string]$username, [SecureString]$password, [string]$realmName, [string]$clientId, [string]$baseUrl) { 
     $authUrl = "$($baseUrl)/realms/$($realmName)/protocol/openid-connect/token"
 
@@ -47,6 +50,7 @@ function GetToken([string]$username, [SecureString]$password, [string]$realmName
     }
 }
 
+# Retrieves access token using client credentials grant
 function GetClientToken([string]$clientName, [SecureString]$clientSecret, [string]$realmName, [string]$baseUrl) {
     $authUrl = "$($baseUrl)/realms/$($realmName)/protocol/openid-connect/token"
 
@@ -76,6 +80,7 @@ function GetClientToken([string]$clientName, [SecureString]$clientSecret, [strin
 # Server info
 #
 
+# Retrieves Keycloak server information
 function GetServerInfo([string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/serverinfo"
 
@@ -100,6 +105,7 @@ function GetServerInfo([string]$baseUrl, [string]$token) {
 # Realm
 #
 
+# Lists all realms
 function ListRealms([string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms"
 
@@ -120,6 +126,7 @@ function ListRealms([string]$baseUrl, [string]$token) {
     }
 }
 
+# Retrieves a specific realm
 function GetRealm([string]$realmName, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)"
 
@@ -140,6 +147,7 @@ function GetRealm([string]$realmName, [string]$baseUrl, [string]$token) {
     }
 }
 
+# Creates a new realm
 function CreateRealm([PSCustomObject]$realm, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms"
 
@@ -166,6 +174,7 @@ function CreateRealm([PSCustomObject]$realm, [string]$baseUrl, [string]$token) {
     }
 }
 
+# Updates an existing realm
 function UpdateRealm([string]$realmName, [PSCustomObject]$realm, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)"
 
@@ -188,6 +197,7 @@ function UpdateRealm([string]$realmName, [PSCustomObject]$realm, [string]$baseUr
     }
 }
 
+# Updates the login theme for a realm
 function UpdateUiExt([string]$realmName, [string]$theme, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/ui-ext"
 
@@ -214,6 +224,7 @@ function UpdateUiExt([string]$realmName, [string]$theme, [string]$baseUrl, [stri
 # Auth Flow
 #
 
+# Lists authentication flows for a realm
 function ListAuthFlows([string]$realmName, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/authentication/flows"
 
@@ -221,8 +232,6 @@ function ListAuthFlows([string]$realmName, [string]$baseUrl, [string]$token) {
         Authorization = "Bearer $($token)"
     }
     
-    $body = $flow | ConvertTo-Json -Depth 100
-
     try {
         $response = Invoke-RestMethod -Method Get `
                                       -Uri $url `
@@ -236,6 +245,7 @@ function ListAuthFlows([string]$realmName, [string]$baseUrl, [string]$token) {
     }
 }
 
+# Copies an authentication flow
 function CopyAuthFlow([string]$realmName, [string]$flowName, [PSCustomObject]$flow, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/authentication/flows/$($flowName)/copy"
 
@@ -262,6 +272,7 @@ function CopyAuthFlow([string]$realmName, [string]$flowName, [PSCustomObject]$fl
     }
 }
 
+# Creates a new authentication flow
 function CreateAuthFlow([string]$realmName, [PSCustomObject]$flow, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/authentication/flows"
 
@@ -288,6 +299,7 @@ function CreateAuthFlow([string]$realmName, [PSCustomObject]$flow, [string]$base
     }
 }
 
+# Creates a sub-flow within an authentication flow
 function CreateAuthSubFlow([string]$realmName, [string]$parentFlow, [PSCustomObject]$subFlow, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/authentication/flows/$($parentFlow)/executions/flow"
 
@@ -314,6 +326,7 @@ function CreateAuthSubFlow([string]$realmName, [string]$parentFlow, [PSCustomObj
     }
 }
 
+# Deletes an authentication flow
 function DeleteAuthFlow([string]$realmName, [string]$flowId, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/authentication/flows/$($flowId)"
 
@@ -336,6 +349,7 @@ function DeleteAuthFlow([string]$realmName, [string]$flowId, [string]$baseUrl, [
 # Executions
 #
 
+# Lists executions for an authentication flow
 function ListAuthFlowExecutions([string]$realmName, [string]$flowName, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/authentication/flows/$($flowName)/executions"
 
@@ -343,8 +357,6 @@ function ListAuthFlowExecutions([string]$realmName, [string]$flowName, [string]$
         Authorization = "Bearer $($token)"
     }
     
-    $body = $flow | ConvertTo-Json -Depth 100
-
     try {
         $response = Invoke-RestMethod -Method Get `
                                       -Uri $url `
@@ -358,6 +370,7 @@ function ListAuthFlowExecutions([string]$realmName, [string]$flowName, [string]$
     }
 }
 
+# Creates an execution for an authentication flow
 function CreateAuthFlowExecution([string]$realmName, [string]$flowName, [PSCustomObject]$execution, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/authentication/flows/$($flowName)/executions/execution"
 
@@ -384,6 +397,7 @@ function CreateAuthFlowExecution([string]$realmName, [string]$flowName, [PSCusto
     }
 }
 
+# Deletes an authentication flow execution
 function DeleteAuthFlowExecution([string]$realmName, [string]$executionId, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/authentication/executions/$($executionId)"
 
@@ -391,8 +405,6 @@ function DeleteAuthFlowExecution([string]$realmName, [string]$executionId, [stri
         Authorization = "Bearer $($token)"
     }
     
-    $body = $flow | ConvertTo-Json -Depth 100
-
     try {
         Invoke-RestMethod -Method Delete `
                           -Uri $url `
@@ -404,6 +416,7 @@ function DeleteAuthFlowExecution([string]$realmName, [string]$executionId, [stri
     }
 }
 
+# Updates an authentication flow execution
 function UpdateAuthFlowExecution([string]$realmName, [string]$flowName, [PSCustomObject]$execution, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/authentication/flows/$($flowName)/executions"
 
@@ -426,6 +439,7 @@ function UpdateAuthFlowExecution([string]$realmName, [string]$flowName, [PSCusto
     }
 }
 
+# Updates configuration for an authentication flow execution
 function UpdateAuthFlowExecutionConfig([string]$realmName, [string]$executionId, [PSCustomObject]$config, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/authentication/executions/$($executionId)/config"
 
@@ -452,6 +466,7 @@ function UpdateAuthFlowExecutionConfig([string]$realmName, [string]$executionId,
 # User profile
 #
 
+# Retrieves user profile configuration
 function GetUserProfile([string]$realmName, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/users/profile"
 
@@ -459,8 +474,6 @@ function GetUserProfile([string]$realmName, [string]$baseUrl, [string]$token) {
         Authorization = "Bearer $($token)"
     }
     
-    $body = $flow | ConvertTo-Json -Depth 100
-
     try {
         $response = Invoke-RestMethod -Method Get `
                                       -Uri $url `
@@ -474,6 +487,7 @@ function GetUserProfile([string]$realmName, [string]$baseUrl, [string]$token) {
     }
 }
 
+# Updates user profile configuration
 function UpdateUserProfile([string]$realmName, [PSCustomObject]$userProfile, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/users/profile"
 
@@ -500,6 +514,7 @@ function UpdateUserProfile([string]$realmName, [PSCustomObject]$userProfile, [st
 # Client
 #
 
+# Lists clients in a realm
 function ListClients([string]$realmName, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/clients"
 
@@ -520,6 +535,7 @@ function ListClients([string]$realmName, [string]$baseUrl, [string]$token) {
     }
 }
 
+# Creates a new client
 function CreateClient([string]$realmName, [PSCustomObject]$client, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/clients"
 
@@ -546,6 +562,7 @@ function CreateClient([string]$realmName, [PSCustomObject]$client, [string]$base
     }
 }
 
+# Creates a role for a client
 function CreateClientRole([string]$realmName, [string]$clientId, [PSCustomObject]$role, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/clients/$($clientId)/roles"
 
@@ -576,6 +593,7 @@ function CreateClientRole([string]$realmName, [string]$clientId, [PSCustomObject
 # Client scope
 #
 
+# Lists client scopes in a realm
 function ListClientScopes([string]$realmName, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/client-scopes"
 
@@ -596,6 +614,7 @@ function ListClientScopes([string]$realmName, [string]$baseUrl, [string]$token) 
     }
 }
 
+# Lists scope mappings for a client scope
 function ListClientScopeMappings([string]$realmName, [string]$scopeId, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/client-scopes/$($scopeId)/scope-mappings"
 
@@ -616,6 +635,7 @@ function ListClientScopeMappings([string]$realmName, [string]$scopeId, [string]$
     }
 }
 
+# Lists default client scopes for a realm
 function ListDefaultClientScopes([string]$realmName, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/default-default-client-scopes"
 
@@ -640,6 +660,7 @@ function ListDefaultClientScopes([string]$realmName, [string]$baseUrl, [string]$
 # Mappers
 #
 
+# Lists protocol mapper models for a client scope
 function ListMapperModels([string]$realmName, [string]$scopeId, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/client-scopes/$($scopeId)/protocol-mappers/models"
 
@@ -660,6 +681,7 @@ function ListMapperModels([string]$realmName, [string]$scopeId, [string]$baseUrl
     }
 }
 
+# Retrieves a specific mapper model
 function GetMapperModel([string]$realmName, [string]$scopeId, [string]$modelId, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/client-scopes/$($scopeId)/protocol-mappers/models/$($modelId)"
 
@@ -680,6 +702,7 @@ function GetMapperModel([string]$realmName, [string]$scopeId, [string]$modelId, 
     }
 }
 
+# Creates a protocol mapper model
 function CreateMapperModel([string]$realmName, [string]$scopeId, [PSCustomObject]$mapper, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/client-scopes/$($scopeId)/protocol-mappers/models"
 
@@ -706,6 +729,7 @@ function CreateMapperModel([string]$realmName, [string]$scopeId, [PSCustomObject
     }
 }
 
+# Updates a protocol mapper model
 function UpdateClientScopeMapperModel([string]$realmName, [string]$scopeId, [string]$modelId, [PSCustomObject]$model, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/client-scopes/$($scopeId)/protocol-mappers/models/$($modelId)"
 
@@ -732,6 +756,7 @@ function UpdateClientScopeMapperModel([string]$realmName, [string]$scopeId, [str
 # Roles
 #
 
+# Lists roles for a client
 function ListClientRoles([string]$realmName, [string]$clientId, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/clients/$($clientId)/roles"
 
@@ -752,6 +777,7 @@ function ListClientRoles([string]$realmName, [string]$clientId, [string]$baseUrl
     }
 }
 
+# Lists role mappings for a service account
 function ListServiceAccountRoleMappings([string]$realmName, [string]$userId, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/users/$($userId)/role-mappings"
 
@@ -772,6 +798,7 @@ function ListServiceAccountRoleMappings([string]$realmName, [string]$userId, [st
     }
 }
 
+# Lists role mappings for a user in a client
 function ListUserRoleMappings([string]$realmName, [string]$userId, [string]$clientId, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/users/$($userId)/role-mappings/clients/$($clientId)"
 
@@ -792,6 +819,7 @@ function ListUserRoleMappings([string]$realmName, [string]$userId, [string]$clie
     }
 }
 
+# Adds client roles to a service account
 function AddServiceAccountClientRoles([string]$realmName, [string]$userId, [string]$clientId, [PSCustomObject[]]$roles, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/users/$($userId)/role-mappings/clients/$($clientId)"
 
@@ -818,6 +846,7 @@ function AddServiceAccountClientRoles([string]$realmName, [string]$userId, [stri
 # Users
 #
 
+# Retrieves the service account user for a client
 function GetClientServiceAccountUser([string]$realmName, [string]$clientId, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/clients/$($clientId)/service-account-user"
 
@@ -838,6 +867,7 @@ function GetClientServiceAccountUser([string]$realmName, [string]$clientId, [str
     }
 }
 
+# Lists users in a realm
 function ListUsers([string]$realmName, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/users"
 
@@ -859,6 +889,7 @@ function ListUsers([string]$realmName, [string]$baseUrl, [string]$token) {
     }
 }
 
+# Creates a new user
 function CreateUser([string]$realmName, [PSCustomObject]$user, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/users"
 
@@ -885,6 +916,7 @@ function CreateUser([string]$realmName, [PSCustomObject]$user, [string]$baseUrl,
     }
 }
 
+# Sets the password for a user
 function SetUserPassword([string]$realmName, [string]$userId, [SecureString]$password, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/users/$($userId)/reset-password"
 
@@ -914,6 +946,7 @@ function SetUserPassword([string]$realmName, [string]$userId, [SecureString]$pas
     }
 }
 
+# Updates an existing user
 function UpdateUser([string]$realmName, [string]$userId, [PSCustomObject]$user, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/users/$($userId)"
 
@@ -981,6 +1014,7 @@ function AddUserClientRoles([string]$realmName, [string]$userId, [string]$client
     }
 }
 
+# Lists client role mappings for a user
 function ListUserClientRoleMappings([string]$realmName, [string]$userId, [string]$clientId, [string]$baseUrl, [string]$token) {
     $url = "$($baseUrl)/admin/realms/$($realmName)/users/$($userId)/role-mappings/clients/$($clientId)"
 
