@@ -1,4 +1,5 @@
-﻿param (
+﻿# Script to set up Keycloak realm and configurations for Kaeltehilfe
+param (
     [string]$realmName = "ulm",
     # Should be NONE for development on localhost, ALL for deployments
     [string]$requireSsl = "NONE", # NONE, ALL, EXTERNAL
@@ -37,10 +38,10 @@ function GetCachedToken() {
     $adminRealm = "master"
 
     $now = [DateTime]::Now
-    if ($null -eq $tokenData -or $null -eq $tokenData.expiresAt -or $tokenData.expiresAt -ge $now.Millisecond) {
+    if ($null -eq $tokenData -or $null -eq $tokenData.expiresAt -or $tokenData.expiresAt -le $now) {
         $token = GetToken -username $adminUsername -password $adminPassword -realmName $adminRealm -clientId $adminClient -baseUrl $baseUrl
         $tokenData.access_token = $token.access_token
-        $tokenData.expiresAt = $now.Milliseconds + $token.expires_in * 1000
+        $tokenData.expiresAt = $now.AddSeconds($token.expires_in)
     }
     return $tokenData.access_token
 }
