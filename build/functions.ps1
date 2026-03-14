@@ -139,30 +139,30 @@ function CreateSignedCertificate {
     }
     finally {
         if ($signerCert) {
-            Remove-Item -Path $signerCert.PSPath
+            Remove-Item -Path $signerCert.PSPath | Out-Null
         }
     }
 
     if (-not [String]::IsNullOrWhiteSpace($exportCaPath)) {
         Write-Debug -Message "Export certificate without private key to `"$($exportCaPath)`""
-        Export-Certificate -Cert $cert -FilePath $exportCaPath
+        Export-Certificate -Cert $cert -FilePath $exportCaPath | Out-Null
     }
 
     if (-not [String]::IsNullOrWhiteSpace($exportPfxPath) -and -not $null -eq $exportPfxPassword) {
         Write-Debug -Message "Export certificate with private key to `"$($exportPfxPath)`""
-        Export-PfxCertificate -Cert $cert -FilePath $exportPfxPath -Password $exportPfxPassword
+        Export-PfxCertificate -Cert $cert -FilePath $exportPfxPath -Password $exportPfxPassword | Out-Null
     }
 
     if ($PsCmdlet.ParameterSetName -eq "Signer") {
         Write-Debug -Message "Move certificate to `"Cert:\LocalMachine\Root`""
-        Move-Item -Path ([System.IO.Path]::combine("Cert:\LocalMachine\My", $cert.Thumbprint)) -Destination "Cert:\LocalMachine\Root"
+        Move-Item -Path ([System.IO.Path]::combine("Cert:\LocalMachine\My", $cert.Thumbprint)) -Destination "Cert:\LocalMachine\Root" | Out-Null
     }
     elseif (
         (-not [String]::IsNullOrWhiteSpace($certStore) -and (Test-Path -Path $certStore)) -and 
         ($cert.PSParentPath -ne (Get-Item -Path $certStore).PSPath)
     ) {
         Write-Debug -Message "Move certificate to `"$($certStore)`""
-        Move-Item -Path ([System.IO.Path]::combine("Cert:\LocalMachine\My", $cert.Thumbprint)) -Destination $certStore
+        Move-Item -Path ([System.IO.Path]::combine("Cert:\LocalMachine\My", $cert.Thumbprint)) -Destination $certStore | Out-Null
     }
 
     return Get-ChildItem -Path "Cert:\LocalMachine" -Recurse | ? { $_.Thumbprint -eq $cert.Thumbprint } | select -First 1

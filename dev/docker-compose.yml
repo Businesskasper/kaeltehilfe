@@ -1,20 +1,29 @@
 version: '3.8'
 services:
   keycloak:
+    image: quay.io/keycloak/keycloak:26.0.4
+    command: start-dev
     ports:
       - '8050:8080'
       - '8051:9000'
-    image: quay.io/keycloak/keycloak:26.0.4
-    command: start-dev
     environment:
       KC_HOSTNAME: 'localhost'
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
       QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
+      KC_PROXY_HEADERS: 'xforwarded'
+      KC_HTTP_ENABLED: 'true'
+      KC_HOSTNAME_STRICT: 'false'
+      KC_HTTP_RELATIVE_PATH: /
+      KC_PROXY_ADDRESS_FORWARDING: 'true'
+      KC_SPI_X509CERT_LOOKUP_PROVIDER: 'nginx'
+      KC_SPI_X509CERT_LOOKUP_NGINX_SSL_CLIENT_CERT: 'X-Client-Cert'
+      X509_CA_BUNDLE: '/etc/x509/https/rootCert.crt'
     volumes:
         - ./keycloak/data:/opt/keycloak/data
-        - ./keycloak/x509:/etc/x509/https
-        - ./keycloak-themes:/opt/keycloak/providers
+        - ./keycloak/themes:/opt/keycloak/providers
+        - ./certs/root-crt:/etc/x509/https
+        - ./certs/crl:/crl
     logging:
       driver: "json-file"
       options:
@@ -22,7 +31,6 @@ services:
 
   pgosm-db:
     image: postgis/postgis:18-3.6
-    restart: always
     ports:
       - "5432:5432"
     environment:
@@ -31,6 +39,10 @@ services:
       POSTGRES_DB: ${POSTGIS_DB}
     volumes:
       - ./pgosm-db/postgresql:/var/lib/postgresql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h localhost -p 5432 -d $$POSTGRES_DB -U $$POSTGRES_USER"]
       interval: 10s
@@ -41,7 +53,6 @@ services:
     build: 
       context: ./pgosm-init/image
       dockerfile: Dockerfile
-    container_name: pgosm-init
     volumes:
       - ./pgosm-init/input:/app/input
     depends_on:
@@ -55,6 +66,13 @@ services:
       PGUSER: ${POSTGIS_ADMIN}
       POSTGRES_PASSWORD: ${POSTGIS_PASSWORD}
       PGOSM_RAM: 8
-      PGOSM_REGION: europe/germany
-      PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
-      PGOSM_INPUT_FILE: /app/input/baden-wuerttemberg/tuebingen-regbez-latest.osm.pbf
+      PGOSM_REGION: europe
+      PGOSM_SUBREGION: germany
+      PGOSM_INPUT_FILE: /app/input/germany-latest.osm.pbf
+      # PGOSM_REGION: europe/germany
+      # PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
+      # PGOSM_INPUT_FILE: /app/input/baden-wuerttemberg/tuebingen-regbez-latest.osm.pbf
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"

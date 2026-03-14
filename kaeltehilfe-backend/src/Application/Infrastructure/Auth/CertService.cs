@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using kaeltehilfe_backend.Infrastructure.Auth;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace kaeltehilfe_backend.Infrastructure.Auth;
 
@@ -9,10 +10,10 @@ public class CertService : ICertService
 {
     private readonly X509Certificate2 _rootCertificate;
 
-    public CertService(IConfiguration configuration)
+    public CertService(IConfiguration configuration, IHostEnvironment env)
     {
-        // Get the root certificate path from appsettings.json
-        var rootCertPath = configuration.RequireConfigValue("CertificateSettings:RootCertPath");
+        // Resolve certificate path (supports absolute or relative values)
+        var rootCertPath = configuration.RequireResolvedPath("CertificateSettings:RootCertPath", env);
 
         // Get the root certificate password from the environment variable
         var rootCertPasswordVar = configuration.RequireConfigValue(

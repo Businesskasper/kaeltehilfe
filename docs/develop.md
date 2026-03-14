@@ -8,23 +8,22 @@ Install Docker Desktop (or a docker compose compatible service).
 ##### Signer certificate
 You must generate a signer certificate so that the backend can sign client certificates and keycloak can validate them. 
 
-You can use `./dev/scripts/create-signer-cert.ps1` to generate the certificate. 
+You can use `./dev/scripts/prepare-certs.ps1` to generate the certificates and set the required environment variables. 
 
-The generated .pfx file contains a private key and is used by the backend to generate client certificates for authentication. The .ca file does not contain a private key and will be used by keycloak to validate the issued client certificates.
+The generated .pfx file contains a private key and is used by the backend to generate client certificates for authentication. The .crt file does not contain a private key and will be used by keycloak to validate the issued client certificates.
 
-The location of the .pfx file and its password will be needed later when configuring the backend. The .ca file must later be mapped to the keycloak container.
+The location of the .pfx file and its password will be needed later when configuring the backend. The .crt file must later be mapped to the keycloak container.
 
 ### Background containers
-
 `./dev/docker-compose.yml` contains following containers:
 - keycloak: Auth provider for the application
 - pgosm-db: OSM database for the kaeltehilfe-go api
 - pgosm-init: Imports OSM data to pgosm-db on launch. The container will exit if the database has already been populated.
 
 #### keycloak
-Build the keycloak theme as described in [./build.md - Keycloak Theme](./build.md#keycloak-theme). Place the .jar file from the build result in `./dev/keycloak-themes/`.
+Build the keycloak theme as described in [./build.md - Keycloak Theme](./build.md#keycloak-theme). Place the .jar file from the build result in `./dev/keycloak/themes/`.
 
-The previously generated signer .ca certificate must be mapped to `/etc/x509/https` - place the file to `./dev/keycloak/x509`, in accordance to the `docker-compose.yml`
+The previously generated signer certificates .crt file must be mapped to `/etc/x509/https` - place the file to `./dev/certs/root-crt`, in accordance to the `docker-compose.yml`
 
 #### pgosm-db
 Make sure the directory `./dev/pgosm-db/postgresql` exists and is empty. Note that PostgreSQL (and PostGIS) version 18+ do not accept mounted data directories. The configuration in `./dev/docker-compose.yml` is correct.
@@ -46,7 +45,8 @@ PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
 Change the directory to `./dev` and run `docker compose up`.
 
 ### Configure Keycloak
-Configure Keycloak as described in [./deploy.md - Keycloak Theme](./deploy.md#keycloak-theme)
+Configure Keycloak as described in [./deploy.md - Setup Keycloak](./deploy.md#setup-keycloak). Use the console URL in the `./dev/docker-compose.yml` (default should be http://localhost:8050) to perform the configuration.
+
 
 ### Backend
 The backend requires a fully set up keycloak dev container and signer certificate (see previous steps).
@@ -68,16 +68,18 @@ The backend must be configured in `./kaeltehilfe-backend/src/appsettings.Develop
 | Key | Description |
 | --- | ----------- |
 | Authorization.Authority | The authority url of the configured keycloak realm |
+
+> **Note:** certificate-related paths may be specified either as full system paths (e.g. <code>/opt/kaeltehilfe-api/cert</code> or <code>C:\...\rootCert.pfx</code>) or as paths relative to the backend's content root.  Relative paths will automatically be resolved when the application starts, making the same configuration file usable on both Windows (development) and Linux (production).
 | Authorization.Client | The name of the configured keycloak client for user authentication |
 |Authorization.ClientId | The clientId from the configured keycloak client for user authentication |
 | Authorization.ApiBaseUrl | The base url for the keycloak admin API |
 | Authorization.MachineClient | The name of the configured keycloak client for m2m communication |
 | Authorization.MachineClientId | "" |
 | Authorization.MachineClientSecretVar | The name of the previously configured environment variable that holds the secret for the machine client |
-| CertificateSettings.RootCertPath | The path to the generated signer certificates .pfx file |
+| CertificateSettings.RootCertPath | The path to the generated signer certificates .pfx file (absolute or relative) |
 | CertificateSettings.RootCertPasswordVar | The name of the environment variable that holds the .pfx files password |
-| CertificateSettings.ClientCertDir | The path to store generated client certificates for authentication |
-| CertificateSettings.CrlPath | The path to generate and store the crl for deactivated client certificates for authentication |
+| CertificateSettings.ClientCertDir | The path to store generated client certificates for authentication (absolute or relative) |
+| CertificateSettings.CrlPath | The path to generate and store the crl for deactivated client certificates for authentication (absolute or relative) |
 
 #### Start
 Run the api by navigating a shell to `./kaeltehilfe-backend/src` and invoking `dotnet watch` or `dotnet start`.

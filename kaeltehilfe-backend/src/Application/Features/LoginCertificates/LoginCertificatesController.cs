@@ -7,6 +7,8 @@ using kaeltehilfe_backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace kaeltehilfe_backend.Features.LoginCertificates;
 
@@ -23,6 +25,7 @@ public class LoginCertificatesController : ControllerBase
 
     public LoginCertificatesController(
         IConfiguration configuration,
+        IHostEnvironment env,
         ILogger<LoginCertificatesController> logger,
         KbContext kbContext,
         IMapper mapper,
@@ -36,8 +39,8 @@ public class LoginCertificatesController : ControllerBase
         _certService = certService;
         _fileService = fileService;
 
-        _certFileDir = configuration.RequireConfigValue("CertificateSettings:ClientCertDir");
-        _crlPath = configuration.RequireConfigValue("CertificateSettings:CrlPath");
+        _certFileDir = configuration.RequireResolvedPath("CertificateSettings:ClientCertDir", env);
+        _crlPath = configuration.RequireResolvedPath("CertificateSettings:CrlPath", env);
     }
 
     [HttpPost()]
