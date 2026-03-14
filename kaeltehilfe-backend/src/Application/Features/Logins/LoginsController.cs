@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace kaeltehilfe_backend.Features.Logins;
 
@@ -20,6 +22,7 @@ public class LoginsController : ControllerBase
 
     public LoginsController(
         IConfiguration configuration,
+        IHostEnvironment env,
         ILogger<LoginsController> logger,
         KbContext kbContext,
         IMapper mapper,
@@ -31,7 +34,7 @@ public class LoginsController : ControllerBase
         _mapper = mapper;
         _userService = userService;
 
-        _certFileDir = configuration.RequireConfigValue("CertificateSettings:ClientCertDir");
+        _certFileDir = configuration.RequireResolvedPath("CertificateSettings:ClientCertDir", env);
     }
 
     [HttpGet()]
