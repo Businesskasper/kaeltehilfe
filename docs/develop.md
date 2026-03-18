@@ -5,6 +5,15 @@
 ### Docker
 Install Docker Desktop (or a docker compose compatible service).
 
+### SDKs
+Depending on which services you want to work on, install the corresponding SDKs:
+
+| Service | SDK |
+| ------- | --- |
+| Backend | [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) |
+| Geo | [Go](https://go.dev/dl/) |
+| Frontend | [Node.js](https://nodejs.org/) (LTS) |
+
 ### Keycloak theme
 Build the keycloak theme as described in [build.md - Keycloak Theme](./build.md#keycloak-theme). Place the resulting `.jar` file in `./dev/keycloak/themes/`.
 
@@ -74,11 +83,28 @@ The init containers run once and exit after completing. On subsequent starts the
 
 All configuration defaults match the automated setup. See the README in each component for configuration details.
 
-| Service | Directory | Command |
-| ------- | --------- | ------- |
-| Backend | `./kaeltehilfe-backend/src` | `dotnet watch` or `dotnet run` |
-| Geo | `./kaeltehilfe-geo` | `air` |
-| Frontend | `./kaeltehilfe-frontend` | `npm run dev` |
+### Backend
+```
+cd ./kaeltehilfe-backend/src
+dotnet watch
+```
+
+### Geo
+Install [air](https://github.com/air-verse/air) for live reloading and resolve dependencies:
+```
+go install github.com/air-verse/air@latest
+cd ./kaeltehilfe-geo
+go mod tidy
+air
+```
+
+### Frontend
+Install dependencies and start the dev server:
+```
+cd ./kaeltehilfe-frontend
+npm ci
+npm run dev
+```
 
 
 ## Manual setup

@@ -1,11 +1,20 @@
+$userName = "max.mustermann@gmail.com"
+$password = "Passw0rd" | ConvertTo-SecureString -AsPlainText -Force
+$realmName = "kaeltehilfe"
+$clientId = "users"
+$baseUrl = "http://localhost:8050"
+
+$tokenCache = [TokenCache]::new($userName, $password, $realmName, $clientId, $baseUrl)
+
+
 try {
     $result = $null
     $response = $null
     $err = $null
     $headers = @{
-        Authorization = "Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJDS245SVpfRzlZR2pITGVlOGRhWW95X0tHY2kzQS1qUld0ZUoxWG5LZWpNIn0.eyJleHAiOjE3NzAxNDY1NDMsImlhdCI6MTc3MDE0NjI0MywiYXV0aF90aW1lIjoxNzcwMTQ1ODc4LCJqdGkiOiI3MDdhYWY0MC1iOGVkLTQ3NmMtYjRjOS00MDQ5ZjdhMmVjYTIiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwNTAvcmVhbG1zL2RyayIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiIyMGZlMjQ5NS1iYjMyLTQ1NTctYjE0MS04OGMwZjA2YTQ3OGUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJrYWVsdGVoaWxmZSIsInNpZCI6IjA2NzMzNGJlLTk1NjgtNGYxZS05ZTA0LWQzYjYyMmI5ZTVkYSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo1MTczIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsImRlZmF1bHQtcm9sZXMtZHJrIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJrYWVsdGVoaWxmZSI6eyJyb2xlcyI6WyJBRE1JTiJdfSwiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJvcGVuaWQgZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiTHVrYSBXZWlzIiwicHJlZmVycmVkX3VzZXJuYW1lIjoibHVrYS53ZWlzIiwiZ2l2ZW5fbmFtZSI6Ikx1a2EiLCJmYW1pbHlfbmFtZSI6IldlaXMiLCJlbWFpbCI6Imx1a2F0LndlaXNAZ21haWwuY29tIn0.hokPgs_7q6WlAk26v46aMmZL-oEuNWox8bfpNJmFn4vpElBm4aIGkyRaed-jRUsKK3MMunPh8p3IlgaGHT_BGKFITKTOFS7OSWOuVx8cXbVGA9238sGrQp6E6gEtO8Df_J1u-uvaR21eIrP35KkRQFfqaeudiEtS0R-VgV_wItSGBwg1ZPbFPul1HJr7883oI64iEVn609nRc8_OwBhV3MLTkUgir89bIfEhMKmXugmYTJsjBO1cAxayW4zRhwd0GRAWtDRlDrUYO4NsamOx5LDVR7M8bSVbuPze0kmsndeDinpIba11zqYqk3S4Y-45Mk3RSaEFw8guRAgB0lIRCg"
+        Authorization = "Bearer $($tokenCache.GetToken())"
     }
-    $response = Invoke-WebRequest -Method GET -Uri "http://localhost:8086/address?lat=48.396065169875015&lng=9.993111692883389" -Headers $headers -UseBasicParsing  -ErrorAction Stop
+    $response = Invoke-WebRequest -Method GET -Uri "http://localhost:8083/address?lat=48.396065169875015&lng=9.993111692883389" -Headers $headers -UseBasicParsing  -ErrorAction Stop
     Write-Host $response.StatusCode
     $result = $response | ConvertFrom-Json
     $result
