@@ -1,8 +1,27 @@
 version: '3.8'
 services:
+  certs-init:
+    build:
+      context: ./certs-init/image
+      dockerfile: Dockerfile
+    environment:
+      PASSWORD: ${ROOT_CERT_PASSWORD}
+      EXPORT_CRT_PATH: /app/output/crt/rootCa.crt
+      EXPORT_PFX_PATH: /app/output/pfx/rootCa.pfx
+      CA_NAME: KaeltehilfeRootCA
+    volumes:
+      - ./certs/root-crt:/app/output/crt
+      - ./certs/root-pfx:/app/output/pfx
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+  
   keycloak:
-    image: quay.io/keycloak/keycloak:26.0.4
-    command: start-dev
+    build:
+      context: ./keycloak/image
+      dockerfile: dockerfile
+    command: start-dev --health-enabled=true
     ports:
       - '8050:8080'
       - '8051:9000'
@@ -13,17 +32,50 @@ services:
       QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
       KC_PROXY_HEADERS: 'xforwarded'
       KC_HTTP_ENABLED: 'true'
+      KC_HEALTH_ENABLED: 'true'
       KC_HOSTNAME_STRICT: 'false'
       KC_HTTP_RELATIVE_PATH: /
       KC_PROXY_ADDRESS_FORWARDING: 'true'
       KC_SPI_X509CERT_LOOKUP_PROVIDER: 'nginx'
       KC_SPI_X509CERT_LOOKUP_NGINX_SSL_CLIENT_CERT: 'X-Client-Cert'
-      X509_CA_BUNDLE: '/etc/x509/https/rootCert.crt'
+      X509_CA_BUNDLE: '/etc/x509/https/rootCa.crt'
     volumes:
         - ./keycloak/data:/opt/keycloak/data
         - ./keycloak/themes:/opt/keycloak/providers
         - ./certs/root-crt:/etc/x509/https
         - ./certs/crl:/crl
+    depends_on:
+      certs-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9000/health/ready | grep -q '\"status\": \"UP\"'"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+
+  keycloak-init:
+    build:
+      context: ./keycloak-init
+      dockerfile: dockerfile
+    environment:
+      REALM_NAME: kaeltehilfe
+      REALM_REQUIRE_SSL: NONE
+      KC_BASE_URL: http://keycloak:8080
+      KC_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
+      KC_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
+      APP_URL: http://localhost:5173
+      APP_ADMIN_USERNAME: Max.Mustermann@gmail.com
+      APP_ADMIN_FIRSTNAME: Max
+      APP_ADMIN_LASTNAME: Mustermann
+      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD}
+      MACHINE_CLIENT_SECRET: ${KC_CLIENT_SECRET}
+    depends_on:
+      keycloak:
+        condition: service_healthy
     logging:
       driver: "json-file"
       options:

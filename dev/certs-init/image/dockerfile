@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/powershell:latest
+
+RUN apt-get update && apt-get install -y openssl
+
+WORKDIR /app
+
+COPY functions.ps1 .
+COPY setup.ps1 .
+
+CMD ["pwsh", "-File", "setup.ps1"]
