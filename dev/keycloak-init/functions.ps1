@@ -28,7 +28,10 @@ function SetupKaeltehilfeKeycloak {
         [SecureString]$appAdminPassword,
         # Secret for backend client
         [Parameter(Mandatory=$true)]
-        [SecureString]$machineClientSecret
+        [SecureString]$machineClientSecret,
+        # Predetermined UUID for user client
+        [Parameter(Mandatory=$true)]
+        [string]$userClientId
     )
 
     #
@@ -294,6 +297,7 @@ function SetupKaeltehilfeKeycloak {
 
     # Create client
     $userClient = [PSCustomObject]@{
+        id = $userClientId
         protocol = "openid-connect"
         clientId = "users"
         name = ""

@@ -9,7 +9,8 @@
     [string]$appAdminFirstname = $ENV:APP_ADMIN_FIRSTNAME,
     [string]$appAdminLastname = $ENV:APP_ADMIN_LASTNAME,
     [string]$appAdminPassword = $env:APP_ADMIN_PASSWORD,
-    [string]$machineClientSecret = $env:MACHINE_CLIENT_SECRET
+    [string]$machineClientSecret = $env:MACHINE_CLIENT_SECRET,
+    [string]$userClientId = $env:USER_CLIENT_ID
 )
 
 $params = $MyInvocation.MyCommand.Parameters.Keys
@@ -46,7 +47,8 @@ try {
                             -appAdminFirstname $appAdminFirstname `
                             -appAdminLastname $appAdminLastname `
                             -appAdminPassword ($appAdminPassword | ConvertTo-SecureString -AsPlainText -Force) `
-                            -machineClientSecret ($machineClientSecret | ConvertTo-SecureString -AsPlainText -Force)
+                            -machineClientSecret ($machineClientSecret | ConvertTo-SecureString -AsPlainText -Force) `
+                            -userClientId $userClientId
 }
 catch [Exception] {
     Write-Error $_.Exception.ToString()

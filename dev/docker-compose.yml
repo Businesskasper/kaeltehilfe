@@ -73,6 +73,7 @@ services:
       APP_ADMIN_LASTNAME: Mustermann
       APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD}
       MACHINE_CLIENT_SECRET: ${KC_CLIENT_SECRET}
+      USER_CLIENT_ID: ${KC_USER_CLIENT_ID}
     depends_on:
       keycloak:
         condition: service_healthy
