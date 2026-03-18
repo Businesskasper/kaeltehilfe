@@ -57,7 +57,7 @@ func getParams() *params {
 		defaultConnStr = envConnStr
 	}
 
-	defaultIssuerUrl := "http://localhost:8050/realms/drk"
+	defaultIssuerUrl := "http://localhost:8050/realms/kaeltehilfe"
 	if envIssuerUrl := os.Getenv("ISSUER_URL"); envIssuerUrl != "" {
 		defaultIssuerUrl = envIssuerUrl
 	}

@@ -13,7 +13,6 @@ public class KeycloakUserService : IUserService
     private readonly string _clientId;
     private readonly string _keycloakApiBaseUrl;
     private readonly string _machineClient;
-    private readonly string _machineClientId;
     private readonly string _machineClientSecret;
     private CachedToken? _cachedToken;
 
@@ -29,7 +28,6 @@ public class KeycloakUserService : IUserService
 
         // Client for machine auth
         _keycloakApiBaseUrl = configuration.RequireConfigValue("Authorization:ApiBaseUrl");
-        _machineClientId = configuration.RequireConfigValue("Authorization:MachineClientId");
         _machineClient = configuration.RequireConfigValue("Authorization:MachineClient");
         var clientSecretVar = configuration.RequireConfigValue(
             "Authorization:MachineClientSecretVar"

@@ -1,115 +1,118 @@
 # Develop
 
-### Prerequisites
+## Prerequisites
 
-##### Docker
+### Docker
 Install Docker Desktop (or a docker compose compatible service).
 
-##### Signer certificate
-You must generate a signer certificate so that the backend can sign client certificates and keycloak can validate them. 
+### Keycloak theme
+Build the keycloak theme as described in [build.md - Keycloak Theme](./build.md#keycloak-theme). Place the resulting `.jar` file in `./dev/keycloak/themes/`.
 
-You can use `./dev/scripts/prepare-certs.ps1` to generate the certificates and set the required environment variables. 
+### OSM data
+Download an `.osm.pbf` file from [Geofabrik](https://download.geofabrik.de/) and place it in `./dev/pgosm-init/input/`.
 
-The generated .pfx file contains a private key and is used by the backend to generate client certificates for authentication. The .crt file does not contain a private key and will be used by keycloak to validate the issued client certificates.
-
-The location of the .pfx file and its password will be needed later when configuring the backend. The .crt file must later be mapped to the keycloak container.
-
-### Background containers
-`./dev/docker-compose.yml` contains following containers:
-- keycloak: Auth provider for the application
-- pgosm-db: OSM database for the kaeltehilfe-go api
-- pgosm-init: Imports OSM data to pgosm-db on launch. The container will exit if the database has already been populated.
-
-#### keycloak
-Build the keycloak theme as described in [./build.md - Keycloak Theme](./build.md#keycloak-theme). Place the .jar file from the build result in `./dev/keycloak/themes/`.
-
-The previously generated signer certificates .crt file must be mapped to `/etc/x509/https` - place the file to `./dev/certs/root-crt`, in accordance to the `docker-compose.yml`
-
-#### pgosm-db
-Make sure the directory `./dev/pgosm-db/postgresql` exists and is empty. Note that PostgreSQL (and PostGIS) version 18+ do not accept mounted data directories. The configuration in `./dev/docker-compose.yml` is correct.
-
-#### pgosm-init
-The custom image is derived from "pgosm-flex/pgosm-flex". Some setup steps of the local PostGIS database are removed, since the image requires an external PostGIS connection (pgosm-db).
-Make sure to adjust the environment variables `PGOSM_REGION` and `PGOSM_SUBREGION`, as documented on the [official website](https://pgosm-flex.com/common-customization.html).
-Example configuration for "europe/germany/baden-wuerttemberg/tuebingen-regbez-260127.osm.pbf": 
-```
-PGOSM_REGION: europe/germany
-PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
-```
+The default configuration expects `germany-latest.osm.pbf`. To use a different region, adjust `PGOSM_REGION`, `PGOSM_SUBREGION`, and `PGOSM_INPUT_FILE` in `./dev/docker-compose.yml`. See the [pgosm-flex documentation](https://pgosm-flex.com/common-customization.html) for details on available regions.
 
 > [!NOTE]
-> There seems to be a bug with the hash checking when pgosm-init downloads the .pbf files. To prevent this, you can provide the container with the correct file prior to launching. Download the .pbf file from https://download.geofabrik.de/, set `PGOSM_REGION` and `PGOSM_SUBREGION` as well as `PGOSM_INPUT_FILE` with the path to the file on a mounted directory. For example: `/app/input/baden-wuerttemberg/tuebingen-regbez-latest.osm.pbf`
->
-
-### Run the containers
-Change the directory to `./dev` and run `docker compose up`.
-
-### Configure Keycloak
-Configure Keycloak as described in [./deploy.md - Setup Keycloak](./deploy.md#setup-keycloak). Use the console URL in the `./dev/docker-compose.yml` (default should be http://localhost:8050) to perform the configuration.
+> There is a known bug with hash checking when pgosm-init downloads `.pbf` files automatically. To avoid this, download and place the file manually as described above.
 
 
-### Backend
-The backend requires a fully set up keycloak dev container and signer certificate (see previous steps).
+## Environment variables
 
-#### Env vars
-The backend requires set up environment variables. Note that the keys of the variables must correspond to `./kaeltehilfe-backend/src/appsettings.Development.json`. You can run the following powershell code *with administrative privileges* to set environment variables system wide. Restart your shell after using the commands:
+Add `ROOT_CERT_PASSWORD` and `KC_CLIENT_SECRET` to `./dev/.env`:
 ```
-[Environment]::SetEnvironmentVariable("KC_CLIENT_SECRET", "...", "Machine")
+ROOT_CERT_PASSWORD=<password-for-the-certificate>
+KC_CLIENT_SECRET=<secret-for-the-machine-client>
 ```
 
-| Environment variable | appsettings.Development.json | Description |
-| --- | ---------------------------- | ----------- |
-| KC_CLIENT_SECRET | Authorization.MachineClientSecretVar | Client secret of the configured keycloak m2m client |
-| ROOT_CERT_PASSWORD | RooCertificateSettings.RootCertPasswordVar | Password of the previously created signer ceritificate .pfx file |
+| Variable | Description |
+| -------- | ----------- |
+| `ROOT_CERT_PASSWORD` | Protects the generated `.pfx` certificate. Used by `certs-init` during generation and by the backend at runtime to load the certificate. |
+| `KC_CLIENT_SECRET` | Secret for the Keycloak machine-to-machine client (`backend`). Used by `keycloak-init` during setup and by the backend for service account authentication. |
 
-#### Configuration
-The backend must be configured in `./kaeltehilfe-backend/src/appsettings.Development.json`:
-
-| Key | Description |
-| --- | ----------- |
-| Authorization.Authority | The authority url of the configured keycloak realm |
-
-> **Note:** certificate-related paths may be specified either as full system paths (e.g. <code>/opt/kaeltehilfe-api/cert</code> or <code>C:\...\rootCert.pfx</code>) or as paths relative to the backend's content root.  Relative paths will automatically be resolved when the application starts, making the same configuration file usable on both Windows (development) and Linux (production).
-| Authorization.Client | The name of the configured keycloak client for user authentication |
-|Authorization.ClientId | The clientId from the configured keycloak client for user authentication |
-| Authorization.ApiBaseUrl | The base url for the keycloak admin API |
-| Authorization.MachineClient | The name of the configured keycloak client for m2m communication |
-| Authorization.MachineClientId | "" |
-| Authorization.MachineClientSecretVar | The name of the previously configured environment variable that holds the secret for the machine client |
-| CertificateSettings.RootCertPath | The path to the generated signer certificates .pfx file (absolute or relative) |
-| CertificateSettings.RootCertPasswordVar | The name of the environment variable that holds the .pfx files password |
-| CertificateSettings.ClientCertDir | The path to store generated client certificates for authentication (absolute or relative) |
-| CertificateSettings.CrlPath | The path to generate and store the crl for deactivated client certificates for authentication (absolute or relative) |
-
-#### Start
-Run the api by navigating a shell to `./kaeltehilfe-backend/src` and invoking `dotnet watch` or `dotnet start`.
+Both variables must also be available as system environment variables so the backend can read them at runtime:
+```powershell
+[Environment]::SetEnvironmentVariable("ROOT_CERT_PASSWORD", "<password-for-the-certificate>", "Machine")
+[Environment]::SetEnvironmentVariable("KC_CLIENT_SECRET", "<secret-for-the-machine-client>", "Machine")
+```
+Restart your shell after setting them.
 
 
-### Geo
-#### Configuration
-The geo service uses configuration defaults that fit the `./dev/docker-compose.yml`. To change the arguments for the dev server, add runtime arguments in `args_bin` or their corresponding environment variables.  
+## Setup
 
-| Runtime argument | Environment variable | Description |
-| ---------------- | -------------------- | ----------- |
-| port | PORT | The port under which the webserver is provided |
-| connection_string | DB_CONN_STR | The connection string to the pgosm database |
-| issuer_url | ISSUER_URL | The issuer url to the configured keycloak client for user authentication |
-| allowed_origins | ALLOWED_ORIGINS | The url of the frontend for CORS configuration |
+### Start the containers
 
-#### Start
-Run the api by navigating a shell to `./kaeltehilfe-geo` and invoking `air`.
+```
+cd ./dev
+docker compose up
+```
+
+The `docker-compose.yml` defines the following services:
+
+| Container | Purpose |
+| --------- | ------- |
+| **certs-init** | Generates a root CA certificate (`.crt` and `.pfx`). Skips if certificates already exist. |
+| **keycloak** | Auth provider at http://localhost:8050. |
+| **keycloak-init** | Creates realm, auth flows, clients, and an initial admin user. Skips existing resources. |
+| **pgosm-db** | PostgreSQL with PostGIS at localhost:5432. |
+| **pgosm-init** | Imports OSM data into pgosm-db. Skips if the database is already populated. |
+
+The init containers run once and exit after completing. On subsequent starts they are idempotent and skip already existing resources.
+
+### Keycloak resources created by keycloak-init
+
+| Resource | Value |
+| -------- | ----- |
+| Realm | `kaeltehilfe` |
+| User client | `users` |
+| Machine client | `backend` (secret from `KC_CLIENT_SECRET`) |
+| Browser auth flow | `x509` (set as default) |
+| Initial admin user | `Max.Mustermann@gmail.com` (password from `APP_ADMIN_PASSWORD` in `.env`) |
 
 
-### Frontend
-#### Configuration
-The configuration file `./kaeltehilfe-frontend/.env` has correct defaults for most configuration items, only `VITE_IDP_CLIENT` must be configured according to the keycloak setup.
-| Key | Description |
-| --- | ----------- |
-| VITE_API_BASE_URL | The base url of the kaeltehilfe-backend api |
-| VITE_IDP_AUTHORITY | The authority url of the configured keycloak realm |
-| VITE_IDP_CLIENT | The name of the configured keycloak client for user authentication |
-| VITE_API_GEO_URL | The base url of the kaeltehilfe-geo api |
+## Start the services
 
-#### Start
-Run the frontend by navigating a shell to `./kaeltehilfe-frontend` and invoking `npm run dev`.
+All configuration defaults match the automated setup. See the README in each component for configuration details.
 
+| Service | Directory | Command |
+| ------- | --------- | ------- |
+| Backend | `./kaeltehilfe-backend/src` | `dotnet watch` or `dotnet run` |
+| Geo | `./kaeltehilfe-geo` | `air` |
+| Frontend | `./kaeltehilfe-frontend` | `npm run dev` |
+
+
+## Manual setup
+
+<details>
+<summary>Alternative: manual certificate generation and Keycloak configuration</summary>
+
+If you need more control over the setup or want to use a different realm configuration, you can perform the steps manually instead of relying on the init containers.
+
+### Certificate generation
+
+Generate a root CA certificate and place the output files in the expected directories:
+- `.pfx` file (with private key) in `./dev/certs/root-pfx/`
+- `.crt` file (public key only) in `./dev/certs/root-crt/`
+
+The `certs-init` container will skip generation if these files already exist.
+
+### Keycloak configuration
+
+Start only the infrastructure containers (without init containers):
+```
+cd ./dev
+docker compose up keycloak pgosm-db
+```
+
+Then configure Keycloak manually via the admin console at http://localhost:8050, following [deploy.md - Setup Keycloak](./deploy.md#setup-keycloak). You will need to create:
+- A realm
+- A user client with appropriate redirect URIs and web origins
+- A machine client with service account roles for the admin API
+- An X.509 browser authentication flow
+- An initial admin user
+
+Update `appsettings.Development.json` and `kaeltehilfe-frontend/.env` to match your manual configuration (realm name, client names, client UUIDs).
+
+Either comment out `keycloak-init` from the `docker-compose.yml`, or adjust all values so that the container will skip all actions.
+
+</details>
