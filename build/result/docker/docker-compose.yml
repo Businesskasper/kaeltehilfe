@@ -1,6 +1,6 @@
 services:
   proxy:
-    image: 'jc21/nginx-proxy-manager:latest'
+    image: 'jc21/nginx-proxy-manager:2.12.1'
     restart: unless-stopped
     ports:
       - '80:80'
@@ -35,8 +35,7 @@ services:
     image: kaeltehilfe-keycloak:latest
     restart: unless-stopped
     ports:
-      - '8080:8080'
-      - '9000:9000'
+      - '127.0.0.1:8080:8080'
     command: start
     logging:
       driver: "json-file"
@@ -97,7 +96,7 @@ services:
     image: kaeltehilfe-ui:latest
     restart: unless-stopped
     ports:
-      - '8082:80'
+      - '127.0.0.1:8082:80'
     logging:
       driver: "json-file"
       options:
@@ -105,12 +104,17 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
+    environment:
+      API_BASE_URL: https://${APP_DOMAIN}/api
+      IDP_AUTHORITY: https://${AUTH_DOMAIN}/realms/${KC_REALM}
+      IDP_CLIENT: ${KC_USER_CLIENT_ID}
+      API_GEO_URL: https://${APP_DOMAIN}/geo
 
   api:
     image: kaeltehilfe-api:latest
     restart: unless-stopped
     ports:
-      - '8081:8080'
+      - '127.0.0.1:8081:8080'
     logging:
       driver: "json-file"
       options:
@@ -134,7 +138,7 @@ services:
     image: postgis/postgis:18-3.6
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     logging:
       driver: "json-file"
       options:
@@ -179,7 +183,7 @@ services:
     image: kaeltehilfe-geo:latest
     restart: unless-stopped
     ports:
-      - "8083:8083"
+      - "127.0.0.1:8083:8083"
     logging:
       driver: "json-file"
       options:

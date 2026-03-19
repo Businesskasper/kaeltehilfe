@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getConfig } from "../../config";
 import { http } from "../utils";
 
 export type Address = {
@@ -9,14 +10,12 @@ export type Address = {
   distance?: number;
 };
 
-const { VITE_API_GEO_URL } = import.meta.env;
-
 type AddressQueryParams = { lat?: number; lng?: number };
 export const useAddressLookup = ({ lat, lng }: AddressQueryParams) => {
   const getAddress = async (abortSignal?: AbortSignal) => {
     if (lat === undefined || lng === undefined) return undefined;
     const response = await http.get<Address>(`address`, {
-      baseURL: VITE_API_GEO_URL,
+      baseURL: getConfig().API_GEO_URL,
       signal: abortSignal,
       params: { lat, lng },
     });

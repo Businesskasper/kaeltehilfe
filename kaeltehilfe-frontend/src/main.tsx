@@ -7,8 +7,10 @@ import {
 } from "react-router-dom";
 import App from "./App.tsx";
 import { AppShell } from "./AppShell.tsx";
-import { userManager } from "./UserManager.tsx";
+import { initUserManager, userManager } from "./UserManager.tsx";
 import { AuthRoute } from "./common/components";
+import { initHttp } from "./common/utils/http.tsx";
+import { loadConfig } from "./config.ts";
 import {
   AdminNavigation,
   Admins,
@@ -34,7 +36,7 @@ import "mantine-react-table/styles.css";
 
 import "./index.scss";
 
-export const router = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
@@ -109,17 +111,25 @@ export const router = createBrowserRouter([
   },
 ]);
 
-const onSigninCallback = (): void => {
-  window.history.replaceState({}, document.title, window.location.pathname);
-};
+async function bootstrap() {
+  await loadConfig();
+  initHttp();
+  initUserManager();
 
-const authProvProps: AuthProviderProps = {
-  userManager,
-  onSigninCallback,
-};
+  const onSigninCallback = (): void => {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  };
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <AuthProvider {...authProvProps}>
-    <RouterProvider router={router} />
-  </AuthProvider>,
-);
+  const authProvProps: AuthProviderProps = {
+    userManager,
+    onSigninCallback,
+  };
+
+  ReactDOM.createRoot(document.getElementById("root")!).render(
+    <AuthProvider {...authProvProps}>
+      <RouterProvider router={router} />
+    </AuthProvider>,
+  );
+}
+
+bootstrap();

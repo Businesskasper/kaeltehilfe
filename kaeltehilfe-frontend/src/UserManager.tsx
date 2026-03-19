@@ -3,18 +3,21 @@ import {
   UserManagerSettings,
   WebStorageStateStore,
 } from "oidc-client-ts";
+import { getConfig } from "./config";
 
-const { VITE_IDP_AUTHORITY, VITE_IDP_CLIENT } = import.meta.env;
+export let userManager: UserManager = null!;
 
-const userManagerProps: UserManagerSettings = {
-  client_id: VITE_IDP_CLIENT,
-  authority: VITE_IDP_AUTHORITY,
-  redirect_uri: window.location.href,
-  userStore: new WebStorageStateStore({ store: window.localStorage }),
-  extraQueryParams: {
-    theme: localStorage.getItem("mantine-color-scheme-value") || "light",
-  },
-  scope: "openid profile roles",
-};
-
-export const userManager = new UserManager(userManagerProps);
+export function initUserManager(): void {
+  const { IDP_AUTHORITY, IDP_CLIENT } = getConfig();
+  const settings: UserManagerSettings = {
+    client_id: IDP_CLIENT,
+    authority: IDP_AUTHORITY,
+    redirect_uri: window.location.href,
+    userStore: new WebStorageStateStore({ store: window.localStorage }),
+    extraQueryParams: {
+      theme: localStorage.getItem("mantine-color-scheme-value") || "light",
+    },
+    scope: "openid profile roles",
+  };
+  userManager = new UserManager(settings);
+}

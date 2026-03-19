@@ -1,0 +1,6 @@
+{
+  "API_BASE_URL": "http://localhost:5280/api",
+  "IDP_AUTHORITY": "http://localhost:8050/realms/kaeltehilfe",
+  "IDP_CLIENT": "users",
+  "API_GEO_URL": "http://localhost:8083"
+}

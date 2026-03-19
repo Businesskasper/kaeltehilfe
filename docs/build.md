@@ -6,7 +6,7 @@ Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or a 
 
 ## Build order
 
-Most images are deployment-agnostic and can be built in any order. The only exception is the **frontend**: Vite bakes the API and Keycloak URLs into the bundle at build time, so `kaeltehilfe-frontend/.env.production` must contain the correct URLs before building.
+All images are deployment-agnostic and can be built in any order. No URLs or environment-specific values are baked in at build time.
 
 > [!NOTE]
 > The NGINX Proxy Manager must be deployed and configured first so the public URLs are known. All other services (Keycloak realm, clients, users) are set up automatically by the init containers.
@@ -28,15 +28,6 @@ Each build script creates a Docker image and exports it as a `.tar` file to `bui
 
 
 ## Configuration
-
-### Frontend (`kaeltehilfe-frontend/.env.production`)
-
-Set these values **before building** the frontend image — they are baked into the bundle at build time:
-
-| Key | Description |
-| --- | ----------- |
-| `VITE_API_BASE_URL` | Public URL of the backend API (e.g. `https://app.example.com/api`). |
-| `VITE_IDP_AUTHORITY` | Keycloak realm URL (e.g. `https://auth.example.com/realms/kaeltehilfe`). |
 
 ### Backend (`build/result/kaeltehilfe-api/config/appsettings.json`)
 
@@ -62,6 +53,8 @@ Fill in the values in `.env` before starting the services:
 | `ROOT_CERT_PASSWORD` | Password for the root CA `.pfx` file. |
 | `KC_REALM` | Keycloak realm name (default: `kaeltehilfe`). |
 | `KC_USER_CLIENT_ID` | Predetermined UUID for the user client. Pre-filled — do not change unless you also update `Authorization.ClientId` in the backend config. |
+| `APP_DOMAIN` | Public domain for the application (e.g. `ulm.kaelte-hilfe.de`). Used to derive frontend config URLs. |
+| `AUTH_DOMAIN` | Public domain for Keycloak (e.g. `auth.kaelte-hilfe.de`). Used to derive frontend config URLs. |
 | `APP_URL` | Public frontend URL (used for Keycloak redirect URIs). |
 | `APP_ADMIN_USERNAME` | Initial admin user email. |
 | `APP_ADMIN_FIRSTNAME` | Initial admin user first name. |

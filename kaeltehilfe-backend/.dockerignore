@@ -1,0 +1,6 @@
+bin
+obj
+src/bin
+src/obj
+src/kaeltehilfeDatabase.db
+src/appsettings.Development.json
