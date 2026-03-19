@@ -1,13 +1,10 @@
 import { NotificationData, notifications } from "@mantine/notifications";
 import { IconX } from "@tabler/icons-react";
-import axios, { AxiosResponse, isAxiosError } from "axios";
+import axios, { AxiosInstance, AxiosResponse, isAxiosError } from "axios";
 import { userManager } from "../../UserManager";
+import { getConfig } from "../../config";
 
-const { VITE_API_BASE_URL } = import.meta.env;
-
-export const http = axios.create({
-  baseURL: VITE_API_BASE_URL,
-});
+export let http: AxiosInstance = null!;
 
 const notificationProps: Partial<NotificationData> = {
   title: "Fehler bei der Übertragung",
@@ -17,47 +14,56 @@ const notificationProps: Partial<NotificationData> = {
   withCloseButton: true,
   mb: "xs",
 };
-http.interceptors.request.use(async (request) => {
-  request.withCredentials = true;
-  const user = await userManager.getUser();
-  const { access_token } = user || {};
-  if (access_token) {
-    request.headers.setAuthorization(`Bearer ${access_token}`);
-  }
-  return request;
-});
-http.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (isAxiosError(error)) {
-      if (error.response?.status === 404) {
-        notifications.show({
-          ...notificationProps,
-          message: "Das Objekt wurde nicht gefunden",
-        });
-      } else if (error.response?.status?.toString()[0] === "4") {
-        if (error.response?.data.Code === "DUPLICATE") {
+
+export function initHttp(): void {
+  const { API_BASE_URL } = getConfig();
+  http = axios.create({
+    baseURL: API_BASE_URL,
+  });
+
+  http.interceptors.request.use(async (request) => {
+    request.withCredentials = true;
+    const user = await userManager.getUser();
+    const { access_token } = user || {};
+    if (access_token) {
+      request.headers.setAuthorization(`Bearer ${access_token}`);
+    }
+    return request;
+  });
+  http.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (isAxiosError(error)) {
+        if (error.response?.status === 404) {
           notifications.show({
             ...notificationProps,
-            message: "Ein Objekt mit angegebenem Schlüssel existiert bereits.",
+            message: "Das Objekt wurde nicht gefunden",
           });
-        } else {
+        } else if (error.response?.status?.toString()[0] === "4") {
+          if (error.response?.data.Code === "DUPLICATE") {
+            notifications.show({
+              ...notificationProps,
+              message:
+                "Ein Objekt mit angegebenem Schlüssel existiert bereits.",
+            });
+          } else {
+            notifications.show({
+              ...notificationProps,
+              message: "Bitte überprüfen Sie Ihre Eingabe",
+            });
+          }
+        } else if (error.response?.status?.toString()[0] === "5") {
           notifications.show({
             ...notificationProps,
-            message: "Bitte überprüfen Sie Ihre Eingabe",
+            message: "Bitte versuchen Sie es später erneut",
           });
         }
-      } else if (error.response?.status?.toString()[0] === "5") {
-        notifications.show({
-          ...notificationProps,
-          message: "Bitte versuchen Sie es später erneut",
-        });
       }
-    }
 
-    throw error;
-  },
-);
+      throw error;
+    },
+  );
+}
 
 const getBaseQuery =
   <T,>(path: string) =>
@@ -66,7 +72,6 @@ const getBaseQuery =
     params?: Record<string, unknown>,
   ): Promise<Array<T>> => {
     const response = await http.get<Array<T>>(path, {
-      baseURL: VITE_API_BASE_URL,
       signal: abortSignal,
       params,
     });
@@ -80,7 +85,6 @@ const getBaseGet =
     params?: Record<string, unknown>,
   ): Promise<T> => {
     const response = await http.get<T>(path, {
-      baseURL: VITE_API_BASE_URL,
       signal: abortSignal,
       params,
     });
@@ -99,17 +103,13 @@ const getBasePost =
       };
     }, {} as T);
 
-    return await http.post<T, AxiosResponse<TResult>>(path, cleanedItem, {
-      baseURL: VITE_API_BASE_URL,
-    });
+    return await http.post<T, AxiosResponse<TResult>>(path, cleanedItem);
   };
 
 const getBaseUpdate =
   <T,>(path: string) =>
   async (id: number, update: Partial<T>): Promise<void> => {
-    await http.patch<Partial<T>>(`${path}/${id}`, update, {
-      baseURL: VITE_API_BASE_URL,
-    });
+    await http.patch<Partial<T>>(`${path}/${id}`, update);
   };
 
 const getBasePut =
@@ -124,17 +124,13 @@ const getBasePut =
       };
     }, {} as T);
 
-    await http.put<Partial<T>>(`${path}/${id}`, cleanedUpdate, {
-      baseURL: VITE_API_BASE_URL,
-    });
+    await http.put<Partial<T>>(`${path}/${id}`, cleanedUpdate);
   };
 
 const getBaseDelete =
   (path: string) =>
   async (id: number): Promise<void> => {
-    await http.delete(`${path}/${id}`, {
-      baseURL: VITE_API_BASE_URL,
-    });
+    await http.delete(`${path}/${id}`);
   };
 
 const downloadBase64 = async (

@@ -60,9 +60,10 @@ All images must have been built according to the [build documentation](./build.m
 The `certs/root-crt/` and `certs/root-pfx/` directories are populated automatically by the `certs-init` container on first start.
 
 > [!IMPORTANT]
-> Containers need read/write access to all directories in the tree. Grant access by running:
-> ```
-> sudo chmod -R 777 /home/kaeltehilfe
+> Containers need read/write access to their data directories. Set ownership and permissions:
+> ```bash
+> sudo chown -R root:root /home/kaeltehilfe
+> sudo chmod -R 755 /home/kaeltehilfe
 > ```
 
 > [!WARNING]
@@ -80,6 +81,8 @@ done
 ### Configuration
 
 Fill in `.env` and `appsettings.json` as described in the [build documentation](./build.md#configuration).
+
+The frontend configuration (API URLs, Keycloak authority) is injected at container startup from environment variables defined in docker-compose. No build-time URL configuration is needed.
 
 
 ## Initial deployment
@@ -110,7 +113,7 @@ Configure proxy hosts for the following domains and issue Let's Encrypt certific
 | ------ | ------ | ---------------- | ----------- |
 | `proxy.mydomain.de` | `http://127.0.0.1:81` | `/` => `http://127.0.0.1:81` | Route to NGINX Proxy Manager itself |
 | `auth.mydomain.de` | `http://127.0.0.1:8080` | `/` => `http://127.0.0.1:8080` | Route to Keycloak |
-| `myinstance.mydomain.de` | `http://127.0.0.1:8082` | `/` => `http://127.0.0.1:8082`<br>`/api` => `http://127.0.0.1:8081`<br>`/admin` => `http://127.0.0.1:8082` | Routes to frontend and backend |
+| `myinstance.mydomain.de` | `http://127.0.0.1:8082` | `/` => `http://127.0.0.1:8082`<br>`/api` => `http://127.0.0.1:8081`<br>`/geo` => `http://127.0.0.1:8083`<br>`/admin` => `http://127.0.0.1:8082` | Routes to frontend, backend, and geo |
 
 #### Keycloak proxy headers
 
