@@ -1,48 +1,77 @@
 # Build
 
-> [!WARNING] TODO
-> - Add documentation for secrets
->
+## Prerequisites
+
+Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or a docker compose compatible service). All images are built inside Docker — no local SDKs are required.
+
+## Build order
+
+Most images are deployment-agnostic and can be built in any order. The only exception is the **frontend**: Vite bakes the API and Keycloak URLs into the bundle at build time, so `kaeltehilfe-frontend/.env.production` must contain the correct URLs before building.
 
 > [!NOTE]
-> For the initial deployment of services "proxy" and "keycloak" (from [docker-compose.yml](../build/result/docker/docker-compose.yml)), the build and deployment steps for "kaeltehilfe-api" and "ui" must be skipped, since both require configuration details from Keycloak and the NGINX Proxy Manager.
->
-> Comment out both services in `build/result/docker/docker-compose.yml` and skip the steps "Backend" and "Frontend" in this document and in [the deployment documentation](./deploy.md)).
->
-> After the successful configuration of the services "proxy" and "keycloak", build the backend and frontend as documented here and execute both services [deployment steps](./deploy.md)).
+> The NGINX Proxy Manager must be deployed and configured first so the public URLs are known. All other services (Keycloak realm, clients, users) are set up automatically by the init containers.
 
-### Root certificate
-Mobile clients must authenticate using a client certificate. Therefore a root certificate must be created, which allows the API to issue signed client certificates and Keycloak to verify those certificates.
+## Build images
 
-To create a root certificate, run `build/certs/create-root-cert.ps1` ***with administrative privileges***. A .pfx file (certificate and private key) for the API will be placed in `build/result/api/cert` and a .ca (only the certificate) file for Keycloak will be placed in `build/result/keycloak/x509`. Either set the .pfx's import password in the scripts params block, or pass it as a SecureString parameter on execution.
+Each build script creates a Docker image and exports it as a `.tar` file to `build/result/docker/images/`.
 
-> [!WARNING]  
-> The .pfx file's import password must be set in the APIs containers environment variable `ROOT_CERT_PASSWORD` (see [Todo]()). The easiest way to achieve this is to overwrite the `ROOT_CERT_PASSWORD` key's value in `build/result/docker/.env`. Caution! Dollar signs need to be escaped in both docker-compose.yml and docker .env!
+| Script | Image | Description |
+| ------ | ----- | ----------- |
+| `build\keycloak-theme\build-keycloak-theme.ps1` | — | Builds the Keycloak login theme `.jar` to `build/result/keycloak/themes/`. |
+| `build\keycloak\build-keycloak.ps1` | `kaeltehilfe-keycloak` | Custom Keycloak image with health endpoint support. |
+| `build\certs-init\build-certs-init.ps1` | `kaeltehilfe-certs-init` | Certificate generation init container. |
+| `build\keycloak-init\build-keycloak-init.ps1` | `kaeltehilfe-keycloak-init` | Keycloak realm setup init container. |
+| `build\backend\build-backend.ps1` | `kaeltehilfe-api` | .NET backend (multi-stage build). |
+| `build\frontend\build-frontend.ps1` | `kaeltehilfe-ui` | Frontend (multi-stage build). |
+| `build\geo\build-geo.ps1` | `kaeltehilfe-geo` | Geo service (multi-stage build). |
+| `build\pgosm-init\build-pgosm-init.ps1` | `pgosm-init` | OSM data import init container. |
 
-### Keycloak Theme
-The project includes a theme for Keycloak which allows seamless integration into the frontend. Build the theme by running `build/keycloak-theme/build-keycloak-theme.ps1`. The created .jar file will be placed in `build/result/keycloak/themes`
 
-### Backend
-> [!IMPORTANT]  
-> Execute this only AFTER Keycloak and NGINX have been configured.
+## Configuration
 
-Adjust values following values in `kaeltehilfe-backend/src/appsettings.json` according to your configured Keycloak service:
-| Key                     | Value                                                                                       |
-| ----------------------- | ------------------------------------------------------------------------------------------- |
-| Authorization.Authority | Link to your created realm                                                                  |
-| Authorization.Client    | Name of your created client inside the realm                                                |
-| Authorization.ClientId  | Id of your created client inside the realm. The Id can be read from the realms browser URL. |
+### Frontend (`kaeltehilfe-frontend/.env.production`)
 
-Build the project and create a docker image by running `build/backend/build-backend.ps1`. The image will be placed in `build/result/docker/images`.
+Set these values **before building** the frontend image — they are baked into the bundle at build time:
 
-### Frontend
-> [!IMPORTANT]  
-> Execute this only AFTER Keycloak and NGINX have been configured.
+| Key | Description |
+| --- | ----------- |
+| `VITE_API_BASE_URL` | Public URL of the backend API (e.g. `https://app.example.com/api`). |
+| `VITE_IDP_AUTHORITY` | Keycloak realm URL (e.g. `https://auth.example.com/realms/kaeltehilfe`). |
 
-Adjust values following values in `kaeltehilfe-frontend/.env.production` according to your configured Keycloak and NGINX services:
-| Key                | Value                                                   |
-| ------------------ | ------------------------------------------------------- |
-| VITE_API_BASE_URL  | Route to your backend base URL (should end with "/api") |
-| VITE_IDP_AUTHORITY | Link to your created realm                              |
+### Backend (`build/result/kaeltehilfe-api/config/appsettings.json`)
 
-Build the project and create a docker image by running `build/frontend/build-frontend.ps1`. The image will be placed in `build/result/docker/images`.
+The backend configuration is mounted into the container at runtime and can be changed without rebuilding. A template is provided at `build/result/kaeltehilfe-api/config/appsettings.json`. Adjust the following values for your deployment:
+
+| Key | Description |
+| --- | ----------- |
+| `Authorization.Authority` | Keycloak realm URL (e.g. `https://auth.example.com/realms/kaeltehilfe`). |
+| `Authorization.ApiBaseUrl` | Keycloak admin API URL (e.g. `https://auth.example.com/admin/realms/kaeltehilfe`). |
+
+The remaining values have sensible defaults. See the [backend README](../kaeltehilfe-backend/src/README.md) for details on all settings.
+
+### Environment variables (`build/result/docker/.env`)
+
+Fill in the values in `.env` before starting the services:
+
+| Variable | Description |
+| -------- | ----------- |
+| `KEYCLOAK_ADMIN` | Keycloak bootstrap admin username. |
+| `KEYCLOAK_ADMIN_PASSWORD` | Keycloak bootstrap admin password. |
+| `KEYCLOAK_ISSUER_URL` | Full Keycloak realm URL (used by the geo service). |
+| `KC_CLIENT_SECRET` | Secret for the machine-to-machine client (`backend`). |
+| `ROOT_CERT_PASSWORD` | Password for the root CA `.pfx` file. |
+| `KC_REALM` | Keycloak realm name (default: `kaeltehilfe`). |
+| `KC_USER_CLIENT_ID` | Predetermined UUID for the user client. Pre-filled — do not change unless you also update `Authorization.ClientId` in the backend config. |
+| `APP_URL` | Public frontend URL (used for Keycloak redirect URIs). |
+| `APP_ADMIN_USERNAME` | Initial admin user email. |
+| `APP_ADMIN_FIRSTNAME` | Initial admin user first name. |
+| `APP_ADMIN_LASTNAME` | Initial admin user last name. |
+| `APP_ADMIN_PASSWORD` | Initial admin user password. |
+| `POSTGIS_ADMIN` | PostgreSQL admin username. |
+| `POSTGIS_PASSWORD` | PostgreSQL admin password. |
+| `POSTGIS_DB` | PostgreSQL database name. |
+| `POSTGIS_CONN_STR` | Full PostgreSQL connection string for the geo service. |
+| `ALLOWED_ORIGINS` | Allowed CORS origins for the backend and geo service. |
+
+> [!WARNING]
+> Dollar signs in passwords must be escaped in `.env` files (`$$`).

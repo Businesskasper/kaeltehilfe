@@ -2,6 +2,8 @@
 
 Configuration is managed through `appsettings.json` (production) and `appsettings.Development.json` (development). The development defaults match the automated dev setup from `./dev/docker-compose.yml`.
 
+In production, `appsettings.json` is mounted into the container from `build/result/kaeltehilfe-api/config/appsettings.json` and can be adjusted without rebuilding the image.
+
 ### Authorization
 
 | Key | Description | Dev default |
