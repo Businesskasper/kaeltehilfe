@@ -1,19 +1,9 @@
-function invokeNpmScript([string]$projectPath, [string]$scriptName) {
-    $result = Start-Process -FilePath "C:\Program Files\nodejs\npm" -ArgumentList @("run", $scriptName) -Wait -PassThru -WorkingDirectory $projectPath
-    if ($result.ExitCode -ne 0) {
-        throw [Exception]::new("NPM script failed with exit code $($result.ExitCode)")
-    }
-}
 
-function invokeDotnetCommand([string]$projectPath, [string]$command) {
-    $result = Start-Process -FilePath "C:\Program Files\dotnet\dotnet.exe" -ArgumentList @($command) -Wait -PassThru -WorkingDirectory $projectPath
-    if ($result.ExitCode -ne 0) {
-        throw [Exception]::new("Dotnet command failed with exit code $($result.ExitCode)")
-    }
-}
-
-function buildDockerImage([string]$dockerFileDir, [string]$dockerImageName, [string[]]$buildArgs) {
+function buildDockerImage([string]$dockerFileDir, [string]$dockerImageName, [string[]]$buildArgs, [string]$dockerFilePath) {
     $argumentList = @("build", ".", "-t", $dockerImageName)
+    if (-not [string]::IsNullOrEmpty($dockerFilePath)) {
+        $argumentList += @("-f", $dockerFilePath)
+    }
     if ($null -ne $buildArgs) {
         foreach ($buildArg in $buildArgs) {
             $argumentList += "--build-arg $($buildArg)"

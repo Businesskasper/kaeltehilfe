@@ -1,0 +1,15 @@
+FROM registry.access.redhat.com/ubi9/ubi-minimal AS curl-provider
+RUN mkdir /curl-export && \
+    cp /usr/bin/curl /curl-export/ && \
+    ldd /usr/bin/curl | awk 'NF==4{print $3} NF==2{print $1}' | grep '^/' | \
+        grep -vE '(libc\.so|libm\.so|libpthread|libdl\.so|librt\.so|ld-linux)' | \
+        while read lib; do cp -L "$lib" /curl-export/; done
+
+FROM quay.io/keycloak/keycloak:26.0.4 AS builder
+RUN /opt/keycloak/bin/kc.sh build --health-enabled=true
+
+FROM quay.io/keycloak/keycloak:26.0.4
+COPY --from=builder /opt/keycloak/ /opt/keycloak/
+COPY --from=curl-provider /curl-export /opt/curl
+ENV PATH="/opt/curl:$PATH"
+ENV LD_LIBRARY_PATH="/opt/curl"

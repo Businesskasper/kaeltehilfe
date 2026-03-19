@@ -1,0 +1,9 @@
+FROM node:lts-alpine AS build
+WORKDIR /src
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build-keycloak-theme
+
+FROM scratch
+COPY --from=build /src/dist_keycloak/keycloak-theme-for-kc-22-to-25.jar /keycloak-theme.jar

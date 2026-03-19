@@ -1,39 +1,30 @@
 if ($psISE) {
-    $global:root = $psISE.CurrentFile | Select-Object -ExpandProperty FullPath | Split-Path -Parent
+    $root = $psISE.CurrentFile | Select-Object -ExpandProperty FullPath | Split-Path -Parent
 }
-elseif ($profile -match "VSCode") { 
-    $global:root = $psEditor.GetEditorContext().CurrentFile.Path | Split-Path -Parent
+elseif ($profile -match "VSCode") {
+    $root = $psEditor.GetEditorContext().CurrentFile.Path | Split-Path -Parent
 }
 else {
-    $global:root = $MyInvocation.MyCommand.Definition | Split-Path -Parent 
+    $root = $MyInvocation.MyCommand.Definition | Split-Path -Parent
 }
 
 Write-Host "Build backend container image" -ForegroundColor Cyan
 
-. ([System.IO.Path]::Combine($global:root, "..", "functions.ps1"))
+. ([System.IO.Path]::Combine($root, "..", "functions.ps1"))
 
 $dockerImageName = "kaeltehilfe-api:latest"
+$dockerContext = [System.IO.Path]::Combine($root, "..", "..", "kaeltehilfe-backend")
+$dockerFilePath = [System.IO.Path]::Combine($dockerContext, "dockerfile.prod")
 
-$backendDir = [System.IO.Path]::Combine($global:root, "..", "..", "kaeltehilfe-backend", "src")
-
-$publishDir = [System.IO.Path]::Combine($global:root, "publish-backend")
-if (Test-Path -Path $publishDir) {
-    Write-Host "Clean up previous publish directory"
-    Remove-Item -Recurse -Force $publishDir -ErrorAction SilentlyContinue | Out-Null
-}
-    
-$dockerImageExportPath = [System.IO.Path]::Combine($global:root, "..", "result", "docker", "images", "kaeltehilfe-api.tar")
+$dockerImageExportPath = [System.IO.Path]::Combine($root, "..", "result", "docker", "images", "kaeltehilfe-api.tar")
 if (Test-Path -Path $dockerImageExportPath) {
     Write-Host "Clean up previously exported image"
     Remove-Item -Force $dockerImageExportPath -ErrorAction SilentlyContinue | Out-Null
 }
 
 try {
-    Write-Host "Build project to $($publishDir)"
-    invokeDotnetCommand -projectPath $backendDir -command "publish -c Release -o $($publishDir)"
-
     Write-Host "Build image"
-    buildDockerImage -dockerFileDir $global:root -dockerImageName $dockerImageName
+    buildDockerImage -dockerFileDir $dockerContext -dockerImageName $dockerImageName -dockerFilePath $dockerFilePath
     Write-Host "Image built as $($dockerImageName)"
 
     Write-Host "Export image"

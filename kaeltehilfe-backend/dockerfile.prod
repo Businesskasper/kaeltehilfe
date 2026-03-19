@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY src/kaeltehilfe-backend.csproj .
+RUN dotnet restore
+COPY src/ .
+RUN dotnet publish -c Release -o /app/publish
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+EXPOSE 8080
+
+RUN apt-get update -yq && apt-get install -yq libsqlite3-mod-spatialite && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /App
+COPY --from=build /app/publish .
+ENTRYPOINT ["dotnet", "kaeltehilfe-backend.dll"]
