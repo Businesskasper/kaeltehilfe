@@ -22,6 +22,7 @@ builder.Configuration.AddJsonFile(
     optional: true,
     reloadOnChange: true
 );
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();

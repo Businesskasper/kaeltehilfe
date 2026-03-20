@@ -46,16 +46,25 @@ type params struct {
 	allowedOrigins []string
 }
 
+func envOrDefault(key, fallback string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return fallback
+}
+
 func getParams() *params {
 	defaultPort := 8083
 	if envPort := os.Getenv("PORT"); envPort != "" {
 		fmt.Sscanf(envPort, "%d", &defaultPort)
 	}
 
-	defaultConnStr := "postgres://admin:Passw0rd@localhost:5432/pgosm?sslmode=disable"
-	if envConnStr := os.Getenv("DB_CONN_STR"); envConnStr != "" {
-		defaultConnStr = envConnStr
-	}
+	dbUser := envOrDefault("DB_USER", "admin")
+	dbPassword := envOrDefault("DB_PASSWORD", "Passw0rd")
+	dbHost := envOrDefault("DB_HOST", "localhost")
+	dbPort := envOrDefault("DB_PORT", "5432")
+	dbName := envOrDefault("DB_NAME", "pgosm")
+	defaultConnStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", dbUser, dbPassword, dbHost, dbPort, dbName)
 
 	defaultIssuerUrl := "http://localhost:8050/realms/kaeltehilfe"
 	if envIssuerUrl := os.Getenv("ISSUER_URL"); envIssuerUrl != "" {
