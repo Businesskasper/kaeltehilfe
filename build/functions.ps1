@@ -21,21 +21,3 @@ function exportDockerImage([string]$dockerImageName, [string]$exportPath) {
         throw [Exception]::new("Docker export failed with exit code $($result.ExitCode)")
     }
 }
-
-function EnsureHostsEntry([string]$domain, [string]$ip) {
-    $hostsPath = "C:\Windows\System32\drivers\etc\hosts"
-    $entry = "$($ip) $($domain)"
-
-    $hostsContent = Get-Content -Path $hostsPath
-    if ($hostsContent -like "*$($entry)*") {
-        return
-    }
-
-    $tempDir = [System.IO.Path]::Combine($env:TEMP, [Guid]::NewGuid().Guid)
-    New-Item -Path $tempDir -ItemType Directory -Force -ErrorAction SilentlyContinue | Out-Null
-    
-    $tempHostsPath = [System.IO.Path]::Combine($tempDir, "hosts")
-    $hostsContent + [System.Environment]::NewLine + $entry  | Out-File -FilePath $tempHostsPath -Append -Force -NoClobber | Out-Null
-
-    Move-Item -Path $tempHostsPath -Destination $hostsPath -Force 
-}

@@ -61,6 +61,7 @@ services:
       QUARKUS_TRANSACTION_MANAGER_ENABLE_RECOVERY: 'true'
       KC_PROXY_HEADERS: 'xforwarded'
       KC_HTTP_ENABLED: 'true'
+      KC_HEALTH_ENABLED: 'true'
       KC_HOSTNAME_STRICT: 'false'
       KC_HTTP_RELATIVE_PATH: /
       KC_PROXY_ADDRESS_FORWARDING: 'true'
@@ -104,6 +105,8 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
+      keycloak-init:
+        condition: service_completed_successfully
     environment:
       API_BASE_URL: https://${APP_DOMAIN}/api
       IDP_AUTHORITY: https://${AUTH_DOMAIN}/realms/${KC_REALM}
@@ -122,6 +125,10 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
+      cerits-init:
+        condition: service_completed_successfully
+      keycloak-init:
+        condition: service_completed_successfully
     volumes:
       - ../kaeltehilfe-api/config/appsettings.json:/App/appsettings.json:ro
       - ../kaeltehilfe-api/db:/opt/kaeltehilfe-api/db
@@ -191,8 +198,12 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
+      keycloak-init:
+        condition: service_completed_successfully
       pgosm-db:
         condition: service_healthy
+      pgosm-init:
+        condition: service_completed_successfully
     environment:
       PORT: "8083"
       DB_CONN_STR: ${POSTGIS_CONN_STR}
