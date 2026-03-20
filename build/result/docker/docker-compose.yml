@@ -137,7 +137,10 @@ services:
       - ../certs/crl:/opt/kaeltehilfe-api/cert/crl
     environment:
       ASPNETCORE_ENVIRONMENT: 'Production'
-      CORS_ORIGINS: ${ALLOWED_ORIGINS}
+      Authorization__Authority: https://${AUTH_DOMAIN}/realms/${KC_REALM}
+      Authorization__ClientId: ${KC_USER_CLIENT_ID}
+      Authorization__ApiBaseUrl: https://${AUTH_DOMAIN}/admin/realms/${KC_REALM}
+      CORS_ORIGINS: ${APP_URL}
       ROOT_CERT_PASSWORD: ${ROOT_CERT_PASSWORD}
       KC_CLIENT_SECRET: ${KC_CLIENT_SECRET}
 
@@ -206,6 +209,10 @@ services:
         condition: service_completed_successfully
     environment:
       PORT: "8083"
-      DB_CONN_STR: ${POSTGIS_CONN_STR}
-      ISSUER_URL: ${KEYCLOAK_ISSUER_URL}
-      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      DB_USER: ${POSTGIS_ADMIN}
+      DB_PASSWORD: ${POSTGIS_PASSWORD}
+      DB_HOST: pgosm-db
+      DB_PORT: "5432"
+      DB_NAME: ${POSTGIS_DB}
+      ISSUER_URL: https://${AUTH_DOMAIN}/realms/${KC_REALM}
+      ALLOWED_ORIGINS: ${APP_URL}

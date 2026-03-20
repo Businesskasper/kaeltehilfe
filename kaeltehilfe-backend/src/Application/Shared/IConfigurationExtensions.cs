@@ -7,7 +7,10 @@ public static class ConfigurationExtensions
 {
     public static string RequireConfigValue(this IConfiguration configuration, string key)
     {
-        return configuration[key] ?? throw new Exception($"{key} is not defined in appsettings");
+        var value = configuration[key];
+        return !string.IsNullOrWhiteSpace(value)
+            ? value
+            : throw new Exception($"{key} is not defined in appsettings or environment variables");
     }
 
     public static string RequireResolvedPath(this IConfiguration configuration, string key, IHostEnvironment env)
