@@ -85,7 +85,7 @@ services:
       KC_BASE_URL: http://keycloak:8080
       KC_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
       KC_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      APP_URL: ${APP_URL}
+      APP_URL: https://${APP_DOMAIN}
       APP_ADMIN_USERNAME: ${APP_ADMIN_USERNAME}
       APP_ADMIN_FIRSTNAME: ${APP_ADMIN_FIRSTNAME}
       APP_ADMIN_LASTNAME: ${APP_ADMIN_LASTNAME}
@@ -140,7 +140,7 @@ services:
       Authorization__Authority: https://${AUTH_DOMAIN}/realms/${KC_REALM}
       Authorization__ClientId: ${KC_USER_CLIENT_ID}
       Authorization__ApiBaseUrl: https://${AUTH_DOMAIN}/admin/realms/${KC_REALM}
-      CORS_ORIGINS: ${APP_URL}
+      ALLOWED_ORIGINS: https://${APP_DOMAIN}
       ROOT_CERT_PASSWORD: ${ROOT_CERT_PASSWORD}
       KC_CLIENT_SECRET: ${KC_CLIENT_SECRET}
 
@@ -216,4 +216,4 @@ services:
       DB_PORT: "5432"
       DB_NAME: ${POSTGIS_DB}
       ISSUER_URL: https://${AUTH_DOMAIN}/realms/${KC_REALM}
-      ALLOWED_ORIGINS: ${APP_URL}
+      ALLOWED_ORIGINS: https://${APP_DOMAIN}

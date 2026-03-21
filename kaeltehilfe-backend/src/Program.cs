@@ -60,8 +60,8 @@ builder.Services.AddLoginInitializer<KbContext, LoginInitializer>();
 var CORS_POLICY = "CorsPolicy";
 
 // Get the CORS origins from environment variables, default to "http://localhost:5173"
-var corsOrigins = Environment.GetEnvironmentVariable("CORS_ORIGINS") ?? "http://localhost:5173";
-var origins = corsOrigins.Split(",", StringSplitOptions.RemoveEmptyEntries);
+var allowedOrigins = Environment.GetEnvironmentVariable("ALLOWED_ORIGINS") ?? "http://localhost:5173";
+var origins = allowedOrigins.Split(",", StringSplitOptions.RemoveEmptyEntries);
 
 builder.Services.AddCors(options =>
 {
