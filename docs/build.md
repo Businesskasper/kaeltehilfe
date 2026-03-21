@@ -43,13 +43,13 @@ Fill in the values in `.env` before starting the services:
 | -------- | ----------- |
 | `KEYCLOAK_ADMIN` | Keycloak bootstrap admin username. |
 | `KEYCLOAK_ADMIN_PASSWORD` | Keycloak bootstrap admin password. |
-| `KC_CLIENT_SECRET` | Secret for the machine-to-machine client (`backend`). |
+| `KC_CLIENT_SECRET` | Secret for the machine-to-machine client (`backend`). Must be 35 alphabetical characters. |
 | `ROOT_CERT_PASSWORD` | Password for the root CA `.pfx` file. |
 | `KC_REALM` | Keycloak realm name (default: `kaeltehilfe`). |
-| `KC_USER_CLIENT_ID` | Predetermined UUID for the user client. Pre-filled — do not change unless you also update `Authorization.ClientId` in the backend config. |
+| `KC_USER_CLIENT_ID` | UUID for the user client. You can use the default value or create your |
 | `APP_DOMAIN` | Public domain for the application (e.g. `ulm.kaelte-hilfe.de`). Used to derive URLs for frontend, backend, and geo. |
 | `AUTH_DOMAIN` | Public domain for Keycloak (e.g. `auth.kaelte-hilfe.de`). Used to derive Keycloak URLs for all services. |
-| `APP_URL` | Public frontend URL (used for Keycloak redirect URIs and CORS). |
+<!-- | `APP_URL` | Public frontend URL (used for Keycloak redirect URIs and CORS). | -->
 | `APP_ADMIN_USERNAME` | Initial admin user email. |
 | `APP_ADMIN_FIRSTNAME` | Initial admin user first name. |
 | `APP_ADMIN_LASTNAME` | Initial admin user last name. |
@@ -60,3 +60,23 @@ Fill in the values in `.env` before starting the services:
 
 > [!WARNING]
 > Dollar signs in passwords must be escaped in `.env` files (`$$`).
+
+>[!NOTE]
+> You can use following snippet to generate `KC_CLIENT_SECRET` and `ROOT_CERT_PASSWORD`.
+```powershell
+function GeneratePassword([int]$length) {
+    $pw = ""
+    1..$length | % {
+        $case = Get-Random -Minimum 0 -Maximum 2
+        if ($case -eq 0) {
+            $pw += [char](Get-Random -Minimum 65 -Maximum 90)
+        }
+        else {
+            $pw += [char](Get-Random -Minimum 97 -Maximum 122)
+        }
+    }
+    return $pw
+}
+
+GeneratePassword -length 35
+```

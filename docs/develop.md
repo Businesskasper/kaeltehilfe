@@ -28,23 +28,39 @@ The default configuration expects `germany-latest.osm.pbf`. To use a different r
 
 ## Environment variables
 
-Add `ROOT_CERT_PASSWORD` and `KC_CLIENT_SECRET` to `./dev/.env`:
-```
-ROOT_CERT_PASSWORD=<password-for-the-certificate>
-KC_CLIENT_SECRET=<secret-for-the-machine-client>
-```
+Add following environment variables on your machine. Do not use .env since the kaeltehilfe-backend development server is not run via docker.
 
 | Variable | Description |
 | -------- | ----------- |
 | `ROOT_CERT_PASSWORD` | Protects the generated `.pfx` certificate. Used by `certs-init` during generation and by the backend at runtime to load the certificate. |
 | `KC_CLIENT_SECRET` | Secret for the Keycloak machine-to-machine client (`backend`). Used by `keycloak-init` during setup and by the backend for service account authentication. |
 
-Both variables must also be available as system environment variables so the backend can read them at runtime:
+You can set the variables using following powershell snippet:
 ```powershell
 [Environment]::SetEnvironmentVariable("ROOT_CERT_PASSWORD", "<password-for-the-certificate>", "Machine")
 [Environment]::SetEnvironmentVariable("KC_CLIENT_SECRET", "<secret-for-the-machine-client>", "Machine")
 ```
-Restart your shell after setting them.
+
+KC_CLIENT_SECRET must be a 35 alphabetical string. You can use following function to generate a secret:
+```powershell
+function GeneratePassword([int]$length) {
+    $pw = ""
+    1..$length | % {
+        $case = Get-Random -Minimum 0 -Maximum 2
+        if ($case -eq 0) {
+            $pw += [char](Get-Random -Minimum 65 -Maximum 90)
+        }
+        else {
+            $pw += [char](Get-Random -Minimum 97 -Maximum 122)
+        }
+    }
+    return $pw
+}
+
+GeneratePassword -length 35
+```
+
+Restart your shell after you're done.
 
 
 ## Setup
