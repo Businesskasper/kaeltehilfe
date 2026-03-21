@@ -30,9 +30,9 @@ try {
     $jarPath = [System.IO.Path]::Combine($publishDir, "kaeltehilfe-keycloak-theme.jar")
 
     # Create a temporary container and copy the jar out
-    & "C:\Program Files\Docker\Docker\resources\bin\docker" create --name $containerName $dockerImageName 2>&1 | Out-Null
-    & "C:\Program Files\Docker\Docker\resources\bin\docker" cp "${containerName}:/keycloak-theme.jar" $jarPath
-    & "C:\Program Files\Docker\Docker\resources\bin\docker" rm $containerName 2>&1 | Out-Null
+    createDockerContainer -containerName $containerName -imageName $dockerImageName
+    copyDockerFile -source "${containerName}:/keycloak-theme.jar" -destination $jarPath
+    removeDockerContainer -containerName $containerName
 
     if (-not (Test-Path $jarPath)) {
         throw [Exception]::new("Failed to extract theme jar")
@@ -44,5 +44,5 @@ catch [Exception] {
     Write-Host "Build failed" -ForegroundColor Red
     Write-Host $_.Exception.ToString()
     # Clean up container on failure
-    & "C:\Program Files\Docker\Docker\resources\bin\docker" rm $containerName 2>&1 | Out-Null
+    removeDockerContainer -containerName $containerName
 }

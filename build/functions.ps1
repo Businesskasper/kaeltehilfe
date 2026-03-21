@@ -21,3 +21,21 @@ function exportDockerImage([string]$dockerImageName, [string]$exportPath) {
         throw [Exception]::new("Docker export failed with exit code $($result.ExitCode)")
     }
 }
+
+function createDockerContainer([string]$containerName, [string]$imageName) {
+    $result = Start-Process -FilePath "C:\Program Files\Docker\Docker\resources\bin\docker" -ArgumentList @("create", "--name", $containerName, $imageName) -Wait -PassThru
+    if ($result.ExitCode -ne 0) {
+        throw [Exception]::new("Docker create failed with exit code $($result.ExitCode)")
+    }
+}
+
+function copyDockerFile([string]$source, [string]$destination) {
+    $result = Start-Process -FilePath "C:\Program Files\Docker\Docker\resources\bin\docker" -ArgumentList @("cp", $source, $destination) -Wait -PassThru
+    if ($result.ExitCode -ne 0) {
+        throw [Exception]::new("Docker cp failed with exit code $($result.ExitCode)")
+    }
+}
+
+function removeDockerContainer([string]$containerName) {
+    Start-Process -FilePath "C:\Program Files\Docker\Docker\resources\bin\docker" -ArgumentList @("rm", $containerName) -Wait -PassThru | Out-Null
+}
