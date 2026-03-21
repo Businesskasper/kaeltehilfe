@@ -1,9 +1,11 @@
 FROM node:lts-alpine AS build
+RUN apk add --no-cache openjdk17 maven
 WORKDIR /src
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 RUN npm run build-keycloak-theme
 
-FROM scratch
+FROM busybox
 COPY --from=build /src/dist_keycloak/keycloak-theme-for-kc-22-to-25.jar /keycloak-theme.jar
+CMD ["true"]
