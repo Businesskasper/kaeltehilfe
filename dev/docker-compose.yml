@@ -120,12 +120,12 @@ services:
       PGUSER: ${POSTGIS_ADMIN}
       POSTGRES_PASSWORD: ${POSTGIS_PASSWORD}
       PGOSM_RAM: 8
-      PGOSM_REGION: europe
-      PGOSM_SUBREGION: germany
-      PGOSM_INPUT_FILE: /app/input/germany-latest.osm.pbf
-      # PGOSM_REGION: europe/germany
-      # PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
-      # PGOSM_INPUT_FILE: /app/input/baden-wuerttemberg/tuebingen-regbez-latest.osm.pbf
+      # PGOSM_REGION: europe
+      # PGOSM_SUBREGION: germany
+      # PGOSM_INPUT_FILE: /app/input/germany-latest.osm.pbf
+      PGOSM_REGION: europe/germany
+      PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
+      PGOSM_INPUT_FILE: /app/input/tuebingen-regbez-latest.osm.pbf
     logging:
       driver: "json-file"
       options:
