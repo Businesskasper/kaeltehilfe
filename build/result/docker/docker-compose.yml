@@ -125,7 +125,7 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
-      cerits-init:
+      certs-init:
         condition: service_completed_successfully
       keycloak-init:
         condition: service_completed_successfully
@@ -188,7 +188,7 @@ services:
       PGOSM_RAM: 8
       PGOSM_REGION: europe/germany
       PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
-      PGOSM_INPUT_FILE: /app/input/baden-wuerttemberg/tuebingen-regbez-latest.osm.pbf
+      PGOSM_INPUT_FILE: /app/input/tuebingen-regbez-latest.osm.pbf
 
   geo:
     image: kaeltehilfe-geo:latest
