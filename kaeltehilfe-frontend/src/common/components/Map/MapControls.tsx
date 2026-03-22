@@ -3,7 +3,7 @@ import { IconMinus, IconPlus, IconTarget } from "@tabler/icons-react";
 import L from "leaflet";
 import React from "react";
 import { useMap, useMapEvents } from "react-leaflet";
-import { Distribution, GeoLocation } from "../../data";
+import { Distribution } from "../../data";
 import { ActionGroup } from "../ActionGroup/ActionGroup";
 import { KeyedMarkerRegistry } from "./mapUtils";
 
@@ -87,7 +87,7 @@ export const NumbZone = () => {
   return null;
 };
 
-export const ZoomButtons = ({ lat, lng }: Partial<GeoLocation>) => {
+export const ZoomButtons = () => {
   const map = useMap();
 
   const [currentZoom, setCurrentZoom] = React.useState<{
@@ -125,18 +125,13 @@ export const ZoomButtons = ({ lat, lng }: Partial<GeoLocation>) => {
 
   const onZoom = (zoomMode: string) => {
     if (zoomMode === "IN" && canZoomIn) {
-      if (lat && lng) {
-        map.setView({ lat, lng }, map.getZoom() + 1);
-      } else {
-        map.zoomIn(1, { animate: true });
-      }
-      // map.zoomIn(1, { animate: true });
+      (map as L.Map & { _programmaticMove?: boolean })._programmaticMove = true;
+      map.once("zoomend", () => { (map as L.Map & { _programmaticMove?: boolean })._programmaticMove = false; });
+      map.zoomIn(1, { animate: true });
     } else if (zoomMode === "OUT" && canZoomOut) {
-      if (lat && lng) {
-        map.setView({ lat, lng }, map.getZoom() - 1);
-      } else {
-        map.zoomOut(1, { animate: true });
-      }
+      (map as L.Map & { _programmaticMove?: boolean })._programmaticMove = true;
+      map.once("zoomend", () => { (map as L.Map & { _programmaticMove?: boolean })._programmaticMove = false; });
+      map.zoomOut(1, { animate: true });
     }
   };
 
@@ -193,7 +188,6 @@ export const FitBoundsButton = ({
     map.fitBounds(bounds, {
       padding: [60, 60],
       paddingTopLeft: new L.Point(110, 110),
-      //   maxZoom: 16,
     });
     onFitBounds && onFitBounds();
   }, [registry, map, onFitBounds]);

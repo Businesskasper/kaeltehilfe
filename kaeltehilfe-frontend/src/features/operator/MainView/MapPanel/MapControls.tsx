@@ -33,7 +33,6 @@ export const LocationTracker = ({
 }) => {
   const map = useMap();
 
-  const isManualMoveRef = React.useRef<boolean>(false);
   const isTrackingRef = React.useRef<boolean>(false);
 
   const [geoLocation, setGeoLocation] = React.useState<GeoLocation>();
@@ -47,33 +46,22 @@ export const LocationTracker = ({
   );
 
   useMapEvents({
+    movestart: () => {
+      const isProgrammatic = isTrackingRef.current
+        || (map as L.Map & { _programmaticMove?: boolean })._programmaticMove;
+      if (!isProgrammatic) {
+        setIsTracking(false);
+      }
+    },
     move: () => {
-      const center = map.getCenter();
-      // console.log("move", center);
-      setMapCenter(center);
-      isManualMoveRef.current && !isTrackingRef.current && setIsTracking(false);
+      setMapCenter(map.getCenter());
     },
     locationfound: (event) => {
-      const location = { lat: event.latlng.lat, lng: event.latlng.lng };
-      console.log("locationfound", location);
-      setGeoLocation(location);
+      setGeoLocation({ lat: event.latlng.lat, lng: event.latlng.lng });
     },
-    locationerror: () => {
-      // console.error("locationerror", event);
-    },
-    dragstart: () => {
-      // console.log("dragstart");
-      isManualMoveRef.current = true;
-      setIsTracking(false);
-    },
-    dragend: () => {
-      // console.log("dragend");
-      isManualMoveRef.current = false;
-    },
+    locationerror: () => {},
     zoomend: () => {
-      // console.log("zoomend");
-      const zoom = map.getZoom();
-      setMapZoom(zoom);
+      setMapZoom(map.getZoom());
     },
   });
 
@@ -113,12 +101,11 @@ export const LocationTracker = ({
       return;
 
     isTrackingRef.current = true;
-    // map.setView(geoLocation, mapZoom, { animate: true, easeLinearity: 0.5 });
+    map.once("moveend", () => { isTrackingRef.current = false; });
     map.panTo(
       { lat: geoLocationLat, lng: geoLocationLng },
       { animate: true, easeLinearity: 0.5, noMoveStart: true },
     );
-    isTrackingRef.current = true;
   }, [isTracking, geoLocationLat, geoLocationLng, map]);
 
   // Sync up zoom
