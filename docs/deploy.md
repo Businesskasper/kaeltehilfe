@@ -142,7 +142,10 @@ Configure proxy hosts for the following domains and issue Let's Encrypt certific
 | ------ | ------ | ---------------- | ----------- |
 | `proxy.mydomain.de` | `http://127.0.0.1:81` | `/` => `http://127.0.0.1:81` | Route to NGINX Proxy Manager itself |
 | `auth.mydomain.de` | `http://127.0.0.1:8080` | `/` => `http://127.0.0.1:8080` | Route to Keycloak |
-| `myinstance.mydomain.de` | `http://127.0.0.1:8082` | `/` => `http://127.0.0.1:8082`<br>`/api` => `http://127.0.0.1:8081`<br>`/geo` => `http://127.0.0.1:8083`<br>`/admin` => `http://127.0.0.1:8082` | Routes to frontend, backend, and geo |
+| `myinstance.mydomain.de` | `http://127.0.0.1:8082` | `/` => `http://127.0.0.1:8082`<br>`/api` => `http://127.0.0.1:8081`<br>`/admin` => `http://127.0.0.1:8082` | Routes to frontend and backend |
+
+> [!NOTE]
+> The `/geo` route is **not** added as a custom location because NGINX Proxy Manager does not support path rewriting in custom locations. The geo service expects requests at `/address`, not `/geo/address`, so the `/geo` prefix must be stripped. This is configured in the Advanced tab instead (see [Geo service routing](#geo-service-routing) below).
 
 > [!WARNING]
 > If enabling SSL results in an internal server error, you might have to connect through your external domain through port 80 (http://proxy.mydomain.de) first and enable SSL in a second step by editing the proxs hosts.
@@ -170,6 +173,23 @@ proxy_busy_buffers_size   256k;
 ssl_verify_client optional_no_ca;
 ```
 The first three lines are buffer size adjustments required by Keycloak. The last line makes NGINX accept client certificates without validating them (Keycloak handles validation).
+
+#### Geo service routing
+
+The geo service is routed via the **Advanced** tab of the `myinstance.mydomain.de` proxy host (not as a custom location). Add the following:
+
+```
+location /geo/ {
+    proxy_pass http://127.0.0.1:8083/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Authorization $http_authorization;
+}
+```
+
+The trailing `/` on both `/geo/` and the `proxy_pass` URL causes NGINX to strip the `/geo` prefix before forwarding (e.g. `/geo/address` → `/address`). The `Authorization` header is forwarded explicitly so the geo service can validate JWT tokens.
 
 ### 3. Start all services
 
