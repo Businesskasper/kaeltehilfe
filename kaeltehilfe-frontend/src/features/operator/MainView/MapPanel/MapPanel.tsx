@@ -161,7 +161,7 @@ export const MapPanel = ({
       {storedState.center?.lat && (
         <StaticAddDistributionFlag onClick={onNewDistributionClick} />
       )}
-      <ZoomButtons lat={storedState.center.lat} lng={storedState.center.lng} />
+      <ZoomButtons />
       <LocationTracker
         isTracking={storedState.isTracking}
         setIsTracking={setIsTracking}
@@ -172,7 +172,6 @@ export const MapPanel = ({
       />
       <DistributionsLayer
         distributions={distributionsToDisplay}
-        onClusterClick={() => setIsTracking(false)}
         focusedGeoLocation={focusedGeoLocation}
         resetFocusedGeoLocation={resetFocusedGeoLocation}
         onFitBounds={onFitBounds}
