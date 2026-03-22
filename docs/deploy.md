@@ -2,6 +2,11 @@
 
 ## Prerequisites
 
+> [!TIP]
+> For preparing a fresh VPS (user setup, SSH hardening, firewall, Docker), see the [VPS setup guide](./vps.md).
+
+This guide assumes a `kaeltehilfe` user with Docker access has been set up as described in the [VPS setup guide](./vps.md). All commands are run as this user.
+
 ### DNS
 Configure DNS A records pointing to the Docker host. This guide uses the following domains as examples:
 
@@ -19,7 +24,31 @@ The host must have Docker (or a compose-compatible container service) installed 
 
 ### Directory structure
 
-All images must have been built according to the [build documentation](./build.md). Copy the `build/result` directory to the Docker host. Create any missing directories so the final structure matches:
+All images must have been built according to the [build documentation](./build.md).
+
+### OSM data
+
+> [!NOTE]
+> There is a bug with hash checking when pgosm-init downloads `.pbf` files automatically. To avoid this, download and place the file manually as described below.
+
+Download an `.osm.pbf` file from [Geofabrik](https://download.geofabrik.de/) and place it in `./build/result/pgosm-init/input/`.
+
+Adjust the configuration for the `pgosm-init` service in the `docker-compose.yml` to work with the downloaded file through `PGOSM_REGION`, `PGOSM_SUBREGION`, and `PGOSM_INPUT_FILE`. See the [pgosm-flex documentation](https://pgosm-flex.com/common-customization.html) for details on available regions.
+
+
+### Copy files to the host
+
+Copy the `build/result` directory to the Docker host.
+
+**Windows (WinSCP):**
+Connect to the host as `kaeltehilfe` using your `.ppk` key. Drag the `build\result` folder to `/home/kaeltehilfe/`.
+
+**Linux/macOS:**
+```bash
+rsync -av build/result/ kaeltehilfe@<your-ip>:/home/kaeltehilfe/
+```
+
+Remove `.gitignore` files (not needed on the server) and create any missing directories so the final structure matches:
 
 ```
 /home/kaeltehilfe
@@ -62,7 +91,7 @@ The `certs/root-crt/` and `certs/root-pfx/` directories are populated automatica
 > [!IMPORTANT]
 > Containers need read/write access to their data directories. Set ownership and permissions:
 > ```bash
-> sudo chown -R root:root /home/kaeltehilfe
+> sudo chown -R kaeltehilfe:kaeltehilfe /home/kaeltehilfe
 > sudo chmod -R 755 /home/kaeltehilfe
 > ```
 
@@ -98,7 +127,7 @@ docker compose up proxy -d
 
 ### 2. Configure NGINX Proxy Manager
 
-Connect to NGINX Proxy Manager via the browser (`http://<your-ip>:81`) and log in using the default credentials:
+Connect to NGINX Proxy Manager via SSH tunnel (see [VPS setup — Firewall](./vps.md#3-firewall)) and log in using the default credentials:
 
 | | |
 | -------- | ----------------- |
@@ -114,6 +143,10 @@ Configure proxy hosts for the following domains and issue Let's Encrypt certific
 | `proxy.mydomain.de` | `http://127.0.0.1:81` | `/` => `http://127.0.0.1:81` | Route to NGINX Proxy Manager itself |
 | `auth.mydomain.de` | `http://127.0.0.1:8080` | `/` => `http://127.0.0.1:8080` | Route to Keycloak |
 | `myinstance.mydomain.de` | `http://127.0.0.1:8082` | `/` => `http://127.0.0.1:8082`<br>`/api` => `http://127.0.0.1:8081`<br>`/geo` => `http://127.0.0.1:8083`<br>`/admin` => `http://127.0.0.1:8082` | Routes to frontend, backend, and geo |
+
+> [!WARNING]
+> If enabling SSL results in an internal server error, you might have to connect through your external domain through port 80 (http://proxy.mydomain.de) first and enable SSL in a second step by editing the proxs hosts.
+
 
 #### Keycloak proxy headers
 
