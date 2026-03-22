@@ -22,17 +22,17 @@ import { Outlet } from "react-router-dom";
 import { classes, useIsMobile } from "./common/utils";
 dayjs.extend(customParseFormat);
 
-function App() {
-  const queryCache = new QueryCache();
-  const queryClient = new QueryClient({
-    queryCache,
-    defaultOptions: {
-      queries: {
-        refetchOnWindowFocus: true,
-      },
+const queryCache = new QueryCache();
+const queryClient = new QueryClient({
+  queryCache,
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: true,
     },
-  });
+  },
+});
 
+function App() {
   const auth = useAuth();
 
   const [hasTriedSignin, setHasTriedSignin] = React.useState(false);

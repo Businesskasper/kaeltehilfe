@@ -2,7 +2,7 @@ import { NotificationData, notifications } from "@mantine/notifications";
 import { IconX } from "@tabler/icons-react";
 import axios, { AxiosInstance, AxiosResponse, isAxiosError } from "axios";
 import { userManager } from "../../UserManager";
-import { getConfig } from "../../config";
+import { AppConfig } from "../../config";
 
 export let http: AxiosInstance = null!;
 
@@ -15,10 +15,9 @@ const notificationProps: Partial<NotificationData> = {
   mb: "xs",
 };
 
-export function initHttp(): void {
-  const { API_BASE_URL } = getConfig();
+export function initHttp(config: AppConfig): void {
   http = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: config.API_BASE_URL,
   });
 
   http.interceptors.request.use(async (request) => {
