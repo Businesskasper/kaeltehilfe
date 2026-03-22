@@ -111,7 +111,7 @@ services:
     environment:
       API_BASE_URL: https://${APP_DOMAIN}/api
       IDP_AUTHORITY: https://${AUTH_DOMAIN}/realms/${KC_REALM}
-      IDP_CLIENT: ${KC_USER_CLIENT_ID}
+      IDP_CLIENT: users
       API_GEO_URL: https://${APP_DOMAIN}/geo
 
   api:
@@ -136,11 +136,13 @@ services:
       - ../certs/root-pfx:/opt/kaeltehilfe-api/cert/root
       - ../kaeltehilfe-api/cert/client:/opt/kaeltehilfe-api/cert/client
       - ../certs/crl:/opt/kaeltehilfe-api/cert/crl
+    mem_limit: 512m
     environment:
       ASPNETCORE_ENVIRONMENT: 'Production'
+      DOTNET_gcServer: '0'
       DOTNET_GCHeapHardLimit: '0x10000000'
       Authorization__Authority: https://${AUTH_DOMAIN}/realms/${KC_REALM}
-      Authorization__ClientId: ${KC_USER_CLIENT_ID}
+      Authorization__ClientId: ${KC_USER_CLIENT_ID}  # Keycloak internal UUID, used for admin API calls
       Authorization__ApiBaseUrl: https://${AUTH_DOMAIN}/admin/realms/${KC_REALM}
       ALLOWED_ORIGINS: https://${APP_DOMAIN}
       ROOT_CERT_PASSWORD: ${ROOT_CERT_PASSWORD}
