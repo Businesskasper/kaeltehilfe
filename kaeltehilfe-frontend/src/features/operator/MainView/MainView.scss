@@ -1,6 +1,6 @@
 .main-view {
-  height: calc(100vh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height,
-        0px) - mantine.rem(32px)); // Idk why -mantine.rem(32px) are still necessary;
+  height: calc(100dvh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height,
+        0px) - mantine.rem(32px));
 
   display: flex;
   flex-direction: column;
