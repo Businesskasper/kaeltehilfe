@@ -178,6 +178,11 @@ cd /home/kaeltehilfe/docker
 docker compose up -d
 ```
 
+> [!NOTE]
+> If your vps has a little memory, you might want to start api, geo and ui in a second step, after pgosm-init completed and memory is freed up again.
+
+
+
 The init containers (`certs-init`, `keycloak-init`, `pgosm-init`) run once and exit after completing. On subsequent starts they detect existing resources and skip setup.
 
 
