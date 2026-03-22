@@ -18,12 +18,13 @@ Depending on which services you want to work on, install the corresponding SDKs:
 Build the keycloak theme as described in [build.md - Keycloak Theme](./build.md#keycloak-theme). Place the resulting `.jar` file in `./dev/keycloak/themes/`.
 
 ### OSM data
+
+> [!NOTE]
+> There is a bug with hash checking when pgosm-init downloads `.pbf` files automatically. To avoid this, download and place the file manually as described below.
+
 Download an `.osm.pbf` file from [Geofabrik](https://download.geofabrik.de/) and place it in `./dev/pgosm-init/input/`.
 
 The default configuration expects `germany-latest.osm.pbf`. To use a different region, adjust `PGOSM_REGION`, `PGOSM_SUBREGION`, and `PGOSM_INPUT_FILE` in `./dev/docker-compose.yml`. See the [pgosm-flex documentation](https://pgosm-flex.com/common-customization.html) for details on available regions.
-
-> [!NOTE]
-> There is a known bug with hash checking when pgosm-init downloads `.pbf` files automatically. To avoid this, download and place the file manually as described above.
 
 
 ## Environment variables
