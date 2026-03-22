@@ -112,9 +112,9 @@ const router = createBrowserRouter([
 ]);
 
 async function bootstrap() {
-  await loadConfig();
-  initHttp();
-  initUserManager();
+  const config = await loadConfig();
+  initHttp(config);
+  initUserManager(config);
 
   const onSigninCallback = (): void => {
     window.history.replaceState({}, document.title, window.location.pathname);
