@@ -12,4 +12,10 @@ RUN apt-get update -yq && apt-get install -yq libsqlite3-mod-spatialite && rm -r
 
 WORKDIR /App
 COPY --from=build /app/publish .
+# Microsoft.Data.Sqlite bundles its own SQLite (libe_sqlite3.so) which is
+# incompatible with the system mod_spatialite, causing a segfault when
+# spatialite is loaded. Replace it with a symlink to the system libsqlite3
+# so both SQLite and spatialite use the same library.
+RUN rm -f runtimes/linux-x64/native/libe_sqlite3.so \
+    && ln -s /lib/x86_64-linux-gnu/libsqlite3.so.0 runtimes/linux-x64/native/libe_sqlite3.so
 ENTRYPOINT ["dotnet", "kaeltehilfe-backend.dll"]
