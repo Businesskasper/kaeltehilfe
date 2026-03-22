@@ -79,7 +79,6 @@ export const useCrudHook = <
       stale: true,
       type: "all",
     });
-    queryClient.refetchQueries(); // Test
     additionalInvalidation?.forEach((key) =>
       queryClient.invalidateQueries({ queryKey: [key] }),
     );
@@ -88,7 +87,6 @@ export const useCrudHook = <
   const post = useMutation({
     mutationFn: httpPost,
     onSettled: () => {
-      console.log("DEBUG: invalidate from hook");
       invalidate();
     },
   });
@@ -101,7 +99,6 @@ export const useCrudHook = <
   >({
     mutationFn: ({ id, update }) => httpPatch(id, update),
     onSettled: () => {
-      console.log("DEBUG: invalidate from hook");
       invalidate();
     },
   });
@@ -114,7 +111,6 @@ export const useCrudHook = <
   >({
     mutationFn: ({ id, update }) => httpPUT(id, update),
     onSettled: () => {
-      console.log("DEBUG: invalidate from hook");
       invalidate();
     },
   });
@@ -122,7 +118,6 @@ export const useCrudHook = <
   const remove = useMutation({
     mutationFn: httpDelete,
     onSettled: () => {
-      console.log("DEBUG: invalidate from hook");
       invalidate();
     },
   });
