@@ -68,6 +68,7 @@ services:
       KC_SPI_X509CERT_LOOKUP_PROVIDER: 'nginx'
       KC_SPI_X509CERT_LOOKUP_NGINX_SSL_CLIENT_CERT: 'X-Client-Cert'
       X509_CA_BUNDLE: '/etc/x509/https/rootCa.crt'
+      JAVA_OPTS_KC_HEAP: '-Xms256m -Xmx512m'
 
   keycloak-init:
     image: kaeltehilfe-keycloak-init:latest
@@ -137,6 +138,7 @@ services:
       - ../certs/crl:/opt/kaeltehilfe-api/cert/crl
     environment:
       ASPNETCORE_ENVIRONMENT: 'Production'
+      DOTNET_GCHeapHardLimit: '0x10000000'
       Authorization__Authority: https://${AUTH_DOMAIN}/realms/${KC_REALM}
       Authorization__ClientId: ${KC_USER_CLIENT_ID}
       Authorization__ApiBaseUrl: https://${AUTH_DOMAIN}/admin/realms/${KC_REALM}
@@ -161,10 +163,13 @@ services:
       start_period: 60s
     volumes:
       - ../pgosm-db/postgresql:/var/lib/postgresql
+    shm_size: '256m'
     environment:
       POSTGRES_USER: ${POSTGIS_ADMIN}
       POSTGRES_PASSWORD: ${POSTGIS_PASSWORD}
       POSTGRES_DB: ${POSTGIS_DB}
+      POSTGRES_SHARED_BUFFERS: '256MB'
+      POSTGRES_WORK_MEM: '16MB'
 
   pgosm-init:
     image: pgosm-init:latest
@@ -185,7 +190,7 @@ services:
       POSTGRES_USER: ${POSTGIS_ADMIN}
       PGUSER: ${POSTGIS_ADMIN}
       POSTGRES_PASSWORD: ${POSTGIS_PASSWORD}
-      PGOSM_RAM: 8
+      PGOSM_RAM: 2
       PGOSM_REGION: europe/germany
       PGOSM_SUBREGION: baden-wuerttemberg/tuebingen-regbez
       PGOSM_INPUT_FILE: /app/input/tuebingen-regbez-latest.osm.pbf
@@ -209,6 +214,7 @@ services:
       pgosm-init:
         condition: service_completed_successfully
     environment:
+      GOMEMLIMIT: '128MiB'
       PORT: "8083"
       DB_USER: ${POSTGIS_ADMIN}
       DB_PASSWORD: ${POSTGIS_PASSWORD}
