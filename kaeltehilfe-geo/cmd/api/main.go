@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 
@@ -64,7 +65,13 @@ func getParams() *params {
 	dbHost := envOrDefault("DB_HOST", "localhost")
 	dbPort := envOrDefault("DB_PORT", "5432")
 	dbName := envOrDefault("DB_NAME", "pgosm")
-	defaultConnStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", dbUser, dbPassword, dbHost, dbPort, dbName)
+	defaultConnStr := (&url.URL{
+		Scheme:   "postgres",
+		User:     url.UserPassword(dbUser, dbPassword),
+		Host:     fmt.Sprintf("%s:%s", dbHost, dbPort),
+		Path:     dbName,
+		RawQuery: "sslmode=disable",
+	}).String()
 
 	defaultIssuerUrl := "http://localhost:8050/realms/kaeltehilfe"
 	if envIssuerUrl := os.Getenv("ISSUER_URL"); envIssuerUrl != "" {
