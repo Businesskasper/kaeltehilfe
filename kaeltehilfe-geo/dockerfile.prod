@@ -6,6 +6,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/kaeltehilfe-geo ./cmd/api
 
 FROM scratch
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build /app/kaeltehilfe-geo /kaeltehilfe-geo
 EXPOSE 8083
 ENTRYPOINT ["/kaeltehilfe-geo"]
