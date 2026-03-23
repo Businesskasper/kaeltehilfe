@@ -189,7 +189,7 @@ location /geo/ {
 }
 ```
 
-The trailing `/` on both `/geo/` and the `proxy_pass` URL causes NGINX to strip the `/geo` prefix before forwarding (e.g. `/geo/address` → `/address`). The `Authorization` header is forwarded explicitly so the geo service can validate JWT tokens.
+The trailing `/` on both `/geo/` and the `proxy_pass` URL causes NGINX to strip the `/geo` prefix before forwarding (e.g. `/geo/address` -> `/address`). The `Authorization` header is forwarded explicitly so the geo service can validate JWT tokens.
 
 ### 3. Start all services
 

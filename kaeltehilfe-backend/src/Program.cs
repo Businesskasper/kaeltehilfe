@@ -216,10 +216,14 @@ app.UseSqliteUniqueExceptionHandler();
 
 app.MapControllers();
 
-app.RunMigrations<KbContext>();
-
-app.RunSeeder<KbContext>(_ => app.Environment.IsDevelopment());
-
-app.RunLoginInitializer<KbContext>();
+if (!app.Environment.IsEnvironment("Testing"))
+{
+    app.RunMigrations<KbContext>();
+    app.RunSeeder<KbContext>(_ => app.Environment.IsDevelopment());
+    app.RunLoginInitializer<KbContext>();
+}
 
 app.Run();
+
+// Make Program accessible for WebApplicationFactory<Program> in integration tests
+public partial class Program { }
