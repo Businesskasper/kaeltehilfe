@@ -162,17 +162,19 @@ export const ZoomButtons = () => {
 };
 
 type FitBoundsButtonProps = {
-  registry: KeyedMarkerRegistry<Distribution>;
+  registryRef: React.MutableRefObject<KeyedMarkerRegistry<Distribution>>;
   onFitBounds?: () => void;
+  disabled?: boolean;
 };
 export const FitBoundsButton = ({
-  registry,
+  registryRef,
   onFitBounds,
+  disabled,
 }: FitBoundsButtonProps) => {
   const map = useMap();
 
   const onClick = React.useCallback(() => {
-    const markers = Array.from(Object.values(registry))
+    const markers = Array.from(Object.values(registryRef.current))
       .map((re) => re.marker)
       .filter(Boolean) as Array<L.Marker>;
 
@@ -190,7 +192,7 @@ export const FitBoundsButton = ({
       paddingTopLeft: new L.Point(110, 110),
     });
     onFitBounds && onFitBounds();
-  }, [registry, map, onFitBounds]);
+  }, [registryRef, map, onFitBounds]);
 
   return (
     <ButtonContainer top={rem(90)} left={rem(13)}>
@@ -199,6 +201,7 @@ export const FitBoundsButton = ({
         onClick={onClick}
         variant="default"
         size="md"
+        disabled={disabled}
       >
         <IconTarget />
       </ActionIcon>

@@ -130,8 +130,9 @@ export const DistributionsLayer = ({
   return (
     <>
       <FitBoundsButton
-        registry={registryRef.current}
+        registryRef={registryRef}
         onFitBounds={onFitBounds}
+        disabled={distributions.length === 0}
       />
       <MarkerClusterGroup {...clusterOptions}>
         {geoLocations.map((geoLocation) => {
