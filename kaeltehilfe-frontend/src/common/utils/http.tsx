@@ -33,7 +33,10 @@ export function initHttp(config: AppConfig): void {
     (response) => response,
     (error) => {
       if (isAxiosError(error)) {
-        if (error.response?.status === 404) {
+        if (error.response?.status === 401) {
+          userManager.signinRedirect();
+          return; // Don't show notification, redirect to login
+        } else if (error.response?.status === 404) {
           notifications.show({
             ...notificationProps,
             message: "Das Objekt wurde nicht gefunden",

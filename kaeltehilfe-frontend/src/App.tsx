@@ -54,35 +54,24 @@ function App() {
     }
   }, [auth, hasTriedSignin]);
 
-  const isDev = import.meta.env.DEV;
   React.useEffect(() => {
-    if (!auth || !isDev) return;
+    if (!auth) return;
 
-    auth.events.addAccessTokenExpiring(() => {
-      console.log("DEBUG: Access token is about to expire...");
-    });
-
-    auth.events.addAccessTokenExpired(() => {
-      console.log("DEBUG: Access token has expired...");
-      auth.signinSilent().catch((error) => {
-        console.error("Silent sign-in failed", error);
-        // Redirect to login if silent login fails
-        // Prevents retry loop
+    const unsubExpired = auth.events.addAccessTokenExpired(() => {
+      auth.signinSilent().catch(() => {
         auth.signinRedirect();
       });
     });
 
-    auth.events.addSilentRenewError((error) => {
-      console.error("Silent renew error:", error);
-      // Redirect to login if silent login fails
-      // Prevents retry loop
+    const unsubRenewError = auth.events.addSilentRenewError(() => {
       auth.signinRedirect();
     });
 
-    auth.events.addUserLoaded((user) => {
-      console.log("DEBUG: New user profile loaded:", user);
-    });
-  }, [auth, isDev]);
+    return () => {
+      unsubExpired();
+      unsubRenewError();
+    };
+  }, [auth]);
 
   // Prevent automatic zoom in on iPhones
   const isIphone = navigator?.userAgent?.includes("iPhone");
