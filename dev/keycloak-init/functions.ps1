@@ -58,6 +58,7 @@ function SetupKaeltehilfeKeycloak {
             realm = $realmName
             enabled = $true
             sslRequired = $requireSsl
+            ssoSessionIdleTimeout = 7200
         }
         CreateRealm -realm $realm -baseUrl $baseUrl -token $tokenCache.GetToken() | Out-Null
     }
