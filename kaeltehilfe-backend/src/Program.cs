@@ -57,6 +57,8 @@ builder.Services.AddSeeder<KbContext, KbSeeder>();
 
 builder.Services.AddLoginInitializer<KbContext, LoginInitializer>();
 
+builder.Services.AddCrlInitializer<CrlInitializer>();
+
 var CORS_POLICY = "CorsPolicy";
 
 // Get the CORS origins from environment variables, default to "http://localhost:5173"
@@ -220,8 +222,10 @@ if (!app.Environment.IsEnvironment("Testing"))
 {
     app.RunMigrations<KbContext>();
     app.RunSeeder<KbContext>(_ => app.Environment.IsDevelopment());
-    app.RunLoginInitializer<KbContext>();
+    app.InitializeLogins<KbContext>();
 }
+
+app.InitializeCrl();
 
 app.Run();
 

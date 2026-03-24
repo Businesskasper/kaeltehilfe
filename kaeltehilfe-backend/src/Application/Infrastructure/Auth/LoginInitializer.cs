@@ -115,7 +115,7 @@ public static class LoginInitializerExtensions
         return services.AddScoped<ILoginInitializer<TContext>, TInitializer>();
     }
 
-    public static IApplicationBuilder RunLoginInitializer<TContext>(this IApplicationBuilder app)
+    public static IApplicationBuilder InitializeLogins<TContext>(this IApplicationBuilder app)
         where TContext : DbContext
     {
         using var scope = app.ApplicationServices.CreateScope();
