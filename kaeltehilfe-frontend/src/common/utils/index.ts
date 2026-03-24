@@ -1,6 +1,5 @@
 export * from "./allStringsMatch";
 export * from "./chunkArray";
-export * from "./classes";
 export * from "./crudHook";
 export * from "./dates";
 export * from "./extractPartial";

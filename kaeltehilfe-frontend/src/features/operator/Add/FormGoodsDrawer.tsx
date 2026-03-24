@@ -26,8 +26,8 @@ import {
   useDistributionsPaginated,
   useGoods,
 } from "../../../common/data";
+import clsx from "clsx";
 import {
-  classes,
   useBreakpoint,
   useIsTouchDevice,
 } from "../../../common/utils";
@@ -107,7 +107,7 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
 
   return (
     <Drawer
-      className={classes({
+      className={clsx({
         "form-good-drawer": true,
         "is-loading": isLoading,
       })}
