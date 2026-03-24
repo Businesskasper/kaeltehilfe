@@ -144,7 +144,7 @@ function SetupKaeltehilfeKeycloak {
                 "x509-cert-auth.mapper-selection" = "Username or Email"
                 "x509-cert-auth.timestamp-validation-enabled" = $true
                 "x509-cert-auth.crl-checking-enabled" = $true
-                "x509-cert-auth.crl-relative-path" = "/crl/crl.pem"
+                "x509-cert-auth.crl-relative-path" = "crl/crl.pem"
                 "x509-cert-auth.crldp-checking-enabled" = $false
                 "x509-cert-auth.ocsp-fail-open" = $false
                 "x509-cert-auth.ocsp-responder-uri" = ""
