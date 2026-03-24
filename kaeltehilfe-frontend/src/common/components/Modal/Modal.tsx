@@ -1,7 +1,8 @@
 import { MantineSize, Modal, Title } from "@mantine/core";
 import { modals } from "@mantine/modals";
 import React from "react";
-import { classes, useBreakpoint } from "../../utils";
+import clsx from "clsx";
+import { useBreakpoint } from "../../utils";
 
 import "./Modal.scss";
 
@@ -65,7 +66,7 @@ export const AppModal = ({
 
   return (
     <Modal.Root
-      className={classes({
+      className={clsx({
         modal: true,
         "full-width": !!isMobile,
       })}

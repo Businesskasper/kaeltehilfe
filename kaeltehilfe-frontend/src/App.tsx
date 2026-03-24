@@ -19,7 +19,8 @@ import dayjs from "dayjs";
 import "dayjs/locale/de";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { Outlet } from "react-router-dom";
-import { classes, useIsMobile } from "./common/utils";
+import clsx from "clsx";
+import { useIsMobile } from "./common/utils";
 dayjs.extend(customParseFormat);
 
 const queryCache = new QueryCache();
@@ -129,7 +130,7 @@ function App() {
                 fullScreen: isMobile,
                 centered: true,
                 transitionProps: { transition: "fade", duration: 200 },
-                className: classes({
+                className: clsx({
                   modal: true,
                   "full-width": !!isMobile,
                 }),
