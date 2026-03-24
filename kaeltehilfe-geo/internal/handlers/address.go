@@ -1,18 +1,23 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 	"net/url"
 	"strconv"
 
-	"github.com/Businesskasper/kaeltehilfe/kaeltehilfe-geo/api/internal/db"
+	"github.com/Businesskasper/kaeltehilfe/kaeltehilfe-geo/api/internal/models"
 )
 
 var APPROXIMATE_POINT_RADIUS_DEFAULT int = 15
 
-func HandleAddressQuery(db *db.Database) http.Handler {
+type AddressQuerier interface {
+	GetAddress(ctx context.Context, lat float64, lng float64, apprxPointRadius int) (models.Address, bool, error)
+}
+
+func HandleAddressQuery(db AddressQuerier) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		params, paramsErr := getParams(r.URL.Query(), APPROXIMATE_POINT_RADIUS_DEFAULT)
 		if paramsErr != nil {
@@ -53,6 +58,10 @@ type paramsError struct {
 	statusCode int
 	message    string
 	error
+}
+
+func (e *paramsError) Error() string {
+	return e.message
 }
 
 func newParamsError(message string, statusCode int) *paramsError {
