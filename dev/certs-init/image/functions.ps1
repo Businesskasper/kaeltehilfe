@@ -19,7 +19,8 @@ function PrepareKaeltehilfeCerts {
                                     -commonName $caName `
                                     -exportCaPath $exportCrtPath `
                                     -exportPfxPath $exportPfxPath `
-                                    -exportPfxPassword $pfxPassword
+                                    -exportPfxPassword $pfxPassword `
+                                    -exportPem
 
     Write-Host "Created CA certificate ""$($caName)"" ($($cert.Thumbprint))"
 }
@@ -86,14 +87,16 @@ function CreateSignedCertificate {
         [string]$certStore = "Cert:\LocalMachine\My",
 
         [string]$exportCaPath = $null,
-        
+
         [string]$exportPfxPath = $null,
 
         [SecureString]$exportPfxPassword = $null,
 
         [Parameter(ParameterSetName = "Client", Mandatory=$true)]
         [Parameter(ParameterSetName = "SSL", Mandatory=$true)]
-        [string]$signerThumbprint = $null
+        [string]$signerThumbprint = $null,
+
+        [switch]$exportPem
     )
 
     if ($IsLinux) {
@@ -124,14 +127,16 @@ function CreateSignedCertificateLinux {
         [string]$certStore = "Cert:\LocalMachine\My",
 
         [string]$exportCaPath = $null,
-        
+
         [string]$exportPfxPath = $null,
 
         [SecureString]$exportPfxPassword = $null,
 
         [Parameter(ParameterSetName = "Client", Mandatory=$true)]
         [Parameter(ParameterSetName = "SSL", Mandatory=$true)]
-        [string]$signerThumbprint = $null
+        [string]$signerThumbprint = $null,
+
+        [switch]$exportPem
     )
 
     # Linux implementation using openssl
@@ -153,6 +158,7 @@ function CreateSignedCertificateLinux {
 
         if (-not [String]::IsNullOrWhiteSpace($exportCaPath)) {
             Copy-Item $certFile $exportCaPath
+            & chmod 644 $exportCaPath
         }
 
         if (-not [String]::IsNullOrWhiteSpace($exportPfxPath) -and -not $null -eq $exportPfxPassword) {
@@ -191,14 +197,16 @@ function CreateSignedCertificateWindows {
         [string]$certStore = "Cert:\LocalMachine\My",
 
         [string]$exportCaPath = $null,
-        
+
         [string]$exportPfxPath = $null,
 
         [SecureString]$exportPfxPassword = $null,
 
         [Parameter(ParameterSetName = "Client", Mandatory=$true)]
         [Parameter(ParameterSetName = "SSL", Mandatory=$true)]
-        [string]$signerThumbprint = $null
+        [string]$signerThumbprint = $null,
+
+        [switch]$exportPem
     )
 
     # Windows implementation
@@ -257,7 +265,14 @@ function CreateSignedCertificateWindows {
 
     if (-not [String]::IsNullOrWhiteSpace($exportCaPath)) {
         Write-Debug -Message "Export certificate without private key to `"$($exportCaPath)`""
-        Export-Certificate -Cert $cert -FilePath $exportCaPath | Out-Null
+        if ($exportPem) {
+            $pemContent = "-----BEGIN CERTIFICATE-----`n"
+            $pemContent += [Convert]::ToBase64String($cert.RawData, [Base64FormattingOptions]::InsertLineBreaks)
+            $pemContent += "`n-----END CERTIFICATE-----"
+            Set-Content -Path $exportCaPath -Value $pemContent -Encoding ASCII -NoNewline
+        } else {
+            Export-Certificate -Cert $cert -FilePath $exportCaPath | Out-Null
+        }
     }
 
     if (-not [String]::IsNullOrWhiteSpace($exportPfxPath) -and -not $null -eq $exportPfxPassword) {

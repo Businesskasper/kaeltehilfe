@@ -131,7 +131,8 @@ public class CertService : ICertService
 
     public string CrlToPem(byte[] crl)
     {
-        string base64Crl = Convert.ToBase64String(crl);
+        string base64Crl = Convert.ToBase64String(crl, Base64FormattingOptions.InsertLineBreaks)
+            .Replace("\r\n", "\n");
 
         string pemCrl = "-----BEGIN X509 CRL-----\n" + base64Crl + "\n-----END X509 CRL-----";
 
