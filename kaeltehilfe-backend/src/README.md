@@ -14,7 +14,7 @@ In production, `appsettings.json` is mounted into the container from `build/resu
 | ClientId | UUID of the user client. Used for role assignment and role mapping via the Keycloak admin API. Must match the `id` of the client in Keycloak. | `912a01de-e8f1-46da-8219-f724d8cde4fd` |
 | ApiBaseUrl | Base URL for the Keycloak admin REST API. Used for user management (create, update, delete, role assignments). | `http://localhost:8050/admin/realms/kaeltehilfe` |
 | MachineClient | Name of the Keycloak service account client. Used to obtain access tokens for admin API calls via client credentials grant. | `backend` |
-| MachineClientSecretVar | Name of the environment variable that holds the machine client secret. The application reads the secret from this env var at startup. | `KC_CLIENT_SECRET` |
+| MachineClientSecret | Keycloak machine client secret. Is overwritten in production by env variable. | `AaeusEtAMdjpkwQFiSAtinONjRWTQrGygnQ` |
 
 ### Certificate settings
 
@@ -23,18 +23,9 @@ Certificate paths may be absolute or relative to the backend's content root. Rel
 | Key | Description | Dev default |
 | --- | ----------- | ----------- |
 | RootCertPath | Path to the root CA `.pfx` file (with private key). Used to sign client certificates for X.509 authentication. | `../dev/certs/root-pfx/rootCa.pfx` |
-| RootCertPasswordVar | Name of the environment variable that holds the `.pfx` file password. | `ROOT_CERT_PASSWORD` |
+| RootCertPassword | Password for the `.pfx` file. Is overwritten in production by env variable. | `Passw0rd` |
 | ClientCertDir | Directory where generated client certificates are stored. | `../dev/certs/client` |
 | CrlPath | Path to the certificate revocation list file. | `../dev/certs/crl/crl.pem` |
-
-### Environment variables
-
-The backend reads secrets from environment variables rather than config files. These must be set as system environment variables:
-
-| Variable | Description |
-| -------- | ----------- |
-| `KC_CLIENT_SECRET` | Secret for the Keycloak machine client. Must match the secret configured in Keycloak for the service account client. |
-| `ROOT_CERT_PASSWORD` | Password for the root CA `.pfx` file. Must match the password used when the certificate was generated. |
 
 ## Migrations
 ```

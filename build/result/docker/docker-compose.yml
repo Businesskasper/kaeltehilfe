@@ -144,9 +144,9 @@ services:
       Authorization__Authority: https://${AUTH_DOMAIN}/realms/${KC_REALM}
       Authorization__ClientId: ${KC_USER_CLIENT_ID}  # Keycloak internal UUID, used for admin API calls
       Authorization__ApiBaseUrl: https://${AUTH_DOMAIN}/admin/realms/${KC_REALM}
+      Authorization__MachineClientSecret: ${KC_CLIENT_SECRET}
       ALLOWED_ORIGINS: https://${APP_DOMAIN}
-      ROOT_CERT_PASSWORD: ${ROOT_CERT_PASSWORD}
-      KC_CLIENT_SECRET: ${KC_CLIENT_SECRET}
+      CertificateSettings__RootCertPassword: ${ROOT_CERT_PASSWORD}
 
   pgosm-db:
     image: postgis/postgis:18-3.6

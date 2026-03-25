@@ -29,15 +29,9 @@ public class KeycloakUserService : IUserService
         // Client for machine auth
         _keycloakApiBaseUrl = configuration.RequireConfigValue("Authorization:ApiBaseUrl");
         _machineClient = configuration.RequireConfigValue("Authorization:MachineClient");
-        var clientSecretVar = configuration.RequireConfigValue(
-            "Authorization:MachineClientSecretVar"
+        _machineClientSecret = configuration.RequireConfigValue(
+            "Authorization:MachineClientSecret"
         );
-
-        _machineClientSecret =
-            Environment.GetEnvironmentVariable(clientSecretVar)
-            ?? throw new InvalidOperationException(
-                $"{clientSecretVar} is not set in environment variables."
-            );
     }
 
     public async Task<CreateUserResponse> CreateLogin(
