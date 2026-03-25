@@ -62,9 +62,7 @@ export const useMarkerRegistry = <TData,>({
     [],
   );
 
-  // Reset registry synchronously during render (not in useEffect) so that
-  // ref callbacks firing during the commit phase see the correct registry.
-  const prevDataRef = React.useRef(data);
+  const prevDataRef = React.useRef<typeof data | null>(null);
   if (prevDataRef.current !== data) {
     prevDataRef.current = data;
     const byGeoLocation = groupBy(data, (d) => getGeoLocation(d));
