@@ -19,13 +19,13 @@ import {
 import { formatDateTime } from "../../../common/utils";
 import { CreateLoginCertificateModalContent } from "./CreateLoginCertificateModalContent";
 
-type ManageLoginCertificatesModalContentProps = {
+type ManageLoginCertificatesDetailsContentProps = {
   login?: OperatorLogin;
 };
 
-export const ManageLoginCertificatesModalContent = ({
+export const ManageLoginCertificatesDetailsContent = ({
   login,
-}: ManageLoginCertificatesModalContentProps) => {
+}: ManageLoginCertificatesDetailsContentProps) => {
   const { mutate: revokeCertificate, isPending: isCertificateRevoking } =
     useRevokeLoginCertificate();
 
@@ -93,47 +93,46 @@ export const ManageLoginCertificatesModalContent = ({
   );
 
   return (
-    <ModalMain>
-      <Table
-        fillScreen
-        tableKey="login-certificates"
-        data={currentLoginCertificates}
-        columns={columns}
-        isLoading={isLoginCertificatesLoading || isCertificateRevoking}
-        keyGetter="thumbprint"
-        hideTopToolbarActions
-        disablePagination
-        customActions={[
-          {
-            label: "Sperren",
-            icon: IconHandStop,
-            isDisabled: (selected) =>
-              selected?.length !== 1 || selected[0].status === "REVOKED",
-            color: "red",
-            variant: "outline",
-            onClick: (selectedCerts) => {
-              if (!selectedCerts || selectedCerts.length !== 1) return;
-              revokeCertificate({ id: selectedCerts[0].id });
-            },
+
+    <Table
+      fillScreen
+      tableKey="login-certificates"
+      data={currentLoginCertificates}
+      columns={columns}
+      isLoading={isLoginCertificatesLoading || isCertificateRevoking}
+      keyGetter="thumbprint"
+      hideTopToolbarActions
+      disablePagination
+      customActions={[
+        {
+          label: "Sperren",
+          icon: IconHandStop,
+          isDisabled: (selected) =>
+            selected?.length !== 1 || selected[0].status === "REVOKED",
+          color: "red",
+          variant: "outline",
+          onClick: (selectedCerts) => {
+            if (!selectedCerts || selectedCerts.length !== 1) return;
+            revokeCertificate({ id: selectedCerts[0].id });
           },
-          {
-            label: "Hinzufügen",
-            icon: IconPlus,
-            isDisabled: (selected) => selected?.length !== 0,
-            color: "blue",
-            variant: "light",
-            onClick: openCreateModal,
-          },
-          {
-            label: "Herunterladen",
-            icon: IconDownload,
-            isDisabled: (selected) => selected?.length !== 1,
-            color: "blue",
-            variant: "light",
-            onClick: downloadCert,
-          },
-        ]}
-      />
-    </ModalMain>
+        },
+        {
+          label: "Hinzufügen",
+          icon: IconPlus,
+          isDisabled: (selected) => selected?.length !== 0,
+          color: "blue",
+          variant: "light",
+          onClick: openCreateModal,
+        },
+        {
+          label: "Herunterladen",
+          icon: IconDownload,
+          isDisabled: (selected) => selected?.length !== 1,
+          color: "blue",
+          variant: "light",
+          onClick: downloadCert,
+        },
+      ]}
+    />
   );
 };

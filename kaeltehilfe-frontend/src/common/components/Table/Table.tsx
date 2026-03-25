@@ -90,6 +90,7 @@ type Props<T extends Record<string, any>> = {
   hideTopToolbarActions?: boolean;
   disablePagination?: boolean;
   renderRowActionMenuItems?: MRT_TableOptions<T>["renderRowActionMenuItems"];
+  mantineDetailPanelProps?: MRT_TableOptions<T>["mantineDetailPanelProps"]
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -113,6 +114,7 @@ export const Table = <T extends Record<string, any>>({
   hideTopToolbarActions,
   disablePagination,
   renderRowActionMenuItems,
+  mantineDetailPanelProps,
 }: Props<T>) => {
   const [rowSelection, setRowSelection] = React.useState({});
   const getRowId = React.useCallback(
@@ -208,6 +210,26 @@ export const Table = <T extends Record<string, any>>({
     mantinePaperProps: {
       className: fillScreen ? "table-fill-screen" : undefined,
     },
+    ...(renderDetailPanel && {
+      displayColumnDefOptions: {
+        "mrt-row-expand": {
+          size: 40,
+          grow: false,
+        },
+      },
+      mantineDetailPanelProps: {
+        ...mantineDetailPanelProps,
+        style: {
+          display: "table-cell",
+          width: "100%",
+          ...(typeof mantineDetailPanelProps === "object" &&
+          mantineDetailPanelProps !== null &&
+          "style" in mantineDetailPanelProps
+            ? (mantineDetailPanelProps.style as object)
+            : {}),
+        },
+      },
+    }),
     renderDetailPanel,
     mantineTableContainerProps: {
       className: fillScreen ? "container-fill-screen" : undefined,

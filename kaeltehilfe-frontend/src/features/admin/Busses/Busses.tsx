@@ -1,5 +1,4 @@
 import { Title } from "@mantine/core";
-import { IconCertificate } from "@tabler/icons-react";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
 import { openAppModal } from "../../../common/components";
@@ -12,7 +11,7 @@ import {
   useLogins,
 } from "../../../common/data";
 import { BusModalContent } from "./BusModalContent";
-import { ManageLoginCertificatesModalContent } from "./ManageLoginCertificatesModalContent";
+import { ManageLoginCertificatesDetailsContent } from "./ManageLoginCertificatesDetailsContent";
 
 export const Busses = () => {
   const {
@@ -25,18 +24,10 @@ export const Busses = () => {
   } = useLogins();
 
   const [selectedBusses, setSelectedBusses] = React.useState<Array<Bus>>([]);
-  const selectedBusLogin = React.useMemo<OperatorLogin | undefined>(
-    () =>
-      selectedBusses.length === 1
-        ? logins?.find(
-            (l): l is OperatorLogin =>
-              isOperatorLogin(l) &&
-              l.registrationNumber.toUpperCase() ===
-                selectedBusses[0].registrationNumber.toUpperCase(),
-          )
-        : undefined,
-    [logins, selectedBusses],
-  );
+
+  const getBusLogin = (registrationNumber?: string) => {
+    return !logins || !registrationNumber ? null : (logins).find((l): l is OperatorLogin => isOperatorLogin(l) && l.registrationNumber?.toUpperCase() === registrationNumber?.toUpperCase())
+  }
 
   const openCrudModal = React.useCallback(
     () =>
@@ -46,18 +37,6 @@ export const Busses = () => {
         children: <BusModalContent existing={selectedBusses[0]} />,
       }),
     [selectedBusses],
-  );
-
-  const openCertModal = React.useCallback(
-    () =>
-      openAppModal({
-        title: `Anmeldezertifikate für ${selectedBusses[0]?.registrationNumber?.toUpperCase()}`,
-        size: "xl",
-        children: (
-          <ManageLoginCertificatesModalContent login={selectedBusLogin} />
-        ),
-      }),
-    [selectedBusLogin, selectedBusses],
   );
 
   const columns: Array<MRT_ColumnDef<Bus>> = [
@@ -104,17 +83,11 @@ export const Busses = () => {
         fillScreen
         tableKey="busses-overview"
         setSelected={setSelectedBusses}
-        customActions={[
-          {
-            label: "Anmeldezertifikate verwalten",
-            icon: IconCertificate,
-            isDisabled: (selected) => selected?.length !== 1,
-            color: "blue",
-            variant: "light",
-            onClick: openCertModal,
-          },
-        ]}
         enableGrouping
+        renderDetailPanel={({ row }) => {
+          const login = getBusLogin(row.original.registrationNumber?.toUpperCase());
+          return login ? <ManageLoginCertificatesDetailsContent login={login} /> : null
+        }}
       />
     </>
   );
