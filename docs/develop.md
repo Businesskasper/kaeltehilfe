@@ -26,44 +26,6 @@ Download an `.osm.pbf` file from [Geofabrik](https://download.geofabrik.de/) and
 
 The default configuration expects `germany-latest.osm.pbf`. To use a different region, adjust `PGOSM_REGION`, `PGOSM_SUBREGION`, and `PGOSM_INPUT_FILE` in `./dev/docker-compose.yml`. See the [pgosm-flex documentation](https://pgosm-flex.com/common-customization.html) for details on available regions.
 
-
-## Environment variables
-
-Add following environment variables on your machine. Do not use .env since the kaeltehilfe-backend development server is not run via docker.
-
-| Variable | Description |
-| -------- | ----------- |
-| `ROOT_CERT_PASSWORD` | Protects the generated `.pfx` certificate. Used by `certs-init` during generation and by the backend at runtime to load the certificate. |
-| `KC_CLIENT_SECRET` | Secret for the Keycloak machine-to-machine client (`backend`). Used by `keycloak-init` during setup and by the backend for service account authentication. |
-
-You can set the variables using following powershell snippet:
-```powershell
-[Environment]::SetEnvironmentVariable("ROOT_CERT_PASSWORD", "<password-for-the-certificate>", "Machine")
-[Environment]::SetEnvironmentVariable("KC_CLIENT_SECRET", "<secret-for-the-machine-client>", "Machine")
-```
-
-KC_CLIENT_SECRET must be a 35 alphabetical string. You can use following function to generate a secret:
-```powershell
-function GeneratePassword([int]$length) {
-    $pw = ""
-    1..$length | % {
-        $case = Get-Random -Minimum 0 -Maximum 2
-        if ($case -eq 0) {
-            $pw += [char](Get-Random -Minimum 65 -Maximum 90)
-        }
-        else {
-            $pw += [char](Get-Random -Minimum 97 -Maximum 122)
-        }
-    }
-    return $pw
-}
-
-GeneratePassword -length 35
-```
-
-Restart your shell after you're done.
-
-
 ## Setup
 
 ### Start the containers

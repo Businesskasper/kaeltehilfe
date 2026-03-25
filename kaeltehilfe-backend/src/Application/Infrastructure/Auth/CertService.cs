@@ -15,15 +15,10 @@ public class CertService : ICertService
         // Resolve certificate path (supports absolute or relative values)
         var rootCertPath = configuration.RequireResolvedPath("CertificateSettings:RootCertPath", env);
 
-        // Get the root certificate password from the environment variable
-        var rootCertPasswordVar = configuration.RequireConfigValue(
-            "CertificateSettings:RootCertPasswordVar"
+        // Get the root certificate password
+        var rootCertPassword = configuration.RequireConfigValue(
+            "CertificateSettings:RootCertPassword"
         );
-        var rootCertPassword =
-            Environment.GetEnvironmentVariable(rootCertPasswordVar)
-            ?? throw new InvalidOperationException(
-                $"{rootCertPasswordVar} is not set in environment variables."
-            );
 
         // Load the root certificate (with private key for signing)
         _rootCertificate = new X509Certificate2(
