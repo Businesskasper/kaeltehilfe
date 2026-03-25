@@ -6,4 +6,4 @@ export type Bus = {
 };
 
 export const useBusses = () =>
-  useCrudHook<Bus, never, Omit<Bus, "id">>({ key: "busses" });
+  useCrudHook<Bus, never, Omit<Bus, "id">>({ key: "busses", additionalInvalidation: ["logins"] });
