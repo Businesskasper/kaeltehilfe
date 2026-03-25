@@ -90,7 +90,7 @@ type Props<T extends Record<string, any>> = {
   hideTopToolbarActions?: boolean;
   disablePagination?: boolean;
   renderRowActionMenuItems?: MRT_TableOptions<T>["renderRowActionMenuItems"];
-  mantineDetailPanelProps?: MRT_TableOptions<T>["mantineDetailPanelProps"]
+  mantineDetailPanelProps?: MRT_TableOptions<T>["mantineDetailPanelProps"];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,5 +1,10 @@
 import { describe, expect, test } from "vitest";
-import { toDate, formatDate, toNormalizedDate, compareByDateOnly } from "./dates";
+import {
+  toDate,
+  formatDate,
+  toNormalizedDate,
+  compareByDateOnly,
+} from "./dates";
 
 describe("toDate", () => {
   test("parses a valid date string", () => {
@@ -52,6 +57,8 @@ describe("compareByDateOnly", () => {
   });
 
   test("returns 0 for same date different times", () => {
-    expect(compareByDateOnly("2026-03-24T08:00:00", "2026-03-24T20:00:00")).toBe(0);
+    expect(
+      compareByDateOnly("2026-03-24T08:00:00", "2026-03-24T20:00:00"),
+    ).toBe(0);
   });
 });

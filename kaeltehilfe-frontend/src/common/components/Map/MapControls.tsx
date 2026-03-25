@@ -126,11 +126,17 @@ export const ZoomButtons = () => {
   const onZoom = (zoomMode: string) => {
     if (zoomMode === "IN" && canZoomIn) {
       (map as L.Map & { _programmaticMove?: boolean })._programmaticMove = true;
-      map.once("zoomend", () => { (map as L.Map & { _programmaticMove?: boolean })._programmaticMove = false; });
+      map.once("zoomend", () => {
+        (map as L.Map & { _programmaticMove?: boolean })._programmaticMove =
+          false;
+      });
       map.zoomIn(1, { animate: true });
     } else if (zoomMode === "OUT" && canZoomOut) {
       (map as L.Map & { _programmaticMove?: boolean })._programmaticMove = true;
-      map.once("zoomend", () => { (map as L.Map & { _programmaticMove?: boolean })._programmaticMove = false; });
+      map.once("zoomend", () => {
+        (map as L.Map & { _programmaticMove?: boolean })._programmaticMove =
+          false;
+      });
       map.zoomOut(1, { animate: true });
     }
   };

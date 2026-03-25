@@ -3,7 +3,10 @@ import { chunkArray } from "./chunkArray";
 
 describe("chunkArray", () => {
   test("splits into even chunks", () => {
-    expect(chunkArray([1, 2, 3, 4], 2)).toEqual([[1, 2], [3, 4]]);
+    expect(chunkArray([1, 2, 3, 4], 2)).toEqual([
+      [1, 2],
+      [3, 4],
+    ]);
   });
 
   test("handles remainder", () => {
