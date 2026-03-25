@@ -8,7 +8,7 @@ import {
 } from "@tabler/icons-react";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
-import { ModalMain, Table, openAppModal } from "../../../common/components";
+import { Table, openAppModal } from "../../../common/components";
 import { OperatorLogin } from "../../../common/data";
 import {
   LoginCertificate,
@@ -93,7 +93,6 @@ export const ManageLoginCertificatesDetailsContent = ({
   );
 
   return (
-
     <Table
       fillScreen
       tableKey="login-certificates"

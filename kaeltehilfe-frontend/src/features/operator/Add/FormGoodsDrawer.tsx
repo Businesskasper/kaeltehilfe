@@ -27,10 +27,7 @@ import {
   useGoods,
 } from "../../../common/data";
 import clsx from "clsx";
-import {
-  useBreakpoint,
-  useIsTouchDevice,
-} from "../../../common/utils";
+import { useBreakpoint, useIsTouchDevice } from "../../../common/utils";
 import { useDistributionFormContext } from "./DistributionFormContext";
 import { GoodListItem } from "./GoodListItem";
 

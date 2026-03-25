@@ -75,7 +75,11 @@ describe("validators (chain)", () => {
   });
 
   test("returns undefined when all pass", () => {
-    const result = validators("hello", requiredValidator(), minLengthValidator(3));
+    const result = validators(
+      "hello",
+      requiredValidator(),
+      minLengthValidator(3),
+    );
     expect(result).toBeUndefined();
   });
 });

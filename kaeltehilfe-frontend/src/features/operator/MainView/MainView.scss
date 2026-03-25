@@ -1,6 +1,10 @@
 .main-view {
-  height: calc(100dvh - var(--app-shell-header-height, 0px) - var(--app-shell-footer-height,
-        0px) - mantine.rem(32px));
+  height: calc(
+    100dvh - var(--app-shell-header-height, 0px) - var(
+        --app-shell-footer-height,
+        0px
+      ) - mantine.rem(32px)
+  );
 
   display: flex;
   flex-direction: column;
@@ -13,7 +17,7 @@
     .buttons-container {
       margin-top: mantine.rem(22);
       display: flex;
-      gap: mantine.rem(8)
+      gap: mantine.rem(8);
     }
   }
 
@@ -59,5 +63,3 @@
     }
   }
 }
-
-

@@ -47,8 +47,9 @@ export const LocationTracker = ({
 
   useMapEvents({
     movestart: () => {
-      const isProgrammatic = isTrackingRef.current
-        || (map as L.Map & { _programmaticMove?: boolean })._programmaticMove;
+      const isProgrammatic =
+        isTrackingRef.current ||
+        (map as L.Map & { _programmaticMove?: boolean })._programmaticMove;
       if (!isProgrammatic) {
         setIsTracking(false);
       }
@@ -101,7 +102,9 @@ export const LocationTracker = ({
       return;
 
     isTrackingRef.current = true;
-    map.once("moveend", () => { isTrackingRef.current = false; });
+    map.once("moveend", () => {
+      isTrackingRef.current = false;
+    });
     map.panTo(
       { lat: geoLocationLat, lng: geoLocationLng },
       { animate: true, easeLinearity: 0.5, noMoveStart: true },

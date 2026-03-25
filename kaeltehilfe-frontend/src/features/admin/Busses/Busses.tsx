@@ -26,8 +26,15 @@ export const Busses = () => {
   const [selectedBusses, setSelectedBusses] = React.useState<Array<Bus>>([]);
 
   const getBusLogin = (registrationNumber?: string) => {
-    return !logins || !registrationNumber ? null : (logins).find((l): l is OperatorLogin => isOperatorLogin(l) && l.registrationNumber?.toUpperCase() === registrationNumber?.toUpperCase())
-  }
+    return !logins || !registrationNumber
+      ? null
+      : logins.find(
+          (l): l is OperatorLogin =>
+            isOperatorLogin(l) &&
+            l.registrationNumber?.toUpperCase() ===
+              registrationNumber?.toUpperCase(),
+        );
+  };
 
   const openCrudModal = React.useCallback(
     () =>
@@ -85,8 +92,12 @@ export const Busses = () => {
         setSelected={setSelectedBusses}
         enableGrouping
         renderDetailPanel={({ row }) => {
-          const login = getBusLogin(row.original.registrationNumber?.toUpperCase());
-          return login ? <ManageLoginCertificatesDetailsContent login={login} /> : null
+          const login = getBusLogin(
+            row.original.registrationNumber?.toUpperCase(),
+          );
+          return login ? (
+            <ManageLoginCertificatesDetailsContent login={login} />
+          ) : null;
         }}
       />
     </>

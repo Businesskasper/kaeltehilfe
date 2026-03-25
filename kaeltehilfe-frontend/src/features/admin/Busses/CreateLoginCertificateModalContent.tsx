@@ -169,9 +169,9 @@ export const CreateLoginCertificateModalContent = ({
           <Button
             disabled={!form.isTouched() || !form.isDirty()}
             onClick={() => {
-              console.log('clicked')
-              console.log('errs', form.errors)
-              form.onSubmit(onSubmit)()
+              console.log("clicked");
+              console.log("errs", form.errors);
+              form.onSubmit(onSubmit)();
             }}
           >
             Abschicken
