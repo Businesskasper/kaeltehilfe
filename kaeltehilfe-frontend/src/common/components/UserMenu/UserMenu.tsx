@@ -1,9 +1,11 @@
 import {
+  Avatar,
   Group,
   Menu,
   rem,
   Switch,
   Text,
+  UnstyledButton,
   useMantineColorScheme,
 } from "@mantine/core";
 import {
@@ -11,6 +13,7 @@ import {
   IconLogout,
   IconMoon,
   IconSun,
+  IconUser,
   IconUserShield,
 } from "@tabler/icons-react";
 import { useAuth } from "react-oidc-context";
@@ -31,47 +34,12 @@ export const UserMenu = () => {
     location.pathname,
   );
 
+  const isBus = !!profile?.registrationNumber;
+  const avatarIcon = isBus ? <IconBus size={16} /> : <IconUser size={16} />;
+  const userName = isBus ? profile?.registrationNumber : auth?.user?.profile.name;
+
   return (
     <Group className="user-menu">
-      <Menu withArrow zIndex={400}>
-        <Menu.Target>
-          <Text>
-            {auth.isAuthenticated && <span>{auth?.user?.profile.name}</span>}
-          </Text>
-        </Menu.Target>
-        <Menu.Dropdown>
-          {!isOnAdminPage && profile?.role === "ADMIN" ? (
-            <Menu.Item>
-              <Group justify="space-between">
-                <Text onClick={() => navigate("/admin")}>Admin Seite</Text>
-                <IconUserShield />
-              </Group>
-            </Menu.Item>
-          ) : (
-            <Menu.Item onClick={() => navigate("/")}>
-              <Group justify="space-between">
-                <Text>Erfasser Seite</Text>
-                <IconBus />
-              </Group>
-            </Menu.Item>
-          )}
-          <Menu.Item
-            onClick={() =>
-              auth
-                .signoutSilent({
-                  post_logout_redirect_uri: window.location.href,
-                  silentRequestTimeoutInSeconds: 0,
-                })
-                .then(() => auth.signinRedirect())
-            }
-          >
-            <Group justify="space-between">
-              <Text>Ausloggen</Text>
-              <IconLogout />
-            </Group>
-          </Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
       <Switch
         size="md"
         checked={colorScheme === "dark"}
@@ -79,6 +47,47 @@ export const UserMenu = () => {
         onLabel={<IconMoon style={{ padding: rem(2) }} />}
         offLabel={<IconSun style={{ padding: rem(2) }} />}
       />
+
+      {auth.isAuthenticated && (
+        <Menu zIndex={400} width={200}>
+          <Menu.Target>
+            <UnstyledButton>
+              <Group gap={5}>
+                <Avatar size={30}>{avatarIcon}</Avatar>
+                <Text size="sm">{userName}</Text>
+              </Group>
+            </UnstyledButton>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Label>Benutzer Menü</Menu.Label>
+
+            {!isOnAdminPage && profile?.role === "ADMIN" ? (
+              <Menu.Item leftSection={<IconUserShield size={16} />} onClick={() => navigate("/admin")}>
+                Admin Seite
+              </Menu.Item>
+            ) : (
+              <Menu.Item onClick={() => navigate("/")} leftSection={<IconBus size={16} />}>
+                Erfasser Seite
+              </Menu.Item>
+            )}
+
+            <Menu.Item
+              onClick={() =>
+                auth
+                  .signoutSilent({
+                    post_logout_redirect_uri: window.location.href,
+                    silentRequestTimeoutInSeconds: 0,
+                  })
+                  .then(() => auth.signinRedirect())
+              }
+              leftSection={<IconLogout size={16} />}
+              color="red"
+            >
+              Ausloggen
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      )}
     </Group>
   );
 };
