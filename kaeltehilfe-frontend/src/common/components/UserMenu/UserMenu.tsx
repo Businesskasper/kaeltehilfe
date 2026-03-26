@@ -13,12 +13,12 @@ import {
   IconLogout,
   IconMoon,
   IconSun,
+  IconUser,
   IconUserShield,
 } from "@tabler/icons-react";
 import { useAuth } from "react-oidc-context";
 import { matchPath, useNavigate, useResolvedPath } from "react-router-dom";
 import { useProfile } from "../../utils/useProfile";
-import { getUserInitials } from "./helper";
 
 export const UserMenu = () => {
   const auth = useAuth();
@@ -34,7 +34,9 @@ export const UserMenu = () => {
     location.pathname,
   );
 
-  const userInitials = getUserInitials(auth?.user?.profile.name);
+  const isBus = !!profile?.registrationNumber;
+  const avatarIcon = isBus ? <IconBus size={16} /> : <IconUser size={16} />;
+  const userName = isBus ? profile?.registrationNumber : auth?.user?.profile.name;
 
   return (
     <Group className="user-menu">
@@ -50,11 +52,9 @@ export const UserMenu = () => {
         <Menu zIndex={400} width={200}>
           <Menu.Target>
             <UnstyledButton>
-              <Group gap="xs">
-                <Avatar name={userInitials} />
-                <Text size="sm">
-                  {auth?.user?.profile.name}
-                </Text>
+              <Group gap={5}>
+                <Avatar size={30}>{avatarIcon}</Avatar>
+                <Text size="sm">{userName}</Text>
               </Group>
             </UnstyledButton>
           </Menu.Target>
