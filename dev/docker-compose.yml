@@ -4,6 +4,8 @@ services:
     build:
       context: ./certs-init/image
       dockerfile: Dockerfile
+    platform: linux/amd64
+    restart: no
     environment:
       PASSWORD: ${ROOT_CERT_PASSWORD}
       EXPORT_CRT_PATH: /app/output/crt/rootCa.crt
@@ -21,6 +23,8 @@ services:
     build:
       context: ./keycloak/image
       dockerfile: dockerfile
+    platform: linux/amd64
+    restart: no
     command: start-dev --health-enabled=true
     ports:
       - '8050:8080'
@@ -61,6 +65,8 @@ services:
     build:
       context: ./keycloak-init
       dockerfile: dockerfile
+    platform: linux/amd64
+    restart: no
     environment:
       REALM_NAME: kaeltehilfe
       REALM_REQUIRE_SSL: NONE
@@ -84,6 +90,8 @@ services:
 
   pgosm-db:
     image: postgis/postgis:18-3.6
+    platform: linux/amd64
+    restart: no
     ports:
       - "5432:5432"
     environment:
@@ -107,6 +115,8 @@ services:
     build: 
       context: ./pgosm-init/image
       dockerfile: Dockerfile
+    platform: linux/amd64
+    restart: no
     volumes:
       - ./pgosm-init/input:/app/input
     depends_on:

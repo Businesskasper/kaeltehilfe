@@ -27,6 +27,15 @@ Certificate paths may be absolute or relative to the backend's content root. Rel
 | ClientCertDir | Directory where generated client certificates are stored. | `../dev/certs/client` |
 | CrlPath | Path to the certificate revocation list file. | `../dev/certs/crl/crl.pem` |
 
+## macOS: SpatiaLite setup
+
+The backend uses SpatiaLite for spatial queries. On macOS, install it via Homebrew and set the library path when running:
+
+```
+brew install libspatialite
+DYLD_LIBRARY_PATH=$(brew --prefix)/lib dotnet watch
+```
+
 ## Migrations
 ```
 dotnet ef migrations add InitialMigration -o Application/Infrastructure/Database/Migrations

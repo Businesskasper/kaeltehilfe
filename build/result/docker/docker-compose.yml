@@ -1,6 +1,7 @@
 services:
   proxy:
     image: 'jc21/nginx-proxy-manager:2.12.1'
+    platform: linux/amd64
     restart: unless-stopped
     ports:
       - '80:80'
@@ -17,7 +18,8 @@ services:
 
   certs-init:
     image: kaeltehilfe-certs-init:latest
-    restart: "no"
+    platform: linux/amd64
+    restart: unless-stopped
     logging:
       driver: "json-file"
       options:
@@ -33,6 +35,7 @@ services:
 
   keycloak:
     image: kaeltehilfe-keycloak:latest
+    platform: linux/amd64
     restart: unless-stopped
     ports:
       - '127.0.0.1:8080:8080'
@@ -72,7 +75,8 @@ services:
 
   keycloak-init:
     image: kaeltehilfe-keycloak-init:latest
-    restart: "no"
+    platform: linux/amd64
+    restart: unless-stopped
     logging:
       driver: "json-file"
       options:
@@ -96,6 +100,7 @@ services:
 
   ui:
     image: kaeltehilfe-ui:latest
+    platform: linux/amd64
     restart: unless-stopped
     ports:
       - '127.0.0.1:8082:80'
@@ -116,6 +121,7 @@ services:
 
   api:
     image: kaeltehilfe-api:latest
+    platform: linux/amd64
     restart: unless-stopped
     ports:
       - '127.0.0.1:8081:8080'
@@ -150,6 +156,7 @@ services:
 
   pgosm-db:
     image: postgis/postgis:18-3.6
+    platform: linux/amd64
     restart: unless-stopped
     ports:
       - "127.0.0.1:5432:5432"
@@ -175,7 +182,8 @@ services:
 
   pgosm-init:
     image: pgosm-init:latest
-    restart: "no"
+    platform: linux/amd64
+    restart: unless-stopped
     logging:
       driver: "json-file"
       options:
@@ -199,6 +207,7 @@ services:
 
   geo:
     image: kaeltehilfe-geo:latest
+    platform: linux/amd64
     restart: unless-stopped
     ports:
       - "127.0.0.1:8083:8083"
