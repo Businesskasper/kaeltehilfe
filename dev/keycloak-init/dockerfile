@@ -1,6 +1,6 @@
-FROM mcr.microsoft.com/powershell:latest
+FROM mcr.microsoft.com/powershell:lts-alpine-3.17
 
-RUN apt-get update && apt-get install -y curl
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
