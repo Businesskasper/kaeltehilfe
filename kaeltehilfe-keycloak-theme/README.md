@@ -64,6 +64,10 @@ The theme is not baked into the Keycloak Docker image — it is injected at runt
 
 On startup, the `keycloak-init` container automatically discovers the theme by searching for a login theme matching `*kaelte*` in the Keycloak server info and applies it to the realm. No manual theme selection in the Keycloak admin console is required.
 
+### Color Scheme Sync
+
+The main frontend and the Keycloak theme share the same light/dark mode preference. When the frontend redirects to Keycloak for login, it reads the current color scheme from Mantine's localStorage (`mantine-color-scheme-value`) and passes it as a `theme` query parameter via OIDC `extraQueryParams`. On the Keycloak side, `Template.tsx` picks up this parameter and applies it to its own `MantineProvider` via `setColorScheme`, so the login page matches the appearance the user chose in the app.
+
 ## Implementation Details
 
 **Only the login theme is customized** — `accountThemeImplementation` is set to `"none"` in `vite.config.ts`.

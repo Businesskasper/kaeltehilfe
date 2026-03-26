@@ -63,9 +63,20 @@ The init containers run once and exit after completing. On subsequent starts the
 All configuration defaults match the automated setup. See the README in each component for configuration details.
 
 ### Backend
+
+**macOS only:** Install SpatiaLite before running the backend:
+```
+brew install libspatialite
+```
+
 ```
 cd ./kaeltehilfe-backend/src
 dotnet watch
+```
+
+On macOS, prefix the command with `DYLD_LIBRARY_PATH` so the runtime can find `mod_spatialite.dylib`:
+```
+DYLD_LIBRARY_PATH=$(brew --prefix)/lib dotnet watch
 ```
 
 ### Geo
