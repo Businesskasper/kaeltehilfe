@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "golang.go",
+        "ms-dotnettools.csdevkit",
+        "ms-dotnettools.csharp",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "ms-vscode.powershell",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "alexcvzz.vscode-sqlite"
+    ]
+}
