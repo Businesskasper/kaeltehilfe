@@ -13,7 +13,7 @@ Write-Host "Build certs-init container image" -ForegroundColor Cyan
 . ([System.IO.Path]::Combine($root, "..", "functions.ps1"))
 
 $dockerImageName = "kaeltehilfe-certs-init:latest"
-$dockerContext = [System.IO.Path]::Combine($root, "..", "..", "dev", "certs-init", "image")
+$dockerContext = [System.IO.Path]::Combine($root, "..", "..", "certs-init", "image")
 
 $dockerImageExportPath = [System.IO.Path]::Combine($root, "..", "result", "docker", "images", "kaeltehilfe-certs-init.tar")
 if (Test-Path -Path $dockerImageExportPath) {
