@@ -21,7 +21,7 @@ services:
   
   keycloak:
     build:
-      context: ./keycloak/image
+      context: ../keycloak/image
       dockerfile: dockerfile
     platform: linux/amd64
     restart: no

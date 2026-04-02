@@ -22,7 +22,7 @@ if (Test-Path -Path $dockerImageExportPath) {
 
 try {
     Write-Host "Build image"
-    buildDockerImage -dockerFileDir $root -dockerImageName $dockerImageName
+    buildDockerImage -dockerFileDir ([System.IO.Path]::Combine($root, "..", "..", "keycloak", "image")) -dockerImageName $dockerImageName
     Write-Host "Image built as $($dockerImageName)"
 
     Write-Host "Export image"
