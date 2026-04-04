@@ -1,5 +1,5 @@
 if ($psISE) {
-    $root = $psISE.CurrentFile | Select-Object -ExpandProperty FullPath | Split-Path -Parent
+    $root = $psISE.CurrentFile | select -ExpandProperty FullPath | Split-Path -Parent
 }
 elseif ($profile -match "VSCode") {
     $root = $psEditor.GetEditorContext().CurrentFile.Path | Split-Path -Parent
@@ -12,9 +12,7 @@ else {
 
 Write-Log "Starting full build" -ForegroundColor Cyan
 
-$scripts = Get-ChildItem -Path $root -Filter "build-*.ps1" |
-    ? { $_.Name -ne "build-all.ps1" } |
-    sort Name
+$scripts = Get-ChildItem -Path $root -Filter "build-*.ps1" | ? { $_.Name -ne "build-all.ps1" } | sort Name
 
 foreach ($script in $scripts) {
     Write-Log "--- Starting $($script.Name) ---" -ForegroundColor Cyan
