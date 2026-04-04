@@ -8,14 +8,14 @@ else {
     $root = $MyInvocation.MyCommand.Definition | Split-Path -Parent
 }
 
-. ([System.IO.Path]::Combine($root, "..", "functions.ps1"))
+. ([System.IO.Path]::Combine($root, "functions.ps1"))
 
 Write-Log "Build keycloak-init container image" -ForegroundColor Cyan
 
 $dockerImageName = "kaeltehilfe-keycloak-init:latest"
-$dockerContext = [System.IO.Path]::Combine($root, "..", "..", "keycloak-init", "image")
+$dockerContext = [System.IO.Path]::Combine($root, "..", "infra", "keycloak-init", "image")
 
-$dockerImageExportPath = [System.IO.Path]::Combine($root, "..", "result", "docker", "images", "kaeltehilfe-keycloak-init.tar")
+$dockerImageExportPath = [System.IO.Path]::Combine($root, "result", "docker", "images", "kaeltehilfe-keycloak-init.tar")
 if (Test-Path -Path $dockerImageExportPath) {
     Write-Log "Clean up previously exported image"
     Remove-Item -Force $dockerImageExportPath -ErrorAction SilentlyContinue | Out-Null

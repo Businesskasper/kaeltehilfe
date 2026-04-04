@@ -15,16 +15,18 @@ All images are deployment-agnostic and can be built in any order. No URLs or env
 
 Each build script creates a Docker image and exports it as a `.tar` file to `build/result/docker/images/`.
 
+Run `build\build-all.ps1` to build everything in sequence. To build a single image, run the corresponding script directly.
+
 | Script | Image | Description |
 | ------ | ----- | ----------- |
-| `build\keycloak-theme\build-keycloak-theme.ps1` | — | Builds the Keycloak login theme `.jar` to `build/result/keycloak/themes/`. |
-| `build\keycloak\build-keycloak.ps1` | `kaeltehilfe-keycloak` | Custom Keycloak image with health endpoint support. |
-| `build\certs-init\build-certs-init.ps1` | `kaeltehilfe-certs-init` | Certificate generation init container. |
-| `build\keycloak-init\build-keycloak-init.ps1` | `kaeltehilfe-keycloak-init` | Keycloak realm setup init container. |
-| `build\backend\build-backend.ps1` | `kaeltehilfe-api` | .NET backend (multi-stage build). |
-| `build\frontend\build-frontend.ps1` | `kaeltehilfe-ui` | Frontend (multi-stage build). |
-| `build\geo\build-geo.ps1` | `kaeltehilfe-geo` | Geo service (multi-stage build). |
-| `build\pgosm-init\build-pgosm-init.ps1` | `pgosm-init` | OSM data import init container. |
+| `build\build-keycloak-theme.ps1` | — | Builds the Keycloak login theme `.jar` to `build/result/keycloak/themes/`. |
+| `build\build-keycloak.ps1` | `kaeltehilfe-keycloak` | Custom Keycloak image with health endpoint support. |
+| `build\build-certs-init.ps1` | `kaeltehilfe-certs-init` | Certificate generation init container. |
+| `build\build-keycloak-init.ps1` | `kaeltehilfe-keycloak-init` | Keycloak realm setup init container. |
+| `build\build-backend.ps1` | `kaeltehilfe-api` | .NET backend (multi-stage build). |
+| `build\build-frontend.ps1` | `kaeltehilfe-ui` | Frontend (multi-stage build). |
+| `build\build-geo.ps1` | `kaeltehilfe-geo` | Geo service (multi-stage build). |
+| `build\build-pgosm-init.ps1` | `pgosm-init` | OSM data import init container. |
 
 
 ## Configuration

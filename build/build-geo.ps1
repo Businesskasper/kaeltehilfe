@@ -8,15 +8,15 @@ else {
     $root = $MyInvocation.MyCommand.Definition | Split-Path -Parent
 }
 
-. ([System.IO.Path]::Combine($root, "..", "functions.ps1"))
+. ([System.IO.Path]::Combine($root, "functions.ps1"))
 
 Write-Log "Build geo container image" -ForegroundColor Cyan
 
 $dockerImageName = "kaeltehilfe-geo:latest"
-$dockerContext = [System.IO.Path]::Combine($root, "..", "..", "kaeltehilfe-geo")
+$dockerContext = [System.IO.Path]::Combine($root, "..", "kaeltehilfe-geo")
 $dockerFilePath = [System.IO.Path]::Combine($dockerContext, "dockerfile.prod")
 
-$dockerImageExportPath = [System.IO.Path]::Combine($root, "..", "result", "docker", "images", "kaeltehilfe-geo.tar")
+$dockerImageExportPath = [System.IO.Path]::Combine($root, "result", "docker", "images", "kaeltehilfe-geo.tar")
 if (Test-Path -Path $dockerImageExportPath) {
     Write-Log "Clean up previously exported image"
     Remove-Item -Force $dockerImageExportPath -ErrorAction SilentlyContinue | Out-Null

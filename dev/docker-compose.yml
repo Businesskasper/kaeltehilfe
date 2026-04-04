@@ -2,7 +2,7 @@ version: '3.8'
 services:
   certs-init:
     build:
-      context: ../certs-init/image
+      context: ../infra/certs-init/image
       dockerfile: Dockerfile
     platform: linux/amd64
     restart: no
@@ -21,7 +21,7 @@ services:
   
   keycloak:
     build:
-      context: ../keycloak/image
+      context: ../infra/keycloak/image
       dockerfile: dockerfile
     platform: linux/amd64
     restart: no
@@ -63,7 +63,7 @@ services:
 
   keycloak-init:
     build:
-      context: ../keycloak-init/image
+      context: ../infra/keycloak-init/image
       dockerfile: dockerfile
     platform: linux/amd64
     restart: no
@@ -113,7 +113,7 @@ services:
 
   pgosm-init:
     build: 
-      context: ../pgosm-init/image
+      context: ../infra/pgosm-init/image
       dockerfile: Dockerfile
     platform: linux/amd64
     restart: no

@@ -8,17 +8,17 @@ else {
     $root = $MyInvocation.MyCommand.Definition | Split-Path -Parent
 }
 
-. ([System.IO.Path]::Combine($root, "..", "functions.ps1"))
+. ([System.IO.Path]::Combine($root, "functions.ps1"))
 
 Write-Log "Build keycloak theme" -ForegroundColor Cyan
 
 $dockerImageName = "kaeltehilfe-keycloak-theme-build:latest"
-$dockerContext = [System.IO.Path]::Combine($root, "..", "..", "kaeltehilfe-keycloak-theme")
+$dockerContext = [System.IO.Path]::Combine($root, "..", "kaeltehilfe-keycloak-theme")
 $dockerFilePath = [System.IO.Path]::Combine($dockerContext, "dockerfile.build")
 
-$publishDir = [System.IO.Path]::Combine($root, "..", "result", "keycloak", "themes")
+$publishDir = [System.IO.Path]::Combine($root, "result", "keycloak", "themes")
 New-Item -Path $publishDir -ItemType Directory -ErrorAction SilentlyContinue | Out-Null
-Get-ChildItem -Path $publishDir | Where-Object { $_.Name -like "*.jar" } | Remove-Item -Force | Out-Null
+Get-ChildItem -Path $publishDir | ? { $_.Name -like "*.jar" } | % { Remove-Item -Force $_.FullName | Out-Null }
 
 try {
     Write-Log "Build theme in Docker"

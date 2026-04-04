@@ -57,7 +57,7 @@ For the Vite dev server (`npm run dev`), Keycloakify provides mock context via a
 
 ## Integration with kaeltehilfe
 
-The theme is not baked into the Keycloak Docker image — it is injected at runtime via a volume mount. The build script `build/keycloak-theme/build-keycloak-theme.ps1` runs the Docker build and copies the resulting JAR to the appropriate `keycloak/themes/` directory.
+The theme is not baked into the Keycloak Docker image — it is injected at runtime via a volume mount. The build script `build/build-keycloak-theme.ps1` runs the Docker build and copies the resulting JAR to the appropriate `keycloak/themes/` directory.
 
 **Development:** `dev/docker-compose.yml` mounts `./keycloak/themes` → `/opt/keycloak/providers`
 **Production:** `build/result/docker/docker-compose.yml` mounts `../keycloak/themes` → `/opt/keycloak/providers`
