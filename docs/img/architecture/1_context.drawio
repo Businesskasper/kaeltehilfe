@@ -7,7 +7,7 @@
         <mxCell id="cRFrPcr5aK_C9aRf-qd9-1" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;Admin&lt;/b&gt;&lt;br&gt;(Manages shifts, buses,&lt;br&gt;volunteers, clients, goods)" vertex="1">
           <mxGeometry height="60" width="40" x="312" y="558" as="geometry" />
         </mxCell>
-        <mxCell id="cRFrPcr5aK_C9aRf-qd9-2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;Operator&lt;/b&gt;&lt;br&gt;(Plans and records&lt;br&gt;distributions)" vertex="1">
+        <mxCell id="cRFrPcr5aK_C9aRf-qd9-2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;Operator&lt;/b&gt;&lt;br&gt;(Records distributions&lt;br&gt;on shifts)" vertex="1">
           <mxGeometry height="60" width="40" x="512" y="613" as="geometry" />
         </mxCell>
         <mxCell id="cRFrPcr5aK_C9aRf-qd9-28" edge="1" parent="1" source="cRFrPcr5aK_C9aRf-qd9-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;curved=0;startArrow=classic;startFill=1;" target="cRFrPcr5aK_C9aRf-qd9-9">

@@ -7,7 +7,7 @@
         <mxCell id="vPFnM_Jm0kVhzXOxZaO--28" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;Admin&lt;/b&gt;&lt;br&gt;(Manages shifts, buses,&lt;br&gt;volunteers, clients, goods)" vertex="1">
           <mxGeometry height="60" width="40" x="530" y="500" as="geometry" />
         </mxCell>
-        <mxCell id="vPFnM_Jm0kVhzXOxZaO--29" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;Operator&lt;/b&gt;&lt;br&gt;(Plans and records&lt;br&gt;distributions)" vertex="1">
+        <mxCell id="vPFnM_Jm0kVhzXOxZaO--29" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;Operator&lt;/b&gt;&lt;br&gt;(Records distributions&lt;br&gt;on shifts)" vertex="1">
           <mxGeometry height="60" width="40" x="520" y="670" as="geometry" />
         </mxCell>
         <mxCell id="vPFnM_Jm0kVhzXOxZaO--30" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;dashed=1;arcSize=8;" value="" vertex="1">
@@ -243,6 +243,18 @@
         </mxCell>
         <mxCell id="vPFnM_Jm0kVhzXOxZaO--79" parent="lUlHVXKtklTuTBNQbI9z-30" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" value="File Storage" vertex="1">
           <mxGeometry height="30" width="80" x="34.72000000000003" as="geometry" />
+        </mxCell>
+        <mxCell id="admin-api-edge-1" edge="1" parent="1" source="vPFnM_Jm0kVhzXOxZaO--33" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;exitX=0.995;exitY=0.65;exitDx=0;exitDy=0;exitPerimeter=0;entryX=-0.005;entryY=0.87;entryDx=0;entryDy=0;entryPerimeter=0;" target="vPFnM_Jm0kVhzXOxZaO--36">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1490" y="950" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin-api-edge-2" connectable="0" parent="admin-api-edge-1" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=10;" value="HTTPS&lt;br&gt;(Admin API)" vertex="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="80" as="offset" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="lUlHVXKtklTuTBNQbI9z-31" connectable="0" parent="1" style="group" value="" vertex="1">
           <mxGeometry height="30" width="124.3599999999999" x="1598.65" y="1191" as="geometry" />
