@@ -19,8 +19,8 @@ import { useNavigate } from "react-router-dom";
 import {
   Distribution,
   GoodTypeTranslation,
+  useDistributions,
   useGoods,
-  useWriteDistributions,
 } from "../../../common/data";
 import {
   compareByDateOnly,
@@ -53,7 +53,7 @@ export const DistributionCard = ({
   const {
     update: { mutate: updateDistribution },
     remove: { mutate: removeDistribution },
-  } = useWriteDistributions();
+  } = useDistributions({ from: null, to: null });
 
   // TODO: Gruppierung um Ort?
   const byGood = groupBy(distributions, (d) => d.good?.id);

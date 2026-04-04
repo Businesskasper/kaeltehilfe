@@ -1,14 +1,11 @@
 import {
   InfiniteData,
   useInfiniteQuery,
-  useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
 import React from "react";
 import {
-  getBaseDelete,
   getBaseQuery,
-  getBaseUpdate,
   toNormalizedDate,
   useCrudHook,
 } from "../utils";
@@ -53,46 +50,8 @@ export const useDistributions = (params: DistributionsQueryParams) =>
     key: "distributions",
     params,
     additionalInvalidation: ["distributionsPaginated"],
-    enabled: () => !!params?.from && !!params?.to,
+    enabled: !!params?.from && !!params?.to,
   });
-
-export const useWriteDistributions = () => {
-  const httpPatch = getBaseUpdate<DistributionUpdate>(`/distributions`);
-  const httpDelete = getBaseDelete(`/distributions`);
-
-  const queryClient = useQueryClient();
-
-  const invalidate = () => {
-    queryClient.invalidateQueries({ queryKey: ["distributions"] });
-    queryClient.invalidateQueries({ queryKey: ["distributionsPaginated"] });
-  };
-
-  const update = useMutation<
-    void,
-    unknown,
-    { id: number; update: DistributionUpdate },
-    unknown
-  >({
-    mutationFn: ({ id, update }) => httpPatch(id, update),
-    onSettled: () => {
-      console.log("DEBUG: invalidate from hook");
-      invalidate();
-    },
-  });
-
-  const remove = useMutation({
-    mutationFn: httpDelete,
-    onSettled: () => {
-      console.log("DEBUG: invalidate from hook");
-      invalidate();
-    },
-  });
-
-  return {
-    remove,
-    update,
-  };
-};
 
 export const useDistributionsPaginated = () => {
   const httpGet = getBaseQuery<Distribution>(`/distributions`);
@@ -135,7 +94,7 @@ export const useDistributionsPaginated = () => {
           return undefined; // Return undefined to stop fetching more pages
         }
 
-        // Calculate the next page's "from" and "to" date range
+        // Calculate the next pages "from" and "to" date range
         const to = lastPageParams.from;
         const from = new Date(
           new Date(to).setMonth(to.getMonth() - 1).valueOf(),
@@ -157,68 +116,3 @@ export const useDistributionsPaginated = () => {
 
   return { queryDistributionsPaginated, invalidate };
 };
-
-// type DistributionQueryParams = { from: Date; to: Date };
-// export const useDistribtions = ({ from, to }: DistributionQueryParams) => {
-//   const httpGet = getBaseQuery<Distribution>(`/distributions`);
-
-//   const queryClient = useQueryClient();
-
-//   const query = useQuery<
-//     Array<Distribution>,
-//     Error,
-//     Array<Distribution>,
-//     ["distributions", string, string]
-//   >(
-//     {
-//       queryKey: ["distributions", from.toISOString(), to.toISOString()],
-//       queryFn: async ({ signal }) => await httpGet(signal, { from, to }),
-//       refetchOnWindowFocus: "always",
-//       refetchOnReconnect: "always",
-//     },
-//     queryClient,
-//   );
-
-//   const invalidate = () => {
-//     queryClient.invalidateQueries({
-//       queryKey: ["distributions", from.toISOString(), to.toISOString()],
-//       refetchType: "all",
-//       stale: true,
-//       type: "all",
-//     });
-//     queryClient.refetchQueries();
-//   };
-
-//   return {
-//     query,
-//     invalidate,
-//   };
-// };
-
-// // TODO: not tested
-// export const useDistributionsByClients = (clientIds: number[]) => {
-//   const getDistributionsByClient = getBaseQuery<Distribution>(`/distributions`);
-
-//   const queryClient = useQueryClient();
-
-//   const queries = useQueries({
-//     queries: clientIds.map((clientId) => ({
-//       queryKey: ["distributionsByClientId", clientId.toString()],
-//       queryFn: (params: QueryFunctionContext) =>
-//         getDistributionsByClient(params.signal, {
-//           clientId: clientId.toString(),
-//         }),
-//     })),
-//     combine: (result) => result.flatMap((r) => r.data),
-//   });
-
-//   const invalidate = (clientId: number) =>
-//     queryClient.invalidateQueries({
-//       queryKey: ["distributionsByClientId", [clientId.toString()]],
-//     });
-
-//   return {
-//     invalidate,
-//     queries,
-//   };
-// };

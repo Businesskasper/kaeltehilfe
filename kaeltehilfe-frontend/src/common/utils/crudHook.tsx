@@ -16,7 +16,7 @@ type UseCrudHookParams<T, TParams extends Record<string, unknown>> = {
   params?: TParams;
   transformer?: Transformer<T>;
   additionalInvalidation?: Array<string>;
-  enabled?: () => boolean;
+  enabled?: boolean | (() => boolean);
 };
 
 export const useCrudHook = <
@@ -44,7 +44,7 @@ export const useCrudHook = <
 
   const objs = useQuery<Array<T>>({
     queryKey: [key, ...paramValues],
-    enabled: enabled ?? true,
+    enabled: typeof enabled === "function" ? enabled() : (enabled ?? true),
     placeholderData: (previousData) => previousData,
     queryFn: async ({ signal }): Promise<Array<T>> => {
       const response = await httpGet(signal, params);
