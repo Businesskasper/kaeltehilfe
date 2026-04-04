@@ -34,11 +34,11 @@ public class DistributionsController : ControllerBase
     )
     {
         var query = _kbContext.Distributions.AsQueryable().Where(x => !x.IsDeleted);
-        // if (pageSize != null && page != null)
-        //     query = query.Skip(((int)page - 1) * (int)pageSize);
-        _logger.LogInformation($"Query distributions from {from} to {to}");
         if (from.HasValue && to.HasValue)
+        {
+            _logger.LogInformation("Querying distributions from {From} to {To}", from, to);
             query = query.Where(x => x.AddOn >= from && x.AddOn <= to);
+        }
 
         var objs = await query.ToListAsync();
 
