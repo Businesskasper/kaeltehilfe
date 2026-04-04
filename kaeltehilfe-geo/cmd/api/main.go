@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"os"
@@ -17,6 +18,14 @@ import (
 
 func main() {
 	params := getParams()
+
+	setupLogger(params.logLevel)
+
+	slog.Info("Starting geo service",
+		"port", params.port,
+		"issuer_url", params.issuerUrl,
+		"allowed_origins", params.allowedOrigins,
+	)
 
 	database, err := db.NewDatabase(context.Background(), params.connStr)
 	if err != nil {
@@ -40,11 +49,29 @@ func main() {
 	}
 }
 
+func setupLogger(levelStr string) {
+	var level slog.Level
+	switch strings.ToLower(levelStr) {
+	case "debug":
+		level = slog.LevelDebug
+	case "warn", "warning":
+		level = slog.LevelWarn
+	case "error":
+		level = slog.LevelError
+	default:
+		level = slog.LevelInfo
+	}
+
+	handler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: level})
+	slog.SetDefault(slog.New(handler))
+}
+
 type params struct {
 	port           int
 	connStr        string
 	issuerUrl      string
 	allowedOrigins []string
+	logLevel       string
 }
 
 func envOrDefault(key, fallback string) string {
@@ -87,6 +114,7 @@ func getParams() *params {
 	connStr := flag.String("connection_string", defaultConnStr, "The database connection string")
 	issuerUrl := flag.String("issuer_url", defaultIssuerUrl, "The oidc issuer url")
 	allowedOrigins := flag.String("allowed_origins", defaultAllowedOrigins, "The CORS allowed origins for the api")
+	logLevel := flag.String("log_level", envOrDefault("LOG_LEVEL", "info"), "Log level: debug, info, warn, error")
 	flag.Parse()
 
 	return &params{
@@ -94,5 +122,6 @@ func getParams() *params {
 		connStr:        *connStr,
 		issuerUrl:      *issuerUrl,
 		allowedOrigins: strings.Split(*allowedOrigins, ","),
+		logLevel:       *logLevel,
 	}
 }

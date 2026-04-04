@@ -226,6 +226,7 @@ services:
         condition: service_completed_successfully
     environment:
       GOMEMLIMIT: '128MiB'
+      LOG_LEVEL: 'info'
       PORT: "8083"
       DB_USER: ${POSTGIS_ADMIN}
       DB_PASSWORD: ${POSTGIS_PASSWORD}

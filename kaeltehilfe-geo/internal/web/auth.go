@@ -2,7 +2,7 @@ package web
 
 import (
 	"context"
-	"log"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -31,20 +31,20 @@ func (oidcAuth *OidcAuth) AuthMiddleware(next http.Handler) http.Handler {
 func (oidcAuth *OidcAuth) isAuthorized(r *http.Request) bool {
 	authHeader := r.Header.Get("Authorization")
 	if authHeader == "" {
-		log.Println("No authorization token received!")
+		slog.Warn("Request rejected: no authorization header")
 		return false
 	}
 
 	parts := strings.Split(authHeader, " ")
 	if len(parts) != 2 || parts[1] == "" {
-		log.Println("Authorization header has bad format!")
+		slog.Warn("Request rejected: malformed authorization header")
 		return false
 	}
 	authToken := parts[1]
 
 	_, err := oidcAuth.verifiyToken(r.Context(), authToken)
 	if err != nil {
-		log.Println(err)
+		slog.Warn("Request rejected: token verification failed", "error", err)
 		return false
 	}
 	// No further claim must be inspected - everyone can use the geo service
@@ -60,7 +60,7 @@ func (oidcAuth *OidcAuth) verifiyToken(parentCtx context.Context, token string) 
 
 	provider, err := oidc.NewProvider(ctx, oidcAuth.issuerUrl)
 	if err != nil {
-		log.Println(err)
+		slog.Error("Failed to fetch OIDC provider", "issuer_url", oidcAuth.issuerUrl, "error", err)
 		return nil, err
 	}
 

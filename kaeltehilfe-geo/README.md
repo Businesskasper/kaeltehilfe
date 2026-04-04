@@ -8,6 +8,7 @@ The geo service is configured via command-line flags or environment variables. E
 | `-connection_string` | `DB_CONN_STR` | PostgreSQL connection string for the pgosm database. Must match the credentials configured in `docker-compose.yml`. | `postgres://admin:Passw0rd@localhost:5432/pgosm?sslmode=disable` |
 | `-issuer_url` | `ISSUER_URL` | OpenID Connect issuer URL. Must point to the Keycloak realm used for authentication. Corresponds to `Authorization.Authority` in the backend config. | `http://localhost:8050/realms/kaeltehilfe` |
 | `-allowed_origins` | `ALLOWED_ORIGINS` | Allowed origins for CORS. Must match the URL where the frontend is served. | `http://localhost:5173` |
+| `-log_level` | `LOG_LEVEL` | Log level: `debug`, `info`, `warn`, `error`. In dev, `debug` enables per-request query logging. | `info` |
 
 ## Import
 Running the `./docker/docker-compose.yaml` will spin up postgis and a derived pgosm-flex image. The derived image will import the data on its first run only and create indices etc. on postgis.

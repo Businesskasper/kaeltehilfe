@@ -2,7 +2,7 @@ package web
 
 import (
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 )
 
@@ -24,9 +24,10 @@ func (s *Server) RegisterRoute(path string, handler http.Handler) {
 		handler = s.middleware[i](handler)
 	}
 	s.mux.Handle(path, handler)
+	slog.Info("Route registered", "path", path)
 }
 
 func (s *Server) Listen(port int) error {
-	log.Printf("Server running on port %d", port)
+	slog.Info("Server listening", "port", port)
 	return http.ListenAndServe(fmt.Sprintf(":%d", port), s.mux)
 }

@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"log/slog"
 
 	"github.com/Businesskasper/kaeltehilfe/kaeltehilfe-geo/api/internal/models"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -17,6 +18,12 @@ func NewDatabase(ctx context.Context, connectionString string) (*Database, error
 		return nil, err
 	}
 
+	if err := pool.Ping(ctx); err != nil {
+		pool.Close()
+		return nil, err
+	}
+
+	slog.Info("Database connection established")
 	return &Database{pool: pool}, nil
 }
 

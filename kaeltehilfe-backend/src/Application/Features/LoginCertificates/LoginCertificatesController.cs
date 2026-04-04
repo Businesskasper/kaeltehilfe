@@ -49,7 +49,7 @@ public class LoginCertificatesController : ControllerBase
         [FromBody] CreateLoginCertificateRequest createCertRequest
     )
     {
-        _logger.LogInformation($"Generate certificate for {createCertRequest.LoginUsername}");
+        _logger.LogInformation("Generate certificate for {LoginUsername}", createCertRequest.LoginUsername);
 
         await using var transaction = await _kbContext.Database.BeginTransactionAsync();
         try
@@ -102,7 +102,7 @@ public class LoginCertificatesController : ControllerBase
             if (_fileService.ExistsFileOrPath(certFilePath))
             {
                 _fileService.DeleteFile(certFilePath);
-                _logger.LogInformation($"Deleted orphaned certificate file: {certFilePath}");
+                _logger.LogInformation("Deleted orphaned certificate file: {CertFilePath}", certFilePath);
             }
 
             return StatusCode(500, "An error occurred while creating the certificate.");

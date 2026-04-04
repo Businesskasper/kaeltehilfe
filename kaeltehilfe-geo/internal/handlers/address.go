@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"log"
+	"log/slog"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -21,19 +21,20 @@ func HandleAddressQuery(db AddressQuerier) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		params, paramsErr := getParams(r.URL.Query(), APPROXIMATE_POINT_RADIUS_DEFAULT)
 		if paramsErr != nil {
-			log.Printf("params validation error: %v", paramsErr)
+			slog.Warn("Address query rejected: invalid params", "error", paramsErr, "status", paramsErr.statusCode)
 			http.Error(w, paramsErr.Error(), paramsErr.statusCode)
 			return
 		}
 
-		log.Printf("get address for lat %f, lng %f, radius %d", params.lat, params.lng, params.apprxPointRadius)
+		slog.Debug("Address query", "lat", params.lat, "lng", params.lng, "radius", params.apprxPointRadius)
 		address, hasData, err := db.GetAddress(r.Context(), params.lat, params.lng, params.apprxPointRadius)
 		if err != nil {
-			log.Printf("database error: %v", err)
+			slog.Error("Address query failed: database error", "lat", params.lat, "lng", params.lng, "error", err)
 			http.Error(w, "could not complete query", http.StatusInternalServerError)
 			return
 		}
 		if !hasData {
+			slog.Debug("Address query: no result found", "lat", params.lat, "lng", params.lng, "radius", params.apprxPointRadius)
 			http.Error(w, "no address found", http.StatusNotFound)
 			return
 		}
@@ -42,7 +43,7 @@ func HandleAddressQuery(db AddressQuerier) http.Handler {
 		w.WriteHeader(http.StatusOK)
 
 		if err := json.NewEncoder(w).Encode(address); err != nil {
-			log.Printf("encoding error: %v", err)
+			slog.Error("Address query failed: response encoding error", "error", err)
 			http.Error(w, "failed to encode response", http.StatusInternalServerError)
 		}
 	})
