@@ -1,3 +1,8 @@
+function Write-Log([string]$message, [System.ConsoleColor]$foregroundColor = [System.ConsoleColor]::White) {
+    $timestamp = Get-Date -Format "HH:mm:ss"
+    Write-Log"[$timestamp] $message" -ForegroundColor $foregroundColor
+}
+
 # Generates certificates for Kaeltehilfe use
 function PrepareKaeltehilfeCerts {
     param (
@@ -14,7 +19,7 @@ function PrepareKaeltehilfeCerts {
     if (-not (Test-Path $exportCrtDir)) { New-Item -Path $exportCrtDir -ItemType Directory -ea 0 | Out-Null }
 
     # Create certificate files
-    Write-Host "Creating CA certificate ""$($caName)"""
+    Write-Log"Creating CA certificate ""$($caName)"""
     $cert = CreateSignedCertificate -signer `
                                     -commonName $caName `
                                     -exportCaPath $exportCrtPath `
@@ -22,7 +27,7 @@ function PrepareKaeltehilfeCerts {
                                     -exportPfxPassword $pfxPassword `
                                     -exportPem
 
-    Write-Host "Created CA certificate ""$($caName)"" ($($cert.Thumbprint))"
+    Write-Log"Created CA certificate ""$($caName)"" ($($cert.Thumbprint))"
 }
 
 function GeneratePassword([int]$length) {

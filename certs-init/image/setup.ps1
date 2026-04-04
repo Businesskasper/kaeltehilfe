@@ -29,7 +29,7 @@ else {
 
 # Check if certificates already exist and create if not
 if ((Test-Path $exportCrtPath) -and (Test-Path $exportPfxPath)) {
-    Write-Host "Certificates already exist - skip generation"
+    Write-Log"Certificates already exist - skip generation"
     exit 0
 }
 

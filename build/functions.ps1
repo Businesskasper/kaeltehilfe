@@ -1,4 +1,9 @@
 
+function Write-Log([string]$message, [System.ConsoleColor]$foregroundColor = [System.ConsoleColor]::White) {
+    $timestamp = Get-Date -Format "HH:mm:ss"
+    Write-Host "[$timestamp] $message" -ForegroundColor $foregroundColor
+}
+
 function buildDockerImage([string]$dockerFileDir, [string]$dockerImageName, [string[]]$buildArgs, [string]$dockerFilePath) {
     $argumentList = @("build", ".", "-t", $dockerImageName)
     if (-not [string]::IsNullOrEmpty($dockerFilePath)) {

@@ -1,4 +1,9 @@
-﻿# Sets up Keycloak realm and configurations for Kaeltehilfe
+﻿function Write-Log([string]$message, [System.ConsoleColor]$foregroundColor = [System.ConsoleColor]::White) {
+    $timestamp = Get-Date -Format "HH:mm:ss"
+    Write-Log"[$timestamp] $message" -ForegroundColor $foregroundColor
+}
+
+# Sets up Keycloak realm and configurations for Kaeltehilfe
 function SetupKaeltehilfeKeycloak {
     param (
         [Parameter(Mandatory=$true)]
@@ -50,10 +55,10 @@ function SetupKaeltehilfeKeycloak {
     $realms = ListRealms -baseUrl $baseUrl -token $tokenCache.GetToken()
     $existingRealm = $realms | ? { $_.realm -eq $realmName } | select -First 1
     if ($null -ne $existingRealm) {
-        Write-Host "Realm $($realmName) already exists - skip creation"
+        Write-Log"Realm $($realmName) already exists - skip creation"
     }
     else {
-        Write-Host "Create realm ""$($realmName)"""
+        Write-Log"Create realm ""$($realmName)"""
         $realm = [PSCustomObject]@{
             realm = $realmName
             enabled = $true
@@ -74,7 +79,7 @@ function SetupKaeltehilfeKeycloak {
     $authFlows = ListAuthFlows -realmName $realmName -baseUrl $baseUrl -token $tokenCache.GetToken()
     $existingAuthFlow = $authFlows | ? { $_.alias -eq $flowName } | select -First 1 # Should not be possible since we just created the realm - just to be sure and for future flexibility
     if ($null -ne $existingAuthFlow) {
-        Write-Host "Auth flow $($flowName) already exists - skip creation"
+        Write-Log"Auth flow $($flowName) already exists - skip creation"
     }
     else {
         # Create flow
@@ -85,11 +90,11 @@ function SetupKaeltehilfeKeycloak {
           topLevel = $true
           builtIn = $false
         }
-        Write-Host "Create auth flow ""$($flowName)"""
+        Write-Log"Create auth flow ""$($flowName)"""
         $authFlowId = CreateAuthFlow -realmName $realmName -flow $flow -baseUrl $baseUrl -token $tokenCache.GetToken()
 
         # Add executions
-        Write-Host "Add and configure execution ""auth-cookie"""
+        Write-Log"Add and configure execution ""auth-cookie"""
         $authCookieExec = [PSCustomObject]@{
             provider = "auth-cookie"
         }
@@ -111,7 +116,7 @@ function SetupKaeltehilfeKeycloak {
         }
         UpdateAuthFlowExecution -realmName $realmName -flowName $flowName -execution $authCookieExecDetails -baseUrl $baseUrl -token $tokenCache.GetToken()
 
-        Write-Host "Add and configure execution ""auth-x509-client-username-form"""
+        Write-Log"Add and configure execution ""auth-x509-client-username-form"""
         $x509CertExec = [PSCustomObject]@{
             provider = "auth-x509-client-username-form"
         }
@@ -157,7 +162,7 @@ function SetupKaeltehilfeKeycloak {
         }
         UpdateAuthFlowExecutionConfig -realmName $realmName -executionId $x509CertExecId -config $x509CertExecConfig -baseUrl $baseUrl -token $tokenCache.GetToken()
 
-        Write-Host "Add execution subflow ""x509 forms"""
+        Write-Log"Add execution subflow ""x509 forms"""
         $x509FormExec = [PSCustomObject]@{
           alias = "x509 forms"
           type = "basic-flow"
@@ -187,7 +192,7 @@ function SetupKaeltehilfeKeycloak {
         }
         UpdateAuthFlowExecution -realmName $realmName -flowName $flowName -execution $x509FormExecDetails -baseUrl $baseUrl -token $tokenCache.GetToken()
 
-        Write-Host "Add execution ""auth-username-password-form"" to subflow ""x509 forms"""
+        Write-Log"Add execution ""auth-username-password-form"" to subflow ""x509 forms"""
         $authFormExec = [PSCustomObject]@{
             provider = "auth-username-password-form"
         }
@@ -199,7 +204,7 @@ function SetupKaeltehilfeKeycloak {
         }
         UpdateAuthFlowExecution -realmName $realmName -flowName $flowName -execution $authFormExecDetails -baseUrl $baseUrl -token $tokenCache.GetToken()
 
-        Write-Host "Set flow as default for browser logins"
+        Write-Log"Set flow as default for browser logins"
         $realm = [PSCustomObject]@{
             #browserFlow = "browser"
             browserFlow = $flowName
@@ -233,11 +238,11 @@ function SetupKaeltehilfeKeycloak {
     $profile = GetUserProfile -realmName $realmName -baseUrl $baseUrl -token $tokenCache.GetToken()
     $existingRegNoAttribute = $profile.attributes | ? { $_.name -eq $regNoAttribute.name } | select -First 1
     if ($null -ne $existingRegNoAttribute) {
-        Write-Host "Attribute ""$($regNoAttribute.name)"" already exists - skip creation"
+        Write-Log"Attribute ""$($regNoAttribute.name)"" already exists - skip creation"
     }
     else {
         $profile.attributes += $regNoAttribute
-        Write-Host "Add attribute ""$($regNoAttribute.name)"""
+        Write-Log"Add attribute ""$($regNoAttribute.name)"""
         UpdateUserProfile -realmName $realmName -userProfile $profile -baseUrl $baseUrl -token $tokenCache.GetToken()
     }
 
@@ -263,10 +268,10 @@ function SetupKaeltehilfeKeycloak {
     $existingMapperModels = ListMapperModels -scopeId $profileScopeId -realmName $realmName -baseUrl $baseUrl -token $tokenCache.GetToken()
     $existingMapperModel = $existingMapperModels | ? { $_.name -eq $mapperModel.name } | select -First 1
     if ($null -ne $existingMapperModel) {
-        Write-Host "Mapper model ""$($mapperModel.name)"" already exists - skip creation"
+        Write-Log"Mapper model ""$($mapperModel.name)"" already exists - skip creation"
     }
     else {
-        Write-Host "Add mapper model ""$($mapperModel.name)"""
+        Write-Log"Add mapper model ""$($mapperModel.name)"""
         CreateMapperModel -realmName $realmName -scopeId $profileScopeId -mapper $mapperModel -baseUrl $baseUrl -token $tokenCache.GetToken() | Out-Null
     }
 
@@ -283,10 +288,10 @@ function SetupKaeltehilfeKeycloak {
     else {
         $realm = GetRealm -realmName $realmName -baseUrl $baseUrl -token $tokenCache.GetToken()
         if ($realm.loginTheme -eq $theme) {
-            Write-Host "Theme ""$($theme)"" is already set - skip"
+            Write-Log"Theme ""$($theme)"" is already set - skip"
         }
         else {
-            Write-Host "Set theme ""$($theme)"""
+            Write-Log"Set theme ""$($theme)"""
             UpdateUiExt -realmName $realmName -theme $theme -baseUrl $baseUrl -token $tokenCache.GetToken()
         }
     }
@@ -330,10 +335,10 @@ function SetupKaeltehilfeKeycloak {
     $existingUserClient = $clients | ? { $_.clientId -eq $userClient.clientId }
     if ($null -ne $existingUserClient) {
         $userClientId = $existingUserClient.id
-        Write-Host "Client ""$($userClient.clientId)"" already exists - skip creation"
+        Write-Log"Client ""$($userClient.clientId)"" already exists - skip creation"
     }
     else {
-        Write-Host "Create client ""$($userClient.clientId)"""
+        Write-Log"Create client ""$($userClient.clientId)"""
         $userClientId = CreateClient -realmName $realmName -client $userClient -baseUrl $baseUrl -token $tokenCache.GetToken()
     }
 
@@ -355,10 +360,10 @@ function SetupKaeltehilfeKeycloak {
     foreach ($userRole in $userRoles) {
         $existingRole = $existingRoles | ? { $_.name -eq $userRole.name } | select -First 1
         if ($null -ne $existingRole) {
-            Write-Host "Role ""$($userRole.name)"" already exists - skip creation"
+            Write-Log"Role ""$($userRole.name)"" already exists - skip creation"
         }
         else {
-            Write-Host "Create role ""$($userRole.name)"""
+            Write-Log"Create role ""$($userRole.name)"""
             CreateClientRole -realmName $realmName -clientId $userClientId -role $userRole -baseUrl $baseUrl -token $tokenCache.GetToken() | Out-Null
         }
     }
@@ -370,10 +375,10 @@ function SetupKaeltehilfeKeycloak {
     $clientRolesMapperId = $rolesScope.protocolMappers | ? { $_.name -eq "client roles" } | select -ExpandProperty id -First 1
     $clientScopeMapperModel = GetMapperModel -realmName $realmName -scopeId $rolesScopeId -modelId $clientRolesMapperId -baseUrl $baseUrl -token $tokenCache.GetToken()
     if ($clientScopeMapperModel.config.'access.token.claim' -eq "true" -and $clientScopeMapperModel.config.'id.token.claim' -eq "true" -and $clientScopeMapperModel.config.'lightweight.token.claim' -eq "true" -and $clientScopeMapperModel.config.'userinfo.token.claim' -eq "true") {
-        Write-Host "Roles already added to all tokens and user info - skip"
+        Write-Log"Roles already added to all tokens and user info - skip"
     }
     else {
-        Write-Host "Add roles to all tokens and user info"
+        Write-Log"Add roles to all tokens and user info"
 
         SetMemberSafe -obj $clientScopeMapperModel.config -memberName 'access.token.claim' -value "true"
         SetMemberSafe -obj $clientScopeMapperModel.config -memberName 'id.token.claim' -value "true"
@@ -417,10 +422,10 @@ function SetupKaeltehilfeKeycloak {
     $existingMachineClient = $clients | ? { $_.clientId -eq $machineClient.clientId }
     if ($null -ne $existingMachineClient) {
         $machineClientId = $existingMachineClient.id
-        Write-Host "Client ""$($machineClient.clientId)"" already exists - skip creation"
+        Write-Log"Client ""$($machineClient.clientId)"" already exists - skip creation"
     }
     else {
-        Write-Host "Create client ""$($machineClient.clientId)"""
+        Write-Log"Create client ""$($machineClient.clientId)"""
         $machineClientId = CreateClient -realmName $realmName -client $machineClient -baseUrl $baseUrl -token $tokenCache.GetToken()
     }
 
@@ -434,7 +439,7 @@ function SetupKaeltehilfeKeycloak {
         "manage-users"
     )
 
-    Write-Host "Assign service account roles to client ""$($machineClient.clientId)"""
+    Write-Log"Assign service account roles to client ""$($machineClient.clientId)"""
     $machineClientServiceAccount = GetClientServiceAccountUser -realmName $realmName -clientId $machineClientId -baseUrl $baseUrl -token $tokenCache.GetToken()
     $realmManagement = ListClients -realmName $realmName -baseUrl $baseUrl -token $tokenCache.GetToken() | ? { $_.clientId -eq "realm-management" } | select -First 1
     $rolesToAdd = ListClientRoles -realmName $realmName -clientId $realmManagement.id -baseUrl $baseUrl -token $tokenCache.GetToken() | ? { $_.name -in $machineClientRoles }
@@ -457,14 +462,14 @@ function SetupKaeltehilfeKeycloak {
     $existingUsers = ListUsers -realmName $realmName -baseUrl $baseUrl -token $tokenCache.GetToken()
     $existingInitialAdminUser = $existingUsers | ? { $_.username -eq $initialAdminUser.username } | select -First 1
     if ($null -ne $existingInitialAdminUser) {
-        Write-Host "Initial admin user ""$($initialAdminUser.username)"" already exists - skip creation"
+        Write-Log"Initial admin user ""$($initialAdminUser.username)"" already exists - skip creation"
         $adminUserId = $existingInitialAdminUser.id
     }
     else {
-        Write-Host "Create admin user ""$($initialAdminUser.username)"""
+        Write-Log"Create admin user ""$($initialAdminUser.username)"""
         $adminUserId = CreateUser -realmName $realmName -user $initialAdminUser -baseUrl $baseUrl -token $tokenCache.GetToken()
 
-        Write-Host "Set password for admin user ""$($initialAdminUser.username)"""
+        Write-Log"Set password for admin user ""$($initialAdminUser.username)"""
         SetUserPassword -realmName $realmName -userId $adminUserId -password $appAdminPassword -baseUrl $baseUrl -token $tokenCache.GetToken()
     }
 
@@ -472,14 +477,14 @@ function SetupKaeltehilfeKeycloak {
     $existingUserRoles = ListUserClientRoleMappings -realmName $realmName -userId $adminUserId -clientId $userClientId -baseUrl $baseUrl -token $tokenCache.GetToken()
     $existingUserAdminRole = $existingUserRoles | ? { $_.id -eq $adminRole.id } | select -First 1
     if ($null -ne $existingUserAdminRole) {
-        Write-Host "User ""$($initialAdminUser.username)"" is already application admin - skip assignment"
+        Write-Log"User ""$($initialAdminUser.username)"" is already application admin - skip assignment"
     }
     else {
-        Write-Host "Make user ""$($initialAdminUser.username)"" application admin"
+        Write-Log"Make user ""$($initialAdminUser.username)"" application admin"
         AddUserClientRoles -realmName $realmName -userId $adminUserId -clientId $userClientId -roles $adminRole -baseUrl $baseUrl -token $tokenCache.GetToken()
     }
 
-    Write-Host "Done" -ForegroundColor Green
+    Write-Log"Done" -ForegroundColor Green
 }
 
 # Extracts response body from WebException for error details

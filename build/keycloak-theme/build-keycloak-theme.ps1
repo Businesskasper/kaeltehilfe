@@ -8,9 +8,9 @@ else {
     $root = $MyInvocation.MyCommand.Definition | Split-Path -Parent
 }
 
-Write-Host "Build keycloak theme" -ForegroundColor Cyan
-
 . ([System.IO.Path]::Combine($root, "..", "functions.ps1"))
+
+Write-Log "Build keycloak theme" -ForegroundColor Cyan
 
 $dockerImageName = "kaeltehilfe-keycloak-theme-build:latest"
 $dockerContext = [System.IO.Path]::Combine($root, "..", "..", "kaeltehilfe-keycloak-theme")
@@ -21,11 +21,11 @@ New-Item -Path $publishDir -ItemType Directory -ErrorAction SilentlyContinue | O
 Get-ChildItem -Path $publishDir | Where-Object { $_.Name -like "*.jar" } | Remove-Item -Force | Out-Null
 
 try {
-    Write-Host "Build theme in Docker"
+    Write-Log "Build theme in Docker"
     buildDockerImage -dockerFileDir $dockerContext -dockerImageName $dockerImageName -dockerFilePath $dockerFilePath
-    Write-Host "Image built as $($dockerImageName)"
+    Write-Log "Image built as $($dockerImageName)"
 
-    Write-Host "Extract theme jar"
+    Write-Log "Extract theme jar"
     $containerName = "kaeltehilfe-keycloak-theme-extract"
     $jarPath = [System.IO.Path]::Combine($publishDir, "kaeltehilfe-keycloak-theme.jar")
 
@@ -38,11 +38,11 @@ try {
         throw [Exception]::new("Failed to extract theme jar")
     }
 
-    Write-Host "Theme is located in $(Resolve-Path -Path $publishDir)" -ForegroundColor Cyan
+    Write-Log "Theme is located in $(Resolve-Path -Path $publishDir)" -ForegroundColor Cyan
 }
 catch [Exception] {
-    Write-Host "Build failed" -ForegroundColor Red
-    Write-Host $_.Exception.ToString()
+    Write-Log "Build failed" -ForegroundColor Red
+    Write-Log $_.Exception.ToString()
     # Clean up container on failure
     removeDockerContainer -containerName $containerName
 }

@@ -1,8 +1,10 @@
 #!/bin/bash
 set -e
 
+log() { echo "[$(date +'%H:%M:%S')] $*"; }
+
 # until pg_isready -p 5432 -U "$POSTGRES_USER"; do
-#   echo "Wait for postgres"
+#   log "Wait for postgres"
 #   sleep 1
 # done
 
@@ -35,10 +37,10 @@ if PGPASSWORD="$POSTGRES_PASSWORD" "${psql_cmd[@]}" -tAc "
 fi
 
 if [[ -z "$status" || "$status" == "Initializing" ]]; then
-  echo "Import not yet completed - run init-import.sh"
+  log "Import not yet completed - run init-import.sh"
   /usr/local/bin/init-import.sh
 else
-  echo "Import already completed - skip"
+  log "Import already completed - skip"
 fi
 
 wait

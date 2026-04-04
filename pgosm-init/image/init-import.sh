@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+log() { echo "[$(date +'%H:%M:%S')] $*"; }
+
 # Required env vars
 : "${PGOSM_RAM:?PGOSM_RAM is required}"
 : "${PGOSM_REGION:?PGOSM_REGION is required}"
@@ -25,7 +27,7 @@ psql_cmd=(
 
 
 # Ensure database exists
-echo "Ensure database $POSTGRES_DB exists on $POSTGRES_HOST..."
+log "Ensure database $POSTGRES_DB exists on $POSTGRES_HOST..."
 PGPASSWORD="$POSTGRES_PASSWORD" "${psql_cmd[@]}" -d postgres <<SQL
 DO
 \$do\$
@@ -38,13 +40,13 @@ END
 SQL
 
 # Install required plugins first
-echo "Install 1/2 extensions on remote database $POSTGRES_DB at $POSTGRES_HOST"
+log "Install 1/2 extensions on remote database $POSTGRES_DB at $POSTGRES_HOST"
 PGPASSWORD="$POSTGRES_PASSWORD" "${psql_cmd[@]}" <<SQL
 CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS hstore;
 SQL
 
-echo "Install 2/2 extensions on remote database $POSTGRES_DB at $POSTGRES_HOST"
+log "Install 2/2 extensions on remote database $POSTGRES_DB at $POSTGRES_HOST"
 PGPASSWORD="$POSTGRES_PASSWORD" "${psql_cmd[@]}" <<SQL
 CREATE EXTENSION IF NOT EXISTS postgis;
 CREATE EXTENSION IF NOT EXISTS postgis_topology;
@@ -66,7 +68,7 @@ if [[ -n "$PGOSM_INPUT_FILE" ]]; then
 fi
 
 # Run pgosm import
-echo "Run pgosm import:"
+log "Run pgosm import:"
 printf ' %q' "${cmd[@]}"
 echo
 "${cmd[@]}"
@@ -75,14 +77,14 @@ echo
 INIT_DIR="/usr/local/bin/db-prep"
 
 if [ -d "$INIT_DIR" ];then
-  echo "Run SQL scripts from $INIT_DIR on remote database $POSTGRES_DB at $POSTGRES_HOST"
+  log "Run SQL scripts from $INIT_DIR on remote database $POSTGRES_DB at $POSTGRES_HOST"
   for sql in "$INIT_DIR"/*.sql; do
     [ -f "$sql" ] || continue
-    echo "Execute $sql..."
+    log "Execute $sql..."
     PGPASSWORD="$POSTGRES_PASSWORD" "${psql_cmd[@]}" -f "$sql"
   done
 else
-  echo "No SQL scripts directory $INIT_DIR found - skip."
+  log "No SQL scripts directory $INIT_DIR found - skip."
 fi
 
-echo "All SQL scripts executed successfully."
+log "All SQL scripts executed successfully."
