@@ -14,27 +14,41 @@ public class LoginInitializer : ILoginInitializer<KbContext>
 {
     private readonly KbContext _kbContext;
     private readonly IUserService _userService;
+    private readonly ILogger<LoginInitializer> _logger;
 
-    public LoginInitializer(KbContext kbContext, IUserService userService)
+    public LoginInitializer(KbContext kbContext, IUserService userService, ILogger<LoginInitializer> logger)
     {
         _kbContext = kbContext;
         _userService = userService;
+        _logger = logger;
     }
 
     public async Task InitializeLogins()
     {
-        // Fetch logins from provider and current app logins
+        _logger.LogInformation("Synchronizing logins with identity provider");
+
+        // Throws if Keycloak is unreachable — intentional: startup should fail loudly rather than
+        // silently deleting all logins due to an empty provider response.
         var providerLogins = await _userService.GetLogins();
         var appLogins = await _kbContext.Logins.ToListAsync();
 
-        // Identify logins to delete
+        // Identify logins that exist locally but are no longer in the identity provider
         var loginsToDelete = appLogins.Where(appLogin =>
             !providerLogins.Any(providerLogin =>
                 providerLogin.Username == appLogin.Username
                 && providerLogin.GetType() == appLogin.GetType()
             )
-        );
-        _kbContext.Logins.RemoveRange(loginsToDelete);
+        ).ToList();
+
+        if (loginsToDelete.Count > 0)
+        {
+            _logger.LogInformation(
+                "Removing {Count} logins no longer present in identity provider: {Usernames}",
+                loginsToDelete.Count,
+                string.Join(", ", loginsToDelete.Select(l => l.Username))
+            );
+            _kbContext.Logins.RemoveRange(loginsToDelete);
+        }
 
         // Update or add logins from provider
         foreach (var providerLogin in providerLogins)
@@ -52,55 +66,58 @@ public class LoginInitializer : ILoginInitializer<KbContext>
                 existingLogin.CreateOn = providerLogin.CreateOn;
 
                 // Specific updates for AdminLogin
-                if (
-                    existingLogin is AdminLogin adminLogin
-                    && providerLogin is AdminLogin providerAdminLogin
-                )
+                if (existingLogin is AdminLogin adminLogin && providerLogin is AdminLogin providerAdminLogin)
                 {
                     adminLogin.Firstname = providerAdminLogin.Firstname;
                     adminLogin.Lastname = providerAdminLogin.Lastname;
                 }
                 // Specific updates for OperatorLogin
-                else if (
-                    existingLogin is OperatorLogin operatorLogin
-                    && providerLogin is OperatorLogin providerOperatorLogin
-                )
+                else if (existingLogin is OperatorLogin operatorLogin && providerLogin is OperatorLogin providerOperatorLogin)
                 {
                     operatorLogin.RegistrationNumber = providerOperatorLogin.RegistrationNumber;
                 }
             }
             else
             {
+                _logger.LogInformation(
+                    "Adding login {Username} from identity provider",
+                    providerLogin.Username
+                );
+
                 // Add new login based on its role
-                if (providerLogin is AdminLogin)
+                if (providerLogin is AdminLogin providerAdmin)
                 {
-                    var newAdminLogin = new AdminLogin
+                    await _kbContext.Logins.AddAsync(new AdminLogin
                     {
-                        Username = providerLogin.Username,
-                        IdentityProviderId = providerLogin.IdentityProviderId,
-                        Email = providerLogin.Email,
-                        CreateOn = providerLogin.CreateOn,
-                        Firstname = ((AdminLogin)providerLogin).Firstname,
-                        Lastname = ((AdminLogin)providerLogin).Lastname,
-                    };
-                    await _kbContext.Logins.AddAsync(newAdminLogin);
+                        Username = providerAdmin.Username,
+                        IdentityProviderId = providerAdmin.IdentityProviderId,
+                        Email = providerAdmin.Email,
+                        CreateOn = providerAdmin.CreateOn,
+                        Firstname = providerAdmin.Firstname,
+                        Lastname = providerAdmin.Lastname,
+                    });
                 }
-                else if (providerLogin is OperatorLogin)
+                else if (providerLogin is OperatorLogin providerOperator)
                 {
-                    var newOperatorLogin = new OperatorLogin
+                    await _kbContext.Logins.AddAsync(new OperatorLogin
                     {
-                        Username = providerLogin.Username,
-                        IdentityProviderId = providerLogin.IdentityProviderId,
-                        Email = providerLogin.Email,
-                        CreateOn = providerLogin.CreateOn,
-                        RegistrationNumber = ((OperatorLogin)providerLogin).RegistrationNumber,
-                    };
-                    await _kbContext.Logins.AddAsync(newOperatorLogin);
+                        Username = providerOperator.Username,
+                        IdentityProviderId = providerOperator.IdentityProviderId,
+                        Email = providerOperator.Email,
+                        CreateOn = providerOperator.CreateOn,
+                        RegistrationNumber = providerOperator.RegistrationNumber,
+                    });
                 }
             }
         }
 
         await _kbContext.SaveChangesAsync();
+        _logger.LogInformation(
+            "Login sync complete: {Total} logins from provider, {Removed} removed, {Added} added",
+            providerLogins.Count,
+            loginsToDelete.Count,
+            providerLogins.Count(p => !appLogins.Any(a => a.Username == p.Username && a.GetType() == p.GetType()))
+        );
     }
 }
 
@@ -119,9 +136,7 @@ public static class LoginInitializerExtensions
         where TContext : DbContext
     {
         using var scope = app.ApplicationServices.CreateScope();
-        var loginInitializer = scope.ServiceProvider.GetRequiredService<
-            ILoginInitializer<TContext>
-        >();
+        var loginInitializer = scope.ServiceProvider.GetRequiredService<ILoginInitializer<TContext>>();
         loginInitializer.InitializeLogins().GetAwaiter().GetResult();
 
         return app;
