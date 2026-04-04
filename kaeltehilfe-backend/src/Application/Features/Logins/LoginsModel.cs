@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
 using AutoMapper;
 using FluentValidation;
 using kaeltehilfe_backend.Models;
@@ -27,7 +25,12 @@ public class LoginCreateDto
     public string? Password { get; set; }
 }
 
-public class LoginUpdateDto : Dictionary<string, object> { }
+public class LoginUpdateDto
+{
+    public string? Firstname { get; set; }
+    public string? Lastname { get; set; }
+    public string? Email { get; set; }
+}
 
 public class LoginDtoToObjProfile : Profile
 {
@@ -89,76 +92,20 @@ public class LoginUpdateDtoValidator : AbstractValidator<LoginUpdateDto>
 {
     public LoginUpdateDtoValidator()
     {
-        RuleForEach(x => x.Keys)
-            .Must(key => key == "firstname" || key == "lastname" || key == "email")
-            .WithMessage("Only 'firstname', 'lastname', or 'email' are allowed as keys.");
-
         RuleFor(x => x)
-            .Must(dto =>
-                dto.ContainsKey("firstname")
-                || dto.ContainsKey("lastname")
-                || dto.ContainsKey("email")
-            )
-            .WithMessage("At least one of 'firstname', 'lastname', or 'email' must be present.");
+            .Must(dto => dto.Firstname != null || dto.Lastname != null || dto.Email != null)
+            .WithMessage("At least one of 'firstname', 'lastname', or 'email' must be provided.");
 
-        When(
-            x => x.ContainsKey("firstname"),
-            () =>
-            {
-                RuleFor(x => x["firstname"])
-                    .NotNull()
-                    .WithMessage("'firstname' cannot be null.")
-                    .Must(value =>
-                    {
-                        if (value is not JsonElement)
-                            return false;
-                        var parsed = ObjectMethods.GetJsonElementValue((JsonElement)value);
-                        return parsed is not null
-                            && parsed is string
-                            && ((string)parsed).Length >= 3;
-                    })
-                    .WithMessage(
-                        (a, b) => $"{b.GetType()}'firstname' must be at least 3 characters long."
-                    );
-            }
+        When(x => x.Firstname != null, () =>
+            RuleFor(x => x.Firstname).MinimumLength(3).WithMessage("'firstname' must be at least 3 characters long.")
         );
 
-        When(
-            x => x.ContainsKey("lastname"),
-            () =>
-            {
-                RuleFor(x => x["lastname"])
-                    .NotNull()
-                    .WithMessage("'lastname' cannot be null.")
-                    .Must(value =>
-                    {
-                        if (value is not JsonElement)
-                            return false;
-                        var parsed = ObjectMethods.GetJsonElementValue((JsonElement)value);
-                        return parsed is not null
-                            && parsed is string
-                            && ((string)parsed).Length >= 3;
-                    })
-                    .WithMessage("'lastname' must be at least 3 characters long.");
-            }
+        When(x => x.Lastname != null, () =>
+            RuleFor(x => x.Lastname).MinimumLength(3).WithMessage("'lastname' must be at least 3 characters long.")
         );
 
-        When(
-            x => x.ContainsKey("email"),
-            () =>
-            {
-                RuleFor(x => x["email"])
-                    .NotNull()
-                    .WithMessage("'email' cannot be null.")
-                    .Must(value =>
-                    {
-                        if (value is not JsonElement)
-                            return false;
-                        var parsed = ObjectMethods.GetJsonElementValue((JsonElement)value);
-                        return parsed is not null && new EmailAddressAttribute().IsValid(parsed);
-                    })
-                    .WithMessage("Invalid email format.");
-            }
+        When(x => x.Email != null, () =>
+            RuleFor(x => x.Email).EmailAddress().WithMessage("Invalid email format.")
         );
     }
 }

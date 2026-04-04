@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using kaeltehilfe_backend.Features.Busses;
 using kaeltehilfe_backend.Infrastructure.Auth;
 using kaeltehilfe_backend.Infrastructure.Database;
 using kaeltehilfe_backend.Infrastructure.File;
@@ -115,6 +116,7 @@ builder.Services.AddScoped<ICertService, CertService>();
 builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IUserService, KeycloakUserService>();
+builder.Services.AddScoped<IBusService, BusService>();
 
 // Register JWT token handling
 builder.Services.AddTransient<IClaimsTransformation, KeycloakClaimsTransformer>();
@@ -201,16 +203,6 @@ app.UseCors(CORS_POLICY);
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-// Allow Request.Body to be read in controller
-// Required for UPDATE logic since apparently .Net cannot implement PATCH in a proper way
-app.Use(
-    (context, next) =>
-    {
-        context.Request.EnableBuffering();
-        return next();
-    }
-);
 
 app.UseInvalidModelStateHandler();
 

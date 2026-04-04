@@ -1,4 +1,5 @@
 using AutoMapper;
+using kaeltehilfe_backend.Features.Busses;
 using kaeltehilfe_backend.Infrastructure.Auth;
 using kaeltehilfe_backend.Infrastructure.Database;
 using kaeltehilfe_backend.Models;
@@ -14,27 +15,25 @@ namespace kaeltehilfe_backend.Features.Logins;
 [Route("/api/[controller]")]
 public class LoginsController : ControllerBase
 {
-    protected readonly ILogger<LoginsController> _logger;
-    protected readonly KbContext _kbContext;
-    protected readonly IMapper _mapper;
-    protected readonly IUserService _userService;
-    protected readonly string _certFileDir;
+    private readonly ILogger<LoginsController> _logger;
+    private readonly KbContext _kbContext;
+    private readonly IMapper _mapper;
+    private readonly IUserService _userService;
+    private readonly IBusService _busService;
 
     public LoginsController(
-        IConfiguration configuration,
-        IHostEnvironment env,
         ILogger<LoginsController> logger,
         KbContext kbContext,
         IMapper mapper,
-        IUserService userService
+        IUserService userService,
+        IBusService busService
     )
     {
         _logger = logger;
         _kbContext = kbContext;
         _mapper = mapper;
         _userService = userService;
-
-        _certFileDir = configuration.RequireResolvedPath("CertificateSettings:ClientCertDir", env);
+        _busService = busService;
     }
 
     [HttpGet()]
@@ -42,9 +41,7 @@ public class LoginsController : ControllerBase
     public async Task<IEnumerable<LoginDto>> Query()
     {
         var objs = await _kbContext.Logins.ToListAsync();
-        var dtos = _mapper.Map<List<LoginDto>>(objs);
-
-        return dtos;
+        return _mapper.Map<List<LoginDto>>(objs);
     }
 
     [HttpGet("{username}")]
@@ -67,24 +64,7 @@ public class LoginsController : ControllerBase
         var lastName = "";
         if (login is OperatorLogin operatorLogin)
         {
-            var bus = await _kbContext.Busses.FirstOrDefaultAsync(b =>
-                b.RegistrationNumber == operatorLogin.RegistrationNumber && !b.IsDeleted
-            );
-
-            if (bus is null)
-            {
-                _logger.LogInformation(
-                    $"Add bus with registrationNumber {operatorLogin.RegistrationNumber}"
-                );
-                await _kbContext.Busses.AddAsync(
-                    new Bus
-                    {
-                        RegistrationNumber = operatorLogin.RegistrationNumber,
-                        IsDeleted = false,
-                    }
-                );
-            }
-
+            await _busService.EnsureBusExists(operatorLogin.RegistrationNumber);
             firstName = "Bus";
             lastName = operatorLogin.RegistrationNumber;
         }
@@ -94,6 +74,7 @@ public class LoginsController : ControllerBase
             lastName = adminLogin.Lastname;
         }
 
+        _logger.LogInformation("Creating {Role} login for {Username}", dto.Role, login.Username);
         var createdUserResponse = await _userService.CreateLogin(
             login.Username,
             login.Email,
@@ -120,6 +101,7 @@ public class LoginsController : ControllerBase
         if (obj == null)
             return NotFound();
 
+        _logger.LogInformation("Deleting login {Username}", username);
         await _userService.DeleteLogin(obj.IdentityProviderId);
 
         _kbContext.Logins.Remove(obj);
@@ -135,12 +117,12 @@ public class LoginsController : ControllerBase
         [FromBody] SetPasswordRequest setPasswordRequest
     )
     {
-        _logger.LogInformation($"Set password for username {username}");
         var login = await _kbContext.Logins.FindAsync(username);
         if (login == null)
             return NotFound();
 
-        await _userService.SetPassword(username, setPasswordRequest.Password);
+        _logger.LogInformation("Setting password for login {Username}", username);
+        await _userService.SetPassword(login.IdentityProviderId, setPasswordRequest.Password);
 
         return NoContent();
     }
@@ -149,27 +131,26 @@ public class LoginsController : ControllerBase
     [Authorize(Roles = "ADMIN")]
     public async Task<IActionResult> Update(
         [FromRoute(Name = "username")] string username,
-        [FromBody] LoginUpdateDto update
+        [FromBody] LoginUpdateDto dto
     )
     {
         var login = await _kbContext.Logins.FindAsync(username);
-        if (login is null || login is not AdminLogin)
+        if (login is null || login is not AdminLogin adminLogin)
             return NotFound();
 
-        var (hasUpdate, updated) = ObjectMethods.GetUpdated((AdminLogin)login, update);
-        if (!hasUpdate)
-            return NoContent();
+        if (dto.Firstname is not null) adminLogin.Firstname = dto.Firstname;
+        if (dto.Lastname is not null) adminLogin.Lastname = dto.Lastname;
+        if (dto.Email is not null) adminLogin.Email = dto.Email;
 
+        _logger.LogInformation("Updating admin login {Username}", username);
         await _userService.UpdateLogin(
             login.IdentityProviderId,
-            updated.Firstname,
-            updated.Lastname,
-            updated.Email
+            dto.Firstname,
+            dto.Lastname,
+            dto.Email
         );
 
-        _kbContext.Entry(login).CurrentValues.SetValues(updated);
         await _kbContext.SaveChangesAsync();
-
         return NoContent();
     }
 }

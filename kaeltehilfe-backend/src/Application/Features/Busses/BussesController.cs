@@ -1,6 +1,4 @@
 using AutoMapper;
-using FluentValidation;
-using kaeltehilfe_backend.Infrastructure.Auth;
 using kaeltehilfe_backend.Infrastructure.Database;
 using kaeltehilfe_backend.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -13,34 +11,30 @@ namespace kaeltehilfe_backend.Features.Busses;
 [Route("/api/[controller]")]
 public class BussesController : ControllerBase
 {
-    protected readonly ILogger<BussesController> _logger;
-    protected readonly KbContext _kbContext;
-    protected readonly IMapper _mapper;
-    protected readonly IUserService _userService;
+    private readonly ILogger<BussesController> _logger;
+    private readonly KbContext _kbContext;
+    private readonly IMapper _mapper;
+    private readonly IBusService _busService;
 
     public BussesController(
         ILogger<BussesController> logger,
         KbContext kbContext,
         IMapper mapper,
-        IUserService userService
+        IBusService busService
     )
     {
         _logger = logger;
         _kbContext = kbContext;
         _mapper = mapper;
-        _userService = userService;
+        _busService = busService;
     }
 
     [HttpGet()]
     [Authorize(Roles = "ADMIN,OPERATOR")]
     public async Task<IEnumerable<BusDto>> Query()
     {
-        var tokenDetails = User.Claims.GetTokenDetails();
-
         var objs = await _kbContext.Busses.Where(x => !x.IsDeleted).ToListAsync();
-        var dtos = _mapper.Map<List<BusDto>>(objs);
-
-        return dtos;
+        return _mapper.Map<List<BusDto>>(objs);
     }
 
     [HttpGet("{id}")]
@@ -53,7 +47,7 @@ public class BussesController : ControllerBase
 
     [HttpPost()]
     [Authorize(Roles = "ADMIN")]
-    public async Task<IActionResult> Create([FromBody()] BusCreateDto dto)
+    public async Task<IActionResult> Create([FromBody] BusCreateDto dto)
     {
         var existing = await _kbContext.Busses.FirstOrDefaultAsync(b =>
             b.RegistrationNumber == dto.RegistrationNumber && !b.IsDeleted
@@ -64,36 +58,11 @@ public class BussesController : ControllerBase
                 $"A bus with registration number {dto.RegistrationNumber} already exists"
             );
 
-        var bus = _mapper.Map<Bus>(dto);
-        var busResult = await _kbContext.Busses.AddAsync(bus);
-
-        var existingLogin = await _userService.GetLogin(bus.RegistrationNumber);
-        if (existingLogin is null)
-        {
-            var email = $"{bus.RegistrationNumber}@kaeltehilfe.de";
-            var createdLogin = await _userService.CreateLogin(
-                dto.RegistrationNumber.ToLower(),
-                email,
-                "Bus",
-                dto.RegistrationNumber,
-                Role.OPERATOR,
-                dto.RegistrationNumber,
-                null
-            );
-            var login = new OperatorLogin
-            {
-                RegistrationNumber = bus.RegistrationNumber,
-                Username = bus.RegistrationNumber.ToLower(),
-                Email = email,
-                CreateOn = createdLogin.createdOn,
-                IdentityProviderId = createdLogin.idpUsername,
-            };
-            await _kbContext.Logins.AddAsync(login);
-        }
-
+        _logger.LogInformation("Creating bus {RegistrationNumber}", dto.RegistrationNumber);
+        var bus = await _busService.CreateBusWithLogin(dto.RegistrationNumber);
         await _kbContext.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(Get), routeValues: new { id = busResult.Entity.Id }, null);
+        return CreatedAtAction(nameof(Get), routeValues: new { id = bus.Id }, null);
     }
 
     [HttpPut("{id}")]
@@ -122,24 +91,12 @@ public class BussesController : ControllerBase
     public async Task<ActionResult> Delete([FromRoute(Name = "id")] int id)
     {
         var obj = await _kbContext.Busses.FirstOrDefaultAsync(b => b.Id == id && !b.IsDeleted);
-        if (obj == null)
+        if (obj is null)
             return NotFound();
 
-        obj.IsDeleted = true;
+        _logger.LogInformation("Deleting bus {RegistrationNumber}", obj.RegistrationNumber);
+        await _busService.DeleteBusWithLogin(obj);
         await _kbContext.SaveChangesAsync();
-
-        var authLogin = await _userService.GetLogin(obj.RegistrationNumber.ToLower());
-        if (authLogin is not null)
-        {
-            await _userService.DeleteLogin(authLogin.IdentityProviderId);
-            var dbLogin = await _kbContext.Logins.FirstOrDefaultAsync(l =>
-                l.Username == obj.RegistrationNumber.ToLower()
-            );
-            if (dbLogin is not null)
-                _kbContext.Logins.Remove(dbLogin);
-
-            await _kbContext.SaveChangesAsync();
-        }
 
         return NoContent();
     }
