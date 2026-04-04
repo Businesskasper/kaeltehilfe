@@ -108,14 +108,14 @@ The application shell utilizes an auth component which is integrated with Keyclo
 
 ### White Box *\<kaeltehilfe-backend\>* {#_white_box_kaeltehilfe-backend}
 
-![White Box Frontend](img/architecture/4_whitebox_backend.drawio.png)
+![White Box Backend](img/architecture/4_whitebox_backend.drawio.png)
 
 The backend is an ASP.NET 8 based web API. The entry point is `Program.cs`, which registers all services via dependency injection and configures the ASP.NET request pipeline. The application code lives under `Application/` and is organized into four top-level folders:
 
-- **Features/** — Vertical slices, one per domain concept (Admin, Busses, Clients, Distributions, Goods, LoginCertificates, Logins, Shifts, Volunteers). Each slice contains a Controller and a Model (DTOs). A generic base controller (`Shared/CRUDQController`) provides reusable CRUD + soft-delete operations.
+- **Features/** — Vertical slices, one per domain concept (Admin, Busses, Clients, Distributions, Goods, LoginCertificates, Logins, Shifts, Volunteers). Each slice contains a Controller, a Model (DTOs), and — where needed — a dedicated service (e.g. `BusService` for the bus/login coordination workflow).
 - **Infrastructure/** — Cross-cutting services: `Auth/` (CertService, KeycloakUserService, KeycloakClaimsTransformer, CrlInitializer), `Database/` (KbContext — EF Core DbContext with NetTopologySuite, migrations, seeder), `File/` (FileService).
 - **Models/** — Domain entities: BaseEntity, Bus, Client, Distribution, Good, Login, LoginCertificate, Shift, Volunteer. All inherit from `BaseEntity` which provides `Id`, `AddOn`, `ChangeOn`, and soft-delete via `IsDeleted`.
-- **Shared/** — Reusable cross-feature utilities: generic `CRUDQController`, `ModelStateValidationFilter`, `InvalidModelStateExceptionHandler`, `SqliteUniqueExceptionHandler`.
+- **Shared/** — Reusable cross-feature utilities: `ModelStateValidationFilter`, `InvalidModelStateExceptionHandler`, `SqliteUniqueExceptionHandler`.
 
 Entity Framework is not wrapped into a repository or abstracted away through interfaces, since Entity Framework already is a repository and offers enough flexibility to switch to other database systems.
 
@@ -126,11 +126,10 @@ The ASP.NET middleware pipeline configured in `Program.cs` runs in the following
 3. CORS
 4. Authentication (JWT Bearer / Keycloak)
 5. Authorization
-6. Request body buffering (enables multiple reads for update endpoints)
-7. `InvalidModelStateExceptionHandler` (returns consistent validation error responses)
-8. `SqliteUniqueExceptionHandler` (maps UNIQUE constraint violations to 409 Conflict)
-9. Controller routing
-10. Database migrations, seeding, login initialization, CRL initialization (startup hooks)
+6. `InvalidModelStateExceptionHandler` (returns consistent validation error responses)
+7. `SqliteUniqueExceptionHandler` (maps UNIQUE constraint violations to 409 Conflict)
+8. Controller routing
+9. Database migrations, seeding, login initialization, CRL initialization (startup hooks)
 
 #### Used Libraries
 | Name | Description |
@@ -142,7 +141,7 @@ The ASP.NET middleware pipeline configured in `Program.cs` runs in the following
 
 ### White Box *\<kaeltehilfe-geo>* {#_white_box_kaeltehilfe-geo}
 
-![White Box Frontend](img/architecture/5_whitebox_geo.drawio.png)
+![White Box Geo](img/architecture/5_whitebox_geo.drawio.png)
 
 The geo service provides address resolution through geo locations. It compiles to the package "api" through `cmd/api/main`. The main package instantiates the database connection pool and injects it into the webserver. It also configures the request pipeline with CORS, authentication through Keycloak and a method guard.
 
