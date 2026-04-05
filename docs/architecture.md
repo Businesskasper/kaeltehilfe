@@ -331,7 +331,7 @@ graph TD
     Browser["Browser / Tablet"]
 
     subgraph VPS["Ubuntu VPS"]
-        Proxy["NGINX Proxy Manager\n:80 :443 (public)\n:81 (SSH tunnel only)"]
+        Proxy["NGINX Proxy Manager\n:443 (public)\n:81 (SSH tunnel only)"]
 
         subgraph Docker["Docker containers (127.0.0.1)"]
             UI["kaeltehilfe-ui\n:8082"]
@@ -341,6 +341,7 @@ graph TD
             PGOSM["pgosm-db\n:5432"]
 
             CertsVol[("certs/\nroot-crt · root-pfx · crl")]
+            SQLiteVol[("api/db/\nSQLite + SpatiaLite")]
         end
     end
 
@@ -355,8 +356,10 @@ graph TD
 
     API --- CertsVol
     KC --- CertsVol
-    API --> PGOSM
-    GEO --> PGOSM
+    API --- SQLiteVol
+    GEO -->|"address lookup"| PGOSM
+    API -->|"JWKS (startup + key rotation)"| KC
+    GEO -->|"JWKS (startup + key rotation)"| KC
 ```
 
 ### Building Block to Container Mapping
