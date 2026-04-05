@@ -324,35 +324,71 @@ sequenceDiagram
 
 ## Infrastructure Level 1 {#_infrastructure_level_1}
 
-***\<Overview Diagram\>***
+The application runs on a single Ubuntu VPS. NGINX Proxy Manager is the only service with public-facing ports; all other containers bind exclusively to `127.0.0.1` and are reachable only from the host.
 
-Motivation
+```mermaid
+graph TD
+    Browser["Browser / Tablet"]
 
-:   *\<explanation in text form\>*
+    subgraph VPS["Ubuntu VPS"]
+        Proxy["NGINX Proxy Manager\n:80 :443 (public)\n:81 (SSH tunnel only)"]
 
-Quality and/or Performance Features
+        subgraph Docker["Docker containers (127.0.0.1)"]
+            UI["kaeltehilfe-ui\n:8082"]
+            API["kaeltehilfe-api\n:8081"]
+            GEO["kaeltehilfe-geo\n:8083"]
+            KC["keycloak\n:8080"]
+            PGOSM["pgosm-db\n:5432"]
 
-:   *\<explanation in text form\>*
+            CertsVol[("certs/\nroot-crt · root-pfx · crl")]
+        end
+    end
 
-Mapping of Building Blocks to Infrastructure
+    Browser -->|"ulm.kaelte-hilfe.de (443)"| Proxy
+    Browser -->|"auth.kaelte-hilfe.de (443)"| Proxy
+    Browser -->|"proxy.kaelte-hilfe.de (443)\nor SSH tunnel :8181→:81"| Proxy
 
-:   *\<description of the mapping\>*
+    Proxy -->|"/"| UI
+    Proxy -->|"/api"| API
+    Proxy -->|"/geo → / (prefix stripped)"| GEO
+    Proxy -->|"X-Client-Cert forwarded"| KC
 
-## Infrastructure Level 2 {#_infrastructure_level_2}
+    API --- CertsVol
+    KC --- CertsVol
+    API --> PGOSM
+    GEO --> PGOSM
+```
 
-### *\<Infrastructure Element 1\>* {#_infrastructure_element_1}
+### Building Block to Container Mapping
 
-*\<diagram + explanation\>*
+| Building Block | Container | Host binding |
+| -------------- | --------- | ------------ |
+| kaeltehilfe-frontend | `ui` | `127.0.0.1:8082` |
+| kaeltehilfe-backend | `api` | `127.0.0.1:8081` |
+| kaeltehilfe-geo | `geo` | `127.0.0.1:8083` |
+| Keycloak | `keycloak` | `127.0.0.1:8080` |
+| pgosm-db | `pgosm-db` | `127.0.0.1:5432` |
+| NGINX Proxy Manager | `proxy` | `0.0.0.0:80`, `:443`, `:81` |
 
-### *\<Infrastructure Element 2\>* {#_infrastructure_element_2}
+Init containers (`certs-init`, `keycloak-init`, `pgosm-init`) run once at startup and exit. They are not mapped to permanent host ports.
 
-*\<diagram + explanation\>*
+### Shared Certificate Volume
 
-...​
+The `certs/` directory on the host is a shared volume that decouples certificate lifecycle between the backend and Keycloak.
 
-### *\<Infrastructure Element n\>* {#_infrastructure_element_n}
+| Host path | Written by | Read by | Content |
+| --------- | ---------- | ------- | ------- |
+| `certs/root-crt/` | `certs-init` | `keycloak`, `api` | Root CA public certificate — Keycloak uses it as the trust anchor for X.509 client certificate validation |
+| `certs/root-pfx/` | `certs-init` | `api` | Root CA private key — used by the backend to sign operator client certificates |
+| `certs/crl/` | `api` | `keycloak` | Certificate Revocation List — updated by the backend on revocation; Keycloak reads it on every authentication attempt |
 
-*\<diagram + explanation\>*
+### Network Topology
+
+`proxy` runs with `network_mode: host`, placing it on the host network directly. This allows it to reach all other containers via `127.0.0.1`, which bind to the loopback interface rather than the Docker bridge network. As a result, no service port is reachable from outside the host — all external traffic enters exclusively through NGINX Proxy Manager on ports 80 and 443.
+
+Port 81 (NGINX Proxy Manager admin UI) is not opened in the host firewall and is accessed only via SSH tunnel. See [VPS setup — Firewall](./vps.md#3-firewall) for instructions.
+
+For initial deployment, proxy host configuration, NGINX advanced settings (Keycloak header forwarding, geo path stripping), and update procedures, see [deploy.md](./deploy.md). For VPS provisioning, see [vps.md](./vps.md).
 
 # Cross-cutting Concepts {#section-concepts}
 
