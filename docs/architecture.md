@@ -155,18 +155,169 @@ The geo service provides address resolution through geo locations. It compiles t
 
 # Runtime View {#section-runtime-view}
 
-## \<Runtime Scenario 1\> {#_runtime_scenario_1}
+## Operator Authentication (X.509) {#_operator_authentication}
 
--   *\<insert runtime diagram or textual description of the scenario\>*
+Operators authenticate using a client certificate installed on the tablet device. A custom Keycloak browser flow (`x509`) runs three executors in sequence: session cookie check, certificate validation, and a username/password fallback subflow. For operators, authentication succeeds at the certificate step.
 
--   *\<insert description of the notable aspects of the interactions
-    between the building block instances depicted in this diagram.\>*
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant NGINX
+    participant Keycloak
+    participant CertStorage as Certificate Storage
 
-## \<Runtime Scenario 2\> {#_runtime_scenario_2}
+    Browser->>NGINX: GET /realms/kaeltehilfe/... (OIDC redirect)
+    NGINX->>Browser: TLS handshake — request client certificate
+    Browser->>NGINX: Client certificate presented
+    Note over NGINX: Forwards cert in X-Client-Cert header
+    NGINX->>Keycloak: GET /realms/kaeltehilfe/... (X-Client-Cert: <cert>)
 
-## ...​
+    Note over Keycloak: x509 browser flow
+    Keycloak->>Keycloak: auth-cookie executor — no session, skip
+    Keycloak->>CertStorage: Read crl.pem
+    CertStorage-->>Keycloak: Current CRL
+    Note over Keycloak: auth-x509-client-username-form executor<br/>Extract CN from Subject, look up user by username,<br/>check serial against CRL, validate timestamps
+    Keycloak-->>Browser: Authorization code (redirect to redirect_uri)
 
-## \<Runtime Scenario n\> {#_runtime_scenario_n}
+    Browser->>Keycloak: POST /token (code exchange)
+    Keycloak-->>Browser: JWT { role: OPERATOR, registrationNumber: "..." }
+    Note over Browser: oidc-client-ts stores token in localStorage.<br/>HTTP interceptor attaches Bearer on all subsequent requests.
+```
+
+The JWT includes the `registrationNumber` custom claim — mapped from a Keycloak user attribute — which ties the token to a specific bus and is used by the backend to associate distributions.
+
+## Admin Login (Password Fallback) {#_admin_login}
+
+Admins use the same Keycloak browser flow. Because the admin browser has no client certificate installed, the `auth-x509-client-username-form` executor finds no certificate and the flow continues to the `x509 forms` subflow, which presents a standard username/password form. The resulting JWT contains `role: ADMIN` and no `registrationNumber` claim.
+
+After the token exchange, the frontend's `useProfile` hook extracts the role from `resource_access.users.roles` and the `AuthRoute` guard routes the session to `/admin`.
+
+## Client Certificate Issuance {#_certificate_issuance}
+
+An admin issues a certificate for a new operator tablet. The backend signs the certificate with the root CA private key and persists the result to both the Certificate Storage volume and SQLite. Keycloak trusts all certificates signed by the root CA, so the new certificate is immediately usable for authentication.
+
+```mermaid
+sequenceDiagram
+    participant Admin as Admin (browser)
+    participant Frontend
+    participant Backend
+    participant CertStorage as Certificate Storage
+    participant DB as SQLite
+
+    Admin->>Frontend: Issue certificate for operator
+    Frontend->>Backend: POST /api/LoginCertificates { loginUsername, pfxPassword, description }
+    Note over Backend: Requires role: ADMIN
+
+    Backend->>DB: Look up Login by username
+    DB-->>Backend: Login record
+    Backend->>CertStorage: Read rootCa.pfx
+    CertStorage-->>Backend: Root CA certificate + private key
+
+    Note over Backend: CertService.GenerateClientCert()<br/>Generate 2048-bit RSA key pair<br/>Build CertificateRequest (CN=username, DigitalSignature only)<br/>Sign with root CA, validity 1 year<br/>Export as PKCS#12 chain (client cert + root cert)
+
+    Backend->>CertStorage: Write {username}_{thumbprint}.pfx
+    Backend->>DB: INSERT LoginCertificate { thumbprint, serialNumber, validFrom, validTo, status: ACTIVE }
+    DB-->>Backend: Commit
+    Backend-->>Frontend: { fileName, encodedCertChain (Base64) }
+    Frontend-->>Admin: Download .pfx file
+```
+
+The file write and the database insert are wrapped in a transaction. If either step fails, the PFX file is deleted and the transaction is rolled back.
+
+## Certificate Revocation {#_certificate_revocation}
+
+When an operator tablet is lost or decommissioned, an admin revokes its certificate. The backend updates the Certificate Revocation List on the shared volume. Keycloak reads this file on every authentication attempt, so revocation takes effect immediately without a service restart.
+
+```mermaid
+sequenceDiagram
+    participant Admin as Admin (browser)
+    participant Frontend
+    participant Backend
+    participant CertStorage as Certificate Storage
+    participant DB as SQLite
+    participant Keycloak
+
+    Admin->>Frontend: Revoke certificate
+    Frontend->>Backend: POST /api/LoginCertificates/{id}/revocation
+    Note over Backend: Requires role: ADMIN
+
+    Backend->>CertStorage: Read crl.pem
+    CertStorage-->>Backend: Current CRL
+
+    Note over Backend: CertService.AddCertToCrl()<br/>Append serial number to revocation list<br/>Re-sign CRL with root CA
+
+    Backend->>CertStorage: Write updated crl.pem
+    Backend->>DB: UPDATE LoginCertificate SET status = REVOKED
+    DB-->>Backend: OK
+    Backend-->>Frontend: 200 OK
+
+    Note over Keycloak: On next login attempt with the revoked certificate:<br/>auth-x509-client-username-form reads crl.pem from the<br/>mounted volume and rejects the serial number.
+```
+
+## Distribution Recording {#_distribution_recording}
+
+The core operator workflow. Operator logins represent buses (Schichtträger), not individual persons — the `registrationNumber` in the JWT identifies the bus, not the user. An operator selects a location, one or more clients, and the goods distributed to each. The backend creates one `Distribution` record per client–good pair.
+
+```mermaid
+sequenceDiagram
+    participant Operator as Operator (tablet)
+    participant Frontend
+    participant Backend
+    participant DB as SQLite
+
+    Operator->>Frontend: Select location, clients, goods — submit form
+    Frontend->>Backend: POST /api/BatchDistributions { locationName, geoLocation, busRegistrationNumber, clients[], goods[] }
+    Note over Backend: JWT validated (Bearer token)<br/>Requires role: ADMIN or OPERATOR
+
+    Backend->>DB: Look up Bus by registrationNumber
+    DB-->>Backend: Bus record
+
+    loop For each client in request
+        Backend->>DB: Find client by id or name
+        Note over Backend: Upsert: create if new,<br/>update gender/approxAge if changed
+        DB-->>Backend: Client record
+    end
+
+    Note over Backend: Cartesian product: clients × goods<br/>Build one Distribution per pair<br/>(GeoLocation stored as PostGIS Point, SRID 4326)
+
+    Backend->>DB: AddRangeAsync(distributions) + SaveChangesAsync()
+    DB-->>Backend: OK
+    Backend-->>Frontend: 200 OK
+    Note over Frontend: React Query invalidates ["distributions"] cache
+```
+
+## Address Lookup {#_address_lookup}
+
+When an operator pins a location on the map, the frontend resolves the coordinates to a human-readable address via the geo service. In production, NGINX strips the `/geo/` path prefix before forwarding; the service itself only sees `/address`.
+
+```mermaid
+sequenceDiagram
+    participant Frontend
+    participant NGINX
+    participant Geo as kaeltehilfe-geo
+    participant Keycloak
+    participant pgosm as pgosm-db (PostGIS)
+
+    Frontend->>NGINX: GET /geo/address?lat=…&lng=… (Authorization: Bearer <token>)
+    Note over NGINX: Strip /geo/ prefix
+    NGINX->>Geo: GET /address?lat=…&lng=…
+
+    Note over Geo: OidcAuth middleware
+    Geo->>Keycloak: JWKS discovery (once at startup, then cached)
+    Keycloak-->>Geo: Public keys
+    Geo->>Geo: Verify JWT signature and expiry
+    Note over Geo: No role check — any authenticated user may call this endpoint
+
+    Geo->>pgosm: SELECT * FROM nearest_building($lat, $lng, $radius)
+    Note over pgosm: 1. ST_Covers: check if point lies within a building polygon<br/>2. If no hit: find nearest building point within search radius<br/>Returns housenumber, street, city, postcode, distance_m
+    pgosm-->>Geo: Address row (or empty)
+
+    alt Address found
+        Geo-->>Frontend: 200 { housenumber, street, city, postcode, distance_m }
+    else No building within radius
+        Geo-->>Frontend: 404
+    end
+```
 
 # Deployment View {#section-deployment-view}
 
