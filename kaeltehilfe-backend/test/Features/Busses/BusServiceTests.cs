@@ -74,7 +74,7 @@ public class BusServiceTests
 
         _userService.Verify(x => x.CreateLogin(
             "ul-kh-001",
-            "UL-KH-001@kaeltehilfe.de",
+            "UL-KH-001@kaelte-hilfe.de",
             "Bus",
             "UL-KH-001",
             Role.OPERATOR,
@@ -96,7 +96,7 @@ public class BusServiceTests
             Username = "ul-kh-001",
             RegistrationNumber = "UL-KH-001",
             IdentityProviderId = "idp-existing",
-            Email = "ul-kh-001@kaeltehilfe.de",
+            Email = "ul-kh-001@kaelte-hilfe.de",
         };
         _userService.Setup(x => x.GetLogin("ul-kh-001")).ReturnsAsync(existingLogin);
 
@@ -226,7 +226,8 @@ public class BusServiceTests
             Username = username,
             RegistrationNumber = username.ToUpper(),
             IdentityProviderId = $"idp-{username}",
-            Email = $"{username}@kaeltehilfe.de",
+            Email = $"{username}@kaelte-hilfe.de",
+            CreateOn = DateTime.UtcNow,
         });
         await _db.SaveChangesAsync();
     }
