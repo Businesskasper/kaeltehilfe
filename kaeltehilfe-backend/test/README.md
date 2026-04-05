@@ -1,3 +1,11 @@
+## Run tests
+
+From the repository root or the `kaeltehilfe-backend/` directory:
+
+```
+dotnet test
+```
+
 ## Setup
 1. Create test project
 

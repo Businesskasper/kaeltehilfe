@@ -1,3 +1,9 @@
+## Tests
+
+```
+npm test
+```
+
 ## Configuration
 
 Configuration is loaded at runtime from `/config.json`. In development, Vite serves this from `public/config.json`. In production, the Docker entrypoint generates it from environment variables.

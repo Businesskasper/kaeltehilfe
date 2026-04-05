@@ -1,3 +1,9 @@
+## Tests
+
+```
+go test ./...
+```
+
 ## Configuration
 
 The geo service is configured via command-line flags or environment variables. Environment variables take precedence as defaults for the flags. All development defaults match the automated dev setup from `./dev/docker-compose.yml`.
