@@ -80,6 +80,7 @@ The following diagram shows the systems Building Blocks and their integration. T
 | Keycloak | Auth provider for application with X509 client certificate auth flow | <li>HTTPS inbound interface for auth flows</li><li>HTTPS inbound admin API for kaeltehilfe-backend</li><li>Byte Stream inbound from Certificate Storage (CRL for certificate revocation)</li> |
 | Certificate Storage | File system volume shared between kaeltehilfe-backend and Keycloak | <li>Byte Stream inbound from certs-init (signer certificate)</li><li>Byte Stream inbound from kaeltehilfe-backend (client certificates, CRL)</li><li>Byte Stream outbound to Keycloak (CRL) and kaeltehilfe-backend (signer certificate)</li> |
 
+NGINX is not a building block but is part of the shipped package and carries two architecturally relevant responsibilities: forwarding the client certificate in the `X-Client-Cert` header (required for the X.509 auth flow) and stripping the `/geo/` path prefix before forwarding to kaeltehilfe-geo. Both are documented in the Deployment View.
 
 ## Level 2 {#_level_2}
 
