@@ -35,6 +35,8 @@ func main() {
 
 	srv := web.NewServer()
 
+	srv.AddMiddleware(web.CorrelationMiddleware)
+
 	corsConf := web.NewCors([]string{http.MethodGet}, []string{"authorization"}, params.allowedOrigins, true)
 	srv.AddMiddleware(corsConf.CorsMiddleware)
 

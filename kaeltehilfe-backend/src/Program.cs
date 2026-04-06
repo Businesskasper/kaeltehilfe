@@ -201,6 +201,17 @@ app.UseHttpsRedirection();
 
 app.UseCors(CORS_POLICY);
 
+app.Use(async (context, next) =>
+{
+    var correlationId = context.Request.Headers["X-Correlation-Id"].FirstOrDefault()
+                        ?? context.TraceIdentifier;
+    context.Response.Headers["X-Correlation-Id"] = correlationId;
+    using (app.Logger.BeginScope("{CorrelationId}", correlationId))
+    {
+        await next(context);
+    }
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 

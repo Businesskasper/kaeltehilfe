@@ -161,6 +161,7 @@ proxy_set_header X-Forwarded-Host $host;
 proxy_set_header X-Forwarded-Port 443;
 
 proxy_set_header X-Client-Cert $ssl_client_escaped_cert;
+proxy_set_header X-Correlation-Id $request_id;
 ```
 The first four headers ensure correct forwarding behind the proxy. The last line forwards client certificates in the `X-Client-Cert` header so that Keycloak can verify them for X.509 authentication.
 
@@ -186,6 +187,7 @@ location /geo/ {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header Authorization $http_authorization;
+    proxy_set_header X-Correlation-Id $request_id;
 }
 ```
 
