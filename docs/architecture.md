@@ -436,6 +436,100 @@ The correlation ID in the response header allows browser dev tools to match a ne
 
 # Architecture Decisions {#section-design-decisions}
 
+## ADR-001: X.509 Client Certificate Authentication with Keycloak {#_adr_001}
+
+**Context:** Operator tablets are shared devices used by rotating volunteers. A shared password would expose sensitive distribution data to anyone who ever learned it. Rotating passwords frequently would create unacceptable administrative overhead. Individual TOTP adds UX friction on tablet devices used under time pressure in the field.
+
+**Alternatives considered:** Shared password login; individual TOTP per volunteer; cloud identity providers with certificate support.
+
+**Decision:** Operators authenticate via X.509 client certificates installed on each tablet. Keycloak is bundled in the shipped docker-compose package because it provides the `x509` browser flow out of the box — certificate validation, CRL checking, and a username/password fallback for admins in a single configurable auth flow. NGINX forwards the client certificate in the `X-Client-Cert` header to Keycloak. Certificates are issued and revoked by admin users through the application itself.
+
+**Consequences:** Keycloak adds memory overhead to the stack. NGINX must be configured to request client certificates and forward them. A `keycloak-init` container is required to bootstrap the realm and auth flow. A shared `certs/` volume is needed between the backend (which writes certificates and the CRL) and Keycloak (which reads the CRL on every authentication attempt).
+
+---
+
+## ADR-002: Self-Hosted Geo Stack (OpenStreetMap, PostGIS, Own Lookup Service) {#_adr_002}
+
+**Context:** The application needs interactive map views and coordinate-to-address resolution. Commercial geo services (Google Maps, HERE, Mapbox) charge per request or require a subscription, which is incompatible with the zero-cost constraint.
+
+**Alternatives considered:** Google Maps Platform; HERE Geocoding API; Mapbox.
+
+**Decision:** Map views use Leaflet with OpenStreetMap tiles — no API key, no cost. Address resolution uses a self-hosted PostGIS database populated from freely available OSM exports via pgosm-flex. A dedicated Go service (kaeltehilfe-geo) translates coordinates to addresses by querying PostGIS directly.
+
+**Consequences:** pgosm-init is memory-intensive and must complete before the stack is usable. OSM data is a snapshot and must be refreshed manually. Address coverage depends on OSM completeness for the target area.
+
+---
+
+## ADR-003: Separate Geo Service {#_adr_003}
+
+**Context:** Address lookup requires a different data store (PostGIS) and a different runtime (Go, for lightweight deployment and easy PostGIS integration via pgx) than the main backend (.NET, SQLite). The functionality is also a candidate for reuse across independent kaeltehilfe deployments.
+
+**Alternatives considered:** Embedding geo lookup directly in the .NET backend.
+
+**Decision:** kaeltehilfe-geo is a standalone Go service with its own JWT validation and PostGIS connection pool. It exposes a single `/address` endpoint. NGINX strips the `/geo/` path prefix before forwarding requests to it, keeping the service unaware of its URL context.
+
+**Consequences:** Separate container, separate OIDC configuration, and path-prefix stripping required in NGINX. The path stripping cannot be done via NGINX Proxy Manager custom locations and must be configured in the Advanced tab of the proxy host.
+
+---
+
+## ADR-004: Vertical Slice Architecture in Backend {#_adr_004}
+
+**Context:** The backend is a small codebase maintained by a single developer. Strict horizontal layering (Clean Architecture, onion architecture) adds abstraction and indirection that only pays off in larger teams or codebases.
+
+**Alternatives considered:** Clean Architecture with use case / repository / domain layer separation.
+
+**Decision:** Backend features are organized as vertical slices — one folder per domain concept, each owning its controller, DTOs, and service where needed. Cross-feature coupling is intentionally avoided. Entity Framework is not wrapped in a repository interface, since EF already is a repository and the abstraction would add no benefit.
+
+**Consequences:** Adding a new feature means adding a new slice folder. Cross-cutting concerns (auth, validation, error handling) are handled at the middleware and filter level, not per-slice.
+
+---
+
+## ADR-005: SQLite for Application Data {#_adr_005}
+
+**Context:** The application needs a relational database with spatial query support. Running a full PostgreSQL instance solely for application data would add operational complexity and memory overhead without a meaningful benefit at the expected scale (single site, low concurrency).
+
+**Alternatives considered:** PostgreSQL; MySQL.
+
+**Decision:** SQLite with SpatiaLite via EF Core. The only PostgreSQL instance in the stack is pgosm-db, used exclusively by the geo service for OSM address data. SpatiaLite provides sufficient spatial query support for storing and querying client geolocations.
+
+**Consequences:** SQLite does not support concurrent writes at scale. This is acceptable given the single-site, low-concurrency use case.
+
+---
+
+## ADR-006: Single SPA for Both User Roles {#_adr_006}
+
+**Context:** The admin and operator UIs share authentication, HTTP client infrastructure, and several UI components. Maintaining two separate frontend applications would double the build, deployment, and maintenance surface.
+
+**Alternatives considered:** Two separate React applications served from different paths or subdomains.
+
+**Decision:** A single React SPA serves both roles. Role-based route guards (`AuthRoute`) enforce access at the React Router level. The operator UI is the default entry point (`/`); the admin UI is at `/admin`. The role is extracted from the JWT at login.
+
+**Consequences:** The bundle includes code for both roles loaded by any user. The role guard implementation must be correct — a misconfigured guard would allow an operator to reach admin routes.
+
+---
+
+## ADR-007: Docker Compose as the Delivery Format {#_adr_007}
+
+**Context:** The application must be self-hostable by customer admins who are not infrastructure engineers. Kubernetes or Nomad would require substantial operational knowledge to set up and maintain.
+
+**Alternatives considered:** Kubernetes (Helm chart); bare systemd services.
+
+**Decision:** The entire stack — application services, Keycloak, databases, init containers — ships as a single `docker-compose.yml`. Docker Compose is widely understood, requires no cluster setup, and can be operated with a handful of commands. Init containers handle first-run bootstrapping idempotently.
+
+**Consequences:** Horizontal scaling across multiple hosts is not possible with this setup. This is acceptable: the application serves a single city-level deployment with no scaling requirement beyond a single VPS.
+
+---
+
+## ADR-008: NGINX Proxy Manager as Reverse Proxy {#_adr_008}
+
+**Context:** The stack needs a reverse proxy to terminate TLS, route traffic to the correct backend service, forward the client certificate header for X.509 auth, and strip the `/geo/` path prefix. The proxy must be operable by non-technical admins without writing NGINX config files. TLS certificates must be renewed automatically without manual intervention.
+
+**Alternatives considered:** Raw NGINX with hand-written config; Traefik.
+
+**Decision:** NGINX Proxy Manager provides a web UI for managing proxy hosts, SSL certificates, and advanced NGINX directives. Let's Encrypt certificate issuance and automatic renewal are built in and require no additional tooling. Advanced configuration (Keycloak header forwarding, geo path stripping) is applied per-host via the Advanced tab.
+
+**Consequences:** NGINX Proxy Manager must be started and configured before the other services, since the public domain names must be known when configuring Keycloak. Port 81 (admin UI) must not be exposed publicly and is accessed only via SSH tunnel.
+
 # Quality Requirements {#section-quality-scenarios}
 
 ## Quality Requirements Overview {#_quality_requirements_overview}
