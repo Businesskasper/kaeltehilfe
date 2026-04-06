@@ -2,6 +2,7 @@ import {
   Avatar,
   Group,
   Menu,
+  px,
   rem,
   Switch,
   Text,
@@ -19,10 +20,14 @@ import {
 import { useAuth } from "react-oidc-context";
 import { matchPath, useNavigate, useResolvedPath } from "react-router-dom";
 import { useProfile } from "../../utils/useProfile";
+import { useBreakpoint } from "../../utils";
 
 export const UserMenu = () => {
   const auth = useAuth();
   const profile = useProfile();
+
+  const breakpoint = useBreakpoint();
+  const isMobile = breakpoint === "BASE" || breakpoint === "XS";
 
   const navigate = useNavigate();
 
@@ -38,16 +43,17 @@ export const UserMenu = () => {
   const avatarIcon = isBus ? <IconBus size={16} /> : <IconUser size={16} />;
   const userName = isBus ? profile?.registrationNumber : auth?.user?.profile.name;
 
+
+  const colorSwitch = <Switch
+    size="md"
+    checked={colorScheme === "dark"}
+    onChange={() => toggleColorScheme()}
+    onLabel={<IconMoon style={{ padding: rem(2) }} />}
+    offLabel={<IconSun style={{ padding: rem(2) }} />}
+  />
   return (
     <Group className="user-menu">
-      <Switch
-        size="md"
-        checked={colorScheme === "dark"}
-        onChange={() => toggleColorScheme()}
-        onLabel={<IconMoon style={{ padding: rem(2) }} />}
-        offLabel={<IconSun style={{ padding: rem(2) }} />}
-      />
-
+      {!isMobile && colorSwitch}
       {auth.isAuthenticated && (
         <Menu zIndex={400} width={200}>
           <Menu.Target>
@@ -60,7 +66,6 @@ export const UserMenu = () => {
           </Menu.Target>
           <Menu.Dropdown>
             <Menu.Label>Benutzer Menü</Menu.Label>
-
             {!isOnAdminPage && profile?.role === "ADMIN" ? (
               <Menu.Item leftSection={<IconUserShield size={16} />} onClick={() => navigate("/admin")}>
                 Admin Seite
@@ -70,6 +75,11 @@ export const UserMenu = () => {
                 Erfasser Seite
               </Menu.Item>
             )}
+            {isMobile &&
+              <Group px="sm" py="xs">
+                <Text size="sm">{colorScheme === "light" ? "Hell" : "Dunkel"}</Text>
+                {colorSwitch}
+              </Group>}
 
             <Menu.Item
               onClick={() =>
