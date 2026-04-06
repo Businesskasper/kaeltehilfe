@@ -2,7 +2,6 @@ import {
   Avatar,
   Group,
   Menu,
-  px,
   rem,
   Switch,
   Text,
