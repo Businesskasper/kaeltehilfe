@@ -1,6 +1,6 @@
 ﻿function Write-Log([string]$message, [System.ConsoleColor]$foregroundColor = [System.ConsoleColor]::White) {
-    $timestamp = Get-Date -Format "HH:mm:ss"
-    Write-Log"[$timestamp] $message" -ForegroundColor $foregroundColor
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss.fff"
+    Write-Host "[$timestamp] $message" -ForegroundColor $foregroundColor
 }
 
 # Sets up Keycloak realm and configurations for Kaeltehilfe
