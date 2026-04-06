@@ -395,19 +395,44 @@ For initial deployment, proxy host configuration, NGINX advanced settings (Keycl
 
 # Cross-cutting Concepts {#section-concepts}
 
-## *\<Concept 1\>* {#_concept_1}
+## Authentication and Authorization {#_authentication_authorization}
 
-*\<explanation\>*
+All three services use Keycloak as the single authority for authentication and authorization. JWT Bearer tokens issued by Keycloak are the common credential — each service validates them independently using JWKS public keys fetched from Keycloak at startup and cached for the lifetime of the process (refreshed only on key rotation).
 
-## *\<Concept 2\>* {#_concept_2}
+The role claim requires service-specific handling because Keycloak encodes client roles under `resource_access.<clientId>.roles` rather than as a flat claim:
 
-*\<explanation\>*
+- **kaeltehilfe-backend**: ASP.NET JWT Bearer middleware validates the token; `KeycloakClaimsTransformer` extracts the nested roles and maps them to standard .NET role claims, enabling `[Authorize(Roles = "ADMIN")]` attributes throughout.
+- **kaeltehilfe-geo**: go-oidc middleware validates the token via JWKS. No role check is applied — any authenticated user may call the address lookup endpoint.
+- **kaeltehilfe-frontend**: `oidc-client-ts` / `react-oidc-context` manage the OIDC session. An Axios interceptor attaches the Bearer token to every outbound request and triggers `signinRedirect` on 401. The `useProfile` hook extracts the role from `resource_access.users.roles`; `AuthRoute` enforces role-based access at the React Router level.
 
-...​
+## Idempotent Initialization {#_idempotent_initialization}
 
-## *\<Concept n\>* {#_concept_n}
+All three init containers (`certs-init`, `keycloak-init`, `pgosm-init`) follow the same pattern: check whether the target resources already exist, and exit cleanly if they do. This makes `docker compose up` safely re-runnable — init containers will not re-generate certificates, re-bootstrap the Keycloak realm, or re-import OSM data if a previous run already completed. The check is the first step in each container's entrypoint; nothing is modified unless the check finds missing resources.
 
-*\<explanation\>*
+## Soft Delete {#_soft_delete}
+
+All domain entities in the backend inherit from `BaseEntity`, which provides `Id`, `AddOn` (creation timestamp), `ChangeOn` (last modification timestamp), and `IsDeleted` (soft-delete flag). Records are never hard-deleted from the database. This preserves distribution history and audit trails, which are core to the application's purpose.
+
+## Runtime Configuration Injection {#_runtime_configuration}
+
+No environment-specific values are baked into Docker images at build time. All URLs, secrets, and domain names are injected at container startup, which allows a single set of images to be used across local development and production without rebuilding.
+
+Each service has its own injection mechanism:
+
+| Service | Mechanism |
+| ------- | --------- |
+| kaeltehilfe-frontend | Nginx serves `/config.json` from environment variables at startup; the React app fetches it before mounting |
+| kaeltehilfe-backend | `appsettings.json` is mounted as a read-only volume; additional values are passed as environment variables |
+| kaeltehilfe-geo | Environment variables only |
+| Keycloak, init containers | Environment variables only |
+
+## Logging {#_logging}
+
+All containers use the Docker `json-file` log driver, capped at 50 MB per container. Logs from all services are accessible on the host via `docker compose logs`, optionally filtered by service name or time range (`--since`).
+
+**Correlation IDs:** NGINX generates a unique `X-Correlation-Id` header per request using the built-in `$request_id` variable (16-byte random hex) and forwards it to all upstream services. The backend reads the header in a middleware, adds it to the ASP.NET log scope for the duration of the request, and echoes it in the response. The geo service reads the header in `CorrelationMiddleware`, logs it as a structured field on every request, and echoes it in the response. If no header is present (e.g. in local development without NGINX), the backend falls back to `HttpContext.TraceIdentifier` and the geo service falls back to a nanosecond timestamp.
+
+The correlation ID in the response header allows browser dev tools to match a network request to the corresponding server log lines. For cross-service queries, filtering `docker compose logs` by the correlation ID string is sufficient at the current scale.
 
 # Architecture Decisions {#section-design-decisions}
 

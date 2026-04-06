@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Seite-1" id="og0eC4lzQvGFdu6S4FN-">
-    <mxGraphModel dx="2431" dy="1338" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="2066" dy="1137" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -20,7 +20,7 @@
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="1060" y="735" />
-              <mxPoint x="1060" y="900" />
+              <mxPoint x="1060" y="920" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -70,7 +70,7 @@
           <mxGeometry height="30" width="80" x="1265" y="1370" as="geometry" />
         </mxCell>
         <mxCell id="n9p_uoSpoFW_pGJOKyor-46" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=11;" value="&lt;b&gt;db/Database&lt;/b&gt;" vertex="1">
-          <mxGeometry height="94" width="166.31" x="1113.69" y="853" as="geometry" />
+          <mxGeometry height="94" width="166.31" x="1120" y="873" as="geometry" />
         </mxCell>
         <mxCell id="n9p_uoSpoFW_pGJOKyor-65" edge="1" parent="1" source="n9p_uoSpoFW_pGJOKyor-48" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="n9p_uoSpoFW_pGJOKyor-22">
           <mxGeometry relative="1" as="geometry" />
@@ -88,20 +88,22 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="n9p_uoSpoFW_pGJOKyor-49" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=11;" value="&lt;b&gt;web/server&lt;/b&gt;&lt;br&gt;&lt;br&gt;net/http ServeMux&lt;br&gt;Middleware chain&lt;br&gt;Route registration" vertex="1">
-          <mxGeometry height="100" width="170" x="610" y="850" as="geometry" />
+          <mxGeometry height="100" width="170" x="610" y="870" as="geometry" />
+        </mxCell>
+        <mxCell id="corrId-geo-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;" value="&lt;b&gt;web/correlationid&lt;/b&gt;&lt;br&gt;&lt;br&gt;Read X-Correlation-Id header&lt;br&gt;Log request · Echo in response" vertex="1">
+          <mxGeometry height="75" width="220" x="820" y="752" as="geometry" />
         </mxCell>
         <mxCell id="n9p_uoSpoFW_pGJOKyor-53" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;" value="&lt;b&gt;web/cors&lt;/b&gt;" vertex="1">
-          <mxGeometry height="90" width="220" x="820" y="785" as="geometry" />
+          <mxGeometry height="75" width="220" x="820" y="930" as="geometry" />
         </mxCell>
         <mxCell id="n9p_uoSpoFW_pGJOKyor-55" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;" value="&lt;b&gt;web/methodgate&lt;/b&gt;" vertex="1">
-          <mxGeometry height="90" width="220" x="820" y="1015" as="geometry" />
+          <mxGeometry height="75" width="220" x="820" y="1020" as="geometry" />
         </mxCell>
-        <mxCell id="n9p_uoSpoFW_pGJOKyor-59" edge="1" parent="1" source="n9p_uoSpoFW_pGJOKyor-49" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.042;entryY=0.11;entryDx=0;entryDy=0;entryPerimeter=0;curved=0;" target="n9p_uoSpoFW_pGJOKyor-23">
+        <mxCell id="n9p_uoSpoFW_pGJOKyor-59" edge="1" parent="1" source="n9p_uoSpoFW_pGJOKyor-49" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;curved=0;" target="corrId-geo-1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="800" y="900" />
-              <mxPoint x="800" y="735" />
-              <mxPoint x="880" y="735" />
+              <mxPoint x="800" y="920" />
+              <mxPoint x="800" y="790" />
             </Array>
           </mxGeometry>
         </mxCell>
@@ -112,7 +114,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="n9p_uoSpoFW_pGJOKyor-54" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;verticalAlign=top;" value="&lt;b&gt;web/auth&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;div style=&quot;&quot;&gt;go-oidc/v3&lt;/div&gt;&lt;div style=&quot;&quot;&gt;JWT Bearer verification&lt;/div&gt;&lt;div style=&quot;&quot;&gt;Keycloak JWKS discovery&lt;/div&gt;" vertex="1">
-          <mxGeometry height="90" width="220" x="820" y="900" as="geometry" />
+          <mxGeometry height="75" width="220" x="820" y="840" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
