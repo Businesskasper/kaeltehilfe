@@ -442,7 +442,7 @@ The correlation ID in the response header allows browser dev tools to match a ne
 
 **Alternatives considered:** Shared password login; individual TOTP per volunteer; cloud identity providers with certificate support.
 
-**Decision:** Operators authenticate via X.509 client certificates installed on each tablet. Keycloak is bundled in the shipped docker-compose package because it provides the `x509` browser flow out of the box — certificate validation, CRL checking, and a username/password fallback for admins in a single configurable auth flow. NGINX forwards the client certificate in the `X-Client-Cert` header to Keycloak. Certificates are issued and revoked by admin users through the application itself.
+**Decision:** Operators authenticate via X.509 client certificates installed on each tablet. Keycloak is bundled in the shipped docker-compose package because it provides the custom `x509` browser flow — certificate validation, CRL checking, and a username/password fallback for admins in a single configurable auth flow. NGINX forwards the client certificate in the `X-Client-Cert` header to Keycloak. Certificates are issued and revoked by admin users through the application itself.
 
 **Consequences:** Keycloak adds memory overhead to the stack. NGINX must be configured to request client certificates and forward them. A `keycloak-init` container is required to bootstrap the realm and auth flow. A shared `certs/` volume is needed between the backend (which writes certificates and the CRL) and Keycloak (which reads the CRL on every authentication attempt).
 
@@ -530,20 +530,79 @@ The correlation ID in the response header allows browser dev tools to match a ne
 
 **Consequences:** NGINX Proxy Manager must be started and configured before the other services, since the public domain names must be known when configuring Keycloak. Port 81 (admin UI) must not be exposed publicly and is accessed only via SSH tunnel.
 
+---
+
+## ADR-009: Potential Future Migration to Traefik {#_adr_009}
+
+**Context:** NGINX Proxy Manager is a manually configured reverse proxy. Each new kaeltehilfe instance (e.g. for a different city) requires manually adding proxy hosts, pasting advanced NGINX config, and issuing TLS certificates through the UI. If the project evolves to support multiple independently operated instances with programmatic provisioning of new endpoints, manual configuration becomes a bottleneck.
+
+**Alternatives considered:** Traefik with dynamic configuration from Docker labels; Caddy.
+
+**Decision:** No decision made yet. NGINX Proxy Manager is sufficient for the current single-instance deployment. A migration to Traefik would be motivated if and when automatic population of new instances — with automatic domain and TLS certificate provisioning — becomes a requirement. Traefik handles this natively via Docker provider labels and built-in Let's Encrypt ACME support.
+
+**Consequences of migrating:** The advanced NGINX config (Keycloak header forwarding, geo path prefix stripping) would need to be re-expressed as Traefik middleware. The manual admin UI workflow would be replaced by Docker Compose label configuration, which is version-controlled. This ADR should be revisited if multi-instance provisioning is planned.
+
+---
+
 # Quality Requirements {#section-quality-scenarios}
 
 ## Quality Requirements Overview {#_quality_requirements_overview}
 
+| ID | Quality Goal | Priority |
+|----|-------------|---------|
+| Q1 | Operability — the application can be administered and operated by non-technical users without training | High |
+| Q2 | Cost efficiency — no recurring cost for external services; hosting cost must stay minimal | High |
+| Q3 | Security — sensitive client and distribution data must not be accessible to unauthorized parties | High |
+| Q4 | Availability — the application must recover automatically from restarts; no manual intervention required | Medium |
+| Q5 | Modifiability — a single developer must be able to add features without understanding the full stack | Medium |
+| Q6 | Deployability — a customer admin must be able to set up a new instance without deep infrastructure knowledge | Medium |
+
 ## Quality Scenarios {#_quality_scenarios}
+
+| ID | Quality Goal | Stimulus | System State | Response | Measure |
+|----|-------------|---------|-------------|---------|---------|
+| S1 | Operability | An admin provisions a new operator tablet | System running; at least one Schichtträger exists | Admin issues a certificate through the web UI and downloads the `.pfx` file without using SSH or the command line | Certificate is downloadable within 2 minutes; no technical knowledge required beyond navigating the UI |
+| S2 | Operability | An operator records an Ausgabe for three Klienten | Operator is authenticated; a Schicht exists for the current day | Operator selects a location on the map, adds clients, selects goods, and submits | Workflow completes in under 3 minutes on a tablet; no training required |
+| S3 | Security | A tablet is lost; admin revokes its Anmeldezertifikat | Keycloak running; shared `certs/` volume mounted | The revoked certificate is rejected on the next authentication attempt | Revocation takes effect immediately on the next login attempt; no service restart required |
+| S4 | Security | An operator attempts to access the admin UI at `/admin` | Operator is authenticated with role `OPERATOR` | The route guard redirects the operator away from admin routes | No admin functionality is reachable with an operator token |
+| S5 | Cost efficiency | The full application stack is running in production | Normal operating conditions | All services run on a single VPS with no external paid dependencies | Monthly infrastructure cost under €10; no per-request billing for any feature |
+| S6 | Availability | The VPS is rebooted | All containers have restart policies set | All services come back up without manual intervention | Services are available again within 3 minutes of the VPS being reachable |
+| S7 | Availability | `docker compose up` is run on a fully initialized stack | Keycloak realm, certificates, and OSM data already exist | Init containers detect existing resources and exit cleanly | No data is overwritten; application services reach healthy state |
+| S8 | Modifiability | A developer adds a new domain entity (e.g. a new Güter category) | Codebase in a stable state | Changes are contained within the relevant vertical slice in the backend and the corresponding frontend feature module | No changes required outside the new slice; existing slices unaffected |
+| S9 | Deployability | A customer admin sets up a new instance | A VPS with Docker is available; `.pbf` file and Keycloak theme `.jar` are prepared | Admin runs `docker compose up` and configures NGINX Proxy Manager via the web UI | Instance is operational without writing code, editing config files manually, or using the command line beyond initial Docker setup |
 
 # Risks and Technical Debts {#section-technical-risks}
 
+| ID | Risk / Debt | Likelihood | Impact | Mitigation |
+|----|------------|-----------|--------|-----------|
+| R1 | **Single point of failure** — the entire stack runs on one VPS with no redundancy | Low | High (full outage) | Regular database and certificate volume backups; VPS snapshots. Acceptable given voluntary, non-commercial context |
+| R2 | **SQLite write contention** — SQLite serializes all writes; concurrent distribution submissions from multiple tablets could cause transient errors | Low | Medium | EF Core connection pool serializes writes in practice; the use case does not require high write throughput. Revisit if concurrent operator count grows significantly |
+| R3 | **Certificate volume loss** — if the `certs/` volume is lost, all issued operator certificates become invalid and must be re-issued | Low | High | Include `certs/` in regular host backups alongside the SQLite database |
+| R4 | **OSM data staleness** — the PostGIS database contains a static snapshot of OSM data; new buildings and address changes are not reflected automatically | Medium | Low | Periodically refresh the OSM import by re-running `pgosm-init` with a current `.pbf` export |
+| R5 | **Keycloak major version upgrades** — realm configuration is bootstrapped once; major Keycloak upgrades may require realm migration or manual adjustments | Medium | Medium | Pin the Keycloak image version in `docker-compose.yml`; test upgrades in dev before applying to production |
+| R6 | **NGINX Proxy Manager advanced config not version-controlled** — geo path stripping and Keycloak header forwarding are stored in the NPM database, not in the repository | Medium | Medium | Config is documented in [deploy.md](./deploy.md); NPM database volume should be included in backups |
+| R7 | **pgosm-init memory spike** — the OSM import is memory-intensive and can exhaust available memory on low-memory VPS instances | Medium | Medium | Start `api`, `geo`, and `ui` only after `pgosm-init` has finished on low-memory hosts; prefer a region-scoped `.pbf` file over a full country export |
+| R8 | **Manual provisioning for new instances** — adding a kaeltehilfe instance for a new city requires manual NGINX Proxy Manager configuration per instance | Medium | Low (operational overhead only) | Addressed by ADR-009: evaluate Traefik migration if automated multi-instance provisioning becomes a requirement |
+
 # Glossary {#section-glossary}
 
-+----------------------+-----------------------------------------------+
-| Term                 | Definition                                    |
-+======================+===============================================+
-| *\<Term-1\>*         | *\<definition-1\>*                            |
-+----------------------+-----------------------------------------------+
-| *\<Term-2\>*         | *\<definition-2\>*                            |
-+----------------------+-----------------------------------------------+
+| Term | Definition |
+|------|-----------|
+| **Kältehilfe** | "Cold aid" — the voluntary initiative of distributing goods to people in need during winter frost. The name of both the initiative and this application. |
+| **Schichtträger** | Literally "shift carrier" — a bus or vehicle that participates in distribution shifts. In the data model, a Schichtträger is identified by its Registrierungsnummer and is the unit to which operator logins and Ausgaben are associated. Referred to as *Bus* in code. |
+| **Schicht** | A scheduled shift on a specific date, consisting of a Schichtträger and a set of assigned Freiwillige. |
+| **Schichtplanung** | Shift planning — the admin workflow for creating and managing Schichten, assigning Freiwillige, and ensuring staffing requirements are met. |
+| **Freiwilliger / Freiwillige** | Volunteer(s) — people who participate in Schichten to distribute goods. Each Freiwilliger may be flagged as a Fahrer (driver). |
+| **Fahrer** | Driver — a Freiwilliger who drives the Schichtträger. Each Schicht must have at least one Fahrer assigned for its Planungsstatus to be valid. |
+| **Operator** | A system role. Operators are authenticated via X.509 client certificate installed on a tablet device. An operator login maps to a specific Schichtträger via its Registrierungsnummer. Operators record Ausgaben. |
+| **Admin** | A system role. Admins authenticate via username and password. Admins manage all application data, issue and revoke Anmeldezertifikate, and plan Schichten. |
+| **Klient** | A person receiving goods during a distribution. Identified by name; demographic attributes (Geschlecht, geschätztes Alter) are tracked for analysis. |
+| **Güter** | Goods — items distributed to Klienten. Each Gut has a type (Kleidung, Verbrauchsartikel, Nahrung), a description, and optional tags. |
+| **Ausgabe** | A single distribution event — one or more Güter given to one or more Klienten at a specific location during a Schicht. Referred to as *Distribution* in code. |
+| **Ort** | Location — a geographic coordinate with an associated address, recorded at the time of a distribution. The address is resolved via the geo service at the moment the operator pins the location on the map. |
+| **Anmeldezertifikat** | Login certificate — an X.509 client certificate issued to an operator tablet. Certificates can be in status `ACTIVE` or `REVOKED`. Managed by admins through the Schichtträger detail view. |
+| **Registrierungsnummer** | Registration number — a unique identifier for a Schichtträger (typically a vehicle licence plate). Stored as a custom claim in the operator's JWT and used by the backend to associate distributions with the correct bus. |
+| **Planungsstatus** | Planning status — a computed indicator on a Schicht summarizing whether staffing requirements are met: minimum volunteer count reached, at least one Fahrer assigned, at least one female Freiwillige assigned. |
+| **Verwaltung** | Administration — the section of the admin UI covering entity management (Schichtträger, Güter, Klienten, Freiwillige, Admins). |
+| **Ausgaben** (nav) | The distributions analysis section of the admin UI, showing recorded distributions with filters for date range and other criteria. |
+| **KH** | Abbreviation for *Kaeltehilfe*, used in CSV export file names (e.g. `KH-Schichten`, `KH-Klienten`). |
