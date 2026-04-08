@@ -19,7 +19,7 @@ function PrepareKaeltehilfeCerts {
     if (-not (Test-Path $exportCrtDir)) { New-Item -Path $exportCrtDir -ItemType Directory -ea 0 | Out-Null }
 
     # Create certificate files
-    Write-Log"Creating CA certificate ""$($caName)"""
+    Write-Log "Creating CA certificate ""$($caName)"""
     $cert = CreateSignedCertificate -signer `
                                     -commonName $caName `
                                     -exportCaPath $exportCrtPath `
@@ -27,7 +27,7 @@ function PrepareKaeltehilfeCerts {
                                     -exportPfxPassword $pfxPassword `
                                     -exportPem
 
-    Write-Log"Created CA certificate ""$($caName)"" ($($cert.Thumbprint))"
+    Write-Log "Created CA certificate ""$($caName)"" ($($cert.Thumbprint))"
 }
 
 function GeneratePassword([int]$length) {
