@@ -18,6 +18,7 @@ import {
   Clients,
   Distributions,
   Goods,
+  ShiftRules,
   Shifts,
   Volunteers,
 } from "./features/admin";
@@ -49,10 +50,14 @@ const router = createBrowserRouter([
           </AuthRoute>
         ),
         children: [
-          { path: "", element: <Navigate relative="path" to="shifts" /> },
+          { path: "", element: <Navigate relative="path" to="distributions" /> },
           {
             path: "shifts",
             element: <Shifts />,
+          },
+          {
+            path: "shift-rules",
+            element: <ShiftRules />,
           },
           {
             path: "admins",

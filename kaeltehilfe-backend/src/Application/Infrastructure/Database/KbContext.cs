@@ -14,6 +14,7 @@ public class KbContext : DbContext
     public virtual DbSet<Client> Clients { get; set; }
     public virtual DbSet<Distribution> Distributions { get; set; }
     public virtual DbSet<Bus> Busses { get; set; }
+    public virtual DbSet<ShiftRule> ShiftRules { get; set; }
     public virtual DbSet<Login> Logins { get; set; }
     public virtual DbSet<LoginCertificate> LoginCertificates { get; set; }
 
@@ -104,6 +105,14 @@ public class KbContext : DbContext
             .WithMany(d => d.Distributions)
             .HasForeignKey(d => d.BusId);
         modelBuilder.Entity<Distribution>().Navigation(d => d.Bus).AutoInclude();
+
+        modelBuilder.Entity<ShiftRule>().ConfigureBaseEntity();
+        modelBuilder
+            .Entity<ShiftRule>()
+            .HasOne(sr => sr.Bus)
+            .WithMany(b => b.ShiftRules)
+            .HasForeignKey(sr => sr.BusId)
+            .IsRequired(false);
 
         modelBuilder.Entity<ShiftVolunteer>().HasKey(sv => new { sv.ShiftId, sv.VolunteerId });
         modelBuilder

@@ -1,11 +1,11 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Seite-1" id="AhLFmeMOInSEHHINCcU-">
-    <mxGraphModel dx="2175" dy="1197" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="2162" dy="1197" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;dashed=1;arcSize=6;" value="" vertex="1">
-          <mxGeometry height="970" width="1060" x="580" y="400" as="geometry" />
+          <mxGeometry height="970" width="1080" x="570" y="400" as="geometry" />
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-3" parent="1" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;" value="&lt;b&gt;kaeltehilfe-backend (ASP.NET Core 8)&lt;/b&gt;" vertex="1">
           <mxGeometry height="30" width="310" x="955" y="410" as="geometry" />
@@ -27,46 +27,34 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-4" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;strokeWidth=2;fontSize=12;verticalAlign=top;" value="&lt;b&gt;REST API Layer (Controllers)&lt;/b&gt;" vertex="1">
-          <mxGeometry height="480" width="1000" x="610" y="450" as="geometry" />
+          <mxGeometry height="480" width="1020" x="600" y="450" as="geometry" />
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-5" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=top;" value="Admin&lt;br&gt;Controller" vertex="1">
-          <mxGeometry height="410" width="90" x="660" y="500" as="geometry" />
+          <mxGeometry height="410" width="85" x="630" y="500" as="geometry" />
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-6" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=top;" value="Shifts&lt;br&gt;Controller" vertex="1">
-          <mxGeometry height="410" width="90" x="760" y="500" as="geometry" />
+          <mxGeometry height="410" width="85" x="726" y="500" as="geometry" />
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=top;" value="Busses&lt;br&gt;Controller&lt;br&gt;+&lt;br&gt;Service" vertex="1">
-          <mxGeometry height="410" width="90" x="860" y="500" as="geometry" />
+          <mxGeometry height="410" width="85" x="920" y="500" as="geometry" />
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=top;" value="Clients&lt;br&gt;Controller" vertex="1">
-          <mxGeometry height="410" width="90" x="960" y="500" as="geometry" />
+          <mxGeometry height="410" width="85" x="1017" y="500" as="geometry" />
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=top;" value="Distributions&lt;br&gt;Controller" vertex="1">
-          <mxGeometry height="410" width="100" x="1060" y="500" as="geometry" />
+          <mxGeometry height="410" width="85" x="1115.5" y="500" as="geometry" />
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=top;" value="Goods&lt;br&gt;Controller" vertex="1">
-          <mxGeometry height="410" width="90" x="1169" y="500" as="geometry" />
+          <mxGeometry height="410" width="85" x="1212" y="500" as="geometry" />
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=top;" value="Volunteers&lt;br&gt;Controller" vertex="1">
-          <mxGeometry height="410" width="90" x="1270" y="500" as="geometry" />
+          <mxGeometry height="410" width="85" x="1307" y="500" as="geometry" />
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=top;" value="Logins&lt;br&gt;Controller" vertex="1">
-          <mxGeometry height="410" width="90" x="1470" y="500" as="geometry" />
+          <mxGeometry height="410" width="85" x="1500" y="500" as="geometry" />
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=top;" value="Certificates&lt;br&gt;Controller" vertex="1">
-          <mxGeometry height="410" width="90" x="1370" y="500" as="geometry" />
-        </mxCell>
-        <mxCell id="corrId-backend-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;" value="&lt;b&gt;Correlation ID Middleware&lt;/b&gt;&lt;br&gt;&lt;br&gt;Read X-Correlation-Id header (fallback: TraceIdentifier)&lt;br&gt;Add to log scope · Echo in response header" vertex="1">
-          <mxGeometry height="70" width="960" x="630" y="568" as="geometry" />
-        </mxCell>
-        <mxCell id="9TqjNE5YL7lR6RwLzFnC-14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;" value="&lt;b&gt;Authentication/Authorization&lt;/b&gt;&lt;br&gt;&lt;br&gt;JWT Bearer Validation&lt;br&gt;Role-based Authorization" vertex="1">
-          <mxGeometry height="70" width="960" x="630" y="648" as="geometry" />
-        </mxCell>
-        <mxCell id="9TqjNE5YL7lR6RwLzFnC-15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;" value="&lt;b&gt;Validation&lt;/b&gt;&lt;br&gt;&lt;br&gt;FluentValidation&lt;br&gt;Model State Validation" vertex="1">
-          <mxGeometry height="70" width="960" x="630" y="728" as="geometry" />
-        </mxCell>
-        <mxCell id="9TqjNE5YL7lR6RwLzFnC-50" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;" value="&lt;b&gt;Exception Handling&lt;/b&gt;&lt;br&gt;&lt;br&gt;SqliteUniqueExceptionHandler&lt;br&gt;InvalidModelStateExceptionHandler" vertex="1">
-          <mxGeometry height="70" width="960" x="630" y="808" as="geometry" />
+          <mxGeometry height="410" width="85" x="1403" y="500" as="geometry" />
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-39" edge="1" parent="1" source="9TqjNE5YL7lR6RwLzFnC-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="9TqjNE5YL7lR6RwLzFnC-33">
           <mxGeometry relative="1" as="geometry" />
@@ -98,7 +86,7 @@
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-43" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;fontSize=11;" value="Client" vertex="1">
           <mxGeometry height="60" width="96" x="777" y="1090" as="geometry" />
         </mxCell>
-        <mxCell id="9TqjNE5YL7lR6RwLzFnC-44" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;fontSize=11;" value="Good" vertex="1">
+        <mxCell id="9TqjNE5YL7lR6RwLzFnC-44" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;fontSize=11;" value="ShiftRule" vertex="1">
           <mxGeometry height="60" width="96" x="920" y="1160" as="geometry" />
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-45" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;fontSize=11;" value="Bus" vertex="1">
@@ -154,6 +142,24 @@
         </mxCell>
         <mxCell id="9TqjNE5YL7lR6RwLzFnC-75" parent="1" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" value="Service" vertex="1">
           <mxGeometry height="30" width="60" x="1445" y="1490" as="geometry" />
+        </mxCell>
+        <mxCell id="_bMGFbv-rmWNy-Q4Qwwg-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;fontSize=11;" value="Good" vertex="1">
+          <mxGeometry height="60" width="96" x="920" y="1230" as="geometry" />
+        </mxCell>
+        <mxCell id="_bMGFbv-rmWNy-Q4Qwwg-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;verticalAlign=top;" value="ShiftRules&lt;br&gt;Controller" vertex="1">
+          <mxGeometry height="410" width="85" x="823" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="corrId-backend-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;" value="&lt;b&gt;Correlation ID Middleware&lt;/b&gt;&lt;br&gt;&lt;br&gt;Read X-Correlation-Id header (fallback: TraceIdentifier)&lt;br&gt;Add to log scope · Echo in response header" vertex="1">
+          <mxGeometry height="70" width="980" x="620" y="568" as="geometry" />
+        </mxCell>
+        <mxCell id="9TqjNE5YL7lR6RwLzFnC-14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;" value="&lt;b&gt;Authentication/Authorization&lt;/b&gt;&lt;br&gt;&lt;br&gt;JWT Bearer Validation&lt;br&gt;Role-based Authorization" vertex="1">
+          <mxGeometry height="70" width="980" x="620" y="648" as="geometry" />
+        </mxCell>
+        <mxCell id="9TqjNE5YL7lR6RwLzFnC-15" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;" value="&lt;b&gt;Validation&lt;/b&gt;&lt;br&gt;&lt;br&gt;FluentValidation&lt;br&gt;Model State Validation" vertex="1">
+          <mxGeometry height="70" width="980" x="620" y="728" as="geometry" />
+        </mxCell>
+        <mxCell id="9TqjNE5YL7lR6RwLzFnC-50" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;" value="&lt;b&gt;Exception Handling&lt;/b&gt;&lt;br&gt;&lt;br&gt;SqliteUniqueExceptionHandler&lt;br&gt;InvalidModelStateExceptionHandler" vertex="1">
+          <mxGeometry height="70" width="980" x="620" y="808" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

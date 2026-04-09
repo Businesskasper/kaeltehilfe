@@ -4,6 +4,7 @@ import {
   IconCalendar,
   IconCubeSend,
   IconLogin,
+  IconRulerMeasure,
   IconSoup,
   IconUser,
 } from "@tabler/icons-react";
@@ -15,8 +16,9 @@ export const AdminNavigation = () => (
       <NavigationItem label="Admins-Logins" Icon={IconLogin} target="admins" />
     </NavigationSection>
     <NavigationSection label="Schichtplanung">
-      <NavigationItem label="Schichtträger" Icon={IconBus} target="busses" />
       <NavigationItem label="Freiwillige" Icon={IconUser} target="volunteers" />
+      <NavigationItem label="Schichtträger" Icon={IconBus} target="busses" />
+      <NavigationItem label="Schichtregeln" Icon={IconRulerMeasure} target="shift-rules" />
       <NavigationItem label="Schichten" Icon={IconCalendar} target="shifts" />
     </NavigationSection>
     <NavigationSection label="Ausgaben">

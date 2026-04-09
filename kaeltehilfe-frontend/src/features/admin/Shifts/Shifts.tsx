@@ -14,8 +14,54 @@ import {
   openAppModal,
 } from "../../../common/components";
 import { Shift, useShifts } from "../../../common/data";
+import {
+  ShiftRule,
+  VolunteerCriterion,
+  VolunteerCriterionLabel,
+  useShiftRules,
+} from "../../../common/data/shiftRule";
 import { compareByDateOnly, formatDate } from "../../../common/utils";
 import { ShiftModalContent } from "./ShiftModalContent";
+
+const CRITERION_ICONS: Record<VolunteerCriterion, React.ReactNode> = {
+  ANY_VOLUNTEER: <IconUsersGroup fill="red" style={{ color: "red" }} />,
+  FEMALE_VOLUNTEER: <IconWomanFilled fill="red" />,
+  DRIVER: <IconSteeringWheelFilled fill="red" />,
+};
+
+const countMatching = (
+  criterion: VolunteerCriterion,
+  volunteers: Shift["volunteers"],
+): number => {
+  const vs = volunteers ?? [];
+  switch (criterion) {
+    case "ANY_VOLUNTEER":
+      return vs.length;
+    case "FEMALE_VOLUNTEER":
+      return vs.filter((v) => v.gender === "FEMALE").length;
+    case "DRIVER":
+      return vs.filter((v) => v.isDriver).length;
+  }
+};
+
+const getFailingRules = (rules: ShiftRule[], shift: Shift): ShiftRule[] => {
+  // Criteria that have a bus-specific rule for this shift's carrier
+  const overriddenCriteria = new Set(
+    rules
+      .filter((r) => r.isActive && r.busId === shift.busId)
+      .map((r) => r.criterion),
+  );
+
+  return rules.filter(
+    (r) =>
+      r.isActive &&
+      // If a bus-specific rule exists for this criterion, skip the global rule
+      (r.busId != null
+        ? r.busId === shift.busId
+        : !overriddenCriteria.has(r.criterion)) &&
+      countMatching(r.criterion, shift.volunteers) < r.threshold,
+  );
+};
 
 export const Shifts = () => {
   const {
@@ -23,6 +69,8 @@ export const Shifts = () => {
     put: { isPending: isPutting },
     remove: { isPending: isDeleting, mutate: deleteShift },
   } = useShifts();
+
+  const { objs: { data: rules } } = useShiftRules();
 
   const [selectedShifts, setSelectedShifts] = React.useState<Array<Shift>>([]);
 
@@ -66,39 +114,22 @@ export const Shifts = () => {
     {
       id: "planning_state",
       header: "Planungsstatus",
-      accessorFn: ({ volunteers }) => {
-        const driver = volunteers?.find((v) => v.isDriver);
-        const female = volunteers?.find((v) => v.gender === "FEMALE");
-        const count = volunteers?.length || 0;
+      accessorFn: (shift) => {
+        const failingRules = getFailingRules(rules ?? [], shift);
 
-        return driver && female && count >= 3 ? (
+        return failingRules.length === 0 ? (
           <IconCircleCheckFilled fill="green" />
         ) : (
           <>
-            {!driver && (
+            {failingRules.map((r) => (
               <Tooltip
+                key={r.id}
                 events={{ hover: true, touch: true, focus: true }}
-                label="Kein Fahrer"
+                label={`${VolunteerCriterionLabel[r.criterion]}: mind. ${r.threshold}`}
               >
-                <IconSteeringWheelFilled fill="red" />
+                <span>{CRITERION_ICONS[r.criterion]}</span>
               </Tooltip>
-            )}
-            {!female && (
-              <Tooltip
-                events={{ hover: true, touch: true, focus: true }}
-                label="Keine weibliche Freiwillige"
-              >
-                <IconWomanFilled fill="red" />
-              </Tooltip>
-            )}
-            {count < 3 && (
-              <Tooltip
-                events={{ hover: true, touch: true, focus: true }}
-                label="Mindestanzahl nicht erreicht"
-              >
-                <IconUsersGroup fill="red" style={{ color: "red" }} />
-              </Tooltip>
-            )}
+            ))}
           </>
         );
       },

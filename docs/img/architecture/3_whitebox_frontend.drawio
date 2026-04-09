@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36" version="29.6.6">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36">
   <diagram name="Seite-1" id="F9U5wSdUsjhutlWOo7p_">
-    <mxGraphModel dx="1797" dy="989" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+    <mxGraphModel dx="2054" dy="1137" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -38,7 +38,7 @@
         <mxCell id="fdbCAWdMYQrWjC3pGb8c-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="Shifts&lt;br&gt;Management" vertex="1">
           <mxGeometry height="50" width="90" x="420" y="590" as="geometry" />
         </mxCell>
-        <mxCell id="fdbCAWdMYQrWjC3pGb8c-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="Bus/Vehicle&lt;br&gt;Management" vertex="1">
+        <mxCell id="fdbCAWdMYQrWjC3pGb8c-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="Shift Rule&lt;br&gt;Management" vertex="1">
           <mxGeometry height="50" width="90" x="530" y="590" as="geometry" />
         </mxCell>
         <mxCell id="fdbCAWdMYQrWjC3pGb8c-9" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="Volunteer&lt;br&gt;Management" vertex="1">
@@ -121,6 +121,9 @@
         </mxCell>
         <mxCell id="fdbCAWdMYQrWjC3pGb8c-58" parent="1" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=11;" value="Feature" vertex="1">
           <mxGeometry height="30" width="60" x="1308" y="1105" as="geometry" />
+        </mxCell>
+        <mxCell id="xqWJ7HDik78cC1n-5Os6-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" value="Bus/Vehicle&lt;br&gt;Management" vertex="1">
+          <mxGeometry height="50" width="90" x="750" y="660" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

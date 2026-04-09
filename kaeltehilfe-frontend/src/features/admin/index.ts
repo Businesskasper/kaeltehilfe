@@ -4,5 +4,6 @@ export * from "./Busses/Busses";
 export * from "./Clients/Clients";
 export * from "./Distributions/Distributions";
 export * from "./Goods/Goods";
+export * from "./ShiftRules/ShiftRules";
 export * from "./Shifts/Shifts";
 export * from "./Volunteers/Volunteers";

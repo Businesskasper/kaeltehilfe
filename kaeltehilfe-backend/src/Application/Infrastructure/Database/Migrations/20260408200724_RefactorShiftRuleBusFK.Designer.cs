@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using kaeltehilfe_backend.Infrastructure.Database;
@@ -11,9 +12,11 @@ using kaeltehilfe_backend.Infrastructure.Database;
 namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(KbContext))]
-    partial class KbContextModelSnapshot : ModelSnapshot
+    [Migration("20260408200724_RefactorShiftRuleBusFK")]
+    partial class RefactorShiftRuleBusFK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
@@ -347,8 +350,8 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValueSql("unixepoch('now')");
 
-                    b.Property<string>("BusRegistrationNumber")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("BusId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<long?>("ChangeOn")
                         .ValueGeneratedOnUpdate()
@@ -370,6 +373,8 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BusId");
 
                     b.HasIndex("IsDeleted");
 
@@ -538,9 +543,20 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                     b.Navigation("Volunteer");
                 });
 
+            modelBuilder.Entity("kaeltehilfe_backend.Models.ShiftRule", b =>
+                {
+                    b.HasOne("kaeltehilfe_backend.Models.Bus", "Bus")
+                        .WithMany("ShiftRules")
+                        .HasForeignKey("BusId");
+
+                    b.Navigation("Bus");
+                });
+
             modelBuilder.Entity("kaeltehilfe_backend.Models.Bus", b =>
                 {
                     b.Navigation("Distributions");
+
+                    b.Navigation("ShiftRules");
 
                     b.Navigation("Shifts");
                 });

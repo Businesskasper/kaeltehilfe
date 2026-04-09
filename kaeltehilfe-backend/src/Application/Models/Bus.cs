@@ -5,4 +5,5 @@ public class Bus : BaseEntity
     public string RegistrationNumber { get; set; } = "";
     public virtual List<Shift> Shifts { get; set; } = [];
     public virtual List<Distribution> Distributions { get; set; } = [];
+    public virtual List<ShiftRule> ShiftRules { get; set; } = [];
 }
