@@ -51,6 +51,27 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Comments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DisplayName = table.Column<string>(type: "TEXT", nullable: false),
+                    Text = table.Column<string>(type: "TEXT", nullable: false),
+                    IsPinned = table.Column<bool>(type: "INTEGER", nullable: false),
+                    GeoLocation = table.Column<Point>(type: "POINT", nullable: true)
+                        .Annotation("Sqlite:Srid", 4326),
+                    LocationName = table.Column<string>(type: "TEXT", nullable: true),
+                    AddOn = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "unixepoch('now')"),
+                    ChangeOn = table.Column<long>(type: "INTEGER", nullable: true, defaultValueSql: "unixepoch('now')"),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Comments", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Goods",
                 columns: table => new
                 {
@@ -107,6 +128,30 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Volunteers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShiftRules",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Criterion = table.Column<int>(type: "INTEGER", nullable: false),
+                    Threshold = table.Column<int>(type: "INTEGER", nullable: false),
+                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false),
+                    BusId = table.Column<int>(type: "INTEGER", nullable: true),
+                    AddOn = table.Column<long>(type: "INTEGER", nullable: false, defaultValueSql: "unixepoch('now')"),
+                    ChangeOn = table.Column<long>(type: "INTEGER", nullable: true, defaultValueSql: "unixepoch('now')"),
+                    IsDeleted = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShiftRules", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ShiftRules_Busses_BusId",
+                        column: x => x.BusId,
+                        principalTable: "Busses",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -251,6 +296,21 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                 filter: "IsDeleted = 0");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Comments_AddOn",
+                table: "Comments",
+                column: "AddOn");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_IsDeleted",
+                table: "Comments",
+                column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_IsPinned",
+                table: "Comments",
+                column: "IsPinned");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Distributions_AddOn",
                 table: "Distributions",
                 column: "AddOn");
@@ -298,6 +358,16 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                 column: "LoginUsername");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ShiftRules_BusId",
+                table: "ShiftRules",
+                column: "BusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ShiftRules_IsDeleted",
+                table: "ShiftRules",
+                column: "IsDeleted");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Shifts_BusId",
                 table: "Shifts",
                 column: "BusId");
@@ -336,10 +406,16 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Comments");
+
+            migrationBuilder.DropTable(
                 name: "Distributions");
 
             migrationBuilder.DropTable(
                 name: "LoginCertificates");
+
+            migrationBuilder.DropTable(
+                name: "ShiftRules");
 
             migrationBuilder.DropTable(
                 name: "ShiftVolunteers");

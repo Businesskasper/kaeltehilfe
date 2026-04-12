@@ -17,6 +17,7 @@ public class KbContext : DbContext
     public virtual DbSet<ShiftRule> ShiftRules { get; set; }
     public virtual DbSet<Login> Logins { get; set; }
     public virtual DbSet<LoginCertificate> LoginCertificates { get; set; }
+    public virtual DbSet<Comment> Comments { get; set; }
 
     public KbContext(DbContextOptions<KbContext> options)
         : base(options) { }
@@ -47,6 +48,7 @@ public class KbContext : DbContext
             .HasMany(di => di.Distributions)
             .WithOne(de => de.Bus)
             .HasForeignKey(di => di.BusId);
+        // Note: Bus no longer has a Comments navigation — comments store DisplayName directly.
 
         modelBuilder.Entity<Volunteer>().ConfigureBaseEntity();
         modelBuilder
@@ -105,6 +107,11 @@ public class KbContext : DbContext
             .WithMany(d => d.Distributions)
             .HasForeignKey(d => d.BusId);
         modelBuilder.Entity<Distribution>().Navigation(d => d.Bus).AutoInclude();
+
+        modelBuilder.Entity<Comment>().ConfigureBaseEntity();
+        modelBuilder.Entity<Comment>().HasIndex(x => x.AddOn);
+        modelBuilder.Entity<Comment>().HasIndex(x => x.IsPinned);
+        modelBuilder.Entity<Comment>().Property(c => c.GeoLocation).HasSrid(4326);
 
         modelBuilder.Entity<ShiftRule>().ConfigureBaseEntity();
         modelBuilder

@@ -100,6 +100,56 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                     b.ToTable("Clients");
                 });
 
+            modelBuilder.Entity("kaeltehilfe_backend.Models.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("AddOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
+
+                    b.Property<long?>("ChangeOn")
+                        .ValueGeneratedOnUpdate()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValueSql("unixepoch('now')");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Point>("GeoLocation")
+                        .HasColumnType("POINT")
+                        .HasAnnotation("Sqlite:Srid", 4326);
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsPinned")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("LocationName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddOn");
+
+                    b.HasIndex("IsDeleted");
+
+                    b.HasIndex("IsPinned");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("kaeltehilfe_backend.Models.Distribution", b =>
                 {
                     b.Property<int>("Id")
@@ -347,8 +397,8 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                         .HasColumnType("INTEGER")
                         .HasDefaultValueSql("unixepoch('now')");
 
-                    b.Property<string>("BusRegistrationNumber")
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("BusId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<long?>("ChangeOn")
                         .ValueGeneratedOnUpdate()
@@ -370,6 +420,8 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BusId");
 
                     b.HasIndex("IsDeleted");
 
@@ -519,6 +571,15 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                     b.Navigation("Bus");
                 });
 
+            modelBuilder.Entity("kaeltehilfe_backend.Models.ShiftRule", b =>
+                {
+                    b.HasOne("kaeltehilfe_backend.Models.Bus", "Bus")
+                        .WithMany("ShiftRules")
+                        .HasForeignKey("BusId");
+
+                    b.Navigation("Bus");
+                });
+
             modelBuilder.Entity("kaeltehilfe_backend.Models.ShiftVolunteer", b =>
                 {
                     b.HasOne("kaeltehilfe_backend.Models.Shift", "Shift")
@@ -541,6 +602,8 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
             modelBuilder.Entity("kaeltehilfe_backend.Models.Bus", b =>
                 {
                     b.Navigation("Distributions");
+
+                    b.Navigation("ShiftRules");
 
                     b.Navigation("Shifts");
                 });
