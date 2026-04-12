@@ -49,7 +49,7 @@ Fill in the values in `.env` before starting the services:
 | `ROOT_CERT_PASSWORD` | Password for the root CA `.pfx` file. |
 | `KC_REALM` | Keycloak realm name (default: `kaeltehilfe`). |
 | `KC_USER_CLIENT_ID` | UUID for the user client. You can use the default value or create your |
-| `APP_DOMAIN` | Public domain for the application (e.g. `ulm.kaelte-hilfe.de`). Used to derive URLs for frontend, backend, and geo. |
+| `APP_DOMAIN` | Public domain for the application (e.g. `demo.kaelte-hilfe.de`). Used to derive URLs for frontend, backend, and geo. |
 | `AUTH_DOMAIN` | Public domain for Keycloak (e.g. `auth.kaelte-hilfe.de`). Used to derive Keycloak URLs for all services. |
 <!-- | `APP_URL` | Public frontend URL (used for Keycloak redirect URIs and CORS). | -->
 | `APP_ADMIN_USERNAME` | Initial admin user email. |

@@ -345,7 +345,7 @@ graph TD
         end
     end
 
-    Browser -->|"ulm.kaelte-hilfe.de (443)"| Proxy
+    Browser -->|"demo.kaelte-hilfe.de (443)"| Proxy
     Browser -->|"auth.kaelte-hilfe.de (443)"| Proxy
     Browser -->|"proxy.kaelte-hilfe.de (443)\nor SSH tunnel :8181→:81"| Proxy
 
