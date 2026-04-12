@@ -10,13 +10,9 @@ import {
 import { ComponentType } from "react";
 import { useCrudHook } from "../utils/crudHook";
 
-export type GoodType =
-  | "CONSUMABLE"
-  | "CLOTHING"
-  | "FOOD"
-  | "HYGIENE"
-  | "BEDDING"
-  | "EQUIPMENT";
+export const GoodTypes = ["FOOD", "CLOTHING", "CONSUMABLE", "HYGIENE", "BEDDING", "EQUIPMENT"] as const;
+
+export type GoodType = typeof GoodTypes[number];
 
 export type Good = {
   id: number;

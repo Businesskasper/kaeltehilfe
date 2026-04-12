@@ -21,7 +21,7 @@ import {
 import React from "react";
 import {
   Good,
-  GoodType,
+  GoodTypes,
   GoodTypeTranslation,
   useDistributionsPaginated,
   useGoods,
@@ -48,8 +48,6 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
   const distributions = distributionPages?.pages?.flatMap((p) => p) || [];
   const form = useDistributionFormContext();
 
-  const goodTypes: Array<GoodType> = ["FOOD", "CLOTHING", "CONSUMABLE"];
-
   const searchField = useField({
     mode: "controlled",
     initialValue: "",
@@ -59,15 +57,15 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
   const filteredGoods = React.useMemo(() => {
     return searchValue?.trim()
       ? goods?.filter(
-          (good) =>
-            good.name?.toUpperCase()?.includes(searchValue?.toUpperCase()) ||
-            good.tags?.find((tag) =>
-              tag?.toUpperCase()?.includes(searchValue?.toUpperCase()),
-            ) ||
-            good.description
-              ?.toUpperCase()
-              ?.includes(searchValue?.toUpperCase()),
-        ) || []
+        (good) =>
+          good.name?.toUpperCase()?.includes(searchValue?.toUpperCase()) ||
+          good.tags?.find((tag) =>
+            tag?.toUpperCase()?.includes(searchValue?.toUpperCase()),
+          ) ||
+          good.description
+            ?.toUpperCase()
+            ?.includes(searchValue?.toUpperCase()),
+      ) || []
       : goods || [];
   }, [goods, searchValue]);
 
@@ -113,14 +111,14 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
       opened={isOpened}
       onClose={close}
       title={<Title order={4}>Güter wählen</Title>}
-      // title="Güter wählen"
-      // title={
-      //   <TextInput
-      //     width="100%"
-      //     placeholder="Suche..."
-      //     {...searchField.getInputProps()}
-      //   />
-      // }
+    // title="Güter wählen"
+    // title={
+    //   <TextInput
+    //     width="100%"
+    //     placeholder="Suche..."
+    //     {...searchField.getInputProps()}
+    //   />
+    // }
     >
       {isLoading && <LoadingOverlay visible />}
       <Drawer.Body>
@@ -143,10 +141,10 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
         <Accordion
           multiple
           defaultValue={
-            filteredGoodTypes?.length > 0 ? filteredGoodTypes : goodTypes
+            filteredGoodTypes?.length > 0 ? filteredGoodTypes : (GoodTypes.map(gt => gt.toString()))
           }
         >
-          {goodTypes.map((goodType) => {
+          {GoodTypes.map((goodType) => {
             const translation =
               GoodTypeTranslation[goodType as keyof typeof GoodTypeTranslation];
 
