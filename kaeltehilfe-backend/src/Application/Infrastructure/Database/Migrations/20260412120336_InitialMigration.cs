@@ -99,6 +99,7 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                     IdentityProviderId = table.Column<string>(type: "TEXT", nullable: false),
                     Email = table.Column<string>(type: "TEXT", nullable: false),
                     CreateOn = table.Column<long>(type: "INTEGER", nullable: false),
+                    LastLoginOn = table.Column<long>(type: "INTEGER", nullable: true),
                     Role = table.Column<int>(type: "INTEGER", nullable: false),
                     Firstname = table.Column<string>(type: "TEXT", nullable: true),
                     Lastname = table.Column<string>(type: "TEXT", nullable: true),

@@ -12,7 +12,7 @@ using kaeltehilfe_backend.Infrastructure.Database;
 namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(KbContext))]
-    [Migration("20260410145358_InitialMigration")]
+    [Migration("20260412120336_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -275,6 +275,9 @@ namespace kaeltehilfe_backend.Application.Infrastructure.Database.Migrations
                     b.Property<string>("IdentityProviderId")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<long?>("LastLoginOn")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Role")
                         .HasColumnType("INTEGER");
