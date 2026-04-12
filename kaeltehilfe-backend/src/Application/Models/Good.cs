@@ -15,4 +15,7 @@ public enum GoodType
     CONSUMABLE,
     CLOTHING,
     FOOD,
+    HYGIENE,
+    BEDDING,
+    EQUIPMENT,
 }

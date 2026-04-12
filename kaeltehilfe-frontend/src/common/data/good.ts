@@ -1,13 +1,22 @@
 import {
+  IconBackpack,
+  IconBedFlat,
+  IconHandSanitizer,
+  IconPackage,
   IconProps,
   IconShirt,
-  IconToiletPaper,
   IconToolsKitchen2,
 } from "@tabler/icons-react";
 import { ComponentType } from "react";
 import { useCrudHook } from "../utils/crudHook";
 
-export type GoodType = "CONSUMABLE" | "CLOTHING" | "FOOD";
+export type GoodType =
+  | "CONSUMABLE"
+  | "CLOTHING"
+  | "FOOD"
+  | "HYGIENE"
+  | "BEDDING"
+  | "EQUIPMENT";
 
 export type Good = {
   id: number;
@@ -27,11 +36,23 @@ export const GoodTypeTranslation: {
   },
   CONSUMABLE: {
     label: "Verbrauchsartikel",
-    icon: IconToiletPaper,
+    icon: IconPackage,
   },
   FOOD: {
     label: "Nahrung",
     icon: IconToolsKitchen2,
+  },
+  HYGIENE: {
+    label: "Hygiene",
+    icon: IconHandSanitizer,
+  },
+  BEDDING: {
+    label: "Schlafzeug",
+    icon: IconBedFlat,
+  },
+  EQUIPMENT: {
+    label: "Ausrüstung",
+    icon: IconBackpack,
   },
 };
 
