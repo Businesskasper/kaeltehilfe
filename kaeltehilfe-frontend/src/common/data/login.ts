@@ -10,6 +10,7 @@ export type AdminLogin = {
   firstname: string;
   lastname: string;
   createOn: Date;
+  lastLoginOn?: Date;
 };
 
 export type OperatorLogin = {
@@ -19,6 +20,7 @@ export type OperatorLogin = {
   identityProviderId: string;
   registrationNumber: string;
   createOn: Date;
+  lastLoginOn?: Date;
 };
 
 export type Login = AdminLogin | OperatorLogin;
@@ -40,7 +42,10 @@ export type LoginPatch = {
 export const useLogins = () =>
   useCrudHook<Login, never, AdminLoginPost, LoginPatch>({
     key: "logins",
-    transformer: { createOn: (value) => toDate(value) ?? new Date() },
+    transformer: {
+      createOn: (value) => toDate(value) ?? new Date(),
+      lastLoginOn: (value) => toDate(value),
+    },
   });
 
 export const isOperatorLogin = (login: Login): login is OperatorLogin => {

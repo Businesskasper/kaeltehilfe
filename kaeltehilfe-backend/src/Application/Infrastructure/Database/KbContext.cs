@@ -145,6 +145,10 @@ public class KbContext : DbContext
             .Entity<Login>()
             .Property(x => x.CreateOn)
             .HasConversion(new UnixEpochDateTimeConverter());
+        modelBuilder
+            .Entity<Login>()
+            .Property(x => x.LastLoginOn)
+            .HasConversion(new NullableUnixEpochDateTimeConverter());
 
         // Configure properties for AdminLogin
         modelBuilder.Entity<AdminLogin>().Property(a => a.Firstname).IsRequired();
@@ -213,5 +217,14 @@ public class UnixEpochDateTimeConverter : ValueConverter<DateTime, long>
         : base(
             v => ((DateTimeOffset)v).ToUnixTimeSeconds(),
             v => DateTimeOffset.FromUnixTimeSeconds(v).UtcDateTime
+        ) { }
+}
+
+public class NullableUnixEpochDateTimeConverter : ValueConverter<DateTime?, long?>
+{
+    public NullableUnixEpochDateTimeConverter()
+        : base(
+            v => v.HasValue ? ((DateTimeOffset)v.Value).ToUnixTimeSeconds() : (long?)null,
+            v => v.HasValue ? DateTimeOffset.FromUnixTimeSeconds(v.Value).UtcDateTime : (DateTime?)null
         ) { }
 }

@@ -1,6 +1,7 @@
 import { Title } from "@mantine/core";
 import { MRT_ColumnDef } from "mantine-react-table";
 import React from "react";
+import { formatDateTime } from "../../../common/utils";
 import { openAppModal } from "../../../common/components";
 import { ExportConfig, Table } from "../../../common/components/Table/Table";
 import {
@@ -50,6 +51,13 @@ export const Busses = () => {
     {
       accessorKey: "registrationNumber",
       header: "Nummernschild",
+    },
+    {
+      header: "Letzter Login",
+      accessorFn: (bus) => {
+        const login = getBusLogin(bus.registrationNumber?.toUpperCase());
+        return login?.lastLoginOn ? formatDateTime(login.lastLoginOn) : "—";
+      },
     },
   ];
 

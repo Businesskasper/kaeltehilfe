@@ -1,5 +1,7 @@
+import React from "react";
 import { useAuth } from "react-oidc-context";
 import { UserRole } from "../../data";
+import { http } from "../../utils/http";
 import { useProfile } from "../../utils/useProfile";
 
 type PrivateRouteProps = React.PropsWithChildren & { roles?: Array<UserRole> };
@@ -13,6 +15,12 @@ export const AuthRoute = ({ children, roles }: PrivateRouteProps) => {
     !roles ||
     roles?.length === 0 ||
     (profile?.role && roles.includes(profile.role));
+
+  React.useEffect(() => {
+    if (isLoggedIn && isAuthorized && profile?.role) {
+      http.post("/logins/me").catch(() => {});
+    }
+  }, [isLoggedIn, isAuthorized, profile?.role]);
 
   return isLoggedIn && isAuthorized ? children : null;
 };

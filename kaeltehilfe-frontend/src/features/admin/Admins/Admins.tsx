@@ -52,6 +52,10 @@ export const Admins = () => {
       header: "Hinzugefügt",
       accessorFn: (l) => formatDateTime(l.createOn),
     },
+    {
+      header: "Letzter Login",
+      accessorFn: (l) => (l.lastLoginOn ? formatDateTime(l.lastLoginOn) : "—"),
+    },
   ];
 
   const exportConfig: ExportConfig<AdminLogin> = {

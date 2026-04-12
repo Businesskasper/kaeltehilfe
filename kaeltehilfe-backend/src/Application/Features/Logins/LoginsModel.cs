@@ -13,6 +13,7 @@ public class LoginDto
     public string? Lastname { get; set; }
     public string? RegistrationNumber { get; set; }
     public DateTime CreateOn { get; set; }
+    public DateTime? LastLoginOn { get; set; }
 }
 
 public class LoginCreateDto

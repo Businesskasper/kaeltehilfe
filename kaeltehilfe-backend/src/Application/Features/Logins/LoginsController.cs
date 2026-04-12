@@ -36,6 +36,24 @@ public class LoginsController : ControllerBase
         _busService = busService;
     }
 
+    [HttpPost("me")]
+    [Authorize(Roles = "ADMIN,OPERATOR")]
+    public async Task<IActionResult> TrackLastLogin()
+    {
+        var username = User.Identity?.Name;
+        if (username is null)
+            return Unauthorized();
+
+        var login = await _kbContext.Logins.FindAsync(username);
+        if (login is null)
+            return NotFound();
+
+        login.LastLoginOn = DateTime.UtcNow;
+        await _kbContext.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     [HttpGet()]
     [Authorize(Roles = "ADMIN")]
     public async Task<IEnumerable<LoginDto>> Query()
