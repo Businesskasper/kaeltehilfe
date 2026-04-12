@@ -83,7 +83,7 @@ const DistributionFlagPopup = ({
     );
   };
 
-  const busRegistrationNumbers = getDistinct(distributions, (d) => d.bus.registrationNumber).join(", ");
+  const busRegistrationNumbers = getDistinct(distributions, (d) => d.bus.registrationNumber).map(d => d.bus.registrationNumber).join(", ");
 
   return (
     <Popup
