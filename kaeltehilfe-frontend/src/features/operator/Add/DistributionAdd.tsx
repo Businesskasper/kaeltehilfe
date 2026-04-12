@@ -9,20 +9,18 @@ import {
   Title,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications } from "@mantine/notifications";
 import { IconLayoutSidebarRightExpand } from "@tabler/icons-react";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Gender,
   useAddressLookup,
-  useBusses,
   useClients,
   useGoods,
   usePostBatchDistribution,
 } from "../../../common/data";
-import { useBreakpoint } from "../../../common/utils";
-import { useProfile } from "../../../common/utils/useProfile";
+import { useBreakpoint, useSelectedBus } from "../../../common/utils";
+
 import {
   requiredValidator,
   validators,
@@ -41,7 +39,7 @@ import "./DistributionAdd.scss";
 export const DistributionAdd = () => {
   const navigate = useNavigate();
 
-  const profile = useProfile();
+  const { selectedRegistrationNumber } = useSelectedBus();
 
   const { state: locationState } = useLocation();
 
@@ -56,21 +54,12 @@ export const DistributionAdd = () => {
   });
 
   const {
-    objs: { isLoading: isClientsLoading },
+    objs: { data: clients, isSuccess: hasClientsBeenLoaded, isLoading: isClientsLoading },
   } = useClients();
+
   const {
     objs: { isLoading: isGoodsLoading },
   } = useGoods();
-  const {
-    objs: { data: clients, isSuccess: hasClientsBeenLoaded },
-  } = useClients();
-  const {
-    objs: {
-      data: busses,
-      isLoading: isBussesLoading,
-      isSuccess: hasBussesBeenLoaded,
-    },
-  } = useBusses();
 
   const {
     isPending: isBatchDistributionPosting,
@@ -82,7 +71,7 @@ export const DistributionAdd = () => {
     initialValues: {
       locationName: "",
       geoLocation: { lat: lat ? Number(lat) : 0, lng: lng ? Number(lng) : 0 },
-      busRegistrationNumber: profile?.registrationNumber || "",
+      busRegistrationNumber: selectedRegistrationNumber || "",
       clients: [
         {
           id: undefined as unknown as number,
@@ -127,9 +116,7 @@ export const DistributionAdd = () => {
     if (!resolvedAddress) return;
     let locationName = `${resolvedAddress.street}${resolvedAddress.housenumber ? ` ${resolvedAddress.housenumber}` : ""}`;
     if (resolvedAddress.postcode || resolvedAddress.city) {
-      locationName += `, ${resolvedAddress.postcode ? ` ${resolvedAddress.postcode}` : ""}${
-        resolvedAddress.city ? ` ${resolvedAddress.city}` : ""
-      }`;
+      locationName += `, ${resolvedAddress.postcode ? ` ${resolvedAddress.postcode}` : ""}${resolvedAddress.city ? ` ${resolvedAddress.city}` : ""}`;
     }
 
     form.setFieldValue("locationName", locationName);
@@ -156,57 +143,17 @@ export const DistributionAdd = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasClientsBeenLoaded, locationState?.clientId]);
 
-  // Initialize busRegistrationNumber
+  // Initialize busRegistrationNumber from selected bus (hook handles operator vs admin logic)
   React.useEffect(() => {
-    if (!hasBussesBeenLoaded || !profile) return;
-    const availableRegistrationNumbers = busses.map(
-      (b) => b.registrationNumber,
-    );
-    if (!profile?.registrationNumber) {
-      if (availableRegistrationNumbers.length === 0) {
-        // BAD
-        notifications.show({
-          message: `Mindestens ein Bus muss durch einen Admin angelegt und zugewiesen werden`,
-          withBorder: true,
-          withCloseButton: true,
-          w: "100%",
-          my: "sm",
-          autoClose: false,
-          color: "red",
-        });
-      } else {
-        form.setFieldValue(
-          "busRegistrationNumber",
-          availableRegistrationNumbers[0],
-        );
-      }
-    } else {
-      const registrationNumberExists = !!availableRegistrationNumbers.find(
-        (ar) => ar == profile.registrationNumber,
-      );
-      if (registrationNumberExists) {
-        form.setFieldValue("busRegistrationNumber", profile.registrationNumber);
-      } else {
-        // BAD
-        notifications.show({
-          message: `Der zugewiesene Bus "${profile.registrationNumber}" muss durch einen Admin angelegt werden`,
-          withBorder: true,
-          withCloseButton: true,
-          w: "100%",
-          my: "sm",
-          autoClose: false,
-          color: "red",
-        });
-      }
-    }
+    if (!selectedRegistrationNumber) return;
+    form.setFieldValue("busRegistrationNumber", selectedRegistrationNumber);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile?.registrationNumber, hasBussesBeenLoaded]);
+  }, [selectedRegistrationNumber]);
 
   const isLoading =
     isClientsLoading ||
     isGoodsLoading ||
-    isBatchDistributionPosting ||
-    isBussesLoading;
+    isBatchDistributionPosting;
 
   enum FormStep {
     LOCATION,
@@ -378,10 +325,10 @@ export const DistributionAdd = () => {
                     >
                       {activeStep !== FormStep.CLIENTS
                         ? form.values.clients.map((c, index) => (
-                            <Text key={index} size="sm">
-                              {c.name || ""}
-                            </Text>
-                          ))
+                          <Text key={index} size="sm">
+                            {c.name || ""}
+                          </Text>
+                        ))
                         : undefined}
                     </div>
                   }
@@ -437,10 +384,10 @@ export const DistributionAdd = () => {
                       }}
                       disabled={
                         activeStep === FormStep.LOCATION
-                          ? !form.values.locationName
+                          ? !form.values.locationName || !form.values.busRegistrationNumber
                           : activeStep === FormStep.CLIENTS
                             ? !form.values.clients ||
-                              form.values.clients.length === 0
+                            form.values.clients.length === 0
                             : false
                       }
                     >

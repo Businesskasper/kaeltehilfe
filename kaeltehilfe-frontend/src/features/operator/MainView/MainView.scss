@@ -34,20 +34,19 @@
 
       .map-container {
         height: 100%;
-        min-height: 100%;
         position: relative;
         border-radius: 5px;
 
-        .static-add-distribution-flag {
+        .current-location-flag {
           height: 100%;
           width: 100%;
           display: flex;
           justify-content: center;
           align-items: center;
+          pointer-events: none;
 
           .marker {
             z-index: 400;
-            cursor: pointer;
             transform: translateY(-(mantine.rem(30px)));
             height: mantine.rem(60px);
           }

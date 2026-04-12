@@ -1,4 +1,5 @@
 export * from "./AdminNavigation";
+export * from "./Comments/Comments";
 export * from "./Admins/Admins";
 export * from "./Busses/Busses";
 export * from "./Clients/Clients";

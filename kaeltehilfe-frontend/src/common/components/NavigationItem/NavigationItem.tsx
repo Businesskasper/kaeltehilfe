@@ -1,4 +1,4 @@
-import { NavLink } from "@mantine/core";
+import { Badge, NavLink } from "@mantine/core";
 import { IconProps } from "@tabler/icons-react";
 import { ComponentType } from "react";
 import {
@@ -12,11 +12,12 @@ export type NavigationItemProps = {
   target: string;
   label: string;
   Icon: ComponentType<IconProps>;
+  badge?: number;
 };
 
 type Props = NavigationItemProps & { onNavigate?: () => void };
 
-export const NavigationItem = ({ target, label, Icon, onNavigate }: Props) => {
+export const NavigationItem = ({ target, label, Icon, onNavigate, badge }: Props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const resolvedpath = useResolvedPath(target);
@@ -38,6 +39,13 @@ export const NavigationItem = ({ target, label, Icon, onNavigate }: Props) => {
         fz="h3"
         label={label}
         leftSection={<Icon size={24} stroke={1.5} />}
+        rightSection={
+          badge ? (
+            <Badge size="xs" color="red" circle>
+              {badge}
+            </Badge>
+          ) : undefined
+        }
       />
     </>
   );

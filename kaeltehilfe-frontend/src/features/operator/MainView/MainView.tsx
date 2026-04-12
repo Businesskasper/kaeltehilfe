@@ -1,17 +1,23 @@
+import { notifications } from "@mantine/notifications";
 import {
   useDebouncedValue,
   useOrientation,
   useResizeObserver,
 } from "@mantine/hooks";
+import { IconExclamationMark } from "@tabler/icons-react";
 import { Map } from "leaflet";
 import React from "react";
 import { Group, Panel } from "react-resizable-panels";
+import { useNavigate } from "react-router-dom";
 import {
   Distribution,
   GeoLocation,
+  useComments,
   useDistributions,
+  useBusses,
 } from "../../../common/data";
-import { formatDate, useBrowserStorage } from "../../../common/utils";
+import { compareByDateOnly, formatDate, useBrowserStorage, useIsMobile } from "../../../common/utils";
+import { useSelectedBus } from "../../../common/utils/useSelectedBus";
 import { DetailsPanel } from "./DetailsPanel";
 import { MainControls } from "./MainControls";
 import { MapPanel } from "./MapPanel/MapPanel";
@@ -23,6 +29,9 @@ import {
 import "./MainView.scss";
 
 export const MapView = () => {
+  const navigate = useNavigate();
+  const isMobile = useIsMobile();
+
   const { type: orientationType } = useOrientation({
     getInitialValueInEffect: false,
   });
@@ -38,9 +47,29 @@ export const MapView = () => {
     false,
   );
 
+  const [showDistributions, setShowDistributions] = useBrowserStorage(
+    "LOCAL",
+    "OPERATOR_SHOW_DISTRIBUTIONS",
+    true,
+  );
+
+  const [showComments, setShowComments] = useBrowserStorage(
+    "LOCAL",
+    "OPERATOR_SHOW_COMMENTS",
+    true,
+  );
+
   const toggleDetailsOpen = React.useCallback(() => {
     setIsDetailsOpen((open) => !open);
   }, [setIsDetailsOpen]);
+
+  const toggleShowDistributions = React.useCallback(() => {
+    setShowDistributions((v) => !v);
+  }, [setShowDistributions]);
+
+  const toggleShowComments = React.useCallback(() => {
+    setShowComments((v) => !v);
+  }, [setShowComments]);
 
   const mapRef = React.useRef<Map>(null);
   const [ref, rect] = useResizeObserver();
@@ -50,10 +79,14 @@ export const MapView = () => {
     mapRef?.current?.invalidateSize();
   }, [debouncedRect]);
 
+  const showMapPanel = !isDetailsOpen || !isMobile;
+
   const { defaultLayout, onLayoutChanged } = useCachedLayout({
     key: "operator-layout",
     currentPanels: isDetailsOpen
-      ? ["details-panel", "map-panel"]
+      ? isMobile
+        ? ["details-panel"]
+        : ["details-panel", "map-panel"]
       : ["map-panel"],
     initialLayout: {
       panels: ["details-panel", "map-panel"],
@@ -76,15 +109,87 @@ export const MapView = () => {
 
   const [selectedDate, setSelectedDate] = React.useState<Date>(today);
 
+  // Tracks the map's current center so navigation callbacks can use it
+  const mapCenterRef = React.useRef<GeoLocation>();
+  const onCenterChange = React.useCallback((center: GeoLocation) => {
+    mapCenterRef.current = center;
+  }, []);
+
+  const { isOperator, selectedRegistrationNumber } = useSelectedBus();
+  const {
+    objs: { data: busses },
+  } = useBusses();
+
+  const onAddDistribution = React.useCallback(() => {
+    if (compareByDateOnly(selectedDate, today) !== 0) {
+      notifications.show({
+        color: "yellow",
+        icon: <IconExclamationMark />,
+        withBorder: false,
+        withCloseButton: true,
+        mb: "xs",
+        message: "Zum Hinzufügen bitte zum aktuellen Tag wechseln",
+      });
+      return;
+    }
+    if (isOperator && busses && !busses.some((b) => b.registrationNumber === selectedRegistrationNumber)) {
+      notifications.show({
+        color: "red",
+        icon: <IconExclamationMark />,
+        withBorder: false,
+        withCloseButton: true,
+        mb: "xs",
+        message: `Kein Schichtträger mit Kennzeichen "${selectedRegistrationNumber}" gefunden`,
+      });
+      return;
+    }
+    if (!isOperator && !selectedRegistrationNumber) {
+      notifications.show({
+        color: "orange",
+        icon: <IconExclamationMark />,
+        withBorder: false,
+        withCloseButton: true,
+        mb: "xs",
+        message: "Bitte wähle zuerst einen Schichtträger über das Benutzermenü oben rechts aus",
+      });
+      return;
+    }
+    navigate("/add", { state: mapCenterRef.current });
+  }, [navigate, selectedDate, today, isOperator, selectedRegistrationNumber, busses]);
+
+  const onAddComment = React.useCallback(() => {
+    navigate("/add-comment", { state: mapCenterRef.current });
+  }, [navigate]);
+
   const {
     objs: { data: distributions },
   } = useDistributions({ from: queryFrom, to: today });
+
+  const {
+    objs: { data: allComments },
+  } = useComments({ from: null, to: null });
+
+  // Show comments from the last 7 days, or pinned comments regardless of age
+  const comments = React.useMemo(() => {
+    if (!allComments) return [];
+    const cutoff = queryFrom;
+    return allComments.filter(
+      (c) => c.isPinned || new Date(c.addOn) >= cutoff,
+    );
+  }, [allComments, queryFrom]);
 
   const [focusedGeoLocation, setFocusedDistributionId] =
     React.useState<GeoLocation>();
 
   const resetFocusedGeoLocation = React.useCallback(() => {
     setFocusedDistributionId(undefined);
+  }, []);
+
+  const [focusedCommentGeoLocation, setFocusedCommentGeoLocation] =
+    React.useState<GeoLocation>();
+
+  const resetFocusedCommentGeoLocation = React.useCallback(() => {
+    setFocusedCommentGeoLocation(undefined);
   }, []);
 
   const onCardClick = React.useCallback(
@@ -106,6 +211,8 @@ export const MapView = () => {
         selectedDate={selectedDate}
         queryFrom={queryFrom}
         today={today}
+        onAddDistribution={onAddDistribution}
+        onAddComment={onAddComment}
       />
 
       <Group
@@ -114,35 +221,47 @@ export const MapView = () => {
         className="container"
         orientation={groupOrientation}
       >
-        <Panel
-          id="map-panel"
-          className="map-panel"
-          defaultSize={isDetailsOpen ? 70 : 100}
-          elementRef={ref}
-        >
-          <MapPanel
-            mapRef={mapRef}
-            selectedDate={selectedDate}
-            distributions={distributions}
-            focusedGeoLocation={focusedGeoLocation}
-            resetFocusedGeoLocation={resetFocusedGeoLocation}
-          />
-        </Panel>
+        {showMapPanel && (
+          <Panel
+            id="map-panel"
+            className="map-panel"
+            defaultSize={isDetailsOpen ? "70" : "100"}
+            minSize="30"
+            elementRef={ref}
+          >
+            <MapPanel
+              mapRef={mapRef}
+              selectedDate={selectedDate}
+              distributions={distributions}
+              focusedGeoLocation={focusedGeoLocation}
+              resetFocusedGeoLocation={resetFocusedGeoLocation}
+              showDistributions={showDistributions}
+              toggleShowDistributions={toggleShowDistributions}
+              showComments={showComments}
+              toggleShowComments={toggleShowComments}
+              comments={comments ?? []}
+              focusedCommentGeoLocation={focusedCommentGeoLocation}
+              resetFocusedCommentGeoLocation={resetFocusedCommentGeoLocation}
+              onCenterChange={onCenterChange}
+            />
+          </Panel>
+        )}
         {isDetailsOpen && (
           <>
-            <GroupSeparator orientation={groupOrientation} />
+            {!isMobile && <GroupSeparator orientation={groupOrientation} />}
             <Panel
-              collapsible
-              defaultSize={30}
-              minSize={30}
+              defaultSize={isMobile ? "100" : "30"}
+              minSize={isMobile ? "100" : "300px"}
               id="details-panel"
               className="details-panel"
             >
               <DetailsPanel
                 selectedDate={selectedDate}
                 distributions={distributions}
+                comments={comments ?? []}
                 today={today}
                 onCardClick={onCardClick}
+                onCommentCardClick={setFocusedCommentGeoLocation}
               />
             </Panel>
           </>

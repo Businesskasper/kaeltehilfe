@@ -1,5 +1,5 @@
 import { Group, List, ListItem, Title } from "@mantine/core";
-import { IconCalendar, IconLocation } from "@tabler/icons-react";
+import { IconCalendar } from "@tabler/icons-react";
 import React from "react";
 import { Popup } from "react-leaflet";
 import { Flag } from ".";
@@ -13,6 +13,7 @@ import {
   toNormalizedDate,
 } from "../../utils";
 import { ListItemIcon } from "../List/ListItemIcon";
+
 import "./Map.scss";
 
 type DistributionFlagProps = {
@@ -82,6 +83,8 @@ const DistributionFlagPopup = ({
     );
   };
 
+  const busRegistrationNumbers = getDistinct(distributions, (d) => d.bus.registrationNumber).join(", ");
+
   return (
     <Popup
       autoPan={false}
@@ -91,10 +94,6 @@ const DistributionFlagPopup = ({
       offset={[0, -55]}
       maxWidth={400}
     >
-      <Group mb="md" wrap="nowrap" w="100%">
-        <IconLocation />
-        <Title order={4}>{locationName}</Title>
-      </Group>
       {groupByDate ? (
         allDates.map((date) => {
           return (
@@ -130,6 +129,10 @@ const DistributionFlagPopup = ({
           ))}
         </List>
       )}
+      <div style={{ marginTop: "0.5rem", fontSize: "0.75rem", color: "gray" }}>
+        {busRegistrationNumbers}
+        {locationName !== "Unbekannter Ort" ? ` · ${locationName}` : ""}
+      </div>
     </Popup>
   );
 };

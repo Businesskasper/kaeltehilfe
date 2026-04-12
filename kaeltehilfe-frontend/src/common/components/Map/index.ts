@@ -1,3 +1,4 @@
+export * from "./CommentsLayer";
 export * from "./DistributionFlag";
 export * from "./DistributionsLayer";
 export * from "./Flag";

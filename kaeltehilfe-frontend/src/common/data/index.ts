@@ -1,4 +1,5 @@
 export * from "./address";
+export * from "./comment";
 export * from "./batchDistribution";
 export * from "./bus";
 export * from "./client";

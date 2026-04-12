@@ -1,0 +1,12 @@
+.comment-add {
+  margin-top: var(--mantine-spacing-xl);
+
+  .map-container {
+    min-height: mantine.rem(400);
+    position: relative;
+  }
+
+  .pointer-normal {
+    cursor: unset;
+  }
+}

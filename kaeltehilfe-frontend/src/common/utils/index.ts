@@ -13,3 +13,4 @@ export * from "./useBreakpoint";
 export * from "./useBrowserStorage";
 export * from "./useGeolocation";
 export * from "./useIsTouchDevice";
+export * from "./useSelectedBus";

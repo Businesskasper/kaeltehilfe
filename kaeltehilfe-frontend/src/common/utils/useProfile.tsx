@@ -17,6 +17,7 @@ export const useProfile = (): KbProfile | undefined => {
 
     return {
       username,
+      name: auth.user?.profile.name,
       role: roles?.find((r) => r.toUpperCase() === "ADMIN")
         ? "ADMIN"
         : roles?.find((r) => r.toUpperCase() === "OPERATOR")
@@ -33,6 +34,7 @@ export const useProfile = (): KbProfile | undefined => {
 
 type KbProfile = {
   username?: string;
+  name?: string;
   role?: UserRole;
   registrationNumber?: string;
 };

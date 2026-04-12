@@ -3,7 +3,6 @@ import { IconMinus, IconPlus, IconTarget } from "@tabler/icons-react";
 import L from "leaflet";
 import React from "react";
 import { useMap, useMapEvents } from "react-leaflet";
-import { Distribution } from "../../data";
 import { ActionGroup } from "../ActionGroup/ActionGroup";
 import { KeyedMarkerRegistry } from "./mapUtils";
 
@@ -168,7 +167,7 @@ export const ZoomButtons = () => {
 };
 
 type FitBoundsButtonProps = {
-  registryRef: React.MutableRefObject<KeyedMarkerRegistry<Distribution>>;
+  registryRef: React.MutableRefObject<KeyedMarkerRegistry<unknown>>;
   onFitBounds?: () => void;
   disabled?: boolean;
 };

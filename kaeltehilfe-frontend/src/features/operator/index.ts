@@ -1,5 +1,3 @@
 export * from "./Add/DistributionAdd";
-export * from "./CardView/CardView";
-export * from "./ClientSearch/ClientSearch";
+export * from "./Add/CommentAdd";
 export * from "./MainView/MainView";
-export * from "./OperatorNavigation";

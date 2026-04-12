@@ -21,6 +21,17 @@
   color: var(--mantine-color-dark-text);
 }
 
+.comment-cluster-small,
+.comment-cluster-medium,
+.comment-cluster-large {
+  background-color: rgba(129, 140, 248, 0.4);
+  border: 2px solid rgba(79, 70, 229, 0.6);
+  div {
+    background-color: rgba(79, 70, 229, 0.8);
+    border: none;
+  }
+}
+
 .leaflet-popup-content-wrapper {
   background-color: var(--mantine-color-body);
   opacity: 1;

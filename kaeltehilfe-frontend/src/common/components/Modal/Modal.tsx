@@ -24,6 +24,7 @@ type OpenAppModalProps = {
   modalId?: string;
   title: string;
   size?: number | MantineSize;
+  zIndex?: number;
   children:
     | Array<
         | React.ReactElement<ModalMainProps>
@@ -37,6 +38,7 @@ export const openAppModal = (props: OpenAppModalProps) => {
     modalId: props.modalId,
     withCloseButton: false,
     size: props.size || "lg",
+    zIndex: props.zIndex,
     children: (
       <>
         <Modal.Header>

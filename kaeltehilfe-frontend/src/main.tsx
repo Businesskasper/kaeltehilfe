@@ -12,6 +12,7 @@ import { AuthRoute } from "./common/components";
 import { initHttp } from "./common/utils/http.tsx";
 import { loadConfig } from "./config.ts";
 import {
+  AdminComments,
   AdminNavigation,
   Admins,
   Busses,
@@ -23,16 +24,15 @@ import {
   Volunteers,
 } from "./features/admin";
 import {
-  CardView,
-  ClientSearch,
+  CommentAdd,
   DistributionAdd,
   MapView,
-  OperatorNavigation,
 } from "./features/operator";
 
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/notifications/styles.css";
+import "@mantine/tiptap/styles.css";
 import "mantine-react-table/styles.css";
 
 import "./index.scss";
@@ -83,32 +83,32 @@ const router = createBrowserRouter([
             path: "distributions",
             element: <Distributions />,
           },
+          {
+            path: "comments",
+            element: <AdminComments />,
+          },
         ],
       },
       {
         path: "",
         element: (
           <AuthRoute roles={["ADMIN", "OPERATOR"]}>
-            <AppShell navigation={<OperatorNavigation />} />
+            <AppShell />
           </AuthRoute>
         ),
         children: [
           { path: "", element: <Navigate relative="path" to="map" /> },
           {
-            path: "tiles",
-            element: <CardView />,
-          },
-          {
             path: "map",
             element: <MapView />,
           },
           {
-            path: "search",
-            element: <ClientSearch />,
-          },
-          {
             path: "add",
             element: <DistributionAdd />,
+          },
+          {
+            path: "add-comment",
+            element: <CommentAdd />,
           },
         ],
       },
