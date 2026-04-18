@@ -30,6 +30,7 @@ export type FormSelectProps<T extends { [key in string]: unknown }> = {
   onBlur?: () => void;
   label?: string;
   withAsterisk?: boolean;
+  zIndex?: number;
 };
 
 export const FormSelect = <T extends { [key in string]: unknown }>({
@@ -45,6 +46,7 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
   onBlur,
   label,
   withAsterisk,
+  zIndex
 }: FormSelectProps<T>) => {
   const getItemValue = React.useCallback(
     (item: T) => {
@@ -88,6 +90,7 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
   const isTouchDevice = useIsTouchDevice();
 
   const filteredOptions = React.useMemo(() => {
+    if (!searchable) return options;
     const currentValue =
       typeof formProps.value === "string"
         ? formProps?.value?.toLowerCase()?.trim()
@@ -97,10 +100,11 @@ export const FormSelect = <T extends { [key in string]: unknown }>({
           option.value?.toLowerCase()?.includes(currentValue),
         )
       : options;
-  }, [formProps.value, options]);
+  }, [formProps.value, options, searchable]);
 
   return (
     <Combobox
+      zIndex={zIndex}
       store={combobox}
       onOptionSubmit={(val, prop) => {
         formProps.onChange(prop.children);

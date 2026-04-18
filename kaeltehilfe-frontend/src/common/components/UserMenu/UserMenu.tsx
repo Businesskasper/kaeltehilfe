@@ -90,7 +90,7 @@ export const UserMenu = () => {
   );
 
   return (
-    <Group className="user-menu">
+    <>
       {!isMobile && colorSwitch}
       {auth.isAuthenticated && (
         <>
@@ -99,19 +99,7 @@ export const UserMenu = () => {
               <UnstyledButton>
                 <Group gap={5}>
                   <Avatar size={30}>{avatarIcon}</Avatar>
-                  <Text
-                    size="sm"
-                    style={
-                      !isOperator && !isOnAdminPage && busses && busses.length > 1
-                        ? { cursor: "pointer", textDecoration: "underline dotted" }
-                        : undefined
-                    }
-                    onClick={
-                      !isOperator && !isOnAdminPage && busses && busses.length > 1
-                        ? (e) => { e.stopPropagation(); openBusModal(); }
-                        : undefined
-                    }
-                  >
+                  <Text size="sm">
                     {userName}
                   </Text>
                 </Group>
@@ -178,6 +166,7 @@ export const UserMenu = () => {
                   onItemSelected={(item) => {
                     if (item) busForm.setFieldValue("registrationNumber", item.registrationNumber);
                   }}
+                  zIndex={500}
                 />
                 <Button type="submit" fullWidth mt="xl">
                   Übernehmen
@@ -187,6 +176,6 @@ export const UserMenu = () => {
           )}
         </>
       )}
-    </Group>
+    </>
   );
 };
