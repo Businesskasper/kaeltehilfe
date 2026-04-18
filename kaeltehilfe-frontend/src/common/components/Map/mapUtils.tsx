@@ -34,17 +34,20 @@ export type KeyedMarkerRegistry<TData> = {
 type UseMarkerRegistryProps<TData> = {
   data: Array<TData>;
   getGeoLocation: (item: TData) => GeoLocation;
+  registryRef?: React.MutableRefObject<KeyedMarkerRegistry<unknown>>;
 };
 
 export const useMarkerRegistry = <TData,>({
   data,
   getGeoLocation,
+  registryRef: externalRegistryRef,
 }: UseMarkerRegistryProps<TData>) => {
   const map = useMap();
 
-  const registryRef = React.useRef<KeyedMarkerRegistry<TData>>(
+  const internalRegistryRef = React.useRef<KeyedMarkerRegistry<TData>>(
     {} as KeyedMarkerRegistry<TData>,
   );
+  const registryRef = (externalRegistryRef as React.MutableRefObject<KeyedMarkerRegistry<TData>> | undefined) ?? internalRegistryRef;
 
   const getMapEntry = React.useCallback(
     (geoLocation: GeoLocation): MarkerRegistryEntry<TData> | undefined => {

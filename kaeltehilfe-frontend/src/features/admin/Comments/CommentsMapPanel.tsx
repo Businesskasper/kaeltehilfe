@@ -1,5 +1,6 @@
+import React from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
-import { CommentsLayer, ZoomButtons } from "../../../common/components/Map";
+import { CommentsLayer, FitBoundsButton, KeyedMarkerRegistry, ZoomButtons } from "../../../common/components/Map";
 import { Comment, GeoLocation } from "../../../common/data";
 
 const defaultLocation = { lat: 48.40628334508064, lng: 9.993206261642712 };
@@ -18,6 +19,8 @@ export const CommentsMapPanel = ({
   focusedGeoLocation,
   resetFocusedGeoLocation,
 }: CommentsMapPanelProps) => {
+  const commentRegistryRef = React.useRef<KeyedMarkerRegistry<unknown>>({} as KeyedMarkerRegistry<unknown>);
+
   return (
     <MapContainer
       center={defaultLocation}
@@ -40,10 +43,15 @@ export const CommentsMapPanel = ({
         className="tile-layer"
       />
       <ZoomButtons />
+      <FitBoundsButton
+        registryRefs={[commentRegistryRef]}
+        disabled={comments.filter((c) => c.geoLocation !== null).length === 0}
+      />
       <CommentsLayer
         comments={comments}
         focusedGeoLocation={focusedGeoLocation}
         resetFocusedGeoLocation={resetFocusedGeoLocation}
+        registryRef={commentRegistryRef}
       />
     </MapContainer>
   );

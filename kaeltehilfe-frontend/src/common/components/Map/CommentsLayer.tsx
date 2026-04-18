@@ -4,10 +4,10 @@ import { Popup, useMapEvent } from "react-leaflet";
 import MarkerClusterGroup, {
   MarkerClusterGroupProps,
 } from "react-leaflet-markercluster";
-import { Flag, FitBoundsButton } from ".";
+import { Flag } from ".";
 import { Comment, GeoLocation } from "../../data";
 import { formatDateTime } from "../../utils";
-import { useMarkerRegistry } from "./mapUtils";
+import { KeyedMarkerRegistry, useMarkerRegistry } from "./mapUtils";
 
 import "./Map.scss";
 
@@ -17,7 +17,7 @@ type CommentsLayerProps = {
   comments: Array<Comment>;
   focusedGeoLocation?: GeoLocation;
   resetFocusedGeoLocation: () => void;
-  onFitBounds?: () => void;
+  registryRef?: React.MutableRefObject<KeyedMarkerRegistry<unknown>>;
 };
 
 const getGeoLocation = (c: Comment) => c.geoLocation!;
@@ -26,17 +26,18 @@ export const CommentsLayer = ({
   comments,
   focusedGeoLocation,
   resetFocusedGeoLocation,
-  onFitBounds,
+  registryRef: externalRegistryRef,
 }: CommentsLayerProps) => {
   const commentsWithLocation = React.useMemo(
     () => comments.filter((c) => c.geoLocation !== null),
     [comments],
   );
 
-  const { getMapEntry, tryFocus, onIconCreate, getFlagRef, registryRef } =
+  const { getMapEntry, tryFocus, onIconCreate, getFlagRef } =
     useMarkerRegistry({
       data: commentsWithLocation,
       getGeoLocation,
+      registryRef: externalRegistryRef,
     });
 
   useMapEvent("moveend", () => {
@@ -102,22 +103,15 @@ export const CommentsLayer = ({
   );
 
   return (
-    <>
-      <FitBoundsButton
-        registryRef={registryRef}
-        onFitBounds={onFitBounds}
-        disabled={commentsWithLocation.length === 0}
-      />
-      <MarkerClusterGroup {...clusterOptions}>
-        {commentsWithLocation.map((comment) => (
-          <CommentFlag
-            key={comment.id}
-            comment={comment}
-            ref={getFlagRef(comment.geoLocation!)}
-          />
-        ))}
-      </MarkerClusterGroup>
-    </>
+    <MarkerClusterGroup {...clusterOptions}>
+      {commentsWithLocation.map((comment) => (
+        <CommentFlag
+          key={comment.id}
+          comment={comment}
+          ref={getFlagRef(comment.geoLocation!)}
+        />
+      ))}
+    </MarkerClusterGroup>
   );
 };
 

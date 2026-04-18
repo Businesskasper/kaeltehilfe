@@ -3,6 +3,8 @@ import { MapContainer, TileLayer } from "react-leaflet";
 import {
   CommentsLayer,
   DistributionsLayer,
+  FitBoundsButton,
+  KeyedMarkerRegistry,
   ZoomButtons,
 } from "../../../../common/components/Map";
 import { Comment, Distribution, GeoLocation } from "../../../../common/data";
@@ -114,6 +116,9 @@ export const MapPanel = ({
     setIsTracking(false);
   }, [setIsTracking]);
 
+  const distRegistryRef = React.useRef<KeyedMarkerRegistry<unknown>>({} as KeyedMarkerRegistry<unknown>);
+  const commentRegistryRef = React.useRef<KeyedMarkerRegistry<unknown>>({} as KeyedMarkerRegistry<unknown>);
+
   return (
     <MapContainer
         center={storedState.center}
@@ -136,6 +141,11 @@ export const MapPanel = ({
           className="tile-layer"
         />
         <ZoomButtons />
+        <FitBoundsButton
+          registryRefs={[distRegistryRef, commentRegistryRef]}
+          onFitBounds={onFitBounds}
+          disabled={distributionsToDisplay.length === 0 && comments.filter((c) => c.geoLocation !== null).length === 0}
+        />
         <LayerToggleButtons
           showDistributions={showDistributions}
           toggleShowDistributions={toggleShowDistributions}
@@ -155,7 +165,7 @@ export const MapPanel = ({
             distributions={distributionsToDisplay}
             focusedGeoLocation={focusedGeoLocation}
             resetFocusedGeoLocation={resetFocusedGeoLocation}
-            onFitBounds={onFitBounds}
+            registryRef={distRegistryRef}
           />
         )}
         {showComments && (
@@ -163,7 +173,7 @@ export const MapPanel = ({
             comments={comments}
             focusedGeoLocation={focusedCommentGeoLocation}
             resetFocusedGeoLocation={resetFocusedCommentGeoLocation}
-            onFitBounds={onFitBounds}
+            registryRef={commentRegistryRef}
           />
         )}
       </MapContainer>

@@ -4,10 +4,10 @@ import { useMapEvent } from "react-leaflet";
 import MarkerClusterGroup, {
   MarkerClusterGroupProps,
 } from "react-leaflet-markercluster";
-import { DistributionFlag, FitBoundsButton } from ".";
+import { DistributionFlag } from ".";
 import { Distribution, GeoLocation } from "../../data";
 import { groupBy } from "../../utils";
-import { useMarkerRegistry } from "./mapUtils";
+import { KeyedMarkerRegistry, useMarkerRegistry } from "./mapUtils";
 
 import "./Map.scss";
 
@@ -24,8 +24,8 @@ type DistributionsLayerProps = {
   onClusterClick?: () => void;
   focusedGeoLocation?: GeoLocation;
   resetFocusedGeoLocation: () => void;
-  onFitBounds?: () => void;
   groupByDate?: boolean;
+  registryRef?: React.MutableRefObject<KeyedMarkerRegistry<unknown>>;
 };
 
 const getGeoLocation = (d: Distribution) => d.geoLocation;
@@ -35,8 +35,8 @@ export const DistributionsLayer = ({
   distributions,
   focusedGeoLocation,
   resetFocusedGeoLocation,
-  onFitBounds,
   groupByDate,
+  registryRef: externalRegistryRef,
 }: DistributionsLayerProps) => {
   const dateDistsByGeoLocation = React.useMemo(
     () => groupBy(distributions, getGeoLocation),
@@ -46,10 +46,11 @@ export const DistributionsLayer = ({
   const geoLocations = Array.from(dateDistsByGeoLocation.keys());
 
   // Reset cluster ref when date changed to avoid overlaps with same geo locations
-  const { getMapEntry, tryFocus, onIconCreate, getFlagRef, registryRef } =
+  const { getMapEntry, tryFocus, onIconCreate, getFlagRef } =
     useMarkerRegistry({
       data: distributions,
       getGeoLocation,
+      registryRef: externalRegistryRef,
     });
 
   // TODO: not sure if necessary
@@ -128,34 +129,27 @@ export const DistributionsLayer = ({
   );
 
   return (
-    <>
-      <FitBoundsButton
-        registryRef={registryRef}
-        onFitBounds={onFitBounds}
-        disabled={distributions.length === 0}
-      />
-      <MarkerClusterGroup {...clusterOptions}>
-        {geoLocations.map((geoLocation) => {
-          const distributions = dateDistsByGeoLocation.get(geoLocation);
-          if (!distributions || distributions.length === 0) return null;
+    <MarkerClusterGroup {...clusterOptions}>
+      {geoLocations.map((geoLocation) => {
+        const distributions = dateDistsByGeoLocation.get(geoLocation);
+        if (!distributions || distributions.length === 0) return null;
 
-          const clientCount = Array.from(
-            groupBy(distributions, (d) => d.client.id).keys(),
-          ).length;
+        const clientCount = Array.from(
+          groupBy(distributions, (d) => d.client.id).keys(),
+        ).length;
 
-          return (
-            <DistributionFlag
-              colorSet={colorSets.RED}
-              count={clientCount}
-              distributions={distributions}
-              groupByDate={groupByDate}
-              key={JSON.stringify(geoLocation)}
-              // Set marker and cluster in registry to be able to open popup and spiderfy later
-              ref={getFlagRef(geoLocation)}
-            />
-          );
-        })}
-      </MarkerClusterGroup>
-    </>
+        return (
+          <DistributionFlag
+            colorSet={colorSets.RED}
+            count={clientCount}
+            distributions={distributions}
+            groupByDate={groupByDate}
+            key={JSON.stringify(geoLocation)}
+            // Set marker and cluster in registry to be able to open popup and spiderfy later
+            ref={getFlagRef(geoLocation)}
+          />
+        );
+      })}
+    </MarkerClusterGroup>
   );
 };

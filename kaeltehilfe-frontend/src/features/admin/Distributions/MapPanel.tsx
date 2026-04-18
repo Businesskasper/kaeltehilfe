@@ -1,6 +1,9 @@
 import { MapContainer, TileLayer } from "react-leaflet";
+import React from "react";
 import {
   DistributionsLayer,
+  FitBoundsButton,
+  KeyedMarkerRegistry,
   ZoomButtons,
 } from "../../../common/components/Map";
 import { GeoLocation, useDistributions } from "../../../common/data";
@@ -24,6 +27,8 @@ export const MapPanel = ({
     objs: { data: distributions },
   } = distHook;
 
+  const distRegistryRef = React.useRef<KeyedMarkerRegistry<unknown>>({} as KeyedMarkerRegistry<unknown>);
+
   return (
     <MapContainer
       center={defaultLocation}
@@ -46,6 +51,10 @@ export const MapPanel = ({
         className="tile-layer"
       />
       <ZoomButtons />
+      <FitBoundsButton
+        registryRefs={[distRegistryRef]}
+        disabled={!distributions?.length}
+      />
 
       {distributions && (
         <DistributionsLayer
@@ -53,6 +62,7 @@ export const MapPanel = ({
           focusedGeoLocation={focusedGeoLocation}
           resetFocusedGeoLocation={resetFocusedGeoLocation}
           groupByDate
+          registryRef={distRegistryRef}
         />
       )}
     </MapContainer>
