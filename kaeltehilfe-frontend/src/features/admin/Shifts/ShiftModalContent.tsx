@@ -1,4 +1,4 @@
-import { ActionIcon, Button, Group, InputLabel, rem } from "@mantine/core";
+import { ActionIcon, Button, Group, InputLabel, Stack, Text, rem } from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import { modals } from "@mantine/modals";
@@ -16,12 +16,18 @@ import {
   useShifts,
   useVolunteers,
 } from "../../../common/data";
+import {
+  VolunteerCriterionLabel,
+  useShiftRules,
+} from "../../../common/data/shiftRule";
+import { Volunteer } from "../../../common/data/volunteer";
 import { compareByDateOnly } from "../../../common/utils";
 import {
   isDuplicate,
   requiredValidator,
   validators,
 } from "../../../common/utils/validators";
+import { CRITERION_ICONS, getFailingRules } from "./shiftRuleUtils";
 
 type ShiftModalContentProps = {
   existing?: Shift;
@@ -48,6 +54,10 @@ export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
   const {
     objs: { data: busses },
   } = useBusses();
+
+  const {
+    objs: { data: shiftRules },
+  } = useShiftRules();
 
   const initialValues = React.useMemo<ShiftForm>(
     () => ({
@@ -161,6 +171,15 @@ export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
     }
   };
 
+  const selectedVolunteers = form.values.volunteers
+    .map((v) => volunteers?.find((vol) => vol.id === v.id))
+    .filter((v): v is Volunteer => v !== undefined);
+
+  const failingRules = getFailingRules(shiftRules ?? [], {
+    busId: form.values.busId,
+    volunteers: selectedVolunteers,
+  });
+
   const volunteerFields = form.getValues().volunteers?.map((_, index) => (
     <Group
       mt={index > 0 ? "md" : undefined}
@@ -270,6 +289,19 @@ export const ShiftModalContent = ({ existing }: ShiftModalContentProps) => {
         >
           <IconPlus />
         </ActionIcon>
+        {failingRules.length > 0 && (
+          <Stack gap="xs" mt="md">
+            {failingRules.map((r) => (
+              <Group key={r.id} gap="xs">
+                {CRITERION_ICONS[r.criterion]}
+                <Text size="sm" c="red">
+                  {VolunteerCriterionLabel[r.criterion]}: mindestens{" "}
+                  {r.threshold} erforderlich
+                </Text>
+              </Group>
+            ))}
+          </Stack>
+        )}
       </ModalMain>
       <ModalActions>
         <Button
