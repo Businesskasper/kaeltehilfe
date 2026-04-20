@@ -9,12 +9,25 @@ export class GroupedMap<K, V> {
     this.map = new Map();
   }
 
-  private deserializeKey(serializedKey: string) {
-    return JSON.parse(serializedKey) as K;
+  private serializeKey(key: K) {
+    if (key instanceof Date) {
+      return JSON.stringify({ __type: "Date", value: key.toISOString() });
+    }
+    return JSON.stringify(key);
   }
 
-  private serializeKey(key: K) {
-    return JSON.stringify(key);
+  private deserializeKey(serializedKey: string) {
+    const parsed = JSON.parse(serializedKey);
+    if (
+      parsed &&
+      typeof parsed === "object" &&
+      "__type" in parsed &&
+      typeof parsed.__type === "string" &&
+      parsed.__type === "Date"
+    ) {
+      return new Date(parsed.value) as K;
+    }
+    return parsed as K;
   }
 
   get(key: K): V[] | undefined {
