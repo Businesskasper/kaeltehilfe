@@ -2,6 +2,7 @@ import {
   IconBedFlat,
   IconBus,
   IconCalendar,
+  IconChartBar,
   IconCubeSend,
   IconLogin,
   IconMessage,
@@ -37,6 +38,7 @@ export const AdminNavigation = () => {
         <NavigationItem label="Schichten" Icon={IconCalendar} target="shifts" />
       </NavigationSection>
       <NavigationSection label="Ausgaben">
+        <NavigationItem label="Berichte" target="reports" Icon={IconChartBar} />
         <NavigationItem label="Güter" target="goods" Icon={IconSoup} />
         <NavigationItem label="Klienten" target="clients" Icon={IconBedFlat} />
         <NavigationItem

@@ -19,6 +19,7 @@ import {
   Clients,
   Distributions,
   Goods,
+  Reports,
   ShiftRules,
   Shifts,
   Volunteers,
@@ -50,7 +51,7 @@ const router = createBrowserRouter([
           </AuthRoute>
         ),
         children: [
-          { path: "", element: <Navigate relative="path" to="distributions" /> },
+          { path: "", element: <Navigate relative="path" to="reports" /> },
           {
             path: "shifts",
             element: <Shifts />,
@@ -86,6 +87,10 @@ const router = createBrowserRouter([
           {
             path: "comments",
             element: <AdminComments />,
+          },
+          {
+            path: "reports",
+            element: <Reports />,
           },
         ],
       },
