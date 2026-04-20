@@ -95,9 +95,9 @@ const DistributionFlagPopup = ({
       maxWidth={400}
     >
       {groupByDate ? (
-        allDates.map((date) => {
+        allDates.map((date, index) => {
           return (
-            <>
+            <React.Fragment key={date?.toISOString() || index}>
               <Group mb="md" wrap="nowrap" w="100%">
                 <IconCalendar />
                 <Title td="underline" order={6}>
@@ -114,7 +114,7 @@ const DistributionFlagPopup = ({
                   <ListItem key={clientName}>{clientName}</ListItem>
                 ))}
               </List>
-            </>
+            </React.Fragment>
           );
         })
       ) : (
