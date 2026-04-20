@@ -1,10 +1,4 @@
-import {
-  InfiniteData,
-  useInfiniteQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
-import React from "react";
-import { getBaseQuery, toDate, toNormalizedDate, useCrudHook } from "../utils";
+import { toDate, useCrudHook } from "../utils";
 import { GeoLocation } from "./geoLocation";
 
 export type Distribution = {
