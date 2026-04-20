@@ -22,7 +22,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "../build/frontend/publish-frontend",
+    outDir: "dist",
     emptyOutDir: true,
   },
 });
