@@ -23,7 +23,7 @@ import {
   Good,
   GoodTypes,
   GoodTypeTranslation,
-  useDistributionsPaginated,
+  useDistributions,
   useGoods,
 } from "../../../common/data";
 import clsx from "clsx";
@@ -42,10 +42,17 @@ export const FormGoodsDrawer = ({ isOpened, close }: FormGoodsDrawerProps) => {
     objs: { isLoading, data: goods },
   } = useGoods();
 
+  const twoWeeksAgo = React.useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 14);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+  const now = React.useMemo(() => new Date(), []);
+
   const {
-    queryDistributionsPaginated: { data: distributionPages },
-  } = useDistributionsPaginated();
-  const distributions = distributionPages?.pages?.flatMap((p) => p) || [];
+    objs: { data: distributions = [] },
+  } = useDistributions({ from: twoWeeksAgo, to: now });
   const form = useDistributionFormContext();
 
   const searchField = useField({
