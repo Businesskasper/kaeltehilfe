@@ -5,7 +5,7 @@ import React from "react";
 import { Bus, GoodType, GoodTypeTranslation, GoodTypes } from "../../../common/data";
 import { ReportFilters, getDatePreset } from "./reportUtils";
 
-type Props = {
+type ReportsFilterBarProps = {
   filters: ReportFilters;
   setFilters: React.Dispatch<React.SetStateAction<ReportFilters>>;
   busses: Bus[];
@@ -20,7 +20,7 @@ const presets = [
 
 type Preset = (typeof presets)[number]["value"];
 
-export const ReportsFilterBar = ({ filters, setFilters, busses }: Props) => {
+export const ReportsFilterBar = ({ filters, setFilters, busses }: ReportsFilterBarProps) => {
   const [activePreset, setActivePreset] = React.useState<Preset>("30d");
 
   const applyPreset = React.useCallback(
