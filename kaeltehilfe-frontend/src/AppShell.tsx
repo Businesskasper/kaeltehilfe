@@ -2,6 +2,7 @@ import {
   Burger,
   Group,
   AppShell as Mantine_AppShell,
+  ScrollArea,
   rem,
 } from "@mantine/core";
 import { useDisclosure, useViewportSize } from "@mantine/hooks";
@@ -50,7 +51,11 @@ export const AppShell = ({ navigation }: { navigation?: React.ReactNode }) => {
         </Group>
       </Mantine_AppShell.Header>
       {hasNav && (
-        <Mantine_AppShell.Navbar p="md">{navigation}</Mantine_AppShell.Navbar>
+        <Mantine_AppShell.Navbar>
+          <Mantine_AppShell.Section grow component={ScrollArea} p="md">
+            {navigation}
+          </Mantine_AppShell.Section>
+        </Mantine_AppShell.Navbar>
       )}
       <Mantine_AppShell.Main mah="100dvh" id="main">
         <Outlet />
